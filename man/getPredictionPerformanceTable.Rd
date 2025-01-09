@@ -6,7 +6,8 @@
 \usage{
 getPredictionPerformanceTable(
   connectionHandler,
-  resultDatabaseSettings,
+  schema,
+  plpTablePrefix = "plp_",
   table = "attrition",
   performanceId = NULL
 )
@@ -14,7 +15,9 @@ getPredictionPerformanceTable(
 \arguments{
 \item{connectionHandler}{A connection handler that connects to the database and extracts sql queries.  Create a connection handler via `ResultModelManager::ConnectionHandler$new()`.}
 
-\item{resultDatabaseSettings}{A list containing the schema and table prefixes created using `OhdsiShinyAppBuilder::createDefaultResultDatabaseSettings()`}
+\item{schema}{The result database schema (e.g., 'main' for sqlite)}
+
+\item{plpTablePrefix}{The prefix used for the patient level prediction results tables}
 
 \item{table}{The table to extract}
 

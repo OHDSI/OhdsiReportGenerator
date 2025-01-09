@@ -56,12 +56,15 @@ Specify the connectionHandler, the schema and the target/outcome cohort IDs
 \seealso{
 Other {Characterization}: 
 \code{\link{getCaseBinaryFeatures}()},
+\code{\link{getCharacterizationDemographics}()},
 \code{\link{getCohortDefinitions}()},
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getRiskFactors}()},
 \code{\link{getTargetBinaryFeatures}()},
 \code{\link{getTargetCounts}()},
-\code{\link{getTimeToEvent}()}
+\code{\link{getTimeToEvent}()},
+\code{\link{plotAgeDistributions}()},
+\code{\link{plotSexDistributions}()}
 }
 \concept{{Characterization}}

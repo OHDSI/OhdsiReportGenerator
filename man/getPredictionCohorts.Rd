@@ -4,12 +4,21 @@
 \alias{getPredictionCohorts}
 \title{Extract a complete set of cohorts used in the prediction results}
 \usage{
-getPredictionCohorts(connectionHandler, resultDatabaseSettings)
+getPredictionCohorts(
+  connectionHandler,
+  schema,
+  plpTablePrefix = "plp_",
+  cgTablePrefix = "cg_"
+)
 }
 \arguments{
 \item{connectionHandler}{A connection handler that connects to the database and extracts sql queries.  Create a connection handler via `ResultModelManager::ConnectionHandler$new()`.}
 
-\item{resultDatabaseSettings}{A list containing the schema and table prefixes created using `OhdsiShinyAppBuilder::createDefaultResultDatabaseSettings()`}
+\item{schema}{The result database schema (e.g., 'main' for sqlite)}
+
+\item{plpTablePrefix}{The prefix used for the patient level prediction results tables}
+
+\item{cgTablePrefix}{The prefix used for the cohort generator results tables}
 }
 \value{
 Returns a data.frame with the columns: 

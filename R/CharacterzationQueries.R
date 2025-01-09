@@ -707,43 +707,123 @@ result <- connectionHandler$queryDb(
  return(result)
 }
 
-getCaseDemographics <- function(
+
+#' Extract the binary age groups for the cases and targets
+#' @description
+#' This function extracts the age group feature extraction results for cases and targets corresponding to specified target and outcome cohorts.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target/outcome cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetId
+#' @template outcomeId
+#' @param type A character of 'age' or 'sex'
+#' @family {Characterization}
+#' @return
+#' Returns a data.frame with the columns:
+#' \itemize{
+#'  \item{databaseName} \description{the name of the database}
+#'  \item{targetName} \description{the target cohort name}
+#'  \item{targetId} \description{the target cohort unique identifier}
+#'  \item{outcomeName} \description{the outcome name}
+#'  \item{outcomeId} \description{the outcome unique identifier}
+#'  \item{minPriorObservation} \description{the minimum required observation days prior to index for an entry}
+#'  \item{outcomeWashoutDays} \description{patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+#' \item{riskWindowStart} \description{the number of days ofset the start anchor that is the start of the time-at-risk}
+#' \item{startAnchor} \description{the start anchor is either the target cohort start or cohort end date}
+#' \item{riskWindowEnd} \description{the number of days ofset the end anchor that is the end of the time-at-risk}
+#' \item{endAnchor} \description{the end anchor is either the target cohort start or cohort end date}
+#' \item{covariateName} \description{the name of the feature}
+#' \item{sumValue} \description{the number of cases who have the feature value of 1}
+#' \item{averageValue} \description{the mean feature value}
+#' } 
+#' 
+#' @export
+#' 
+getCharacterizationDemographics <- function(
     connectionHandler,
     schema,
     cTablePrefix = 'c_',
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
-    targetIds = NULL,
-    outcomeIds = NULL
+    targetId = NULL,
+    outcomeId = NULL,
+    type = 'age'
 ){
   
-sexTable <- getCaseBinaryFeatures(
-  connectionHandler = connectionHandler, 
-  schema = schema, 
-  cTablePrefix =  cTablePrefix, 
-  cgTablePrefix = cgTablePrefix, 
-  databaseTable = databaseTable, 
-  targetIds = targetIds, 
-  outcomeIds = outcomeIds, 
-  analysisIds = 1
-    )
-
-ageTable <- getCaseBinaryFeatures(
-  connectionHandler = connectionHandler, 
-  schema = schema, 
-  cTablePrefix =  cTablePrefix, 
-  cgTablePrefix = cgTablePrefix, 
-  databaseTable = databaseTable, 
-  targetIds = targetIds, 
-  outcomeIds = outcomeIds, 
-  analysisIds = 3
-)
-
-return(list(
-  sex = sexTable,
-  age = ageTable
-))
-
+  if(type == 'age'){
+    analysisIds <- 3
+  } else if(type == 'sex'){
+    analysisIds <- 1
+  } else{
+    stop('Invalid type - must be age or sex')
+  }
+  
+  ageData <- getCaseBinaryFeatures(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    cTablePrefix = cTablePrefix,
+    cgTablePrefix = cgTablePrefix,
+    targetIds = targetId, 
+    outcomeIds = outcomeId, 
+    analysisIds = analysisIds
+  )
+  ageDataT <- getTargetBinaryFeatures(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    cTablePrefix = cTablePrefix,
+    cgTablePrefix = cgTablePrefix,
+    targetIds = targetId, 
+    outcomeIds = outcomeId, 
+    analysisIds = analysisIds
+  )
+  
+  countT <- getTargetCounts(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    cTablePrefix = cTablePrefix,
+    cgTablePrefix = cgTablePrefix,
+    targetIds = targetId, 
+    outcomeIds = outcomeId
+  )
+  
+  ageDataT <- ageDataT %>% 
+    dplyr::inner_join(
+      y = countT %>% dplyr::select(
+        "databaseName",
+        "minPriorObservation",
+        "outcomeWashoutDays",
+        "personCount"
+      ), 
+      by = c("databaseName", 'minPriorObservation', 'outcomeWashoutDays')
+      )
+  
+  ageDataT <- merge(
+    ageDataT,
+    unique(ageData %>% dplyr::select(
+    "riskWindowStart",
+    "riskWindowEnd",
+    "startAnchor",
+    "endAnchor"
+  ))
+  ) %>% dplyr::mutate(
+    cohortType = "Target",
+    averageValue = .data$sumValue/.data$personCount
+  )
+  
+  ageData <- ageData %>% 
+    dplyr::mutate(
+    cohortType = "Cases"
+  )
+  
+  allData <- rbind(ageData, ageDataT[,colnames(ageData)])
+  
+return(allData)
 }
 
 # add get Target - need to calculate from target and exclude

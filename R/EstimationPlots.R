@@ -1,6 +1,25 @@
+#' Plots the cohort method results for one analysis
+#' @description
+#' Creates nice cohort method plots 
+#'
+#' @details
+#' Input the cohort method data 
+#'
+#' @param cmData The cohort method data 
+#' @param cmMeta (optional) The cohort method evidence synthesis data
+#' @param targetName A friendly name for the target cohort
+#' @param comparatorName A friendly name for the comparator cohort
+#' @param selectedAnalysisId The analysis ID of interest to plot
+#' 
+#' @family {Estimation}
+#' @return
+#' Returns a ggplot with the estimates
+#' 
+#' @export
+#' 
 plotCmEstimates <- function(
     cmData,
-    cmMeta,
+    cmMeta = NULL,
     targetName,
     comparatorName,
     selectedAnalysisId
@@ -45,9 +64,9 @@ plotCmEstimates <- function(
       targetIr = ifelse(.data$nTarget == 0, "--", .data$targetIr),
       comparatorIr = ifelse(.data$nComparator == 0, "--", .data$comparatorIr)
     ) %>%
-    dplyr::arrange(.data$database) %>%
+    dplyr::arrange(.data$databaseName) %>%
     dplyr::select(
-      "database", 
+      "databaseName", 
       "nTarget", 
       "nComparator", 
       "eventsTarget", 
@@ -93,7 +112,7 @@ plotCmEstimates <- function(
         database = "Meta Analysis"
       ) %>%
       dplyr::select(
-        "database", 
+        "databaseName", 
         "nTarget", 
         "nComparator", 
         "eventsTarget", 
@@ -109,7 +128,7 @@ plotCmEstimates <- function(
   }
   
   header <- tibble::tibble(
-    database = c("Data", "Source"),
+    databaseName = c("Data", "Source"),
     nTarget = c("Target", "N"),
     nComparator = c("Comparator", "N"),
     eventsTarget = c("Target", "Events"),
@@ -148,7 +167,7 @@ plotCmEstimates <- function(
   p <- plotData %>%
     forestplot::forestplot(
       labeltext = c( # .data?
-        "database", 
+        "databaseName", 
         "nTarget", 
         "nComparator", 
         "eventsTarget", 
@@ -169,12 +188,31 @@ plotCmEstimates <- function(
   return(p)
 }
 
+#' Plots the self controlled case series results for one analysis
+#' @description
+#' Creates nice self controlled case series plots 
+#'
+#' @details
+#' Input the self controlled case series data 
+#'
+#' @param sccsData The self controlled case series data 
+#' @param sccsMeta (optional) The self controlled case seriesd evidence synthesis data
+#' @param targetName A friendly name for the target cohort
+#' @param selectedAnalysisId The analysis ID of interest to plot
+#' 
+#' @family {Estimation}
+#' @return
+#' Returns a ggplot with the estimates
+#' 
+#' @export
+#'
 plotSccsEstimates <- function(
     sccsData,
-    sccsMeta,
+    sccsMeta = NULL,
     targetName,
     selectedAnalysisId
 ) {
+  # check only one target and outcome in data
   fmtHazardRatio <- "%.2f"
   fmtIncidenceRate <- "%.1f"
   incidenceRateMult <- 365.25 * 1000 
@@ -183,7 +221,7 @@ plotSccsEstimates <- function(
     dplyr::filter(.data$analysisId == !!selectedAnalysisId) %>%
     dplyr::select(
       "databaseName",
-      "exposuresOutcomeSetId", # no longer in results?
+      #"exposuresOutcomeSetId", # no longer in results?
       "calibratedRr",
       "calibratedCi95Lb",
       "calibratedCi95Ub",
@@ -220,10 +258,10 @@ plotSccsEstimates <- function(
   if (!is.null(sccsMeta)) {
     meta <- sccsMeta %>%
       dplyr::filter(.data$analysisId == !!selectedAnalysisId) %>%
-      dplyr::mutate(db = "Meta Analysis") %>% 
+      dplyr::mutate(databaseName = "Meta Analysis") %>% 
       dplyr::select(
-        "db",
-        "exposuresOutcomeSetId",
+        "databaseName",
+        #"exposuresOutcomeSetId",
         "calibratedRr",
         "calibratedCi95Lb",
         "calibratedCi95Ub",
@@ -252,7 +290,7 @@ plotSccsEstimates <- function(
   }
   
   header <- tibble::tibble(
-    db = c("Data", "Source"),
+    databaseName = c("Data", "Source"),
     cases = c("Total", "Cases"),
     yearsObs = c("Years of", "Observation"),
     totalEvents = c("Total", "Events"),
@@ -283,7 +321,7 @@ plotSccsEstimates <- function(
   p <- plotData %>%
     forestplot::forestplot(
       labeltext = c(
-        "db", 
+        "databaseName", 
         "cases", 
         "yearsObs", 
         "totalEvents", 

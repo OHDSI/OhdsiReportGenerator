@@ -75,6 +75,8 @@ Other {Estimation}:
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getSccsDiagnosticsData}()},
 \code{\link{getSccsEstimation}()},
-\code{\link{getSccsMetaEstimation}()}
+\code{\link{getSccsMetaEstimation}()},
+\code{\link{plotCmEstimates}()},
+\code{\link{plotSccsEstimates}()}
 }
 \concept{{Estimation}}

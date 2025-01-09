@@ -1,3 +1,22 @@
+#' Plots the age distributions using the binary age groups
+#' @description
+#' Creates bar charts for the target and case age groups.
+#'
+#' @details
+#' Input the data returned from 'getCharacterizationDemographics(type = 'age')' and the time-at-risk
+#'
+#' @param ageData The age data extracted using 'getCharacterizationDemographics(type = 'age')'
+#' @param riskWindowStart The time at risk window start
+#' @param riskWindowEnd The time at risk window end
+#' @param startAnchor The anchor for the time at risk start
+#' @param endAnchor The anchor for the time at risk end
+#' 
+#' @family {Characterization}
+#' @return
+#' Returns a ggplot with the distributions
+#' 
+#' @export
+#' 
 plotAgeDistributions <- function(
     ageData,
     riskWindowStart = '1',
@@ -55,7 +74,25 @@ result <- ggplot2::ggplot(
 return(result)
 }
 
-
+#' Plots the sex distributions using the sex features
+#' @description
+#' Creates bar charts for the target and case sex.
+#'
+#' @details
+#' Input the data returned from 'getCharacterizationDemographics(type = 'sex')' and the time-at-risk
+#'
+#' @param ageData The sex data extracted using 'getCharacterizationDemographics(type = 'sex')'
+#' @param riskWindowStart The time at risk window start
+#' @param riskWindowEnd The time at risk window end
+#' @param startAnchor The anchor for the time at risk start
+#' @param endAnchor The anchor for the time at risk end
+#' 
+#' @family {Characterization}
+#' @return
+#' Returns a ggplot with the distributions
+#' 
+#' @export
+#' 
 plotSexDistributions <- function(
     sexData,
     riskWindowStart = '1',

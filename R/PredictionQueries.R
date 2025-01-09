@@ -6,7 +6,9 @@
 #' Specify the connectionHandler, the resultDatabaseSettings and (optionally) any targetIds or outcomeIds to restrict models to
 #'
 #' @template connectionHandler
-#' @template resultDatabaseSettings
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
 #' @template targetIds
 #' @template outcomeIds
 #' @param numberPredictors the number of predictors per model to return
@@ -40,13 +42,15 @@
 #' @export
 getPredictionTopPredictors <- function(
     connectionHandler,
-    resultDatabaseSettings,
+    schema,
+    plpTablePrefix = 'plp_',
+    cgTablePrefix = 'cg_',
     targetIds = NULL,
     outcomeIds = NULL,
     numberPredictors = 100
 ){
 
-  # get performance_id
+  # get performance_id - TODO add cohort and outcome names?
   sql <- "
   select * from 
   
@@ -99,9 +103,9 @@ getPredictionTopPredictors <- function(
   
   result <- connectionHandler$queryDb(
     sql = sql,
-    schema = resultDatabaseSettings$schema,
-    plp_table_prefix = resultDatabaseSettings$plpTablePrefix,
-    cg_table_prefix = resultDatabaseSettings$cgTablePrefix,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
+    cg_table_prefix = cgTablePrefix,
     outcome_restrict = !is.null(outcomeIds),
     outcome_ids = paste0(outcomeIds, collapse = ','),
     target_restrict = !is.null(targetIds),
@@ -120,7 +124,9 @@ getPredictionTopPredictors <- function(
 #' Specify the connectionHandler, the resultDatabaseSettings and any targetIds or outcomeIds to restrict models to
 #'
 #' @template connectionHandler
-#' @template resultDatabaseSettings
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
 #' @family {Prediction}
 #' @return
 #' Returns a data.frame with the columns: 
@@ -133,7 +139,9 @@ getPredictionTopPredictors <- function(
 #' @export
 getPredictionCohorts <- function(
     connectionHandler,
-    resultDatabaseSettings
+    schema,
+    plpTablePrefix = 'plp_',
+    cgTablePrefix = 'cg_'
 ){
   
   allres <- c()
@@ -155,9 +163,9 @@ getPredictionCohorts <- function(
     
     result <- connectionHandler$queryDb(
       sql = sql,
-      schema = resultDatabaseSettings$schema,
-      plp_table_prefix = resultDatabaseSettings$plpTablePrefix,
-      cg_table_prefix = resultDatabaseSettings$cgTablePrefix,
+      schema = schema,
+      plp_table_prefix = plpTablePrefix,
+      cg_table_prefix = cgTablePrefix,
       type = type
     )
     
@@ -166,9 +174,7 @@ getPredictionCohorts <- function(
   }
   
   allres <- unique(allres)
-  #res <- result$cohortId
-  #names(res) <- result$cohortName
-  
+
   return(allres)
 }
 
@@ -181,7 +187,9 @@ getPredictionCohorts <- function(
 #' Specify the connectionHandler, the resultDatabaseSettings and (optionally) any targetIds or outcomeIds to restrict model designs to
 #'
 #' @template connectionHandler
-#' @template resultDatabaseSettings
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
 #' @template targetIds
 #' @template outcomeIds
 #' @family {Prediction}
@@ -215,7 +223,9 @@ getPredictionCohorts <- function(
 #' @export
 getPredictionModelDesigns <- function(
     connectionHandler,
-    resultDatabaseSettings,
+    schema,
+    plpTablePrefix = 'plp_',
+    cgTablePrefix = 'cg_',
     targetIds = NULL,
     outcomeIds = NULL
 ){
@@ -349,9 +359,9 @@ getPredictionModelDesigns <- function(
   
   summaryTable <- connectionHandler$queryDb(
     sql = sql,
-    schema = resultDatabaseSettings$schema,
-    plp_table_prefix = resultDatabaseSettings$plpTablePrefix,
-    cg_table_prefix = resultDatabaseSettings$cgTablePrefix,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
+    cg_table_prefix = cgTablePrefix,
     target_restrict = !is.null(targetIds),
     target_ids = paste(targetIds, collapse = ','),
     outcome_restrict = !is.null(outcomeIds),
@@ -381,7 +391,11 @@ getPredictionModelDesigns <- function(
 #' Specify the connectionHandler, the resultDatabaseSettings and (optionally) a modelDesignId and/or developmentDatabaseId to restrict models to
 #'
 #' @template connectionHandler
-#' @template resultDatabaseSettings
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param databaseTablePrefix A prefix to the database table, either '' or 'plp_'
 #' @param modelDesignId The identifier for a model design  to restrict results to
 #' @param developmentDatabaseId The identifier for the development database to restrict results to
 #' @family {Prediction}
@@ -420,7 +434,11 @@ getPredictionModelDesigns <- function(
 #' @export
 getPredictionPerformances <- function(
     connectionHandler,
-    resultDatabaseSettings,
+    schema,
+    plpTablePrefix = 'plp_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    databaseTablePrefix = '',
     modelDesignId = NULL,
     developmentDatabaseId = NULL
 ){
@@ -532,15 +550,15 @@ getPredictionPerformances <- function(
   
   summaryTable <- connectionHandler$queryDb(
     sql = sql,
-    schema = resultDatabaseSettings$schema,
-    plp_table_prefix = resultDatabaseSettings$plpTablePrefix,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
     model_design_id = modelDesignId,
     model_design_restrict = !is.null(modelDesignId),
     development_database_id = developmentDatabaseId,
     development_database_id_restrict = !is.null(developmentDatabaseId),
-    database_table_prefix = resultDatabaseSettings$databaseTablePrefix,
-    database_table = resultDatabaseSettings$databaseTable,
-    cg_table_prefix = resultDatabaseSettings$cgTablePrefix
+    database_table_prefix = databaseTablePrefix,
+    database_table = databaseTable,
+    cg_table_prefix = cgTablePrefix
   )
   
   summaryTable <- summaryTable %>%
@@ -570,7 +588,11 @@ getPredictionPerformances <- function(
 #' Specify the connectionHandler, the resultDatabaseSettings and (optionally) a modelDesignId and threshold1_2 a threshold value to use for the PROBAST 1.2 
 #'
 #' @template connectionHandler
-#' @template resultDatabaseSettings
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param databaseTablePrefix The prefix for the database table either '' or 'plp_'
 #' @param modelDesignId The identifier for a model design  to restrict results to
 #' @param threshold1_2 A threshold for probast 1.2
 #' @family {Prediction}
@@ -595,7 +617,11 @@ getPredictionPerformances <- function(
 #' @export
 getPredictionDiagnostics <- function(
     connectionHandler,
-    resultDatabaseSettings,
+    schema,
+    plpTablePrefix = 'plp_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    databaseTablePrefix = '',
     modelDesignId = NULL,
     threshold1_2 = 0.9
 ){
@@ -623,7 +649,7 @@ getPredictionDiagnostics <- function(
 
           inner join
           (select dd.database_id, md.cdm_source_abbreviation as database_name
-                   from @schema.@database_table_prefixdatabase_meta_data md inner join
+                   from @schema.@database_table_prefix@database_table md inner join
                    @schema.@plp_table_prefixdatabase_details dd
                    on md.database_id = dd.database_meta_data_id) as database
           on database.database_id = diagnostics.database_id
@@ -639,11 +665,12 @@ getPredictionDiagnostics <- function(
   
   summaryTable <- connectionHandler$queryDb(
     sql = sql,
-    schema = resultDatabaseSettings$schema,
-    plp_table_prefix = resultDatabaseSettings$plpTablePrefix,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
     model_design_id = modelDesignId,
     model_design_restrict = !is.null(modelDesignId),
-    database_table_prefix = resultDatabaseSettings$databaseTablePrefix
+    database_table_prefix = databaseTablePrefix,
+    database_table = databaseTable
   )
   
   if(nrow(summaryTable)==0){
@@ -690,7 +717,8 @@ getPredictionDiagnostics <- function(
 #' Specify the connectionHandler, the resultDatabaseSettings, the table of interest and (optionally) a performanceId to filter to 
 #'
 #' @template connectionHandler
-#' @template resultDatabaseSettings
+#' @template schema
+#' @template plpTablePrefix
 #' @param table The table to extract
 #' @param performanceId (optional) restrict to the input performanceId
 #' @family {Prediction}
@@ -700,7 +728,8 @@ getPredictionDiagnostics <- function(
 #' @export
 getPredictionPerformanceTable <- function(
     connectionHandler,
-    resultDatabaseSettings,
+    schema,
+    plpTablePrefix = 'plp_',
     table = 'attrition',
     performanceId = NULL
 ){
@@ -712,10 +741,10 @@ getPredictionPerformanceTable <- function(
     
     result  <- connectionHandler$queryDb(
       sql = sql,
-      schema = resultDatabaseSettings$schema,
+      schema = schema,
       table = table,
       performance_id = performanceId,
-      plp_table_prefix = resultDatabaseSettings$plpTablePrefix
+      plp_table_prefix = plpTablePrefix
     )
     
     return(result)
@@ -731,7 +760,8 @@ getPredictionPerformanceTable <- function(
 #' Specify the connectionHandler, the resultDatabaseSettings, the table of interest and (optionally) a diagnosticId to filter to 
 #'
 #' @template connectionHandler
-#' @template resultDatabaseSettings
+#' @template schema
+#' @template plpTablePrefix
 #' @param table The table to extract
 #' @param diagnosticId (optional) restrict to the input diagnosticId
 #' @family {Prediction}
@@ -741,7 +771,8 @@ getPredictionPerformanceTable <- function(
 #' @export
 getPredictionDiagnosticTable <- function(
     connectionHandler,
-    resultDatabaseSettings,
+    schema,
+    plpTablePrefix = 'plp_',
     table = 'diagnostic_participants', # 'diagnostic_participants','diagnostic_predictors','diagnostic_outcomes'
     diagnosticId = NULL
 ){
@@ -753,10 +784,10 @@ getPredictionDiagnosticTable <- function(
     
     result  <- connectionHandler$queryDb(
       sql = sql,
-      schema = resultDatabaseSettings$schema,
+      schema = schema,
       table = table,
       diagnostic_id = diagnosticId,
-      plp_table_prefix = resultDatabaseSettings$plpTablePrefix
+      plp_table_prefix = plpTablePrefix
     )
     
     if('design' %in% colnames(result)){
@@ -792,7 +823,8 @@ getPredictionDiagnosticTable <- function(
 #' Specify the connectionHandler, the resultDatabaseSettings, the modelDesignId and the databaseId
 #'
 #' @template connectionHandler
-#' @template resultDatabaseSettings
+#' @template schema
+#' @template plpTablePrefix
 #' @param modelDesignId The identifier for a model design  to restrict to
 #' @param databaseId The identifier for the development database to restrict  to
 #' @family {Prediction}
@@ -810,7 +842,8 @@ getPredictionDiagnosticTable <- function(
 #' 
 getPredictionHyperParamSearch <- function(
     connectionHandler,
-    resultDatabaseSettings,
+    schema,
+    plpTablePrefix = 'plp_',
     modelDesignId = NULL,
     databaseId = NULL
 ){
@@ -824,10 +857,10 @@ getPredictionHyperParamSearch <- function(
     
     models <- connectionHandler$queryDb(
       sql = sql,
-      schema = resultDatabaseSettings$schema,
+      schema = schema,
       database_id = databaseId,
       model_design_id = modelDesignId,
-      plp_table_prefix = resultDatabaseSettings$plpTablePrefix
+      plp_table_prefix = plpTablePrefix
     )
     trainDetails <- ParallelLogger::convertJsonToSettings(models$trainDetails)
     
@@ -845,7 +878,8 @@ getPredictionHyperParamSearch <- function(
 #' Specify the connectionHandler, the resultDatabaseSettings, the modelDesignId and the databaseId
 #'
 #' @template connectionHandler
-#' @template resultDatabaseSettings
+#' @template schema
+#' @template plpTablePrefix
 #' @param modelDesignId The identifier for a model design  to restrict to
 #' @param databaseId The identifier for the development database to restrict  to
 #' @family {Prediction}
@@ -856,7 +890,8 @@ getPredictionHyperParamSearch <- function(
 #' 
 getPredictionIntercept <- function(
     connectionHandler,
-    resultDatabaseSettings,
+    schema,
+    plpTablePrefix = 'plp_',
     modelDesignId = NULL,
     databaseId = NULL
 ){
@@ -869,10 +904,10 @@ getPredictionIntercept <- function(
     
     models <- connectionHandler$queryDb(
       sql = sql,
-      schema = resultDatabaseSettings$schema,
+      schema = schema,
       database_id = databaseId,
       model_design_id = modelDesignId,
-      plp_table_prefix = resultDatabaseSettings$plpTablePrefix
+      plp_table_prefix = plpTablePrefix
     )
     
     intercept <- models$intercept
