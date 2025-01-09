@@ -1,0 +1,37 @@
+Package: OhdsiReportGenerator
+Type: Package
+Title: Extract results and generate plots, presentations and reports from OHDSI results database
+Version: 1.0.0
+Date: 2024-12-05
+Authors@R: c(
+  person("Jenna", "Reps", email = "jreps@its.jnj.com", role = c("aut", "cre")),
+  person("Anthony", "Sena", email = "...@its.jnj.com", role = c("aut"))
+  )
+Maintainer: Jenna Reps <jreps@its.jnj.com>
+Description: Generate OHDSI study reports in HTML format from a json specification.
+License: Apache License 2.0
+URL: https://ohdsi.github.io/OhdsiReportGenerator, https://github.com/OHDSI/OhdsiReportGenerator
+BugReports: https://github.com/OHDSI/OhdsiReportGenerator/issues
+VignetteBuilder: knitr
+Depends:
+  R (>= 3.3.0)
+Imports:
+  DatabaseConnector,
+  forestplot,
+  dplyr,
+  ggplot2,
+  ggpubr,
+  ParallelLogger,
+  quarto,
+  reactable,
+  rlang,
+  SqlRender,
+  tibble,
+  tidyr
+Suggests:
+  knitr,
+  markdown,
+  rmarkdown,
+  testthat
+RoxygenNote: 7.3.1
+Encoding: UTF-8

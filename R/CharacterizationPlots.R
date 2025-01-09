@@ -1,0 +1,117 @@
+plotAgeDistributions <- function(
+    ageData,
+    riskWindowStart = '1',
+    riskWindowEnd = '365', 
+    startAnchor = 'cohort start', 
+    endAnchor = 'cohort start'
+){
+  # TODO add input checks
+  
+  ageData <- ageData %>%
+    dplyr::filter(
+      .data$riskWindowStart %in% c(NA,riskWindowStart) &
+      .data$riskWindowEnd %in% c(NA,riskWindowEnd) &
+        .data$startAnchor %in% c(NA,startAnchor) &
+        .data$endAnchor %in% c(NA, endAnchor)
+      )
+  
+  if(nrow(ageData) == 0){
+    return() # empty plot?
+  } 
+  # TODO add input checks
+  
+  # filter to Target and Cases and remove censored
+  ageData <- ageData %>% 
+    dplyr::filter(.data$sumValue > 0) %>%
+    dplyr::filter(.data$cohortType %in% c('Target', 'Cases'))
+  
+ind <- ageData$cohortType == 'Target'
+ageData$averageValue[ind] <- -1*ageData$averageValue[ind] 
+ageData$tar <- addTar(ageData)
+result <- ggplot2::ggplot(
+  data = ageData,
+  ggplot2::aes(
+    x = .data$averageValue,
+    y = .data$covariateName,
+    fill = formatCohortType(.data$cohortType)
+  )
+) +
+  ggplot2::geom_col() +
+  ggplot2::scale_x_continuous(
+    breaks  = c(-1,-0.5, 0, 0.5, 1),
+    labels = abs(c(-1,-0.5, 0, 0.5,  1))
+  ) +
+  ggplot2::facet_grid(
+    cols = ggplot2::vars(.data$databaseName)
+  ) +
+  ggplot2::theme(
+    legend.title=ggplot2::element_blank()
+    ) +
+  ggplot2::labs(
+    y = "Variable", 
+    x = "Frequency"
+  )
+
+return(result)
+}
+
+
+plotSexDistributions <- function(
+    sexData,
+    riskWindowStart = '1',
+    riskWindowEnd = '365', 
+    startAnchor = 'cohort start', 
+    endAnchor = 'cohort start'
+    ){
+  # TODO add input checks
+  
+  sexData <- sexData %>% 
+    dplyr::filter(
+      .data$riskWindowStart %in% c(NA,riskWindowStart) &
+      .data$riskWindowEnd %in% c(NA,riskWindowEnd) &
+      .data$startAnchor %in% c(NA,startAnchor) &
+      .data$endAnchor %in% c(NA, endAnchor)
+  )
+  
+  if(nrow(sexData) == 0){
+    return() # empty plot?
+  } 
+  
+  # filter to Target and Cases and remove censored
+  sexData <- sexData %>% 
+    dplyr::filter(.data$sumValue > 0) %>%
+    dplyr::filter(.data$cohortType %in% c('Target', 'Cases'))
+  
+  ind <- sexData$cohortType == 'Target'
+  sexData$averageValue[ind] <- -1*sexData$averageValue[ind] 
+  sexData$tar <- addTar(sexData)
+  
+  result <- ggplot2::ggplot(
+    data = sexData,
+    ggplot2::aes(
+      x = .data$averageValue,
+      y = .data$covariateName,
+      fill =  formatCohortType(.data$cohortType)
+    )
+  ) +
+    ggplot2::geom_col() +
+    ggplot2::scale_x_continuous(
+      breaks  = c(-1,-0.5, 0, 0.5, 1),
+      labels = abs(c(-1,-0.5, 0, 0.5,  1))
+    ) +
+    ggplot2::facet_grid(
+      cols = ggplot2::vars(.data$databaseName)
+    ) +
+    ggplot2::theme(
+      legend.title=ggplot2::element_blank()
+      ) +
+    ggplot2::labs(
+      y = "Variable", 
+      x = "Frequency"
+    )
+  
+  return(result)
+}
+
+
+
