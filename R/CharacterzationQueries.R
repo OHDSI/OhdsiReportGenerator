@@ -198,7 +198,7 @@ getTimeToEvent <- function(
            
           where 1 = 1
           {@use_target}?{ and tte.TARGET_COHORT_DEFINITION_ID in (@target_id)}
-          {@use_outcome}?{ tte.OUTCOME_COHORT_DEFINITION_ID in (@outcome_id)}
+          {@use_outcome}?{ and tte.OUTCOME_COHORT_DEFINITION_ID in (@outcome_id)}
 
            
           ;"
@@ -309,7 +309,7 @@ getDechallengeRechallenge <- function(
            
           where 1 = 1
           {@use_target}?{ and dr.TARGET_COHORT_DEFINITION_ID in (@target_id)}
-          {@use_outcome}?{ dr.OUTCOME_COHORT_DEFINITION_ID in (@outcome_id)}
+          {@use_outcome}?{ and dr.OUTCOME_COHORT_DEFINITION_ID in (@outcome_id)}
 
            
           ;"
@@ -1060,8 +1060,14 @@ getRiskFactors <- function(
     databaseTable = 'database_meta_data',
     targetId = NULL,
     outcomeId = NULL,
-    analysisIds = c(3) # c(8507, 8532)
+    analysisIds = c(3) # TODO enable this to be NULL?
 ){
+  if(is.null(targetId)){
+    stop('targetId must be entered')
+  }
+  if(is.null(outcomeId)){
+    stop('targetId must be entered')
+  }
   if(length(targetId) > 1){
     stop('Must be single targetId')
   }

@@ -31,6 +31,7 @@ Imports:
 Suggests:
   knitr,
   markdown,
+  ResultModelManager,
   rmarkdown,
   testthat
 RoxygenNote: 7.3.2

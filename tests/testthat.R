@@ -1,2 +1,2 @@
 library(testthat)
-#test_check("ReportGenerator")
+test_check("OhdsiReportGenerator")

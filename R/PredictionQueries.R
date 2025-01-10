@@ -105,7 +105,7 @@ getPredictionTopPredictors <- function(
     sql = sql,
     schema = schema,
     plp_table_prefix = plpTablePrefix,
-    cg_table_prefix = cgTablePrefix,
+    #cg_table_prefix = cgTablePrefix,
     outcome_restrict = !is.null(outcomeIds),
     outcome_ids = paste0(outcomeIds, collapse = ','),
     target_restrict = !is.null(targetIds),
@@ -330,10 +330,9 @@ getPredictionModelDesigns <- function(
         LEFT JOIN @schema.@plp_table_prefixdiagnostics AS diag
         ON results.development_database_id = diag.database_id
 
-        {@target_restrict | @outcome_restrict} ? { WHERE }
-        {@target_restrict} ? { targets.cohort_id in (@target_ids) }
-        {@target_restrict & @outcome_restrict} ? { AND }
-        {@outcome_restrict} ? { outcomes.cohort_id in (@outcome_ids) }
+        where 1 == 1
+        {@target_restrict} ? { and  targets.cohort_definition_id in (@target_ids) }
+        {@outcome_restrict} ? { and  outcomes.cohort_definition_id in (@outcome_ids) }
 
 
         GROUP BY
