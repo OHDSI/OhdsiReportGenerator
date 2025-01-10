@@ -33,7 +33,7 @@ This function extracts the specified diagnostic table
 Specify the connectionHandler, the resultDatabaseSettings, the table of interest and (optionally) a diagnosticId to filter to
 }
 \seealso{
-Other {Prediction}: 
+Other Prediction: 
 \code{\link{getPredictionCohorts}()},
 \code{\link{getPredictionDiagnostics}()},
 \code{\link{getPredictionHyperParamSearch}()},
@@ -43,4 +43,4 @@ Other {Prediction}:
 \code{\link{getPredictionPerformances}()},
 \code{\link{getPredictionTopPredictors}()}
 }
-\concept{{Prediction}}
+\concept{Prediction}

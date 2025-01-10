@@ -32,15 +32,15 @@ getTargetCounts(
 \value{
 Returns a data.frame with the columns:
 \itemize{
- \item{databaseName} \description{the name of the database}
- \item{targetName} \description{the target cohort name}
- \item{targetId} \description{the target cohort unique identifier}
- \item{outcomeName} \description{the outcome name}
- \item{outcomeId} \description{the outcome unique identifier}
- \item{rowCount} \description{the number of entries in the cohort}
- \item{personCount} \description{the number of people in the cohort}
- \item{minPriorObservation} \description{the minimum required observation days prior to index for an entry}
- \item{outcomeWashoutDays} \description{patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+ \item{databaseName the name of the database}
+ \item{targetName the target cohort name}
+ \item{targetId the target cohort unique identifier}
+ \item{outcomeName the outcome name}
+ \item{outcomeId the outcome unique identifier}
+ \item{rowCount the number of entries in the cohort}
+ \item{personCount the number of people in the cohort}
+ \item{minPriorObservation the minimum required observation days prior to index for an entry}
+ \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
  }
 }
 \description{
@@ -50,11 +50,10 @@ This function extracts target cohort counts across databases in the results for 
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
 \seealso{
-Other {Characterization}: 
+Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseCounts}()},
 \code{\link{getCharacterizationDemographics}()},
-\code{\link{getCohortDefinitions}()},
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getRiskFactors}()},
@@ -63,4 +62,4 @@ Other {Characterization}:
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()}
 }
-\concept{{Characterization}}
+\concept{Characterization}

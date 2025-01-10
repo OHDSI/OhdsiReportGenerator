@@ -15,33 +15,33 @@
 #' @template targetIds
 #' @template outcomeIds
 #' @template comparatorIds
-#' @family {Estimation}
+#' @family Estimation
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the name of the database}
-#'  \item{analysisId} \description{the analysis design unique identifier}
-#'  \item{description} \description{the analysis design description}
-#'  \item{targetName} \description{the target cohort name}
-#'  \item{targetId} \description{the target cohort unique identifier}
-#'  \item{comparatorName} \description{the comparator cohort name}
-#'  \item{comparatorId} \description{the comparator cohort unique identifier}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome unique identifier}
-#'  \item{calibratedRr} \description{the calibrated relative risk}
-#'  \item{calibratedRrCi95Lb} \description{the calibrated relative risk 95 percent confidence interval lower bound}
-#'  \item{calibratedRrCi95Ub} \description{the calibrated relative risk 95 percent confidence interval upper bound}
-#'  \item{calibratedP} \description{the two sided calibrated p value}
-#'  \item{calibratedOneSidedP} \description{the one sided calibrated p value}
-#'  \item{calibratedLogRr} \description{the calibrated relative risk logged}
-#'  \item{calibratedSeLogRr} \description{the standard error of the calibrated relative risk logged}
-#'  \item{targetSubjects} \description{the number of people in the target cohort}
-#'  \item{comparatorSubjects} \description{the number of people in the comparator cohort}
-#'  \item{targetDays} \description{the total number of days at risk across the target cohort people}
-#'  \item{comparatorDays} \description{the total number of days at risk across the comparator cohort people}
-#'  \item{targetOutcomes} \description{the total number of outcomes occuring during the time at risk for the target cohort people}
-#'  \item{comparatorOutcomes} \description{the total number of outcomes occuring during the time at risk for the comparator cohort people}
-#'  \item{targetEstimator} \description{...}
+#'  \item{databaseName the name of the database}
+#'  \item{analysisId the analysis design unique identifier}
+#'  \item{description the analysis design description}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{comparatorName the comparator cohort name}
+#'  \item{comparatorId the comparator cohort unique identifier}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome unique identifier}
+#'  \item{calibratedRr the calibrated relative risk}
+#'  \item{calibratedRrCi95Lb the calibrated relative risk 95 percent confidence interval lower bound}
+#'  \item{calibratedRrCi95Ub the calibrated relative risk 95 percent confidence interval upper bound}
+#'  \item{calibratedP the two sided calibrated p value}
+#'  \item{calibratedOneSidedP the one sided calibrated p value}
+#'  \item{calibratedLogRr the calibrated relative risk logged}
+#'  \item{calibratedSeLogRr the standard error of the calibrated relative risk logged}
+#'  \item{targetSubjects the number of people in the target cohort}
+#'  \item{comparatorSubjects the number of people in the comparator cohort}
+#'  \item{targetDays the total number of days at risk across the target cohort people}
+#'  \item{comparatorDays the total number of days at risk across the comparator cohort people}
+#'  \item{targetOutcomes the total number of outcomes occuring during the time at risk for the target cohort people}
+#'  \item{comparatorOutcomes the total number of outcomes occuring during the time at risk for the comparator cohort people}
+#'  \item{targetEstimator ...}
 #'  } 
 #' 
 #' @export
@@ -166,33 +166,33 @@ getCMEstimation <- function(
 #' @template targetIds
 #' @template outcomeIds
 #' @template comparatorIds
-#' @family {Estimation}
+#' @family Estimation
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the name of the database}
-#'  \item{analysisId} \description{the analysis unique identifier}
-#'  \item{description} \description{a description of the analysis}
-#'  \item{targetName} \description{the target cohort name}
-#'  \item{targetId} \description{the target cohort unique identifier}
-#'  \item{comparatorName} \description{the comparator cohort name}
-#'  \item{comparatorId} \description{the comparator cohort unique identifier}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome cohort unique identifier}
-#'  \item{maxSdm} \description{max allowed standardized difference of means when comparing the target to the comparator after PS adjustment for the ballance diagnostic diagnostic to pass.}
-#'  \item{sharedMaxSdm} \description{max allowed standardized difference of means when comparing the target to the comparator after PS adjustment for the ballance diagnostic diagnostic to pass.}
-#'  \item{equipoise} \description{the bounds on the preference score to determine whether a subject is in equipoise.}
-#'  \item{mdrr} \description{the maximum passable minimum detectable relative risk (mdrr) value.  If the mdrr is greater than this the diagnostics will fail.}
-#'  \item{attritionFraction} \description{(depreciated) the minmum attrition before the diagnostics fails.}
-#'  \item{ease} \description{The expected absolute systematic error (ease) measures residual bias.}
-#'  \item{balanceDiagnostic} \description{whether the balance diagnostic passed or failed.}
-#'  \item{sharedBalanceDiagnostic} \description{whether the shared balance diagnostic passed or failed.}
-#'  \item{equipoiseDiagnostic} \description{whether the equipose diagnostic passed or failed.}
-#'  \item{mdrrDiagnostic} \description{whether the mdrr (power) diagnostic passed or failed.}
-#'  \item{attritionDiagnostic} \description{(depreciated) whether the attrition diagnostic passed or failed.}
-#'  \item{easeDiagnostic} \description{whether the ease diagnostic passed or failed.}
-#'  \item{unblind} \description{whether the results can be unblinded.}
-#'  \item{summaryValue} \description{summary of diagnostics results. FAIL, PASS or number of warnings.}
+#'  \item{databaseName the name of the database}
+#'  \item{analysisId the analysis unique identifier}
+#'  \item{description a description of the analysis}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{comparatorName the comparator cohort name}
+#'  \item{comparatorId the comparator cohort unique identifier}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome cohort unique identifier}
+#'  \item{maxSdm max allowed standardized difference of means when comparing the target to the comparator after PS adjustment for the ballance diagnostic diagnostic to pass.}
+#'  \item{sharedMaxSdm max allowed standardized difference of means when comparing the target to the comparator after PS adjustment for the ballance diagnostic diagnostic to pass.}
+#'  \item{equipoise the bounds on the preference score to determine whether a subject is in equipoise.}
+#'  \item{mdrr the maximum passable minimum detectable relative risk (mdrr) value.  If the mdrr is greater than this the diagnostics will fail.}
+#'  \item{attritionFraction (depreciated) the minmum attrition before the diagnostics fails.}
+#'  \item{ease The expected absolute systematic error (ease) measures residual bias.}
+#'  \item{balanceDiagnostic whether the balance diagnostic passed or failed.}
+#'  \item{sharedBalanceDiagnostic whether the shared balance diagnostic passed or failed.}
+#'  \item{equipoiseDiagnostic whether the equipose diagnostic passed or failed.}
+#'  \item{mdrrDiagnostic whether the mdrr (power) diagnostic passed or failed.}
+#'  \item{attritionDiagnostic (depreciated) whether the attrition diagnostic passed or failed.}
+#'  \item{easeDiagnostic whether the ease diagnostic passed or failed.}
+#'  \item{unblind whether the results can be unblinded.}
+#'  \item{summaryValue summary of diagnostics results. FAIL, PASS or number of warnings.}
 #'  } 
 #' 
 #' @export
@@ -302,36 +302,35 @@ getCmDiagnosticsData <- function(
 #' @template targetIds
 #' @template outcomeIds
 #' @template comparatorIds
-#' @family {Estimation}
+#' @family Estimation
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the name of the database}
-#'  \item{analysisId} \description{the analysis unique identifier}
-#'  \item{description} \description{a description of the analysis}
-#'  \item{targetName} \description{the target cohort name}
-#'  \item{targetId} \description{the target cohort unique identifier}
-#'  \item{comparatorName} \description{the comparator cohort name}
-#'  \item{comparatorId} \description{the comparator cohort unique identifier}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome cohort unique identifier}
+#'  \item{databaseName the name of the database}
+#'  \item{analysisId the analysis unique identifier}
+#'  \item{description a description of the analysis}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{comparatorName the comparator cohort name}
+#'  \item{comparatorId the comparator cohort unique identifier}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome cohort unique identifier}
+#'  \item{calibratedRr the calibrated relative risk}
+#'  \item{calibratedRrCi95Lb the calibrated relative risk 95 percent confidence interval lower bound}
+#'  \item{calibratedRrCi95Ub the calibrated relative risk 95 percent confidence interval upper bound}
+#'  \item{calibratedP the two sided calibrated p value}
+#'  \item{calibratedOneSidedP the one sided calibrated p value}
+#'  \item{calibratedLogRr the calibrated relative risk logged}
+#'  \item{calibratedSeLogRr the standard error of the calibrated relative risk logged}
 #'  
-#'  \item{calibratedRr} \description{the calibrated relative risk}
-#'  \item{calibratedRrCi95Lb} \description{the calibrated relative risk 95 percent confidence interval lower bound}
-#'  \item{calibratedRrCi95Ub} \description{the calibrated relative risk 95 percent confidence interval upper bound}
-#'  \item{calibratedP} \description{the two sided calibrated p value}
-#'  \item{calibratedOneSidedP} \description{the one sided calibrated p value}
-#'  \item{calibratedLogRr} \description{the calibrated relative risk logged}
-#'  \item{calibratedSeLogRr} \description{the standard error of the calibrated relative risk logged}
+#'  \item{targetSubjects the number of people in the target cohort across included database}
+#'  \item{comparatorSubjects the number of people in the comparator cohort across included database}
+#'  \item{targetDays the total number of days at risk across the target cohort people across included database}
+#'  \item{comparatorDays the total number of days at risk across the comparator cohort people across included database}
+#'  \item{targetOutcomes the total number of outcomes occuring during the time at risk for the target cohort people across included database}
+#'  \item{comparatorOutcomes the total number of outcomes occuring during the time at risk for the comparator cohort people across included database}
 #'  
-#'  \item{targetSubjects} \description{the number of people in the target cohort across included database}
-#'  \item{comparatorSubjects} \description{the number of people in the comparator cohort across included database}
-#'  \item{targetDays} \description{the total number of days at risk across the target cohort people across included database}
-#'  \item{comparatorDays} \description{the total number of days at risk across the comparator cohort people across included database}
-#'  \item{targetOutcomes} \description{the total number of outcomes occuring during the time at risk for the target cohort people across included database}
-#'  \item{comparatorOutcomes} \description{the total number of outcomes occuring during the time at risk for the comparator cohort people across included database}
-#'  
-#'  \item{nDatabases} \description{the number of databases included}
+#'  \item{nDatabases the number of databases included}
 #'  } 
 #' 
 #' @export
@@ -442,41 +441,41 @@ getCmMetaEstimation <- function(
 #' @template databaseTable
 #' @template targetIds
 #' @template outcomeIds
-#' @family {Estimation}
+#' @family Estimation
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the database name}
-#'  \item{analysisId} \description{the analysis unique identifier}
-#'  \item{description} \description{an analysis description}
-#'  \item{targetName} \description{the target name}
-#'  \item{targetId} \description{the target cohort id}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome cohort id}
-#'  \item{covariateName} \description{whether main or secondary analysis}
-#'  \item{outcomeSubjects} \description{The number of subjects with at least one outcome.}
-#'  \item{outcomeEvents} \description{The number of outcome events.}
-#'  \item{outcomeObservationPeriods} \description{The number of observation periods containing at least one outcome.}
-#'  \item{covariateSubjects} \description{The number of subjects having the covariate.}
-#'  \item{covariateDays} \description{The total covariate time in days.}
-#'  \item{covariateEras} \description{The number of continuous eras of the covariate.}
-#'  \item{covariateOutcomes} \description{The number of outcomes observed during the covariate time.}
-#'  \item{observedDays} \description{The number of days subjects were observed.}
-#'  \item{rr} \description{the relative risk}
-#'  \item{ci95Lb} \description{the lower bound of the 95 percent confidence interval for the relative risk}
-#'  \item{ci95Ub} \description{the upper bound of the 95 percent confidence interval for the relative risk}
-#'  \item{p} \description{the p-value for the relative risk}
-#'  \item{logRr} \description{the log of the relative risk}
-#'  \item{seLogRr} \description{the standard error or the log of the relative risk}
-#'  \item{calibratedRr} \description{the calibrated relative risk}
-#'  \item{calibratedCi95Lb} \description{the lower bound of the 95 percent confidence interval for the calibrated relative risk}
-#'  \item{calibratedCi95Ub} \description{the upper bound of the 95 percent confidence interval for the calibrated relative risk}
-#'  \item{calibratedP} \description{the calibrated p-value}
-#'  \item{calibratedLogRr} \description{the calibrated log of the relative risk}
-#'  \item{calibratedSeLogRr} \description{the calibrated log of the relative risk standard error}
-#'  \item{llr} \description{The log of the likelihood ratio (of the MLE vs the null hypothesis of no effect).}
-#'  \item{mdrr} \description{The minimum detectable relative risk.}
-#'  \item{unblind} \description{Whether the results can be unblinded}
+#'  \item{databaseName the database name}
+#'  \item{analysisId the analysis unique identifier}
+#'  \item{description an analysis description}
+#'  \item{targetName the target name}
+#'  \item{targetId the target cohort id}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome cohort id}
+#'  \item{covariateName whether main or secondary analysis}
+#'  \item{outcomeSubjects The number of subjects with at least one outcome.}
+#'  \item{outcomeEvents The number of outcome events.}
+#'  \item{outcomeObservationPeriods The number of observation periods containing at least one outcome.}
+#'  \item{covariateSubjects The number of subjects having the covariate.}
+#'  \item{covariateDays The total covariate time in days.}
+#'  \item{covariateEras The number of continuous eras of the covariate.}
+#'  \item{covariateOutcomes The number of outcomes observed during the covariate time.}
+#'  \item{observedDays The number of days subjects were observed.}
+#'  \item{rr the relative risk}
+#'  \item{ci95Lb the lower bound of the 95 percent confidence interval for the relative risk}
+#'  \item{ci95Ub the upper bound of the 95 percent confidence interval for the relative risk}
+#'  \item{p the p-value for the relative risk}
+#'  \item{logRr the log of the relative risk}
+#'  \item{seLogRr the standard error or the log of the relative risk}
+#'  \item{calibratedRr the calibrated relative risk}
+#'  \item{calibratedCi95Lb the lower bound of the 95 percent confidence interval for the calibrated relative risk}
+#'  \item{calibratedCi95Ub the upper bound of the 95 percent confidence interval for the calibrated relative risk}
+#'  \item{calibratedP the calibrated p-value}
+#'  \item{calibratedLogRr the calibrated log of the relative risk}
+#'  \item{calibratedSeLogRr the calibrated log of the relative risk standard error}
+#'  \item{llr The log of the likelihood ratio (of the MLE vs the null hypothesis of no effect).}
+#'  \item{mdrr The minimum detectable relative risk.}
+#'  \item{unblind Whether the results can be unblinded}
 #'  } 
 #' 
 #' @export
@@ -610,29 +609,29 @@ getSccsEstimation <- function(
 #' @template databaseTable
 #' @template targetIds
 #' @template outcomeIds
-#' @family {Estimation}
+#' @family Estimation
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the database name}
-#'  \item{analysisId} \description{the analysis unique identifier}
-#'  \item{description} \description{an analysis description}
-#'  \item{targetName} \description{the target name}
-#'  \item{targetId} \description{the target cohort id}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome cohort id}
-#'  \item{covariateName} \description{whether main or secondary analysis}
-#'  \item{mdrr} \description{the maximum passable minimum detectable relative risk (mdrr) value.  If the mdrr is greater than this the diagnostics will fail.}
-#'  \item{ease} \description{The expected absolute systematic error (ease) measures residual bias.}
-#'  \item{timeTrendP} \description{The p for whether the mean monthly ratio between observed and expected is no greater than 1.25.}
-#'  \item{preExposureP} \description{One-sided p-value for whether the rate before expore is higher than after, against the null of no difference.}
-#'  \item{mdrrDiagnostic} \description{whether the mdrr (power) diagnostic passed or failed.}
-#'  \item{easeDiagnostic} \description{whether the ease diagnostic passed or failed.}
-#'  \item{timeTrendDiagnostic} \description{Pass / warning / fail / not evaluated classification of the time trend (unstalbe months) diagnostic.}
-#'  \item{preExposureDiagnostic} \description{Pass / warning / fail / not evaluated classification of the time trend (unstalbe months) diagnostic.}
-#'  \item{unblind} \description{whether the results can be unblinded.}
-#'  \item{unblindForEvidenceSynthesis} \description{whether the results can be unblinded for the meta analysis.}
-#'  \item{summaryValue} \description{summary of diagnostics results. FAIL, PASS or number of warnings.}
+#'  \item{databaseName the database name}
+#'  \item{analysisId the analysis unique identifier}
+#'  \item{description an analysis description}
+#'  \item{targetName the target name}
+#'  \item{targetId the target cohort id}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome cohort id}
+#'  \item{covariateName whether main or secondary analysis}
+#'  \item{mdrr the maximum passable minimum detectable relative risk (mdrr) value.  If the mdrr is greater than this the diagnostics will fail.}
+#'  \item{ease The expected absolute systematic error (ease) measures residual bias.}
+#'  \item{timeTrendP The p for whether the mean monthly ratio between observed and expected is no greater than 1.25.}
+#'  \item{preExposureP One-sided p-value for whether the rate before expore is higher than after, against the null of no difference.}
+#'  \item{mdrrDiagnostic whether the mdrr (power) diagnostic passed or failed.}
+#'  \item{easeDiagnostic whether the ease diagnostic passed or failed.}
+#'  \item{timeTrendDiagnostic Pass / warning / fail / not evaluated classification of the time trend (unstalbe months) diagnostic.}
+#'  \item{preExposureDiagnostic Pass / warning / fail / not evaluated classification of the time trend (unstalbe months) diagnostic.}
+#'  \item{unblind whether the results can be unblinded.}
+#'  \item{unblindForEvidenceSynthesis whether the results can be unblinded for the meta analysis.}
+#'  \item{summaryValue summary of diagnostics results. FAIL, PASS or number of warnings.}
 #'  } 
 #' 
 #' @export
@@ -750,34 +749,34 @@ getSccsDiagnosticsData <- function(
 #' @template esTablePrefix
 #' @template targetIds
 #' @template outcomeIds
-#' @family {Estimation}
+#' @family Estimation
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  #'  \item{databaseName} \description{the database name}
-#'  \item{analysisId} \description{the analysis unique identifier}
-#'  \item{description} \description{an analysis description}
-#'  \item{targetName} \description{the target name}
-#'  \item{targetId} \description{the target cohort id}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome cohort id}
-#'  \item{covariateName} \description{whether main or secondary analysis}
-#'  \item{outcomeSubjects} \description{The number of subjects with at least one outcome.}
-#'  \item{outcomeEvents} \description{The number of outcome events.}
-#'  \item{outcomeObservationPeriods} \description{The number of observation periods containing at least one outcome.}
-#'  \item{covariateSubjects} \description{The number of subjects having the covariate.}
-#'  \item{covariateDays} \description{The total covariate time in days.}
-#'  \item{covariateEras} \description{The number of continuous eras of the covariate.}
-#'  \item{covariateOutcomes} \description{The number of outcomes observed during the covariate time.}
-#'  \item{observedDays} \description{The number of days subjects were observed.}
-#'  \item{calibratedRr} \description{the calibrated relative risk}
-#'  \item{calibratedCi95Lb} \description{the lower bound of the 95 percent confidence interval for the calibrated relative risk}
-#'  \item{calibratedCi95Ub} \description{the upper bound of the 95 percent confidence interval for the calibrated relative risk}
-#'  \item{calibratedP} \description{the calibrated p-value}
-#'  \item{calibratedOneSidedP} \description{the calibrated one sided p-value}
-#'  \item{calibratedLogRr} \description{the calibrated log of the relative risk}
-#'  \item{calibratedSeLogRr} \description{the calibrated log of the relative risk standard error}
-#'  \item{nDatabases} \description{The number of databases included in the estimate.}
+#'  #'  \item{databaseName the database name}
+#'  \item{analysisId the analysis unique identifier}
+#'  \item{description an analysis description}
+#'  \item{targetName the target name}
+#'  \item{targetId the target cohort id}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome cohort id}
+#'  \item{covariateName whether main or secondary analysis}
+#'  \item{outcomeSubjects The number of subjects with at least one outcome.}
+#'  \item{outcomeEvents The number of outcome events.}
+#'  \item{outcomeObservationPeriods The number of observation periods containing at least one outcome.}
+#'  \item{covariateSubjects The number of subjects having the covariate.}
+#'  \item{covariateDays The total covariate time in days.}
+#'  \item{covariateEras The number of continuous eras of the covariate.}
+#'  \item{covariateOutcomes The number of outcomes observed during the covariate time.}
+#'  \item{observedDays The number of days subjects were observed.}
+#'  \item{calibratedRr the calibrated relative risk}
+#'  \item{calibratedCi95Lb the lower bound of the 95 percent confidence interval for the calibrated relative risk}
+#'  \item{calibratedCi95Ub the upper bound of the 95 percent confidence interval for the calibrated relative risk}
+#'  \item{calibratedP the calibrated p-value}
+#'  \item{calibratedOneSidedP the calibrated one sided p-value}
+#'  \item{calibratedLogRr the calibrated log of the relative risk}
+#'  \item{calibratedSeLogRr the calibrated log of the relative risk standard error}
+#'  \item{nDatabases The number of databases included in the estimate.}
 #'  } 
 #' 
 #' @export

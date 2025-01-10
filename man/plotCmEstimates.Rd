@@ -33,7 +33,7 @@ Creates nice cohort method plots
 Input the cohort method data
 }
 \seealso{
-Other {Estimation}: 
+Other Estimation: 
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
@@ -42,4 +42,4 @@ Other {Estimation}:
 \code{\link{getSccsMetaEstimation}()},
 \code{\link{plotSccsEstimates}()}
 }
-\concept{{Estimation}}
+\concept{Estimation}

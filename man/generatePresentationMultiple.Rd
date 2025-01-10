@@ -84,3 +84,4 @@ Generates a presentation from a Strategus result
 Specify the connection details to the result database and the schema name
 to generate a presentation.
 }
+\concept{Reporting}

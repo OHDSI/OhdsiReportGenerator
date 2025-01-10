@@ -32,19 +32,19 @@ getCaseCounts(
 \value{
 Returns a data.frame with the columns:
 \itemize{
- \item{databaseName} \description{the name of the database}
- \item{targetName} \description{the target cohort name}
- \item{targetId} \description{the target cohort unique identifier}
- \item{outcomeName} \description{the outcome name}
- \item{outcomeId} \description{the outcome unique identifier}
- \item{rowCount} \description{the number of entries in the cohort}
- \item{personCount} \description{the number of people in the cohort}
- \item{minPriorObservation} \description{the minimum required observation days prior to index for an entry}
- \item{outcomeWashoutDays} \description{patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
-\item{riskWindowStart} \description{the number of days ofset the start anchor that is the start of the time-at-risk}
-\item{startAnchor} \description{the start anchor is either the target cohort start or cohort end date}
-\item{riskWindowEnd} \description{the number of days ofset the end anchor that is the end of the time-at-risk}
-\item{endAnchor} \description{the end anchor is either the target cohort start or cohort end date}
+ \item{databaseName the name of the database}
+ \item{targetName the target cohort name}
+ \item{targetId the target cohort unique identifier}
+ \item{outcomeName the outcome name}
+ \item{outcomeId the outcome unique identifier}
+ \item{rowCount the number of entries in the cohort}
+ \item{personCount the number of people in the cohort}
+ \item{minPriorObservation the minimum required observation days prior to index for an entry}
+ \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+\item{riskWindowStart the number of days ofset the start anchor that is the start of the time-at-risk}
+\item{startAnchor the start anchor is either the target cohort start or cohort end date}
+\item{riskWindowEnd the number of days ofset the end anchor that is the end of the time-at-risk}
+\item{endAnchor the end anchor is either the target cohort start or cohort end date}
 }
 }
 \description{
@@ -54,10 +54,9 @@ This function extracts outcome cohort counts across databases in the results for
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
 \seealso{
-Other {Characterization}: 
+Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCharacterizationDemographics}()},
-\code{\link{getCohortDefinitions}()},
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getRiskFactors}()},
@@ -67,4 +66,4 @@ Other {Characterization}:
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()}
 }
-\concept{{Characterization}}
+\concept{Characterization}

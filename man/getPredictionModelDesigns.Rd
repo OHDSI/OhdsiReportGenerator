@@ -29,28 +29,28 @@ getPredictionModelDesigns(
 \value{
 Returns a data.frame with the columns:
 \itemize{ 
- \item{modelDesignId} \description{a unique identifier in the database for the model design}
- \item{modelType} \description{the type of classifier or surival model}
- \item{developmentTargetId} \description{a unique identifier for the development target ID}
- \item{developmentTargetName} \description{the name of the development target cohort}
- \item{developmentTargetJson} \description{the json of the target cohort}
- \item{developmentOutcomeId} \description{a unique identifier for the development outcome ID}
- \item{developmentOutcomeName} \description{the name of the development outcome cohort}
- \item{timeAtRisk} \description{the time at risk string}
- \item{developmentOutcomeJson} \description{the json of the outcome cohort}
- \item{covariateSettingsJson} \description{the covariate settings json}
- \item{populationSettingsJson} \description{the population settings json}
- \item{tidyCovariatesSettingsJson} \description{the tidy covariate settings json}
- \item{plpDataSettingsJson} \description{the plp data extraction settings json}
- \item{featureEngineeringSettingsJson} \description{the feature engineering settings json}
- \item{splitSettingsJson} \description{the split settings json}
- \item{sampleSettingsJson} \description{the sample settings json}
- \item{minAuroc} \description{the min AUROC value of models developed using the model design across databases}
- \item{meanAuroc} \description{the mean AUROC value of models developed using the model design across databases}
- \item{maxAuroc} \description{the max AUROC value of models developed using the model design across databases}
- \item{noDiagnosticDatabases} \description{the number of databases where the model design diagnostics were generated}
- \item{noDevelopmentDatabases} \description{the number of databases where the model design was used to develop models}
- \item{noValidationDatabases} \description{the number of databases where the models developed using the model design was externally validated}
+ \item{modelDesignId a unique identifier in the database for the model design}
+ \item{modelType the type of classifier or surival model}
+ \item{developmentTargetId a unique identifier for the development target ID}
+ \item{developmentTargetName the name of the development target cohort}
+ \item{developmentTargetJson the json of the target cohort}
+ \item{developmentOutcomeId a unique identifier for the development outcome ID}
+ \item{developmentOutcomeName the name of the development outcome cohort}
+ \item{timeAtRisk the time at risk string}
+ \item{developmentOutcomeJson the json of the outcome cohort}
+ \item{covariateSettingsJson the covariate settings json}
+ \item{populationSettingsJson the population settings json}
+ \item{tidyCovariatesSettingsJson the tidy covariate settings json}
+ \item{plpDataSettingsJson the plp data extraction settings json}
+ \item{featureEngineeringSettingsJson the feature engineering settings json}
+ \item{splitSettingsJson the split settings json}
+ \item{sampleSettingsJson the sample settings json}
+ \item{minAuroc the min AUROC value of models developed using the model design across databases}
+ \item{meanAuroc the mean AUROC value of models developed using the model design across databases}
+ \item{maxAuroc the max AUROC value of models developed using the model design across databases}
+ \item{noDiagnosticDatabases the number of databases where the model design diagnostics were generated}
+ \item{noDevelopmentDatabases the number of databases where the model design was used to develop models}
+ \item{noValidationDatabases the number of databases where the models developed using the model design was externally validated}
 }
 }
 \description{
@@ -61,7 +61,7 @@ using the model design across databases
 Specify the connectionHandler, the resultDatabaseSettings and (optionally) any targetIds or outcomeIds to restrict model designs to
 }
 \seealso{
-Other {Prediction}: 
+Other Prediction: 
 \code{\link{getPredictionCohorts}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
@@ -71,4 +71,4 @@ Other {Prediction}:
 \code{\link{getPredictionPerformances}()},
 \code{\link{getPredictionTopPredictors}()}
 }
-\concept{{Prediction}}
+\concept{Prediction}

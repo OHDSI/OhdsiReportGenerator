@@ -33,11 +33,10 @@ Creates bar charts for the target and case age groups.
 Input the data returned from 'getCharacterizationDemographics(type = 'age')' and the time-at-risk
 }
 \seealso{
-Other {Characterization}: 
+Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseCounts}()},
 \code{\link{getCharacterizationDemographics}()},
-\code{\link{getCohortDefinitions}()},
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getRiskFactors}()},
@@ -46,4 +45,4 @@ Other {Characterization}:
 \code{\link{getTimeToEvent}()},
 \code{\link{plotSexDistributions}()}
 }
-\concept{{Characterization}}
+\concept{Characterization}

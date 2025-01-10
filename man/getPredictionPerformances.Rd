@@ -35,32 +35,32 @@ getPredictionPerformances(
 \value{
 Returns a data.frame with the columns:
 \itemize{  
- \item{performanceId} \description{the unique identifier for the performance}
- \item{modelDesignId} \description{the unique identifier for the model design}
- \item{developmentDatabaseId} \description{the unique identifier for the database used to develop the model}
- \item{validationDatabaseId} \description{the unique identifier for the database used to validate the model}
- \item{developmentTargetId} \description{the unique cohort id for the development target population}
- \item{developmentTargetName} \description{the name for the development target population}
- \item{developmentOutcomeId} \description{the unique cohort id for the development outcome}
- \item{developmentOutcomeName} \description{the name for the development outcome}
- \item{developmentDatabase} \description{the name for the database used to develop the model}
- \item{validationDatabase} \description{the name for the database used to validate the model}
- \item{validationTargetName} \description{the name for the validation target population}
- \item{validationOutcomeName} \description{the name for the validation outcome}
- \item{timeStamp} \description{the date/time when the analysis occurred}
- \item{auroc} \description{the test/validation AUROC value for the model}
- \item{auroc95lb} \description{the test/validation lower bound of the 95 percent CI AUROC value for the model}
- \item{auroc95ub} \description{the test/validation upper bound of the 95 percent CI AUROC value for the model}
- \item{calibrationInLarge} \description{the test/validation calibration in the large value for the model}
- \item{eStatistic} \description{the test/validation calibration e-statistic value for the model}
- \item{brierScore} \description{the test/validation brier value for the model}
- \item{auprc} \description{the test/validation discrimination AUPRC value for the model}
- \item{populationSize} \description{the test/validation population size used to develop the model}
- \item{outcomeCount} \description{the test/validation outcome count used to develop the model}
- \item{evalPercent} \description{the percentage of the development data used as the test set}
- \item{outcomePercent} \description{the outcome percent in the development data}
- \item{validationTimeAtRisk} \description{time at risk for the validation}
- \item{predictionResultType} \description{development or validation}
+ \item{performanceId the unique identifier for the performance}
+ \item{modelDesignId the unique identifier for the model design}
+ \item{developmentDatabaseId the unique identifier for the database used to develop the model}
+ \item{validationDatabaseId the unique identifier for the database used to validate the model}
+ \item{developmentTargetId the unique cohort id for the development target population}
+ \item{developmentTargetName the name for the development target population}
+ \item{developmentOutcomeId the unique cohort id for the development outcome}
+ \item{developmentOutcomeName the name for the development outcome}
+ \item{developmentDatabase the name for the database used to develop the model}
+ \item{validationDatabase the name for the database used to validate the model}
+ \item{validationTargetName the name for the validation target population}
+ \item{validationOutcomeName the name for the validation outcome}
+ \item{timeStamp the date/time when the analysis occurred}
+ \item{auroc the test/validation AUROC value for the model}
+ \item{auroc95lb the test/validation lower bound of the 95 percent CI AUROC value for the model}
+ \item{auroc95ub the test/validation upper bound of the 95 percent CI AUROC value for the model}
+ \item{calibrationInLarge the test/validation calibration in the large value for the model}
+ \item{eStatistic the test/validation calibration e-statistic value for the model}
+ \item{brierScore the test/validation brier value for the model}
+ \item{auprc the test/validation discrimination AUPRC value for the model}
+ \item{populationSize the test/validation population size used to develop the model}
+ \item{outcomeCount the test/validation outcome count used to develop the model}
+ \item{evalPercent the percentage of the development data used as the test set}
+ \item{outcomePercent the outcome percent in the development data}
+ \item{validationTimeAtRisk time at risk for the validation}
+ \item{predictionResultType development or validation}
  
 }
 }
@@ -71,7 +71,7 @@ This function extracts the model performances
 Specify the connectionHandler, the resultDatabaseSettings and (optionally) a modelDesignId and/or developmentDatabaseId to restrict models to
 }
 \seealso{
-Other {Prediction}: 
+Other Prediction: 
 \code{\link{getPredictionCohorts}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
@@ -81,4 +81,4 @@ Other {Prediction}:
 \code{\link{getPredictionPerformanceTable}()},
 \code{\link{getPredictionTopPredictors}()}
 }
-\concept{{Prediction}}
+\concept{Prediction}

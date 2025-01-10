@@ -13,6 +13,8 @@ plotSexDistributions(
 )
 }
 \arguments{
+\item{sexData}{The sex data extracted using 'getCharacterizationDemographics(type = 'sex')'}
+
 \item{riskWindowStart}{The time at risk window start}
 
 \item{riskWindowEnd}{The time at risk window end}
@@ -20,8 +22,6 @@ plotSexDistributions(
 \item{startAnchor}{The anchor for the time at risk start}
 
 \item{endAnchor}{The anchor for the time at risk end}
-
-\item{ageData}{The sex data extracted using 'getCharacterizationDemographics(type = 'sex')'}
 }
 \value{
 Returns a ggplot with the distributions
@@ -33,11 +33,10 @@ Creates bar charts for the target and case sex.
 Input the data returned from 'getCharacterizationDemographics(type = 'sex')' and the time-at-risk
 }
 \seealso{
-Other {Characterization}: 
+Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseCounts}()},
 \code{\link{getCharacterizationDemographics}()},
-\code{\link{getCohortDefinitions}()},
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getRiskFactors}()},
@@ -46,4 +45,4 @@ Other {Characterization}:
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()}
 }
-\concept{{Characterization}}
+\concept{Characterization}

@@ -32,25 +32,25 @@ getSccsDiagnosticsData(
 \value{
 Returns a data.frame with the columns:
 \itemize{
- \item{databaseName} \description{the database name}
- \item{analysisId} \description{the analysis unique identifier}
- \item{description} \description{an analysis description}
- \item{targetName} \description{the target name}
- \item{targetId} \description{the target cohort id}
- \item{outcomeName} \description{the outcome name}
- \item{outcomeId} \description{the outcome cohort id}
- \item{covariateName} \description{whether main or secondary analysis}
- \item{mdrr} \description{the maximum passable minimum detectable relative risk (mdrr) value.  If the mdrr is greater than this the diagnostics will fail.}
- \item{ease} \description{The expected absolute systematic error (ease) measures residual bias.}
- \item{timeTrendP} \description{The p for whether the mean monthly ratio between observed and expected is no greater than 1.25.}
- \item{preExposureP} \description{One-sided p-value for whether the rate before expore is higher than after, against the null of no difference.}
- \item{mdrrDiagnostic} \description{whether the mdrr (power) diagnostic passed or failed.}
- \item{easeDiagnostic} \description{whether the ease diagnostic passed or failed.}
- \item{timeTrendDiagnostic} \description{Pass / warning / fail / not evaluated classification of the time trend (unstalbe months) diagnostic.}
- \item{preExposureDiagnostic} \description{Pass / warning / fail / not evaluated classification of the time trend (unstalbe months) diagnostic.}
- \item{unblind} \description{whether the results can be unblinded.}
- \item{unblindForEvidenceSynthesis} \description{whether the results can be unblinded for the meta analysis.}
- \item{summaryValue} \description{summary of diagnostics results. FAIL, PASS or number of warnings.}
+ \item{databaseName the database name}
+ \item{analysisId the analysis unique identifier}
+ \item{description an analysis description}
+ \item{targetName the target name}
+ \item{targetId the target cohort id}
+ \item{outcomeName the outcome name}
+ \item{outcomeId the outcome cohort id}
+ \item{covariateName whether main or secondary analysis}
+ \item{mdrr the maximum passable minimum detectable relative risk (mdrr) value.  If the mdrr is greater than this the diagnostics will fail.}
+ \item{ease The expected absolute systematic error (ease) measures residual bias.}
+ \item{timeTrendP The p for whether the mean monthly ratio between observed and expected is no greater than 1.25.}
+ \item{preExposureP One-sided p-value for whether the rate before expore is higher than after, against the null of no difference.}
+ \item{mdrrDiagnostic whether the mdrr (power) diagnostic passed or failed.}
+ \item{easeDiagnostic whether the ease diagnostic passed or failed.}
+ \item{timeTrendDiagnostic Pass / warning / fail / not evaluated classification of the time trend (unstalbe months) diagnostic.}
+ \item{preExposureDiagnostic Pass / warning / fail / not evaluated classification of the time trend (unstalbe months) diagnostic.}
+ \item{unblind whether the results can be unblinded.}
+ \item{unblindForEvidenceSynthesis whether the results can be unblinded for the meta analysis.}
+ \item{summaryValue summary of diagnostics results. FAIL, PASS or number of warnings.}
  }
 }
 \description{
@@ -61,7 +61,7 @@ and checks for different types of bias.
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
 \seealso{
-Other {Estimation}: 
+Other Estimation: 
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
@@ -70,4 +70,4 @@ Other {Estimation}:
 \code{\link{plotCmEstimates}()},
 \code{\link{plotSccsEstimates}()}
 }
-\concept{{Estimation}}
+\concept{Estimation}

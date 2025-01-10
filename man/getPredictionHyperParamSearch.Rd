@@ -26,9 +26,9 @@ getPredictionHyperParamSearch(
 \value{
 Returns a data.frame with the columns:
 \itemize{
- \item{metric} \description{the hyperparameter optimization metric}
- \item{fold} \description{the fold in cross validation}
- \item{value} \description{the metric value for the fold with the specified hyperparameter combination}
+ \item{metric the hyperparameter optimization metric}
+ \item{fold the fold in cross validation}
+ \item{value the metric value for the fold with the specified hyperparameter combination}
  } 
  plus columns for all the hyperparameters and their values
 }
@@ -39,7 +39,7 @@ This function extracts the hyper parameters details
 Specify the connectionHandler, the resultDatabaseSettings, the modelDesignId and the databaseId
 }
 \seealso{
-Other {Prediction}: 
+Other Prediction: 
 \code{\link{getPredictionCohorts}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
@@ -49,4 +49,4 @@ Other {Prediction}:
 \code{\link{getPredictionPerformances}()},
 \code{\link{getPredictionTopPredictors}()}
 }
-\concept{{Prediction}}
+\concept{Prediction}

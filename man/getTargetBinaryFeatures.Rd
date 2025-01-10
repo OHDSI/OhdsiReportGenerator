@@ -35,15 +35,15 @@ getTargetBinaryFeatures(
 \value{
 Returns a data.frame with the columns:
 \itemize{
- \item{databaseName} \description{the name of the database}
- \item{targetName} \description{the target cohort name}
- \item{targetId} \description{the target cohort unique identifier}
- \item{outcomeName} \description{the outcome name}
- \item{outcomeId} \description{the outcome unique identifier}
- \item{minPriorObservation} \description{the minimum required observation days prior to index for an entry}
- \item{outcomeWashoutDays} \description{patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
- \item{covariateName} \description{the name of the feature}
- \item{sumValue} \description{the number of cases who have the feature value of 1}
+ \item{databaseName the name of the database}
+ \item{targetName the target cohort name}
+ \item{targetId the target cohort unique identifier}
+ \item{outcomeName the outcome name}
+ \item{outcomeId the outcome unique identifier}
+ \item{minPriorObservation the minimum required observation days prior to index for an entry}
+ \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+ \item{covariateName the name of the feature}
+ \item{sumValue the number of cases who have the feature value of 1}
 }
 }
 \description{
@@ -53,11 +53,10 @@ This function extracts the feature extraction results for targets corresponding 
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
 \seealso{
-Other {Characterization}: 
+Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseCounts}()},
 \code{\link{getCharacterizationDemographics}()},
-\code{\link{getCohortDefinitions}()},
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getRiskFactors}()},
@@ -66,4 +65,4 @@ Other {Characterization}:
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()}
 }
-\concept{{Characterization}}
+\concept{Characterization}

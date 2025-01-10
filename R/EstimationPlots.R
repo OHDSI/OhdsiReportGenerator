@@ -11,7 +11,7 @@
 #' @param comparatorName A friendly name for the comparator cohort
 #' @param selectedAnalysisId The analysis ID of interest to plot
 #' 
-#' @family {Estimation}
+#' @family Estimation
 #' @return
 #' Returns a ggplot with the estimates
 #' 
@@ -200,7 +200,7 @@ plotCmEstimates <- function(
 #' @param targetName A friendly name for the target cohort
 #' @param selectedAnalysisId The analysis ID of interest to plot
 #' 
-#' @family {Estimation}
+#' @family Estimation
 #' @return
 #' Returns a ggplot with the estimates
 #' 

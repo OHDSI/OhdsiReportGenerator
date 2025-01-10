@@ -32,28 +32,28 @@ getDechallengeRechallenge(
 \value{
 Returns a data.frame with the columns:
 \itemize{
- \item{databaseName} \description{the name of the database}
- \item{targetName} \description{the target cohort name}
- \item{targetId} \description{the target cohort unique identifier}
- \item{outcomeName} \description{the outcome name}
- \item{outcomeId} \description{the outcome unique identifier}
- \item{dechallengeStopInterval} \description{An integer specifying the how much time to add to the cohort_end when determining whether the event starts during cohort and ends after}
- \item{dechallengeEvaluationWindow} \description{A period of time evaluated for outcome recurrence after discontinuation of exposure, among patients with challenge outcomes}
- \item{numExposureEras} \description{Distinct number of exposure events (i.e. drug eras) in a given target cohort}
- \item{numPersonsExposed} \description{Distinct number of people exposed in target cohort. A person must have at least 1 day exposure to be included}
- \item{numCases} \description{Distinct number of persons in outcome cohort. A person must have at least 1 day of observation time to be included}
- \item{dechallengeAttempt} \description{Distinct count of people with observable time after discontinuation of the exposure era during which the challenge outcome occurred}
- \item{dechallengeFail} \description{Among people with challenge outcomes, the distinct number of people with outcomes during dechallengeEvaluationWindow}
- \item{dechallengeSuccess} \description{Among people with challenge outcomes, the distinct number of people without outcomes during the dechallengeEvaluationWindow}
- \item{rechallengeAttempt} \description{Number of people with a new exposure era after the occurrence of an outcome during a prior exposure era}
- \item{rechallengeFail} \description{Number of people with a new exposure era during which an outcome occurred, after the occurrence of an outcome during a prior exposure era}
- \item{rechallengeSuccess} \description{Number of people with a new exposure era during which an outcome did not occur, after the occurrence of an outcome during a prior exposure era}
- \item{pctDechallengeAttempt} \description{Percent of people with observable time after discontinuation of the exposure era during which the challenge outcome occurred}
- \item{pctDechallengeFail} \description{Among people with challenge outcomes, the percent of people without outcomes during the dechallengeEvaluationWindow}
- \item{pctDechallengeSuccess} \description{Among people with challenge outcomes, the percent of people with outcomes during dechallengeEvaluationWindow}
- \item{pctRechallengeAttempt} \description{Percent of people with a new exposure era after the occurrence of an outcome during a prior exposure era}
- \item{pctRechallengeFail} \description{Percent of people with a new exposure era during which an outcome did not occur, after the occurrence of an outcome during a prior exposure era}
- \item{pctRechallengeSuccess} \description{Percent of people with a new exposure era during which an outcome occurred, after the occurrence of an outcome during a prior exposure era}
+ \item{databaseName the name of the database}
+ \item{targetName the target cohort name}
+ \item{targetId the target cohort unique identifier}
+ \item{outcomeName the outcome name}
+ \item{outcomeId the outcome unique identifier}
+ \item{dechallengeStopInterval An integer specifying the how much time to add to the cohort_end when determining whether the event starts during cohort and ends after}
+ \item{dechallengeEvaluationWindow A period of time evaluated for outcome recurrence after discontinuation of exposure, among patients with challenge outcomes}
+ \item{numExposureEras Distinct number of exposure events (i.e. drug eras) in a given target cohort}
+ \item{numPersonsExposed Distinct number of people exposed in target cohort. A person must have at least 1 day exposure to be included}
+ \item{numCases Distinct number of persons in outcome cohort. A person must have at least 1 day of observation time to be included}
+ \item{dechallengeAttempt Distinct count of people with observable time after discontinuation of the exposure era during which the challenge outcome occurred}
+ \item{dechallengeFail Among people with challenge outcomes, the distinct number of people with outcomes during dechallengeEvaluationWindow}
+ \item{dechallengeSuccess Among people with challenge outcomes, the distinct number of people without outcomes during the dechallengeEvaluationWindow}
+ \item{rechallengeAttempt Number of people with a new exposure era after the occurrence of an outcome during a prior exposure era}
+ \item{rechallengeFail Number of people with a new exposure era during which an outcome occurred, after the occurrence of an outcome during a prior exposure era}
+ \item{rechallengeSuccess Number of people with a new exposure era during which an outcome did not occur, after the occurrence of an outcome during a prior exposure era}
+ \item{pctDechallengeAttempt Percent of people with observable time after discontinuation of the exposure era during which the challenge outcome occurred}
+ \item{pctDechallengeFail Among people with challenge outcomes, the percent of people without outcomes during the dechallengeEvaluationWindow}
+ \item{pctDechallengeSuccess Among people with challenge outcomes, the percent of people with outcomes during dechallengeEvaluationWindow}
+ \item{pctRechallengeAttempt Percent of people with a new exposure era after the occurrence of an outcome during a prior exposure era}
+ \item{pctRechallengeFail Percent of people with a new exposure era during which an outcome did not occur, after the occurrence of an outcome during a prior exposure era}
+ \item{pctRechallengeSuccess Percent of people with a new exposure era during which an outcome occurred, after the occurrence of an outcome during a prior exposure era}
  }
 }
 \description{
@@ -63,11 +63,10 @@ This function extracts all dechallenge rechallenge results across databases for 
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
 \seealso{
-Other {Characterization}: 
+Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseCounts}()},
 \code{\link{getCharacterizationDemographics}()},
-\code{\link{getCohortDefinitions}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getRiskFactors}()},
 \code{\link{getTargetBinaryFeatures}()},
@@ -76,4 +75,4 @@ Other {Characterization}:
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()}
 }
-\concept{{Characterization}}
+\concept{Characterization}

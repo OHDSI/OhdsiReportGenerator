@@ -33,7 +33,7 @@ This function extracts the interception value
 Specify the connectionHandler, the resultDatabaseSettings, the modelDesignId and the databaseId
 }
 \seealso{
-Other {Prediction}: 
+Other Prediction: 
 \code{\link{getPredictionCohorts}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
@@ -43,4 +43,4 @@ Other {Prediction}:
 \code{\link{getPredictionPerformances}()},
 \code{\link{getPredictionTopPredictors}()}
 }
-\concept{{Prediction}}
+\concept{Prediction}

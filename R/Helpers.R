@@ -25,6 +25,8 @@
 #' @return
 #' An object of class `ConnectionDetails` with the details to connect to the example OHDSI result database
 #'
+#' @family helper
+#'
 #' @export
 getExampleConnectionDetails <- function() {
   server <- system.file("exampledata", "results.sqlite", package = "OhdsiReportGenerator")
@@ -46,6 +48,8 @@ getExampleConnectionDetails <- function() {
 #' @param x A string
 #' @return
 #' A string without spaces
+#' 
+#' @family helper
 #'
 #' @export
 removeSpaces <- function(x){

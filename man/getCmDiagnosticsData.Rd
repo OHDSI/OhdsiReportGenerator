@@ -35,29 +35,29 @@ getCmDiagnosticsData(
 \value{
 Returns a data.frame with the columns:
 \itemize{
- \item{databaseName} \description{the name of the database}
- \item{analysisId} \description{the analysis unique identifier}
- \item{description} \description{a description of the analysis}
- \item{targetName} \description{the target cohort name}
- \item{targetId} \description{the target cohort unique identifier}
- \item{comparatorName} \description{the comparator cohort name}
- \item{comparatorId} \description{the comparator cohort unique identifier}
- \item{outcomeName} \description{the outcome name}
- \item{outcomeId} \description{the outcome cohort unique identifier}
- \item{maxSdm} \description{max allowed standardized difference of means when comparing the target to the comparator after PS adjustment for the ballance diagnostic diagnostic to pass.}
- \item{sharedMaxSdm} \description{max allowed standardized difference of means when comparing the target to the comparator after PS adjustment for the ballance diagnostic diagnostic to pass.}
- \item{equipoise} \description{the bounds on the preference score to determine whether a subject is in equipoise.}
- \item{mdrr} \description{the maximum passable minimum detectable relative risk (mdrr) value.  If the mdrr is greater than this the diagnostics will fail.}
- \item{attritionFraction} \description{(depreciated) the minmum attrition before the diagnostics fails.}
- \item{ease} \description{The expected absolute systematic error (ease) measures residual bias.}
- \item{balanceDiagnostic} \description{whether the balance diagnostic passed or failed.}
- \item{sharedBalanceDiagnostic} \description{whether the shared balance diagnostic passed or failed.}
- \item{equipoiseDiagnostic} \description{whether the equipose diagnostic passed or failed.}
- \item{mdrrDiagnostic} \description{whether the mdrr (power) diagnostic passed or failed.}
- \item{attritionDiagnostic} \description{(depreciated) whether the attrition diagnostic passed or failed.}
- \item{easeDiagnostic} \description{whether the ease diagnostic passed or failed.}
- \item{unblind} \description{whether the results can be unblinded.}
- \item{summaryValue} \description{summary of diagnostics results. FAIL, PASS or number of warnings.}
+ \item{databaseName the name of the database}
+ \item{analysisId the analysis unique identifier}
+ \item{description a description of the analysis}
+ \item{targetName the target cohort name}
+ \item{targetId the target cohort unique identifier}
+ \item{comparatorName the comparator cohort name}
+ \item{comparatorId the comparator cohort unique identifier}
+ \item{outcomeName the outcome name}
+ \item{outcomeId the outcome cohort unique identifier}
+ \item{maxSdm max allowed standardized difference of means when comparing the target to the comparator after PS adjustment for the ballance diagnostic diagnostic to pass.}
+ \item{sharedMaxSdm max allowed standardized difference of means when comparing the target to the comparator after PS adjustment for the ballance diagnostic diagnostic to pass.}
+ \item{equipoise the bounds on the preference score to determine whether a subject is in equipoise.}
+ \item{mdrr the maximum passable minimum detectable relative risk (mdrr) value.  If the mdrr is greater than this the diagnostics will fail.}
+ \item{attritionFraction (depreciated) the minmum attrition before the diagnostics fails.}
+ \item{ease The expected absolute systematic error (ease) measures residual bias.}
+ \item{balanceDiagnostic whether the balance diagnostic passed or failed.}
+ \item{sharedBalanceDiagnostic whether the shared balance diagnostic passed or failed.}
+ \item{equipoiseDiagnostic whether the equipose diagnostic passed or failed.}
+ \item{mdrrDiagnostic whether the mdrr (power) diagnostic passed or failed.}
+ \item{attritionDiagnostic (depreciated) whether the attrition diagnostic passed or failed.}
+ \item{easeDiagnostic whether the ease diagnostic passed or failed.}
+ \item{unblind whether the results can be unblinded.}
+ \item{summaryValue summary of diagnostics results. FAIL, PASS or number of warnings.}
  }
 }
 \description{
@@ -68,7 +68,7 @@ and checks for different types of bias.
 Specify the connectionHandler, the schema and the target/comparator/outcome cohort IDs
 }
 \seealso{
-Other {Estimation}: 
+Other Estimation: 
 \code{\link{getCMEstimation}()},
 \code{\link{getCmMetaEstimation}()},
 \code{\link{getSccsDiagnosticsData}()},
@@ -77,4 +77,4 @@ Other {Estimation}:
 \code{\link{plotCmEstimates}()},
 \code{\link{plotSccsEstimates}()}
 }
-\concept{{Estimation}}
+\concept{Estimation}

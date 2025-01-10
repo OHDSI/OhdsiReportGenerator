@@ -23,9 +23,9 @@ getPredictionCohorts(
 \value{
 Returns a data.frame with the columns: 
 \itemize{
- \item{cohortId} \description{the cohort definition ID}
- \item{cohortName} \description{the name of the cohort}
- \item{type} \description{whether the cohort was used as a target or outcome cohort}
+ \item{cohortId the cohort definition ID}
+ \item{cohortName the name of the cohort}
+ \item{type whether the cohort was used as a target or outcome cohort}
 }
 }
 \description{
@@ -35,7 +35,7 @@ This function extracts the target and outcome cohorts used to develop any model 
 Specify the connectionHandler, the resultDatabaseSettings and any targetIds or outcomeIds to restrict models to
 }
 \seealso{
-Other {Prediction}: 
+Other Prediction: 
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
 \code{\link{getPredictionHyperParamSearch}()},
@@ -45,4 +45,4 @@ Other {Prediction}:
 \code{\link{getPredictionPerformances}()},
 \code{\link{getPredictionTopPredictors}()}
 }
-\concept{{Prediction}}
+\concept{Prediction}

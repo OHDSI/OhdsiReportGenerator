@@ -4,7 +4,7 @@
 \alias{plotSccsEstimates}
 \title{Plots the self controlled case series results for one analysis}
 \usage{
-plotSccsEstimates(sccsData, sccsMeta, targetName, selectedAnalysisId)
+plotSccsEstimates(sccsData, sccsMeta = NULL, targetName, selectedAnalysisId)
 }
 \arguments{
 \item{sccsData}{The self controlled case series data}
@@ -25,7 +25,7 @@ Creates nice self controlled case series plots
 Input the self controlled case series data
 }
 \seealso{
-Other {Estimation}: 
+Other Estimation: 
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
@@ -34,4 +34,4 @@ Other {Estimation}:
 \code{\link{getSccsMetaEstimation}()},
 \code{\link{plotCmEstimates}()}
 }
-\concept{{Estimation}}
+\concept{Estimation}

@@ -12,31 +12,31 @@
 #' @template targetIds
 #' @template outcomeIds
 #' @param numberPredictors the number of predictors per model to return
-#' @family {Prediction}
+#' @family Prediction
 #' @return
 #' Returns a data.frame with the columns: 
 #' \itemize{
-#'  \item{databaseName} \description{the name of the database the model was developed on}
-#'  \item{tarStartDay} \description{the time-at-risk start day}
-#'  \item{tarStartAnchor} \description{whether the time-at-risk start is relative to cohort start or end}
-#'  \item{tarEndDay} \description{the time-at-risk end day}
-#'  \item{tarEndAnchor} \description{whether the time-at-risk end is relative to cohort start or end}
-#'  \item{performanceId} \description{a unique identifier for the performance}
-#'  \item{covariateId} \description{the FeatureExtraction covariate identifier}
-#'  \item{covariateName} \description{the name of the covariate}
-#'  \item{conceptId} \description{the covariates corresponding concept or 0}
-#'  \item{covariateValue} \description{the feature importance or coefficient value}
-#'  \item{covariateCount} \description{how many people had the covariate}
-#'  \item{covariateMean} \description{the fraction of the target population with the covariate}
-#'  \item{covariateStDev} \description{the standard deviation}
-#'  \item{withNoOutcomeCovariateCount} \description{the number of the target population without the outcome with the covariate}
-#'  \item{withNoOutcomeCovariateMean} \description{the fraction of the target population without the outcome with the covariate}
-#'  \item{withNoOutcomeCovariateStDev} \description{the covariate standard deviation of the target population without the outcome}
-#'  \item{withOutcomeCovariateCount} \description{the number of the target population with the outcome with the covariate}
-#'  \item{withOutcomeCovariateMean} \description{the fraction of the target population with the outcome with the covariate}
-#'  \item{withOutcomeCovariateStDev} \description{the covariate standard deviation of the target population with the outcome}
-#'  \item{standardizedMeanDiff} \description{the standardized mean difference comparing the target population with outcome and without the outcome}
-#'  \item{rn} \description{the row number showing the covariate rank}
+#'  \item{databaseName the name of the database the model was developed on}
+#'  \item{tarStartDay the time-at-risk start day}
+#'  \item{tarStartAnchor whether the time-at-risk start is relative to cohort start or end}
+#'  \item{tarEndDay the time-at-risk end day}
+#'  \item{tarEndAnchor whether the time-at-risk end is relative to cohort start or end}
+#'  \item{performanceId a unique identifier for the performance}
+#'  \item{covariateId the FeatureExtraction covariate identifier}
+#'  \item{covariateName the name of the covariate}
+#'  \item{conceptId the covariates corresponding concept or 0}
+#'  \item{covariateValue the feature importance or coefficient value}
+#'  \item{covariateCount how many people had the covariate}
+#'  \item{covariateMean the fraction of the target population with the covariate}
+#'  \item{covariateStDev the standard deviation}
+#'  \item{withNoOutcomeCovariateCount the number of the target population without the outcome with the covariate}
+#'  \item{withNoOutcomeCovariateMean the fraction of the target population without the outcome with the covariate}
+#'  \item{withNoOutcomeCovariateStDev the covariate standard deviation of the target population without the outcome}
+#'  \item{withOutcomeCovariateCount the number of the target population with the outcome with the covariate}
+#'  \item{withOutcomeCovariateMean the fraction of the target population with the outcome with the covariate}
+#'  \item{withOutcomeCovariateStDev the covariate standard deviation of the target population with the outcome}
+#'  \item{standardizedMeanDiff the standardized mean difference comparing the target population with outcome and without the outcome}
+#'  \item{rn the row number showing the covariate rank}
 #' }
 #'
 #' @export
@@ -127,13 +127,13 @@ getPredictionTopPredictors <- function(
 #' @template schema
 #' @template plpTablePrefix
 #' @template cgTablePrefix
-#' @family {Prediction}
+#' @family Prediction
 #' @return
 #' Returns a data.frame with the columns: 
 #' \itemize{
-#'  \item{cohortId} \description{the cohort definition ID}
-#'  \item{cohortName} \description{the name of the cohort}
-#'  \item{type} \description{whether the cohort was used as a target or outcome cohort}
+#'  \item{cohortId the cohort definition ID}
+#'  \item{cohortName the name of the cohort}
+#'  \item{type whether the cohort was used as a target or outcome cohort}
 #'}
 #'
 #' @export
@@ -192,32 +192,32 @@ getPredictionCohorts <- function(
 #' @template cgTablePrefix
 #' @template targetIds
 #' @template outcomeIds
-#' @family {Prediction}
+#' @family Prediction
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{ 
-#'  \item{modelDesignId} \description{a unique identifier in the database for the model design}
-#'  \item{modelType} \description{the type of classifier or surival model}
-#'  \item{developmentTargetId} \description{a unique identifier for the development target ID}
-#'  \item{developmentTargetName} \description{the name of the development target cohort}
-#'  \item{developmentTargetJson} \description{the json of the target cohort}
-#'  \item{developmentOutcomeId} \description{a unique identifier for the development outcome ID}
-#'  \item{developmentOutcomeName} \description{the name of the development outcome cohort}
-#'  \item{timeAtRisk} \description{the time at risk string}
-#'  \item{developmentOutcomeJson} \description{the json of the outcome cohort}
-#'  \item{covariateSettingsJson} \description{the covariate settings json}
-#'  \item{populationSettingsJson} \description{the population settings json}
-#'  \item{tidyCovariatesSettingsJson} \description{the tidy covariate settings json}
-#'  \item{plpDataSettingsJson} \description{the plp data extraction settings json}
-#'  \item{featureEngineeringSettingsJson} \description{the feature engineering settings json}
-#'  \item{splitSettingsJson} \description{the split settings json}
-#'  \item{sampleSettingsJson} \description{the sample settings json}
-#'  \item{minAuroc} \description{the min AUROC value of models developed using the model design across databases}
-#'  \item{meanAuroc} \description{the mean AUROC value of models developed using the model design across databases}
-#'  \item{maxAuroc} \description{the max AUROC value of models developed using the model design across databases}
-#'  \item{noDiagnosticDatabases} \description{the number of databases where the model design diagnostics were generated}
-#'  \item{noDevelopmentDatabases} \description{the number of databases where the model design was used to develop models}
-#'  \item{noValidationDatabases} \description{the number of databases where the models developed using the model design was externally validated}
+#'  \item{modelDesignId a unique identifier in the database for the model design}
+#'  \item{modelType the type of classifier or surival model}
+#'  \item{developmentTargetId a unique identifier for the development target ID}
+#'  \item{developmentTargetName the name of the development target cohort}
+#'  \item{developmentTargetJson the json of the target cohort}
+#'  \item{developmentOutcomeId a unique identifier for the development outcome ID}
+#'  \item{developmentOutcomeName the name of the development outcome cohort}
+#'  \item{timeAtRisk the time at risk string}
+#'  \item{developmentOutcomeJson the json of the outcome cohort}
+#'  \item{covariateSettingsJson the covariate settings json}
+#'  \item{populationSettingsJson the population settings json}
+#'  \item{tidyCovariatesSettingsJson the tidy covariate settings json}
+#'  \item{plpDataSettingsJson the plp data extraction settings json}
+#'  \item{featureEngineeringSettingsJson the feature engineering settings json}
+#'  \item{splitSettingsJson the split settings json}
+#'  \item{sampleSettingsJson the sample settings json}
+#'  \item{minAuroc the min AUROC value of models developed using the model design across databases}
+#'  \item{meanAuroc the mean AUROC value of models developed using the model design across databases}
+#'  \item{maxAuroc the max AUROC value of models developed using the model design across databases}
+#'  \item{noDiagnosticDatabases the number of databases where the model design diagnostics were generated}
+#'  \item{noDevelopmentDatabases the number of databases where the model design was used to develop models}
+#'  \item{noValidationDatabases the number of databases where the models developed using the model design was externally validated}
 #' }
 #' 
 #' @export
@@ -398,36 +398,36 @@ getPredictionModelDesigns <- function(
 #' @param databaseTablePrefix A prefix to the database table, either '' or 'plp_'
 #' @param modelDesignId The identifier for a model design  to restrict results to
 #' @param developmentDatabaseId The identifier for the development database to restrict results to
-#' @family {Prediction}
+#' @family Prediction
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{  
-#'  \item{performanceId} \description{the unique identifier for the performance}
-#'  \item{modelDesignId} \description{the unique identifier for the model design}
-#'  \item{developmentDatabaseId} \description{the unique identifier for the database used to develop the model}
-#'  \item{validationDatabaseId} \description{the unique identifier for the database used to validate the model}
-#'  \item{developmentTargetId} \description{the unique cohort id for the development target population}
-#'  \item{developmentTargetName} \description{the name for the development target population}
-#'  \item{developmentOutcomeId} \description{the unique cohort id for the development outcome}
-#'  \item{developmentOutcomeName} \description{the name for the development outcome}
-#'  \item{developmentDatabase} \description{the name for the database used to develop the model}
-#'  \item{validationDatabase} \description{the name for the database used to validate the model}
-#'  \item{validationTargetName} \description{the name for the validation target population}
-#'  \item{validationOutcomeName} \description{the name for the validation outcome}
-#'  \item{timeStamp} \description{the date/time when the analysis occurred}
-#'  \item{auroc} \description{the test/validation AUROC value for the model}
-#'  \item{auroc95lb} \description{the test/validation lower bound of the 95 percent CI AUROC value for the model}
-#'  \item{auroc95ub} \description{the test/validation upper bound of the 95 percent CI AUROC value for the model}
-#'  \item{calibrationInLarge} \description{the test/validation calibration in the large value for the model}
-#'  \item{eStatistic} \description{the test/validation calibration e-statistic value for the model}
-#'  \item{brierScore} \description{the test/validation brier value for the model}
-#'  \item{auprc} \description{the test/validation discrimination AUPRC value for the model}
-#'  \item{populationSize} \description{the test/validation population size used to develop the model}
-#'  \item{outcomeCount} \description{the test/validation outcome count used to develop the model}
-#'  \item{evalPercent} \description{the percentage of the development data used as the test set}
-#'  \item{outcomePercent} \description{the outcome percent in the development data}
-#'  \item{validationTimeAtRisk} \description{time at risk for the validation}
-#'  \item{predictionResultType} \description{development or validation}
+#'  \item{performanceId the unique identifier for the performance}
+#'  \item{modelDesignId the unique identifier for the model design}
+#'  \item{developmentDatabaseId the unique identifier for the database used to develop the model}
+#'  \item{validationDatabaseId the unique identifier for the database used to validate the model}
+#'  \item{developmentTargetId the unique cohort id for the development target population}
+#'  \item{developmentTargetName the name for the development target population}
+#'  \item{developmentOutcomeId the unique cohort id for the development outcome}
+#'  \item{developmentOutcomeName the name for the development outcome}
+#'  \item{developmentDatabase the name for the database used to develop the model}
+#'  \item{validationDatabase the name for the database used to validate the model}
+#'  \item{validationTargetName the name for the validation target population}
+#'  \item{validationOutcomeName the name for the validation outcome}
+#'  \item{timeStamp the date/time when the analysis occurred}
+#'  \item{auroc the test/validation AUROC value for the model}
+#'  \item{auroc95lb the test/validation lower bound of the 95 percent CI AUROC value for the model}
+#'  \item{auroc95ub the test/validation upper bound of the 95 percent CI AUROC value for the model}
+#'  \item{calibrationInLarge the test/validation calibration in the large value for the model}
+#'  \item{eStatistic the test/validation calibration e-statistic value for the model}
+#'  \item{brierScore the test/validation brier value for the model}
+#'  \item{auprc the test/validation discrimination AUPRC value for the model}
+#'  \item{populationSize the test/validation population size used to develop the model}
+#'  \item{outcomeCount the test/validation outcome count used to develop the model}
+#'  \item{evalPercent the percentage of the development data used as the test set}
+#'  \item{outcomePercent the outcome percent in the development data}
+#'  \item{validationTimeAtRisk time at risk for the validation}
+#'  \item{predictionResultType development or validation}
 #'  
 #'}
 #' 
@@ -595,23 +595,23 @@ getPredictionPerformances <- function(
 #' @param databaseTablePrefix The prefix for the database table either '' or 'plp_'
 #' @param modelDesignId The identifier for a model design  to restrict results to
 #' @param threshold1_2 A threshold for probast 1.2
-#' @family {Prediction}
+#' @family Prediction
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{   
-#'  \item{modelDesignId} \description{the unique identifier for the model design}
-#'  \item{diagnosticId} \description{the unique identifier for diagnostic result}
-#'  \item{developmentDatabaseName} \description{the name for the database used to develop the model}
-#'  \item{developmentTargetName} \description{the name for the development target population}
-#'  \item{developmentOutcomeName} \description{the name for the development outcome}
-#'  \item{probast1_1} \description{Were appropriate data sources used, e.g., cohort, RCT, or nested case-control study data?}
-#'  \item{probast1_2} \description{Were all inclusions and exclusions of paticipants appropriate?}
-#'  \item{probast2_1} \description{Were predictors defined and assessed in a similar way for all participants?}
-#'  \item{probast2_2} \description{Were predictors assessments made without knowledge of outcome data?}
-#'  \item{probast2_3} \description{All all predictors available at the time the model is intended to be used?}
-#'  \item{probast3_4} \description{Was the outcome defined and determined in a similar way for all participants?}
-#'  \item{probast3_6} \description{Was the time interval between predictor assessment and outcome determination appropriate?}
-#'  \item{probast4_1} \description{Were there a reasonable number of participants with the outcome?}
+#'  \item{modelDesignId the unique identifier for the model design}
+#'  \item{diagnosticId the unique identifier for diagnostic result}
+#'  \item{developmentDatabaseName the name for the database used to develop the model}
+#'  \item{developmentTargetName the name for the development target population}
+#'  \item{developmentOutcomeName the name for the development outcome}
+#'  \item{probast1_1 Were appropriate data sources used, e.g., cohort, RCT, or nested case-control study data?}
+#'  \item{probast1_2 Were all inclusions and exclusions of paticipants appropriate?}
+#'  \item{probast2_1 Were predictors defined and assessed in a similar way for all participants?}
+#'  \item{probast2_2 Were predictors assessments made without knowledge of outcome data?}
+#'  \item{probast2_3 All all predictors available at the time the model is intended to be used?}
+#'  \item{probast3_4 Was the outcome defined and determined in a similar way for all participants?}
+#'  \item{probast3_6 Was the time interval between predictor assessment and outcome determination appropriate?}
+#'  \item{probast4_1 Were there a reasonable number of participants with the outcome?}
 #'  }
 #' 
 #' @export
@@ -680,7 +680,7 @@ getPredictionDiagnostics <- function(
   
   summary <- summaryTable %>%
     dplyr::mutate(
-      probastId = paste0('probast',gsub('\\.','_',probastId))
+      probastId = paste0('probast',gsub('\\.','_',.data$probastId))
     ) %>%
     dplyr::arrange(.data$probastId) %>%
     tidyr::pivot_wider(
@@ -721,7 +721,7 @@ getPredictionDiagnostics <- function(
 #' @template plpTablePrefix
 #' @param table The table to extract
 #' @param performanceId (optional) restrict to the input performanceId
-#' @family {Prediction}
+#' @family Prediction
 #' @return
 #' Returns a data.frame with the specified table
 #' 
@@ -764,7 +764,7 @@ getPredictionPerformanceTable <- function(
 #' @template plpTablePrefix
 #' @param table The table to extract
 #' @param diagnosticId (optional) restrict to the input diagnosticId
-#' @family {Prediction}
+#' @family Prediction
 #' @return
 #' Returns a data.frame with the specified table
 #' 
@@ -827,13 +827,13 @@ getPredictionDiagnosticTable <- function(
 #' @template plpTablePrefix
 #' @param modelDesignId The identifier for a model design  to restrict to
 #' @param databaseId The identifier for the development database to restrict  to
-#' @family {Prediction}
+#' @family Prediction
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{metric} \description{the hyperparameter optimization metric}
-#'  \item{fold} \description{the fold in cross validation}
-#'  \item{value} \description{the metric value for the fold with the specified hyperparameter combination}
+#'  \item{metric the hyperparameter optimization metric}
+#'  \item{fold the fold in cross validation}
+#'  \item{value the metric value for the fold with the specified hyperparameter combination}
 #'  } 
 #'  plus columns for all the hyperparameters and their values
 #' 
@@ -882,7 +882,7 @@ getPredictionHyperParamSearch <- function(
 #' @template plpTablePrefix
 #' @param modelDesignId The identifier for a model design  to restrict to
 #' @param databaseId The identifier for the development database to restrict  to
-#' @family {Prediction}
+#' @family Prediction
 #' @return
 #' Returns a single value corresponding to the model intercept or NULL if not a logistic regression model
 #' 

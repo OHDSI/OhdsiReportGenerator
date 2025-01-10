@@ -35,32 +35,31 @@ getCmMetaEstimation(
 \value{
 Returns a data.frame with the columns:
 \itemize{
- \item{databaseName} \description{the name of the database}
- \item{analysisId} \description{the analysis unique identifier}
- \item{description} \description{a description of the analysis}
- \item{targetName} \description{the target cohort name}
- \item{targetId} \description{the target cohort unique identifier}
- \item{comparatorName} \description{the comparator cohort name}
- \item{comparatorId} \description{the comparator cohort unique identifier}
- \item{outcomeName} \description{the outcome name}
- \item{outcomeId} \description{the outcome cohort unique identifier}
+ \item{databaseName the name of the database}
+ \item{analysisId the analysis unique identifier}
+ \item{description a description of the analysis}
+ \item{targetName the target cohort name}
+ \item{targetId the target cohort unique identifier}
+ \item{comparatorName the comparator cohort name}
+ \item{comparatorId the comparator cohort unique identifier}
+ \item{outcomeName the outcome name}
+ \item{outcomeId the outcome cohort unique identifier}
+ \item{calibratedRr the calibrated relative risk}
+ \item{calibratedRrCi95Lb the calibrated relative risk 95 percent confidence interval lower bound}
+ \item{calibratedRrCi95Ub the calibrated relative risk 95 percent confidence interval upper bound}
+ \item{calibratedP the two sided calibrated p value}
+ \item{calibratedOneSidedP the one sided calibrated p value}
+ \item{calibratedLogRr the calibrated relative risk logged}
+ \item{calibratedSeLogRr the standard error of the calibrated relative risk logged}
  
- \item{calibratedRr} \description{the calibrated relative risk}
- \item{calibratedRrCi95Lb} \description{the calibrated relative risk 95 percent confidence interval lower bound}
- \item{calibratedRrCi95Ub} \description{the calibrated relative risk 95 percent confidence interval upper bound}
- \item{calibratedP} \description{the two sided calibrated p value}
- \item{calibratedOneSidedP} \description{the one sided calibrated p value}
- \item{calibratedLogRr} \description{the calibrated relative risk logged}
- \item{calibratedSeLogRr} \description{the standard error of the calibrated relative risk logged}
+ \item{targetSubjects the number of people in the target cohort across included database}
+ \item{comparatorSubjects the number of people in the comparator cohort across included database}
+ \item{targetDays the total number of days at risk across the target cohort people across included database}
+ \item{comparatorDays the total number of days at risk across the comparator cohort people across included database}
+ \item{targetOutcomes the total number of outcomes occuring during the time at risk for the target cohort people across included database}
+ \item{comparatorOutcomes the total number of outcomes occuring during the time at risk for the comparator cohort people across included database}
  
- \item{targetSubjects} \description{the number of people in the target cohort across included database}
- \item{comparatorSubjects} \description{the number of people in the comparator cohort across included database}
- \item{targetDays} \description{the total number of days at risk across the target cohort people across included database}
- \item{comparatorDays} \description{the total number of days at risk across the comparator cohort people across included database}
- \item{targetOutcomes} \description{the total number of outcomes occuring during the time at risk for the target cohort people across included database}
- \item{comparatorOutcomes} \description{the total number of outcomes occuring during the time at risk for the comparator cohort people across included database}
- 
- \item{nDatabases} \description{the number of databases included}
+ \item{nDatabases the number of databases included}
  }
 }
 \description{
@@ -70,7 +69,7 @@ This function extracts any meta analysis estimation results for cohort method.
 Specify the connectionHandler, the schema and the target/comparator/outcome cohort IDs
 }
 \seealso{
-Other {Estimation}: 
+Other Estimation: 
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getSccsDiagnosticsData}()},
@@ -79,4 +78,4 @@ Other {Estimation}:
 \code{\link{plotCmEstimates}()},
 \code{\link{plotSccsEstimates}()}
 }
-\concept{{Estimation}}
+\concept{Estimation}

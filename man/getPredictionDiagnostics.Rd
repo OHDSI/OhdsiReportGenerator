@@ -35,19 +35,19 @@ getPredictionDiagnostics(
 \value{
 Returns a data.frame with the columns:
 \itemize{   
- \item{modelDesignId} \description{the unique identifier for the model design}
- \item{diagnosticId} \description{the unique identifier for diagnostic result}
- \item{developmentDatabaseName} \description{the name for the database used to develop the model}
- \item{developmentTargetName} \description{the name for the development target population}
- \item{developmentOutcomeName} \description{the name for the development outcome}
- \item{probast1_1} \description{Were appropriate data sources used, e.g., cohort, RCT, or nested case-control study data?}
- \item{probast1_2} \description{Were all inclusions and exclusions of paticipants appropriate?}
- \item{probast2_1} \description{Were predictors defined and assessed in a similar way for all participants?}
- \item{probast2_2} \description{Were predictors assessments made without knowledge of outcome data?}
- \item{probast2_3} \description{All all predictors available at the time the model is intended to be used?}
- \item{probast3_4} \description{Was the outcome defined and determined in a similar way for all participants?}
- \item{probast3_6} \description{Was the time interval between predictor assessment and outcome determination appropriate?}
- \item{probast4_1} \description{Were there a reasonable number of participants with the outcome?}
+ \item{modelDesignId the unique identifier for the model design}
+ \item{diagnosticId the unique identifier for diagnostic result}
+ \item{developmentDatabaseName the name for the database used to develop the model}
+ \item{developmentTargetName the name for the development target population}
+ \item{developmentOutcomeName the name for the development outcome}
+ \item{probast1_1 Were appropriate data sources used, e.g., cohort, RCT, or nested case-control study data?}
+ \item{probast1_2 Were all inclusions and exclusions of paticipants appropriate?}
+ \item{probast2_1 Were predictors defined and assessed in a similar way for all participants?}
+ \item{probast2_2 Were predictors assessments made without knowledge of outcome data?}
+ \item{probast2_3 All all predictors available at the time the model is intended to be used?}
+ \item{probast3_4 Was the outcome defined and determined in a similar way for all participants?}
+ \item{probast3_6 Was the time interval between predictor assessment and outcome determination appropriate?}
+ \item{probast4_1 Were there a reasonable number of participants with the outcome?}
  }
 }
 \description{
@@ -57,7 +57,7 @@ This function extracts the PROBAST diagnostics
 Specify the connectionHandler, the resultDatabaseSettings and (optionally) a modelDesignId and threshold1_2 a threshold value to use for the PROBAST 1.2
 }
 \seealso{
-Other {Prediction}: 
+Other Prediction: 
 \code{\link{getPredictionCohorts}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionHyperParamSearch}()},
@@ -67,4 +67,4 @@ Other {Prediction}:
 \code{\link{getPredictionPerformances}()},
 \code{\link{getPredictionTopPredictors}()}
 }
-\concept{{Prediction}}
+\concept{Prediction}

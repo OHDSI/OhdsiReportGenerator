@@ -18,3 +18,8 @@ Removes spaces and replaces with under scroll
 \details{
 Removes spaces and replaces with under scroll
 }
+\seealso{
+Other helper: 
+\code{\link{getExampleConnectionDetails}()}
+}
+\concept{helper}

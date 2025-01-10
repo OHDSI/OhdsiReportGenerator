@@ -32,27 +32,27 @@ getPredictionTopPredictors(
 \value{
 Returns a data.frame with the columns: 
 \itemize{
- \item{databaseName} \description{the name of the database the model was developed on}
- \item{tarStartDay} \description{the time-at-risk start day}
- \item{tarStartAnchor} \description{whether the time-at-risk start is relative to cohort start or end}
- \item{tarEndDay} \description{the time-at-risk end day}
- \item{tarEndAnchor} \description{whether the time-at-risk end is relative to cohort start or end}
- \item{performanceId} \description{a unique identifier for the performance}
- \item{covariateId} \description{the FeatureExtraction covariate identifier}
- \item{covariateName} \description{the name of the covariate}
- \item{conceptId} \description{the covariates corresponding concept or 0}
- \item{covariateValue} \description{the feature importance or coefficient value}
- \item{covariateCount} \description{how many people had the covariate}
- \item{covariateMean} \description{the fraction of the target population with the covariate}
- \item{covariateStDev} \description{the standard deviation}
- \item{withNoOutcomeCovariateCount} \description{the number of the target population without the outcome with the covariate}
- \item{withNoOutcomeCovariateMean} \description{the fraction of the target population without the outcome with the covariate}
- \item{withNoOutcomeCovariateStDev} \description{the covariate standard deviation of the target population without the outcome}
- \item{withOutcomeCovariateCount} \description{the number of the target population with the outcome with the covariate}
- \item{withOutcomeCovariateMean} \description{the fraction of the target population with the outcome with the covariate}
- \item{withOutcomeCovariateStDev} \description{the covariate standard deviation of the target population with the outcome}
- \item{standardizedMeanDiff} \description{the standardized mean difference comparing the target population with outcome and without the outcome}
- \item{rn} \description{the row number showing the covariate rank}
+ \item{databaseName the name of the database the model was developed on}
+ \item{tarStartDay the time-at-risk start day}
+ \item{tarStartAnchor whether the time-at-risk start is relative to cohort start or end}
+ \item{tarEndDay the time-at-risk end day}
+ \item{tarEndAnchor whether the time-at-risk end is relative to cohort start or end}
+ \item{performanceId a unique identifier for the performance}
+ \item{covariateId the FeatureExtraction covariate identifier}
+ \item{covariateName the name of the covariate}
+ \item{conceptId the covariates corresponding concept or 0}
+ \item{covariateValue the feature importance or coefficient value}
+ \item{covariateCount how many people had the covariate}
+ \item{covariateMean the fraction of the target population with the covariate}
+ \item{covariateStDev the standard deviation}
+ \item{withNoOutcomeCovariateCount the number of the target population without the outcome with the covariate}
+ \item{withNoOutcomeCovariateMean the fraction of the target population without the outcome with the covariate}
+ \item{withNoOutcomeCovariateStDev the covariate standard deviation of the target population without the outcome}
+ \item{withOutcomeCovariateCount the number of the target population with the outcome with the covariate}
+ \item{withOutcomeCovariateMean the fraction of the target population with the outcome with the covariate}
+ \item{withOutcomeCovariateStDev the covariate standard deviation of the target population with the outcome}
+ \item{standardizedMeanDiff the standardized mean difference comparing the target population with outcome and without the outcome}
+ \item{rn the row number showing the covariate rank}
 }
 }
 \description{
@@ -62,7 +62,7 @@ This function extracts the top N predictors per model from the prediction result
 Specify the connectionHandler, the resultDatabaseSettings and (optionally) any targetIds or outcomeIds to restrict models to
 }
 \seealso{
-Other {Prediction}: 
+Other Prediction: 
 \code{\link{getPredictionCohorts}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
@@ -72,4 +72,4 @@ Other {Prediction}:
 \code{\link{getPredictionPerformanceTable}()},
 \code{\link{getPredictionPerformances}()}
 }
-\concept{{Prediction}}
+\concept{Prediction}

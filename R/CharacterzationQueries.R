@@ -13,34 +13,34 @@
 #' @template databaseTable
 #' @template targetIds
 #' @template outcomeIds
-#' @family {Characterization}
+#' @family Characterization
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the name of the database}
-#'  \item{targetName} \description{the target cohort name}
-#'  \item{targetId} \description{the target cohort unique identifier}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome unique identifier}
-#'  \item{cleanWindow} \description{clean windown around outcome}
-#'  \item{subgroupName} \description{name for the result subgroup}
-#'  \item{ageGroupName} \description{name for the result age group}
-#'  \item{genderName} \description{name for the result gender group}
-#'  \item{startYear} \description{name for the result start year}
-#'  \item{tarStartWith} \description{time at risk start reference}
-#'  \item{tarStartOffset} \description{time at risk start offset from reference}
-#'  \item{tarEndWith} \description{time at risk end reference}
-#'  \item{tarEndOffset} \description{time at risk end offset from reference}
-#'  \item{personsAtRiskPe} \description{persons at risk per event}
-#'  \item{personsAtRisk} \description{persons at risk}
-#'  \item{personDaysPe} \description{person days per event}
-#'  \item{personDays} \description{person days}
-#'  \item{personOutcomesPe} \description{person outcome per event}
-#'  \item{personOutcomes} \description{persons outcome}
-#'  \item{outcomesPe} \description{number of outcome per event}
-#'  \item{outcomes} \description{number of outcome}
-#'  \item{incidenceProportionP100p} \description{incidence proportion per 100 persons}
-#'  \item{incidenceRateP100py} \description{incidence rate per 100 person years}
+#'  \item{databaseName the name of the database}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome unique identifier}
+#'  \item{cleanWindow clean windown around outcome}
+#'  \item{subgroupName name for the result subgroup}
+#'  \item{ageGroupName name for the result age group}
+#'  \item{genderName name for the result gender group}
+#'  \item{startYear name for the result start year}
+#'  \item{tarStartWith time at risk start reference}
+#'  \item{tarStartOffset time at risk start offset from reference}
+#'  \item{tarEndWith time at risk end reference}
+#'  \item{tarEndOffset time at risk end offset from reference}
+#'  \item{personsAtRiskPe persons at risk per event}
+#'  \item{personsAtRisk persons at risk}
+#'  \item{personDaysPe person days per event}
+#'  \item{personDays person days}
+#'  \item{personOutcomesPe person outcome per event}
+#'  \item{personOutcomes persons outcome}
+#'  \item{outcomesPe number of outcome per event}
+#'  \item{outcomes number of outcome}
+#'  \item{incidenceProportionP100p incidence proportion per 100 persons}
+#'  \item{incidenceRateP100py incidence rate per 100 person years}
 #'  } 
 #' 
 #' @export
@@ -110,7 +110,7 @@ getIncidenceRates <- function(
     where 
     1 = 1
     {@use_target}?{ and target_cohort_definition_id in (@target_id)}
-    {@use_outcome}?{ and outcome_id in (@outcome_id)}
+    {@use_outcome}?{ and outcome_cohort_definition_id in (@outcome_id)}
     ;'
   
   result <- connectionHandler$queryDb(
@@ -145,20 +145,20 @@ getIncidenceRates <- function(
 #' @template databaseTable
 #' @template targetIds
 #' @template outcomeIds
-#' @family {Characterization}
+#' @family Characterization
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the name of the database}
-#'  \item{targetName} \description{the target cohort name}
-#'  \item{targetId} \description{the target cohort unique identifier}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome unique identifier}
-#'  \item{outcomeType} \description{Whether the outcome is the first or subsequent}
-#'  \item{targetOutcomeType} \description{The interval that the outcome occurs}
-#'  \item{timeToEvent} \description{The number of days from index}
-#'  \item{numEvents} \description{The number of target cohort entries}
-#'  \item{timeScale} \description{The correspondin time-scale}
+#'  \item{databaseName the name of the database}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome unique identifier}
+#'  \item{outcomeType Whether the outcome is the first or subsequent}
+#'  \item{targetOutcomeType The interval that the outcome occurs}
+#'  \item{timeToEvent The number of days from index}
+#'  \item{numEvents The number of target cohort entries}
+#'  \item{timeScale The correspondin time-scale}
 #'  } 
 #' 
 #' @export
@@ -232,32 +232,32 @@ getTimeToEvent <- function(
 #' @template databaseTable
 #' @template targetIds
 #' @template outcomeIds
-#' @family {Characterization}
+#' @family Characterization
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the name of the database}
-#'  \item{targetName} \description{the target cohort name}
-#'  \item{targetId} \description{the target cohort unique identifier}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome unique identifier}
-#'  \item{dechallengeStopInterval} \description{An integer specifying the how much time to add to the cohort_end when determining whether the event starts during cohort and ends after}
-#'  \item{dechallengeEvaluationWindow} \description{A period of time evaluated for outcome recurrence after discontinuation of exposure, among patients with challenge outcomes}
-#'  \item{numExposureEras} \description{Distinct number of exposure events (i.e. drug eras) in a given target cohort}
-#'  \item{numPersonsExposed} \description{Distinct number of people exposed in target cohort. A person must have at least 1 day exposure to be included}
-#'  \item{numCases} \description{Distinct number of persons in outcome cohort. A person must have at least 1 day of observation time to be included}
-#'  \item{dechallengeAttempt} \description{Distinct count of people with observable time after discontinuation of the exposure era during which the challenge outcome occurred}
-#'  \item{dechallengeFail} \description{Among people with challenge outcomes, the distinct number of people with outcomes during dechallengeEvaluationWindow}
-#'  \item{dechallengeSuccess} \description{Among people with challenge outcomes, the distinct number of people without outcomes during the dechallengeEvaluationWindow}
-#'  \item{rechallengeAttempt} \description{Number of people with a new exposure era after the occurrence of an outcome during a prior exposure era}
-#'  \item{rechallengeFail} \description{Number of people with a new exposure era during which an outcome occurred, after the occurrence of an outcome during a prior exposure era}
-#'  \item{rechallengeSuccess} \description{Number of people with a new exposure era during which an outcome did not occur, after the occurrence of an outcome during a prior exposure era}
-#'  \item{pctDechallengeAttempt} \description{Percent of people with observable time after discontinuation of the exposure era during which the challenge outcome occurred}
-#'  \item{pctDechallengeFail} \description{Among people with challenge outcomes, the percent of people without outcomes during the dechallengeEvaluationWindow}
-#'  \item{pctDechallengeSuccess} \description{Among people with challenge outcomes, the percent of people with outcomes during dechallengeEvaluationWindow}
-#'  \item{pctRechallengeAttempt} \description{Percent of people with a new exposure era after the occurrence of an outcome during a prior exposure era}
-#'  \item{pctRechallengeFail} \description{Percent of people with a new exposure era during which an outcome did not occur, after the occurrence of an outcome during a prior exposure era}
-#'  \item{pctRechallengeSuccess} \description{Percent of people with a new exposure era during which an outcome occurred, after the occurrence of an outcome during a prior exposure era}
+#'  \item{databaseName the name of the database}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome unique identifier}
+#'  \item{dechallengeStopInterval An integer specifying the how much time to add to the cohort_end when determining whether the event starts during cohort and ends after}
+#'  \item{dechallengeEvaluationWindow A period of time evaluated for outcome recurrence after discontinuation of exposure, among patients with challenge outcomes}
+#'  \item{numExposureEras Distinct number of exposure events (i.e. drug eras) in a given target cohort}
+#'  \item{numPersonsExposed Distinct number of people exposed in target cohort. A person must have at least 1 day exposure to be included}
+#'  \item{numCases Distinct number of persons in outcome cohort. A person must have at least 1 day of observation time to be included}
+#'  \item{dechallengeAttempt Distinct count of people with observable time after discontinuation of the exposure era during which the challenge outcome occurred}
+#'  \item{dechallengeFail Among people with challenge outcomes, the distinct number of people with outcomes during dechallengeEvaluationWindow}
+#'  \item{dechallengeSuccess Among people with challenge outcomes, the distinct number of people without outcomes during the dechallengeEvaluationWindow}
+#'  \item{rechallengeAttempt Number of people with a new exposure era after the occurrence of an outcome during a prior exposure era}
+#'  \item{rechallengeFail Number of people with a new exposure era during which an outcome occurred, after the occurrence of an outcome during a prior exposure era}
+#'  \item{rechallengeSuccess Number of people with a new exposure era during which an outcome did not occur, after the occurrence of an outcome during a prior exposure era}
+#'  \item{pctDechallengeAttempt Percent of people with observable time after discontinuation of the exposure era during which the challenge outcome occurred}
+#'  \item{pctDechallengeFail Among people with challenge outcomes, the percent of people without outcomes during the dechallengeEvaluationWindow}
+#'  \item{pctDechallengeSuccess Among people with challenge outcomes, the percent of people with outcomes during dechallengeEvaluationWindow}
+#'  \item{pctRechallengeAttempt Percent of people with a new exposure era after the occurrence of an outcome during a prior exposure era}
+#'  \item{pctRechallengeFail Percent of people with a new exposure era during which an outcome did not occur, after the occurrence of an outcome during a prior exposure era}
+#'  \item{pctRechallengeSuccess Percent of people with a new exposure era during which an outcome occurred, after the occurrence of an outcome during a prior exposure era}
 #'  } 
 #' 
 #' @export
@@ -343,19 +343,19 @@ getDechallengeRechallenge <- function(
 #' @template databaseTable
 #' @template targetIds
 #' @template outcomeIds
-#' @family {Characterization}
+#' @family Characterization
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the name of the database}
-#'  \item{targetName} \description{the target cohort name}
-#'  \item{targetId} \description{the target cohort unique identifier}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome unique identifier}
-#'  \item{rowCount} \description{the number of entries in the cohort}
-#'  \item{personCount} \description{the number of people in the cohort}
-#'  \item{minPriorObservation} \description{the minimum required observation days prior to index for an entry}
-#'  \item{outcomeWashoutDays} \description{patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+#'  \item{databaseName the name of the database}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome unique identifier}
+#'  \item{rowCount the number of entries in the cohort}
+#'  \item{personCount the number of people in the cohort}
+#'  \item{minPriorObservation the minimum required observation days prior to index for an entry}
+#'  \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
 #'  } 
 #' 
 #' @export
@@ -495,23 +495,23 @@ cc.target_cohort_id = s2.target_cohort_id
 #' @template databaseTable
 #' @template targetIds
 #' @template outcomeIds
-#' @family {Characterization}
+#' @family Characterization
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the name of the database}
-#'  \item{targetName} \description{the target cohort name}
-#'  \item{targetId} \description{the target cohort unique identifier}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome unique identifier}
-#'  \item{rowCount} \description{the number of entries in the cohort}
-#'  \item{personCount} \description{the number of people in the cohort}
-#'  \item{minPriorObservation} \description{the minimum required observation days prior to index for an entry}
-#'  \item{outcomeWashoutDays} \description{patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
-#' \item{riskWindowStart} \description{the number of days ofset the start anchor that is the start of the time-at-risk}
-#' \item{startAnchor} \description{the start anchor is either the target cohort start or cohort end date}
-#' \item{riskWindowEnd} \description{the number of days ofset the end anchor that is the end of the time-at-risk}
-#' \item{endAnchor} \description{the end anchor is either the target cohort start or cohort end date}
+#'  \item{databaseName the name of the database}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome unique identifier}
+#'  \item{rowCount the number of entries in the cohort}
+#'  \item{personCount the number of people in the cohort}
+#'  \item{minPriorObservation the minimum required observation days prior to index for an entry}
+#'  \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+#' \item{riskWindowStart the number of days ofset the start anchor that is the start of the time-at-risk}
+#' \item{startAnchor the start anchor is either the target cohort start or cohort end date}
+#' \item{riskWindowEnd the number of days ofset the end anchor that is the end of the time-at-risk}
+#' \item{endAnchor the end anchor is either the target cohort start or cohort end date}
 #' } 
 #' 
 #' @export
@@ -595,24 +595,24 @@ getCaseCounts <- function(
 #' @template targetIds
 #' @template outcomeIds
 #' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
-#' @family {Characterization}
+#' @family Characterization
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the name of the database}
-#'  \item{targetName} \description{the target cohort name}
-#'  \item{targetId} \description{the target cohort unique identifier}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome unique identifier}
-#'  \item{minPriorObservation} \description{the minimum required observation days prior to index for an entry}
-#'  \item{outcomeWashoutDays} \description{patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
-#' \item{riskWindowStart} \description{the number of days ofset the start anchor that is the start of the time-at-risk}
-#' \item{startAnchor} \description{the start anchor is either the target cohort start or cohort end date}
-#' \item{riskWindowEnd} \description{the number of days ofset the end anchor that is the end of the time-at-risk}
-#' \item{endAnchor} \description{the end anchor is either the target cohort start or cohort end date}
-#' \item{covariateName} \description{the name of the feature}
-#' \item{sumValue} \description{the number of cases who have the feature value of 1}
-#' \item{averageValue} \description{the mean feature value}
+#'  \item{databaseName the name of the database}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome unique identifier}
+#'  \item{minPriorObservation the minimum required observation days prior to index for an entry}
+#'  \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+#' \item{riskWindowStart the number of days ofset the start anchor that is the start of the time-at-risk}
+#' \item{startAnchor the start anchor is either the target cohort start or cohort end date}
+#' \item{riskWindowEnd the number of days ofset the end anchor that is the end of the time-at-risk}
+#' \item{endAnchor the end anchor is either the target cohort start or cohort end date}
+#' \item{covariateName the name of the feature}
+#' \item{sumValue the number of cases who have the feature value of 1}
+#' \item{averageValue the mean feature value}
 #' } 
 #' 
 #' @export
@@ -723,24 +723,24 @@ result <- connectionHandler$queryDb(
 #' @template targetId
 #' @template outcomeId
 #' @param type A character of 'age' or 'sex'
-#' @family {Characterization}
+#' @family Characterization
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the name of the database}
-#'  \item{targetName} \description{the target cohort name}
-#'  \item{targetId} \description{the target cohort unique identifier}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome unique identifier}
-#'  \item{minPriorObservation} \description{the minimum required observation days prior to index for an entry}
-#'  \item{outcomeWashoutDays} \description{patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
-#' \item{riskWindowStart} \description{the number of days ofset the start anchor that is the start of the time-at-risk}
-#' \item{startAnchor} \description{the start anchor is either the target cohort start or cohort end date}
-#' \item{riskWindowEnd} \description{the number of days ofset the end anchor that is the end of the time-at-risk}
-#' \item{endAnchor} \description{the end anchor is either the target cohort start or cohort end date}
-#' \item{covariateName} \description{the name of the feature}
-#' \item{sumValue} \description{the number of cases who have the feature value of 1}
-#' \item{averageValue} \description{the mean feature value}
+#'  \item{databaseName the name of the database}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome unique identifier}
+#'  \item{minPriorObservation the minimum required observation days prior to index for an entry}
+#'  \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+#' \item{riskWindowStart the number of days ofset the start anchor that is the start of the time-at-risk}
+#' \item{startAnchor the start anchor is either the target cohort start or cohort end date}
+#' \item{riskWindowEnd the number of days ofset the end anchor that is the end of the time-at-risk}
+#' \item{endAnchor the end anchor is either the target cohort start or cohort end date}
+#' \item{covariateName the name of the feature}
+#' \item{sumValue the number of cases who have the feature value of 1}
+#' \item{averageValue the mean feature value}
 #' } 
 #' 
 #' @export
@@ -842,19 +842,19 @@ return(allData)
 #' @template targetIds
 #' @template outcomeIds
 #' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
-#' @family {Characterization}
+#' @family Characterization
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
-#'  \item{databaseName} \description{the name of the database}
-#'  \item{targetName} \description{the target cohort name}
-#'  \item{targetId} \description{the target cohort unique identifier}
-#'  \item{outcomeName} \description{the outcome name}
-#'  \item{outcomeId} \description{the outcome unique identifier}
-#'  \item{minPriorObservation} \description{the minimum required observation days prior to index for an entry}
-#'  \item{outcomeWashoutDays} \description{patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
-#'  \item{covariateName} \description{the name of the feature}
-#'  \item{sumValue} \description{the number of cases who have the feature value of 1}
+#'  \item{databaseName the name of the database}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome unique identifier}
+#'  \item{minPriorObservation the minimum required observation days prior to index for an entry}
+#'  \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+#'  \item{covariateName the name of the feature}
+#'  \item{sumValue the number of cases who have the feature value of 1}
 #' } 
 #' 
 #' @export
@@ -1046,7 +1046,7 @@ return(result)
 #' @template targetId
 #' @template outcomeId
 #' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
-#' @family {Characterization}
+#' @family Characterization
 #' 
 #' @return
 #' A data.frame with the characterization results for the cases and non-cases
@@ -1134,7 +1134,7 @@ processRiskFactorFeatures <- function(
   
   # TODO:what if no cases?
   params <- unique(
-    caseCounts %>% select(
+    caseCounts %>% dplyr::select(
       "databaseName",
       "minPriorObservation",
       "outcomeWashoutDays",

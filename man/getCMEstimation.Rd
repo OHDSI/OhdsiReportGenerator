@@ -35,29 +35,29 @@ getCMEstimation(
 \value{
 Returns a data.frame with the columns:
 \itemize{
- \item{databaseName} \description{the name of the database}
- \item{analysisId} \description{the analysis design unique identifier}
- \item{description} \description{the analysis design description}
- \item{targetName} \description{the target cohort name}
- \item{targetId} \description{the target cohort unique identifier}
- \item{comparatorName} \description{the comparator cohort name}
- \item{comparatorId} \description{the comparator cohort unique identifier}
- \item{outcomeName} \description{the outcome name}
- \item{outcomeId} \description{the outcome unique identifier}
- \item{calibratedRr} \description{the calibrated relative risk}
- \item{calibratedRrCi95Lb} \description{the calibrated relative risk 95 percent confidence interval lower bound}
- \item{calibratedRrCi95Ub} \description{the calibrated relative risk 95 percent confidence interval upper bound}
- \item{calibratedP} \description{the two sided calibrated p value}
- \item{calibratedOneSidedP} \description{the one sided calibrated p value}
- \item{calibratedLogRr} \description{the calibrated relative risk logged}
- \item{calibratedSeLogRr} \description{the standard error of the calibrated relative risk logged}
- \item{targetSubjects} \description{the number of people in the target cohort}
- \item{comparatorSubjects} \description{the number of people in the comparator cohort}
- \item{targetDays} \description{the total number of days at risk across the target cohort people}
- \item{comparatorDays} \description{the total number of days at risk across the comparator cohort people}
- \item{targetOutcomes} \description{the total number of outcomes occuring during the time at risk for the target cohort people}
- \item{comparatorOutcomes} \description{the total number of outcomes occuring during the time at risk for the comparator cohort people}
- \item{targetEstimator} \description{...}
+ \item{databaseName the name of the database}
+ \item{analysisId the analysis design unique identifier}
+ \item{description the analysis design description}
+ \item{targetName the target cohort name}
+ \item{targetId the target cohort unique identifier}
+ \item{comparatorName the comparator cohort name}
+ \item{comparatorId the comparator cohort unique identifier}
+ \item{outcomeName the outcome name}
+ \item{outcomeId the outcome unique identifier}
+ \item{calibratedRr the calibrated relative risk}
+ \item{calibratedRrCi95Lb the calibrated relative risk 95 percent confidence interval lower bound}
+ \item{calibratedRrCi95Ub the calibrated relative risk 95 percent confidence interval upper bound}
+ \item{calibratedP the two sided calibrated p value}
+ \item{calibratedOneSidedP the one sided calibrated p value}
+ \item{calibratedLogRr the calibrated relative risk logged}
+ \item{calibratedSeLogRr the standard error of the calibrated relative risk logged}
+ \item{targetSubjects the number of people in the target cohort}
+ \item{comparatorSubjects the number of people in the comparator cohort}
+ \item{targetDays the total number of days at risk across the target cohort people}
+ \item{comparatorDays the total number of days at risk across the comparator cohort people}
+ \item{targetOutcomes the total number of outcomes occuring during the time at risk for the target cohort people}
+ \item{comparatorOutcomes the total number of outcomes occuring during the time at risk for the comparator cohort people}
+ \item{targetEstimator ...}
  }
 }
 \description{
@@ -67,7 +67,7 @@ This function extracts the single database cohort method estimates for results t
 Specify the connectionHandler, the schema and the target/comparator/outcome cohort IDs
 }
 \seealso{
-Other {Estimation}: 
+Other Estimation: 
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
 \code{\link{getSccsDiagnosticsData}()},
@@ -76,4 +76,4 @@ Other {Estimation}:
 \code{\link{plotCmEstimates}()},
 \code{\link{plotSccsEstimates}()}
 }
-\concept{{Estimation}}
+\concept{Estimation}

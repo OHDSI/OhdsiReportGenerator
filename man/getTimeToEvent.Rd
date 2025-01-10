@@ -32,16 +32,16 @@ getTimeToEvent(
 \value{
 Returns a data.frame with the columns:
 \itemize{
- \item{databaseName} \description{the name of the database}
- \item{targetName} \description{the target cohort name}
- \item{targetId} \description{the target cohort unique identifier}
- \item{outcomeName} \description{the outcome name}
- \item{outcomeId} \description{the outcome unique identifier}
- \item{outcomeType} \description{Whether the outcome is the first or subsequent}
- \item{targetOutcomeType} \description{The interval that the outcome occurs}
- \item{timeToEvent} \description{The number of days from index}
- \item{numEvents} \description{The number of target cohort entries}
- \item{timeScale} \description{The correspondin time-scale}
+ \item{databaseName the name of the database}
+ \item{targetName the target cohort name}
+ \item{targetId the target cohort unique identifier}
+ \item{outcomeName the outcome name}
+ \item{outcomeId the outcome unique identifier}
+ \item{outcomeType Whether the outcome is the first or subsequent}
+ \item{targetOutcomeType The interval that the outcome occurs}
+ \item{timeToEvent The number of days from index}
+ \item{numEvents The number of target cohort entries}
+ \item{timeScale The correspondin time-scale}
  }
 }
 \description{
@@ -51,11 +51,10 @@ This function extracts all time to event results across databases for specified 
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
 \seealso{
-Other {Characterization}: 
+Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseCounts}()},
 \code{\link{getCharacterizationDemographics}()},
-\code{\link{getCohortDefinitions}()},
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getRiskFactors}()},
@@ -64,4 +63,4 @@ Other {Characterization}:
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()}
 }
-\concept{{Characterization}}
+\concept{Characterization}

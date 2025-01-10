@@ -11,7 +11,7 @@
 #' @param startAnchor The anchor for the time at risk start
 #' @param endAnchor The anchor for the time at risk end
 #' 
-#' @family {Characterization}
+#' @family Characterization
 #' @return
 #' Returns a ggplot with the distributions
 #' 
@@ -81,13 +81,13 @@ return(result)
 #' @details
 #' Input the data returned from 'getCharacterizationDemographics(type = 'sex')' and the time-at-risk
 #'
-#' @param ageData The sex data extracted using 'getCharacterizationDemographics(type = 'sex')'
+#' @param sexData The sex data extracted using 'getCharacterizationDemographics(type = 'sex')'
 #' @param riskWindowStart The time at risk window start
 #' @param riskWindowEnd The time at risk window end
 #' @param startAnchor The anchor for the time at risk start
 #' @param endAnchor The anchor for the time at risk end
 #' 
-#' @family {Characterization}
+#' @family Characterization
 #' @return
 #' Returns a ggplot with the distributions
 #' 

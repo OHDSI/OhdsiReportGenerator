@@ -32,30 +32,30 @@ getIncidenceRates(
 \value{
 Returns a data.frame with the columns:
 \itemize{
- \item{databaseName} \description{the name of the database}
- \item{targetName} \description{the target cohort name}
- \item{targetId} \description{the target cohort unique identifier}
- \item{outcomeName} \description{the outcome name}
- \item{outcomeId} \description{the outcome unique identifier}
- \item{cleanWindow} \description{clean windown around outcome}
- \item{subgroupName} \description{name for the result subgroup}
- \item{ageGroupName} \description{name for the result age group}
- \item{genderName} \description{name for the result gender group}
- \item{startYear} \description{name for the result start year}
- \item{tarStartWith} \description{time at risk start reference}
- \item{tarStartOffset} \description{time at risk start offset from reference}
- \item{tarEndWith} \description{time at risk end reference}
- \item{tarEndOffset} \description{time at risk end offset from reference}
- \item{personsAtRiskPe} \description{persons at risk per event}
- \item{personsAtRisk} \description{persons at risk}
- \item{personDaysPe} \description{person days per event}
- \item{personDays} \description{person days}
- \item{personOutcomesPe} \description{person outcome per event}
- \item{personOutcomes} \description{persons outcome}
- \item{outcomesPe} \description{number of outcome per event}
- \item{outcomes} \description{number of outcome}
- \item{incidenceProportionP100p} \description{incidence proportion per 100 persons}
- \item{incidenceRateP100py} \description{incidence rate per 100 person years}
+ \item{databaseName the name of the database}
+ \item{targetName the target cohort name}
+ \item{targetId the target cohort unique identifier}
+ \item{outcomeName the outcome name}
+ \item{outcomeId the outcome unique identifier}
+ \item{cleanWindow clean windown around outcome}
+ \item{subgroupName name for the result subgroup}
+ \item{ageGroupName name for the result age group}
+ \item{genderName name for the result gender group}
+ \item{startYear name for the result start year}
+ \item{tarStartWith time at risk start reference}
+ \item{tarStartOffset time at risk start offset from reference}
+ \item{tarEndWith time at risk end reference}
+ \item{tarEndOffset time at risk end offset from reference}
+ \item{personsAtRiskPe persons at risk per event}
+ \item{personsAtRisk persons at risk}
+ \item{personDaysPe person days per event}
+ \item{personDays person days}
+ \item{personOutcomesPe person outcome per event}
+ \item{personOutcomes persons outcome}
+ \item{outcomesPe number of outcome per event}
+ \item{outcomes number of outcome}
+ \item{incidenceProportionP100p incidence proportion per 100 persons}
+ \item{incidenceRateP100py incidence rate per 100 person years}
  }
 }
 \description{
@@ -65,11 +65,10 @@ This function extracts all incidence rates across databases in the results for s
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
 \seealso{
-Other {Characterization}: 
+Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseCounts}()},
 \code{\link{getCharacterizationDemographics}()},
-\code{\link{getCohortDefinitions}()},
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getRiskFactors}()},
 \code{\link{getTargetBinaryFeatures}()},
@@ -78,4 +77,4 @@ Other {Characterization}:
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()}
 }
-\concept{{Characterization}}
+\concept{Characterization}

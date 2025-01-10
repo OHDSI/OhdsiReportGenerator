@@ -9,7 +9,7 @@
 #' @template schema
 #' @template cgTablePrefix
 #' @template targetIds
-#' @family {Characterization}
+#' @family Cohorts
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{

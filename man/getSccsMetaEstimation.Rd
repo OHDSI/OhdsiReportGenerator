@@ -32,30 +32,30 @@ getSccsMetaEstimation(
 \value{
 Returns a data.frame with the columns:
 \itemize{
- #'  \item{databaseName} \description{the database name}
- \item{analysisId} \description{the analysis unique identifier}
- \item{description} \description{an analysis description}
- \item{targetName} \description{the target name}
- \item{targetId} \description{the target cohort id}
- \item{outcomeName} \description{the outcome name}
- \item{outcomeId} \description{the outcome cohort id}
- \item{covariateName} \description{whether main or secondary analysis}
- \item{outcomeSubjects} \description{The number of subjects with at least one outcome.}
- \item{outcomeEvents} \description{The number of outcome events.}
- \item{outcomeObservationPeriods} \description{The number of observation periods containing at least one outcome.}
- \item{covariateSubjects} \description{The number of subjects having the covariate.}
- \item{covariateDays} \description{The total covariate time in days.}
- \item{covariateEras} \description{The number of continuous eras of the covariate.}
- \item{covariateOutcomes} \description{The number of outcomes observed during the covariate time.}
- \item{observedDays} \description{The number of days subjects were observed.}
- \item{calibratedRr} \description{the calibrated relative risk}
- \item{calibratedCi95Lb} \description{the lower bound of the 95 percent confidence interval for the calibrated relative risk}
- \item{calibratedCi95Ub} \description{the upper bound of the 95 percent confidence interval for the calibrated relative risk}
- \item{calibratedP} \description{the calibrated p-value}
- \item{calibratedOneSidedP} \description{the calibrated one sided p-value}
- \item{calibratedLogRr} \description{the calibrated log of the relative risk}
- \item{calibratedSeLogRr} \description{the calibrated log of the relative risk standard error}
- \item{nDatabases} \description{The number of databases included in the estimate.}
+ #'  \item{databaseName the database name}
+ \item{analysisId the analysis unique identifier}
+ \item{description an analysis description}
+ \item{targetName the target name}
+ \item{targetId the target cohort id}
+ \item{outcomeName the outcome name}
+ \item{outcomeId the outcome cohort id}
+ \item{covariateName whether main or secondary analysis}
+ \item{outcomeSubjects The number of subjects with at least one outcome.}
+ \item{outcomeEvents The number of outcome events.}
+ \item{outcomeObservationPeriods The number of observation periods containing at least one outcome.}
+ \item{covariateSubjects The number of subjects having the covariate.}
+ \item{covariateDays The total covariate time in days.}
+ \item{covariateEras The number of continuous eras of the covariate.}
+ \item{covariateOutcomes The number of outcomes observed during the covariate time.}
+ \item{observedDays The number of days subjects were observed.}
+ \item{calibratedRr the calibrated relative risk}
+ \item{calibratedCi95Lb the lower bound of the 95 percent confidence interval for the calibrated relative risk}
+ \item{calibratedCi95Ub the upper bound of the 95 percent confidence interval for the calibrated relative risk}
+ \item{calibratedP the calibrated p-value}
+ \item{calibratedOneSidedP the calibrated one sided p-value}
+ \item{calibratedLogRr the calibrated log of the relative risk}
+ \item{calibratedSeLogRr the calibrated log of the relative risk standard error}
+ \item{nDatabases The number of databases included in the estimate.}
  }
 }
 \description{
@@ -65,7 +65,7 @@ This function extracts any meta analysis estimation results for sccs.
 Specify the connectionHandler, the schema and the targetoutcome cohort IDs
 }
 \seealso{
-Other {Estimation}: 
+Other Estimation: 
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
@@ -74,4 +74,4 @@ Other {Estimation}:
 \code{\link{plotCmEstimates}()},
 \code{\link{plotSccsEstimates}()}
 }
-\concept{{Estimation}}
+\concept{Estimation}
