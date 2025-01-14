@@ -90,7 +90,7 @@ evaluationText <- params$evaluationText
 
 # get databases
 dbs <- OhdsiReportGenerator:::getDbs(
-  resultsSchema = resultsSchema,
+  schema = resultsSchema,
   server = server,
   username = username,
   password = password,

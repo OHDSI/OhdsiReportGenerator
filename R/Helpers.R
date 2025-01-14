@@ -70,7 +70,7 @@ getTars <- function(
     tarColumnNames = c("tarStartWith","tarStartOffset","tarEndWith","tarEndOffset")
     ){
   tar <- data %>% 
-    dplyr::select(tarColumnNames)
+    dplyr::select(dplyr::all_of(tarColumnNames))
   
   tar <- unique(tar)
   tar <- lapply(
@@ -138,7 +138,7 @@ getAnalyses <- function(
 
 # TODO remove or have an input for the name to type?
 getDbs <- function(
-    resultsSchema,
+    schema,
     server,
     username,
     password,
@@ -170,7 +170,7 @@ getDbs <- function(
   sql <- "select CDM_SOURCE_ABBREVIATION from @schema.database_meta_data;"
   sql <- SqlRender::render(
     sql = sql,
-    schema = resultsSchema
+    schema = schema
   )
   res <- DatabaseConnector::querySql(con, sql)
   dbs <- merge(res, dbDetails)$type

@@ -800,7 +800,8 @@ getCharacterizationDemographics <- function(
         "outcomeWashoutDays",
         "personCount"
       ), 
-      by = c("databaseName", 'minPriorObservation', 'outcomeWashoutDays')
+      by = c("databaseName", 'minPriorObservation', 'outcomeWashoutDays'),
+      relationship = "many-to-many" #fix warning
       )
   
   ageDataT <- merge(

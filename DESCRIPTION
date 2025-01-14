@@ -1,6 +1,6 @@
 Package: OhdsiReportGenerator
 Type: Package
-Title: Extract results and generate plots, presentations and reports from OHDSI results database
+Title: Extract results and generate plots, presentations and reports from the Observational Health Data Sciences and Informatics results database
 Version: 1.0.0
 Date: 2024-12-05
 Authors@R: c(
@@ -8,7 +8,7 @@ Authors@R: c(
   person("Anthony", "Sena", email = "...@its.jnj.com", role = c("aut"))
   )
 Maintainer: Jenna Reps <jreps@its.jnj.com>
-Description: Generate OHDSI study reports in HTML format from a json specification.
+Description: Extract analysis results into R data.frames from the Observational Health Data Sciences and Informatics result database and generate reports that summarize results in HTML format.
 License: Apache License 2.0
 URL: https://ohdsi.github.io/OhdsiReportGenerator, https://github.com/OHDSI/OhdsiReportGenerator
 BugReports: https://github.com/OHDSI/OhdsiReportGenerator/issues

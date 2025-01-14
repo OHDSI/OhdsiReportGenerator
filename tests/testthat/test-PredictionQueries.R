@@ -119,11 +119,113 @@ test_that("getPredictionPerformances", {
   
 })
 
-# TODO
-# getPredictionDiagnostics
-# getPredictionPerformanceTable
-# getPredictionDiagnosticTable
-# getPredictionHyperParamSearch
-# getPredictionIntercept
+test_that("getPredictionPerformances", {
+  
+  data <- getPredictionDiagnostics(
+    connectionHandler = connectionHandler, 
+    schema = schema
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  
+  testthat::expect_true('diagnosticId' %in% colnames(data))
+  testthat::expect_true('modelDesignId' %in% colnames(data))
+  testthat::expect_true('developmentDatabaseName' %in% colnames(data))
+  testthat::expect_true('developmentTargetName' %in% colnames(data))
+  testthat::expect_true('developmentOutcomeName' %in% colnames(data))
+  testthat::expect_true('probast1_1' %in% colnames(data))
+  testthat::expect_true('probast1_2' %in% colnames(data))
+  testthat::expect_true('probast2_1' %in% colnames(data))
+  testthat::expect_true('probast2_2' %in% colnames(data))
+  testthat::expect_true('probast2_3' %in% colnames(data))
+  testthat::expect_true('probast3_4' %in% colnames(data))
+  testthat::expect_true('probast3_6' %in% colnames(data))
+  testthat::expect_true('probast4_1' %in% colnames(data))
+  
+  data <- getPredictionDiagnostics(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    modelDesignId = 1
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  testthat::expect_true(max(data$modelDesignId) == 1)
+  
+})
+
+
+test_that("getPredictionPerformances", {
+  
+  data <- getPredictionPerformanceTable(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    table = 'evaluation_statistics', 
+    performanceId = 1
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  
+  testthat::expect_true('performanceId' %in% colnames(data))
+  testthat::expect_true('evaluation' %in% colnames(data))
+  testthat::expect_true('metric' %in% colnames(data))
+  testthat::expect_true('value' %in% colnames(data))
+  testthat::expect_true(max(data$performanceId) == 1)
+  
+})
+
+test_that("getPredictionDiagnosticTable", {
+  
+  data <- getPredictionDiagnosticTable(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    table = 'diagnostic_participants', 
+    diagnosticId = 1
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  
+  testthat::expect_true('diagnosticId' %in% colnames(data))
+  testthat::expect_true('metric' %in% colnames(data))
+  testthat::expect_true('value' %in% colnames(data))
+  testthat::expect_true('probastId' %in% colnames(data))
+  testthat::expect_true('parameter' %in% colnames(data))
+  testthat::expect_true('paramvalue' %in% colnames(data))
+  
+  testthat::expect_true(max(data$diagnosticId) == 1)
+  
+})
+
+test_that("getPredictionHyperParamSearch", {
+  
+  data <- getPredictionHyperParamSearch(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    modelDesignId = 1,
+    databaseId = 1
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  
+  # Does this differ by classifier?
+  testthat::expect_true('metric' %in% colnames(data))
+  testthat::expect_true('fold' %in% colnames(data))
+  testthat::expect_true('value' %in% colnames(data))
+  
+})
+
+
+test_that("getPredictionHyperParamSearch", {
+  
+  data <- getPredictionIntercept(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    modelDesignId = 1,
+    databaseId = 1
+  )
+  
+  testthat::expect_is(data, 'numeric')
+  
+})
+
 
 
