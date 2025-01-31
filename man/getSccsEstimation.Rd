@@ -71,6 +71,19 @@ This function extracts the single database sccs estimates
 \details{
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+sccsEst <- getSccsEstimation(
+  connectionHandler = connectionHandler, 
+  schema = 'main',
+  targetIds = 1,
+  outcomeIds = 3
+)
+
+}
 \seealso{
 Other Estimation: 
 \code{\link{getCMEstimation}()},

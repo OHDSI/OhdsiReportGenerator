@@ -40,6 +40,18 @@
 #' }
 #'
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' topPreds <- getPredictionTopPredictors(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetIds = 1,
+#'   outcomeIds = 3
+#' )
+#' 
 getPredictionTopPredictors <- function(
     connectionHandler,
     schema,
@@ -137,6 +149,16 @@ getPredictionTopPredictors <- function(
 #'}
 #'
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' predCohorts <- getPredictionCohorts(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
 getPredictionCohorts <- function(
     connectionHandler,
     schema,
@@ -221,6 +243,16 @@ getPredictionCohorts <- function(
 #' }
 #' 
 #' @export
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' modDesign <- getPredictionModelDesigns(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
 getPredictionModelDesigns <- function(
     connectionHandler,
     schema,
@@ -431,6 +463,16 @@ getPredictionModelDesigns <- function(
 #'}
 #' 
 #' @export
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' perf <- getPredictionPerformances(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
 getPredictionPerformances <- function(
     connectionHandler,
     schema,
@@ -614,6 +656,16 @@ getPredictionPerformances <- function(
 #'  }
 #' 
 #' @export
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' diag <- getPredictionDiagnostics(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
 getPredictionDiagnostics <- function(
     connectionHandler,
     schema,
@@ -725,6 +777,17 @@ getPredictionDiagnostics <- function(
 #' Returns a data.frame with the specified table
 #' 
 #' @export
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' attrition <- getPredictionPerformanceTable(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   table = 'attrition'
+#' )
+#' 
 getPredictionPerformanceTable <- function(
     connectionHandler,
     schema,
@@ -768,6 +831,17 @@ getPredictionPerformanceTable <- function(
 #' Returns a data.frame with the specified table
 #' 
 #' @export
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' diagPred <- getPredictionDiagnosticTable(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   table = 'diagnostic_predictors'
+#' )
+#' 
 getPredictionDiagnosticTable <- function(
     connectionHandler,
     schema,
@@ -838,7 +912,16 @@ getPredictionDiagnosticTable <- function(
 #' 
 #' 
 #' @export
+#' @examples
+#' conDet <- getExampleConnectionDetails()
 #' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' hyperParams <- getPredictionHyperParamSearch(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#'
 getPredictionHyperParamSearch <- function(
     connectionHandler,
     schema,
@@ -886,7 +969,16 @@ getPredictionHyperParamSearch <- function(
 #' Returns a single value corresponding to the model intercept or NULL if not a logistic regression model
 #' 
 #' @export
+#' @examples
+#' conDet <- getExampleConnectionDetails()
 #' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' intercepts <- getPredictionIntercept(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#'
 getPredictionIntercept <- function(
     connectionHandler,
     schema,

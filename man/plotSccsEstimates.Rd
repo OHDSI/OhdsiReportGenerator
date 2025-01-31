@@ -24,6 +24,25 @@ Creates nice self controlled case series plots
 \details{
 Input the self controlled case series data
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+sccsEst <- getSccsEstimation(
+  connectionHandler = connectionHandler, 
+  schema = 'main',
+  targetIds = 1,
+  outcomeIds = 3
+)
+plotSccsEstimates(
+  sccsData = sccsEst, 
+  sccsMeta = NULL, 
+  targetName = 'target', 
+  selectedAnalysisId = 1
+)
+
+}
 \seealso{
 Other Estimation: 
 \code{\link{getCMEstimation}()},

@@ -32,6 +32,18 @@ This function extracts the specified table
 \details{
 Specify the connectionHandler, the resultDatabaseSettings, the table of interest and (optionally) a performanceId to filter to
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+attrition <- getPredictionPerformanceTable(
+  connectionHandler = connectionHandler, 
+  schema = 'main',
+  table = 'attrition'
+)
+
+}
 \seealso{
 Other Prediction: 
 \code{\link{getPredictionCohorts}()},

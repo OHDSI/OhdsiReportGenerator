@@ -32,6 +32,22 @@ Creates bar charts for the target and case age groups.
 \details{
 Input the data returned from 'getCharacterizationDemographics(type = 'age')' and the time-at-risk
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+ageData <- getCharacterizationDemographics(
+connectionHandler = connectionHandler, 
+schema = 'main',
+targetId = 1, 
+outcomeId = 3, 
+type = 'age'
+)
+
+plotAgeDistributions(ageData = ageData)
+
+}
 \seealso{
 Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},

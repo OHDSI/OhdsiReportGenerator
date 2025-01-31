@@ -56,6 +56,17 @@ This function extracts the PROBAST diagnostics
 \details{
 Specify the connectionHandler, the resultDatabaseSettings and (optionally) a modelDesignId and threshold1_2 a threshold value to use for the PROBAST 1.2
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+diag <- getPredictionDiagnostics(
+  connectionHandler = connectionHandler, 
+  schema = 'main'
+)
+
+}
 \seealso{
 Other Prediction: 
 \code{\link{getPredictionCohorts}()},

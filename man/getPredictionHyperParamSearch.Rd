@@ -38,6 +38,17 @@ This function extracts the hyper parameters details
 \details{
 Specify the connectionHandler, the resultDatabaseSettings, the modelDesignId and the databaseId
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+hyperParams <- getPredictionHyperParamSearch(
+  connectionHandler = connectionHandler, 
+  schema = 'main'
+)
+
+}
 \seealso{
 Other Prediction: 
 \code{\link{getPredictionCohorts}()},

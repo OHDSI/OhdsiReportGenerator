@@ -45,6 +45,17 @@
 #'  } 
 #' 
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cmEst <- getCMEstimation(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetIds = 1,
+#'   outcomeIds = 3
+#' )
 #' 
 getCMEstimation <- function(
     connectionHandler,
@@ -196,6 +207,17 @@ getCMEstimation <- function(
 #'  } 
 #' 
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cmDiag <- getCmDiagnosticsData(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetIds = 1,
+#'   outcomeIds = 3
+#' )
 #' 
 getCmDiagnosticsData <- function(
     connectionHandler,
@@ -334,6 +356,17 @@ getCmDiagnosticsData <- function(
 #'  } 
 #' 
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cmMeta <- getCmMetaEstimation(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetIds = 1,
+#'   outcomeIds = 3
+#' )
 #' 
 getCmMetaEstimation <- function(
     connectionHandler,
@@ -479,6 +512,17 @@ getCmMetaEstimation <- function(
 #'  } 
 #' 
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' sccsEst <- getSccsEstimation(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetIds = 1,
+#'   outcomeIds = 3
+#' )
 #' 
 getSccsEstimation <- function(
     connectionHandler,
@@ -635,6 +679,17 @@ getSccsEstimation <- function(
 #'  } 
 #' 
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' sccsDiag <- getSccsDiagnosticsData(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetIds = 1,
+#'   outcomeIds = 3
+#' )
 #' 
 getSccsDiagnosticsData <- function(
     connectionHandler,
@@ -780,6 +835,17 @@ getSccsDiagnosticsData <- function(
 #'  } 
 #' 
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' sccsMeta <- getSccsMetaEstimation(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetIds = 1,
+#'   outcomeIds = 3
+#' )
 #' 
 getSccsMetaEstimation <- function(
     connectionHandler,

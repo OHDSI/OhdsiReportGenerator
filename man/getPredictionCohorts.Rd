@@ -34,6 +34,17 @@ This function extracts the target and outcome cohorts used to develop any model 
 \details{
 Specify the connectionHandler, the resultDatabaseSettings and any targetIds or outcomeIds to restrict models to
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+predCohorts <- getPredictionCohorts(
+  connectionHandler = connectionHandler, 
+  schema = 'main'
+)
+
+}
 \seealso{
 Other Prediction: 
 \code{\link{getPredictionDiagnosticTable}()},

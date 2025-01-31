@@ -16,6 +16,15 @@
 #'  } 
 #' 
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohortDef <- getCohortDefinitions(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
 #' 
 getCohortDefinitions <- function(
     connectionHandler,
@@ -40,4 +49,56 @@ getCohortDefinitions <- function(
   return(result)
 }
 
-# TODO add code to find parents and children
+processCohorts <- function(cohort){
+  
+  parentCodes <- unique(cohort$subsetParent)
+  
+  cohortList <- list()
+  for(parentCode in parentCodes){
+    cohortList[[length(cohortList)+1]] <- cohort %>% 
+      dplyr::filter(.data$subsetParent == !! parentCode)
+  }
+  names(cohortList) <- parentCodes
+  
+  names(parentCodes) <- sapply(parentCodes, 
+                               function(x){
+                                 cohort$cohortName[cohort$cohortDefinitionId == x]
+                                 }
+                               )
+  
+  return(
+    list(
+      parents = parentCodes,
+      cohortList = cohortList
+    )
+  )
+}
+
+# TODO - find which analyses each cohort is used and whether target or outcome
+
+
+# Code below doesnt work as the table doesnt exist?
+getCohortSubsetDefinitions <- function(
+    connectionHandler,
+    schema,
+    cgTablePrefix = 'cg_',
+    subsetIds = NULL
+){
+  
+  sql <- 'select * 
+  from @schema.@cg_table_prefixcohort_subset_definition
+  {@use_subsets}?{where subset_definition_id in (@subset_id)}
+  ;'
+  
+  result <- tryCatch({connectionHandler$queryDb(
+    sql = sql, 
+    schema = schema,
+    cg_table_prefix = cgTablePrefix,
+    use_subsets = !is.null(subsetIds),
+    subset_id = paste0(subsetIds, collapse = ',')
+  )}, 
+  error = function(e){print(e); return(NULL)}
+  )
+  
+  return(result)
+}

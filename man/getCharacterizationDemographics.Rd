@@ -57,6 +57,19 @@ This function extracts the age group feature extraction results for cases and ta
 \details{
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
+\examples{
+# example code
+
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+ageData <- getCharacterizationDemographics(
+connectionHandler = connectionHandler, 
+schema = 'main'
+)
+
+}
 \seealso{
 Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},

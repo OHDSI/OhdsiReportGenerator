@@ -60,6 +60,19 @@ and checks for different types of bias.
 \details{
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+sccsDiag <- getSccsDiagnosticsData(
+  connectionHandler = connectionHandler, 
+  schema = 'main',
+  targetIds = 1,
+  outcomeIds = 3
+)
+
+}
 \seealso{
 Other Estimation: 
 \code{\link{getCMEstimation}()},

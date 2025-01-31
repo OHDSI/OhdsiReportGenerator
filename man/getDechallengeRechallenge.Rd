@@ -62,6 +62,17 @@ This function extracts all dechallenge rechallenge results across databases for 
 \details{
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+dcrc <- getDechallengeRechallenge(
+connectionHandler = connectionHandler, 
+schema = 'main'
+)
+
+}
 \seealso{
 Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},

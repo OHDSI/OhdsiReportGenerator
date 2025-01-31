@@ -32,6 +32,18 @@ This function extracts the specified diagnostic table
 \details{
 Specify the connectionHandler, the resultDatabaseSettings, the table of interest and (optionally) a diagnosticId to filter to
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+diagPred <- getPredictionDiagnosticTable(
+  connectionHandler = connectionHandler, 
+  schema = 'main',
+  table = 'diagnostic_predictors'
+)
+
+}
 \seealso{
 Other Prediction: 
 \code{\link{getPredictionCohorts}()},

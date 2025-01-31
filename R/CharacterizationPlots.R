@@ -16,6 +16,20 @@
 #' Returns a ggplot with the distributions
 #' 
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' ageData <- getCharacterizationDemographics(
+#' connectionHandler = connectionHandler, 
+#' schema = 'main',
+#' targetId = 1, 
+#' outcomeId = 3, 
+#' type = 'age'
+#' )
+#' 
+#' plotAgeDistributions(ageData = ageData)
 #' 
 plotAgeDistributions <- function(
     ageData,
@@ -92,6 +106,19 @@ return(result)
 #' Returns a ggplot with the distributions
 #' 
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' sexData <- getCharacterizationDemographics(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetId = 1, 
+#'   outcomeId = 3, 
+#'   type = 'sex'
+#' )
+#' plotSexDistributions(sexData = sexData)
 #' 
 plotSexDistributions <- function(
     sexData,

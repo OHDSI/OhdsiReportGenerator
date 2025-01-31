@@ -49,6 +49,17 @@ This function extracts target cohort counts across databases in the results for 
 \details{
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+tc <- getTargetCounts(
+connectionHandler = connectionHandler, 
+schema = 'main'
+)
+
+}
 \seealso{
 Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},

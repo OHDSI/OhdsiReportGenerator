@@ -32,6 +32,21 @@ Creates bar charts for the target and case sex.
 \details{
 Input the data returned from 'getCharacterizationDemographics(type = 'sex')' and the time-at-risk
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+sexData <- getCharacterizationDemographics(
+  connectionHandler = connectionHandler, 
+  schema = 'main',
+  targetId = 1, 
+  outcomeId = 3, 
+  type = 'sex'
+)
+plotSexDistributions(sexData = sexData)
+
+}
 \seealso{
 Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},

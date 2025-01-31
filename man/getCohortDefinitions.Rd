@@ -31,4 +31,15 @@ This function extracts all cohort definitions for the targets of interest.
 \details{
 Specify the connectionHandler, the schema and the target cohort IDs
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+cohortDef <- getCohortDefinitions(
+  connectionHandler = connectionHandler, 
+  schema = 'main'
+)
+
+}
 \concept{Cohorts}

@@ -53,6 +53,17 @@ This function extracts outcome cohort counts across databases in the results for
 \details{
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+cc <- getCaseCounts(
+connectionHandler = connectionHandler, 
+schema = 'main'
+)
+
+}
 \seealso{
 Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},

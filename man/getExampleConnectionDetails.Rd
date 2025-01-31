@@ -15,6 +15,12 @@ This returns an object of class `ConnectionDetails` that lets you connect via `D
 \details{
 Finds the location of the example result database in the package and calls `DatabaseConnector::createConnectionDetails` to create a `ConnectionDetails` object for connecting to the database.
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+}
 \seealso{
 Other helper: 
 \code{\link{removeSpaces}()}

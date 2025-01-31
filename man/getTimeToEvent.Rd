@@ -50,6 +50,17 @@ This function extracts all time to event results across databases for specified 
 \details{
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+tte <- getTimeToEvent(
+connectionHandler = connectionHandler, 
+schema = 'main'
+)
+ 
+}
 \seealso{
 Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},

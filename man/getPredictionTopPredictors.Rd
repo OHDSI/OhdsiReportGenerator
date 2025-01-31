@@ -61,6 +61,19 @@ This function extracts the top N predictors per model from the prediction result
 \details{
 Specify the connectionHandler, the resultDatabaseSettings and (optionally) any targetIds or outcomeIds to restrict models to
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+topPreds <- getPredictionTopPredictors(
+  connectionHandler = connectionHandler, 
+  schema = 'main',
+  targetIds = 1,
+  outcomeIds = 3
+)
+
+}
 \seealso{
 Other Prediction: 
 \code{\link{getPredictionCohorts}()},

@@ -16,6 +16,24 @@
 #' Returns a ggplot with the estimates
 #' 
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cmEst <- getCMEstimation(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetIds = 1,
+#'   outcomeIds = 3
+#' )
+#' plotCmEstimates(
+#'   cmData = cmEst, 
+#'   cmMeta = NULL, 
+#'   targetName = 'target', 
+#'   comparatorName = 'comp', 
+#'   selectedAnalysisId = 1
+#' )
 #' 
 plotCmEstimates <- function(
     cmData,
@@ -205,7 +223,24 @@ plotCmEstimates <- function(
 #' Returns a ggplot with the estimates
 #' 
 #' @export
-#'
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' sccsEst <- getSccsEstimation(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetIds = 1,
+#'   outcomeIds = 3
+#' )
+#' plotSccsEstimates(
+#'   sccsData = sccsEst, 
+#'   sccsMeta = NULL, 
+#'   targetName = 'target', 
+#'   selectedAnalysisId = 1
+#' )
+#' 
 plotSccsEstimates <- function(
     sccsData,
     sccsMeta = NULL,

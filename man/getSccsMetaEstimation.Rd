@@ -64,6 +64,19 @@ This function extracts any meta analysis estimation results for sccs.
 \details{
 Specify the connectionHandler, the schema and the targetoutcome cohort IDs
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+sccsMeta <- getSccsMetaEstimation(
+  connectionHandler = connectionHandler, 
+  schema = 'main',
+  targetIds = 1,
+  outcomeIds = 3
+)
+
+}
 \seealso{
 Other Estimation: 
 \code{\link{getCMEstimation}()},

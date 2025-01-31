@@ -41,6 +41,19 @@ A function to extract non-case and case characterization results
 \details{
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+rf <- getRiskFactors(
+  connectionHandler = connectionHandler, 
+  schema = 'main',
+  targetId = 1, 
+  outcomeId = 3
+)
+
+}
 \seealso{
 Other Characterization: 
 \code{\link{getCaseBinaryFeatures}()},

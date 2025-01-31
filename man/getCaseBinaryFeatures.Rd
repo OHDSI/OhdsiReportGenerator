@@ -57,6 +57,17 @@ This function extracts the feature extraction results for cases corresponding to
 \details{
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+cbf <- getCaseBinaryFeatures(
+connectionHandler = connectionHandler, 
+schema = 'main'
+)
+
+}
 \seealso{
 Other Characterization: 
 \code{\link{getCaseCounts}()},

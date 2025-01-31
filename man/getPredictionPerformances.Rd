@@ -70,6 +70,17 @@ This function extracts the model performances
 \details{
 Specify the connectionHandler, the resultDatabaseSettings and (optionally) a modelDesignId and/or developmentDatabaseId to restrict models to
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+perf <- getPredictionPerformances(
+  connectionHandler = connectionHandler, 
+  schema = 'main'
+)
+
+}
 \seealso{
 Other Prediction: 
 \code{\link{getPredictionCohorts}()},

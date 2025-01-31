@@ -68,6 +68,19 @@ This function extracts any meta analysis estimation results for cohort method.
 \details{
 Specify the connectionHandler, the schema and the target/comparator/outcome cohort IDs
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+cmMeta <- getCmMetaEstimation(
+  connectionHandler = connectionHandler, 
+  schema = 'main',
+  targetIds = 1,
+  outcomeIds = 3
+)
+
+}
 \seealso{
 Other Estimation: 
 \code{\link{getCMEstimation}()},

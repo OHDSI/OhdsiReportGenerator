@@ -28,6 +28,11 @@
 #' @family helper
 #'
 #' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
 getExampleConnectionDetails <- function() {
   server <- system.file("exampledata", "results.sqlite", package = "OhdsiReportGenerator")
   cd <- DatabaseConnector::createConnectionDetails(

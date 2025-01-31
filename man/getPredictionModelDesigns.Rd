@@ -60,6 +60,17 @@ using the model design across databases
 \details{
 Specify the connectionHandler, the resultDatabaseSettings and (optionally) any targetIds or outcomeIds to restrict model designs to
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+modDesign <- getPredictionModelDesigns(
+  connectionHandler = connectionHandler, 
+  schema = 'main'
+)
+
+}
 \seealso{
 Other Prediction: 
 \code{\link{getPredictionCohorts}()},

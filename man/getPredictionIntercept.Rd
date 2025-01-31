@@ -32,6 +32,17 @@ This function extracts the interception value
 \details{
 Specify the connectionHandler, the resultDatabaseSettings, the modelDesignId and the databaseId
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+intercepts <- getPredictionIntercept(
+  connectionHandler = connectionHandler, 
+  schema = 'main'
+)
+
+}
 \seealso{
 Other Prediction: 
 \code{\link{getPredictionCohorts}()},

@@ -32,6 +32,26 @@ Creates nice cohort method plots
 \details{
 Input the cohort method data
 }
+\examples{
+conDet <- getExampleConnectionDetails()
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+
+cmEst <- getCMEstimation(
+  connectionHandler = connectionHandler, 
+  schema = 'main',
+  targetIds = 1,
+  outcomeIds = 3
+)
+plotCmEstimates(
+  cmData = cmEst, 
+  cmMeta = NULL, 
+  targetName = 'target', 
+  comparatorName = 'comp', 
+  selectedAnalysisId = 1
+)
+
+}
 \seealso{
 Other Estimation: 
 \code{\link{getCMEstimation}()},

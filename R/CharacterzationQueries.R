@@ -45,6 +45,16 @@
 #' 
 #' @export
 #' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' ir <- getIncidenceRates(
+#' connectionHandler = connectionHandler, 
+#' schema = 'main'
+#' )
+#' 
 getIncidenceRates <- function(
     connectionHandler,
     schema,
@@ -163,6 +173,16 @@ getIncidenceRates <- function(
 #' 
 #' @export
 #' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' tte <- getTimeToEvent(
+#' connectionHandler = connectionHandler, 
+#' schema = 'main'
+#' )
+#'  
 getTimeToEvent <- function(
     connectionHandler,
     schema,
@@ -262,6 +282,16 @@ getTimeToEvent <- function(
 #' 
 #' @export
 #' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' dcrc <- getDechallengeRechallenge(
+#' connectionHandler = connectionHandler, 
+#' schema = 'main'
+#' )
+#' 
 getDechallengeRechallenge <- function(
     connectionHandler,
     schema,
@@ -359,6 +389,16 @@ getDechallengeRechallenge <- function(
 #'  } 
 #' 
 #' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' tc <- getTargetCounts(
+#' connectionHandler = connectionHandler, 
+#' schema = 'main'
+#' )
 #' 
 getTargetCounts <- function(
     connectionHandler,
@@ -516,6 +556,16 @@ cc.target_cohort_id = s2.target_cohort_id
 #' 
 #' @export
 #' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cc <- getCaseCounts(
+#' connectionHandler = connectionHandler, 
+#' schema = 'main'
+#' )
+#' 
 getCaseCounts <- function(
     connectionHandler,
     schema,
@@ -616,6 +666,16 @@ getCaseCounts <- function(
 #' } 
 #' 
 #' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cbf <- getCaseBinaryFeatures(
+#' connectionHandler = connectionHandler, 
+#' schema = 'main'
+#' )
 #' 
 getCaseBinaryFeatures <- function(
     connectionHandler,
@@ -744,6 +804,17 @@ result <- connectionHandler$queryDb(
 #' } 
 #' 
 #' @export
+#' @examples
+#' # example code
+#' 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' ageData <- getCharacterizationDemographics(
+#' connectionHandler = connectionHandler, 
+#' schema = 'main'
+#' )
 #' 
 getCharacterizationDemographics <- function(
     connectionHandler,
@@ -859,6 +930,16 @@ return(allData)
 #' } 
 #' 
 #' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' tbf <- getTargetBinaryFeatures (
+#' connectionHandler = connectionHandler, 
+#' schema = 'main'
+#' )
 #' 
 getTargetBinaryFeatures <- function(
     connectionHandler,
@@ -1053,6 +1134,19 @@ return(result)
 #' A data.frame with the characterization results for the cases and non-cases
 #'
 #' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' rf <- getRiskFactors(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetId = 1, 
+#'   outcomeId = 3
+#' )
+#' 
 getRiskFactors <- function(
     connectionHandler,
     schema,
