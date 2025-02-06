@@ -319,3 +319,62 @@ test_that("getContinuousRiskFactors", {
   testthat::expect_true( 'SMD' %in% colnames(data))
   
 })
+
+test_that("getBinaryCaseSeries", {
+  # age works
+  data <-  getBinaryCaseSeries(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetId = 1, 
+    outcomeId = 3
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  
+  testthat::expect_true( 'databaseName' %in% colnames(data))
+  testthat::expect_true( 'targetName' %in% colnames(data))
+  testthat::expect_true( 'outcomeName' %in% colnames(data))
+  testthat::expect_true( 'covariateName' %in% colnames(data))
+  testthat::expect_true( 'minPriorObservation' %in% colnames(data))
+  testthat::expect_true( 'outcomeWashoutDays' %in% colnames(data))
+  testthat::expect_true( 'casePostOutcomeDuration' %in% colnames(data))
+  testthat::expect_true( 'casePreTargetDuration' %in% colnames(data))
+  testthat::expect_true( 'riskWindowStart' %in% colnames(data))
+  testthat::expect_true( 'startAnchor' %in% colnames(data))
+  testthat::expect_true( 'riskWindowEnd' %in% colnames(data))
+  testthat::expect_true( 'endAnchor' %in% colnames(data))
+  testthat::expect_true( 'sumValue' %in% colnames(data))
+  testthat::expect_true( 'averageValue' %in% colnames(data))
+  testthat::expect_true( 'type' %in% colnames(data))
+  
+})
+
+test_that("getContinuousCaseSeries", {
+  # age works
+  data <-  getContinuousCaseSeries(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetId = 1, 
+    outcomeId = 3
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  
+  testthat::expect_true( 'databaseName' %in% colnames(data))
+  testthat::expect_true( 'targetName' %in% colnames(data))
+  testthat::expect_true( 'outcomeName' %in% colnames(data))
+  testthat::expect_true( 'covariateName' %in% colnames(data))
+  testthat::expect_true( 'minPriorObservation' %in% colnames(data))
+  testthat::expect_true( 'outcomeWashoutDays' %in% colnames(data))
+  testthat::expect_true( 'casePostOutcomeDuration' %in% colnames(data))
+  testthat::expect_true( 'casePreTargetDuration' %in% colnames(data))
+  testthat::expect_true( 'riskWindowStart' %in% colnames(data))
+  testthat::expect_true( 'startAnchor' %in% colnames(data))
+  testthat::expect_true( 'riskWindowEnd' %in% colnames(data))
+  testthat::expect_true( 'endAnchor' %in% colnames(data))
+  testthat::expect_true( 'countValue' %in% colnames(data))
+  testthat::expect_true( 'averageValue' %in% colnames(data))
+  testthat::expect_true( 'standardDeviation' %in% colnames(data))
+  testthat::expect_true( 'type' %in% colnames(data))
+  
+})

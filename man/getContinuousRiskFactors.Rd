@@ -56,11 +56,13 @@ rf <- getContinuousRiskFactors(
 }
 \seealso{
 Other Characterization: 
+\code{\link{getBinaryCaseSeries}()},
 \code{\link{getBinaryRiskFactors}()},
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseContinuousFeatures}()},
 \code{\link{getCaseCounts}()},
 \code{\link{getCharacterizationDemographics}()},
+\code{\link{getContinuousCaseSeries}()},
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getTargetBinaryFeatures}()},

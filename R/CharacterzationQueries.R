@@ -1837,3 +1837,264 @@ processContinuousRiskFactorFeatures <- function(
 
   return(allData) 
 }
+
+
+# case series data.frame
+#' A function to extract case series characterization results
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target/outcome cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetId
+#' @template outcomeId
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the characterization case series results
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cs <- getBinaryCaseSeries(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetId = 1, 
+#'   outcomeId = 3
+#' )
+#' 
+getBinaryCaseSeries <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    targetId = NULL,
+    outcomeId = NULL
+){
+  if(is.null(targetId)){
+    stop('targetId must be entered')
+  }
+  if(is.null(outcomeId)){
+    stop('targetId must be entered')
+  }
+  if(length(targetId) > 1){
+    stop('Must be single targetId')
+  }
+  if(length(outcomeId) > 1){
+    stop('Must be single outcomeId')
+  }
+  
+  sql <-  
+    "
+SELECT 
+cov.database_id,
+ d.CDM_SOURCE_ABBREVIATION as database_name,
+ target.cohort_name as target_name,
+cov.TARGET_COHORT_ID,
+outcome.cohort_name as outcome_name,
+cov.Outcome_COHORT_ID,
+  case 
+  when cov.cohort_type = 'CasesBefore' then 'Before'
+  when cov.cohort_type = 'CasesBetween' then 'During'
+  when cov.cohort_type = 'CasesAfter' then 'After'
+  end as type, 
+  cr.covariate_name, 
+  cr.covariate_id, 
+  s.min_prior_observation, 
+  s.outcome_washout_days,
+  s.case_post_outcome_duration, 
+  s.case_pre_target_duration,
+  s.risk_window_start,
+  s.start_anchor,
+  s.risk_window_end,
+  s.end_anchor,
+  cov.sum_value, 
+  cov.average_value 
+          from
+          @schema.@c_table_prefixcovariates cov
+          inner join  @schema.@c_table_prefixcovariate_ref cr
+          on cov.setting_id = cr.setting_id and 
+          cov.database_id = cr.database_id and 
+          cov.covariate_id = cr.covariate_id
+          
+          inner join @schema.@c_table_prefixsettings s
+          on cov.setting_id = s.setting_id
+          and cov.database_id = s.database_id
+          
+            inner join
+  @schema.@database_table d
+  on 
+  cov.database_id = d.database_id
+  
+    inner join 
+  @schema.@cg_table_prefixcohort_definition target
+  on 
+  target.cohort_definition_id = cov.target_cohort_ID
+    
+  inner join 
+  @schema.@cg_table_prefixcohort_definition outcome
+  on 
+  outcome.cohort_definition_id = cov.outcome_cohort_ID
+
+          where cov.target_cohort_id = @target_id
+          and cov.outcome_cohort_id = @outcome_id
+          and cov.cohort_type in ('CasesBetween','CasesAfter','CasesBefore')
+          and cr.analysis_id in (109, 110, 217, 218, 305, 417, 418, 505, 605, 713, 805, 926, 927)
+;
+"
+
+result <- connectionHandler$queryDb(
+  sql = sql,
+  schema = schema,
+  target_id = paste0(targetId, collapse = ','),
+  outcome_id = paste0(outcomeId, collapse = ','),
+  c_table_prefix = cTablePrefix,
+  cg_table_prefix = cgTablePrefix,
+  database_table = databaseTable
+)
+  
+  return(result)
+}
+
+
+#' A function to extract case series continuous feature characterization results
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target/outcome cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetId
+#' @template outcomeId
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the characterization case series results
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cs <- getContinuousCaseSeries(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetId = 1, 
+#'   outcomeId = 3
+#' )
+#' 
+getContinuousCaseSeries <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    targetId = NULL,
+    outcomeId = NULL
+){
+  if(is.null(targetId)){
+    stop('targetId must be entered')
+  }
+  if(is.null(outcomeId)){
+    stop('targetId must be entered')
+  }
+  if(length(targetId) > 1){
+    stop('Must be single targetId')
+  }
+  if(length(outcomeId) > 1){
+    stop('Must be single outcomeId')
+  }
+  
+  sql <-  
+    "
+SELECT 
+cov.database_id,
+ d.CDM_SOURCE_ABBREVIATION as database_name,
+ target.cohort_name as target_name,
+cov.TARGET_COHORT_ID,
+outcome.cohort_name as outcome_name,
+cov.Outcome_COHORT_ID,
+  case 
+  when cov.cohort_type = 'CasesBefore' then 'Before'
+  when cov.cohort_type = 'CasesBetween' then 'During'
+  when cov.cohort_type = 'CasesAfter' then 'After'
+  end as type, 
+  cr.covariate_name, 
+  cr.covariate_id, 
+  s.min_prior_observation, 
+  s.outcome_washout_days,
+  s.case_post_outcome_duration, 
+  s.case_pre_target_duration,
+  s.risk_window_start,
+  s.start_anchor,
+  s.risk_window_end,
+  s.end_anchor,
+  cov.count_value, 
+  cov.min_value,
+cov.max_value,
+cov.average_value,
+cov.standard_deviation,
+cov.median_value,
+cov.p_10_value,
+cov.p_25_value,
+cov.p_75_value,
+cov.p_90_value
+
+          from
+          @schema.@c_table_prefixcovariates_continuous cov
+          inner join  @schema.@c_table_prefixcovariate_ref cr
+          on cov.setting_id = cr.setting_id and 
+          cov.database_id = cr.database_id and 
+          cov.covariate_id = cr.covariate_id
+          
+          inner join @schema.@c_table_prefixsettings s
+          on cov.setting_id = s.setting_id
+          and cov.database_id = s.database_id
+          
+            inner join
+  @schema.@database_table d
+  on 
+  cov.database_id = d.database_id
+  
+    inner join 
+  @schema.@cg_table_prefixcohort_definition target
+  on 
+  target.cohort_definition_id = cov.target_cohort_ID
+    
+  inner join 
+  @schema.@cg_table_prefixcohort_definition outcome
+  on 
+  outcome.cohort_definition_id = cov.outcome_cohort_ID
+
+          where cov.target_cohort_id = @target_id
+          and cov.outcome_cohort_id = @outcome_id
+          and cov.cohort_type in ('CasesBetween','CasesAfter','CasesBefore')
+;
+"
+  
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    target_id = paste0(targetId, collapse = ','),
+    outcome_id = paste0(outcomeId, collapse = ','),
+    c_table_prefix = cTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable
+  )
+  
+  return(result)
+}

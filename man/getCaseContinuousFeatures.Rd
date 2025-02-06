@@ -76,10 +76,12 @@ schema = 'main'
 }
 \seealso{
 Other Characterization: 
+\code{\link{getBinaryCaseSeries}()},
 \code{\link{getBinaryRiskFactors}()},
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseCounts}()},
 \code{\link{getCharacterizationDemographics}()},
+\code{\link{getContinuousCaseSeries}()},
 \code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getIncidenceRates}()},
