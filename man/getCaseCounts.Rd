@@ -66,12 +66,15 @@ schema = 'main'
 }
 \seealso{
 Other Characterization: 
+\code{\link{getBinaryRiskFactors}()},
 \code{\link{getCaseBinaryFeatures}()},
+\code{\link{getCaseContinuousFeatures}()},
 \code{\link{getCharacterizationDemographics}()},
+\code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getIncidenceRates}()},
-\code{\link{getRiskFactors}()},
 \code{\link{getTargetBinaryFeatures}()},
+\code{\link{getTargetContinuousFeatures}()},
 \code{\link{getTargetCounts}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},

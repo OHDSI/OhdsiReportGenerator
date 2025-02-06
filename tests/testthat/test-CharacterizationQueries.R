@@ -260,9 +260,9 @@ test_that("getTargetBinaryFeatures", {
   testthat::expect_true(unique(data$outcomeCohortId) == 3)
 })
 
-test_that("getRiskFactors", {
+test_that("getBinaryRiskFactors", {
   # age works
-  data <-  getRiskFactors(
+  data <-  getBinaryRiskFactors(
     connectionHandler = connectionHandler, 
     schema = 'main', 
     targetId = 1, 
@@ -283,7 +283,7 @@ test_that("getRiskFactors", {
   testthat::expect_true( 'SMD' %in% colnames(data))
   
   # add code to test values sum to 1
-  data <-  getRiskFactors(
+  data <-  getBinaryRiskFactors(
     connectionHandler = connectionHandler, 
     schema = 'main', 
     targetId = 1, 
@@ -297,4 +297,25 @@ test_that("getRiskFactors", {
 })
 
 
-
+test_that("getContinuousRiskFactors", {
+  # age works
+  data <-  getContinuousRiskFactors(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetId = 1, 
+    outcomeId = 3
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  
+  testthat::expect_true( 'databaseName' %in% colnames(data))
+  testthat::expect_true( 'targetName' %in% colnames(data))
+  testthat::expect_true( 'outcomeName' %in% colnames(data))
+  testthat::expect_true( 'covariateName' %in% colnames(data))
+  testthat::expect_true( 'caseCountValue' %in% colnames(data))
+  testthat::expect_true( 'caseAverageValue' %in% colnames(data))
+  testthat::expect_true( 'targetCountValue' %in% colnames(data))
+  testthat::expect_true( 'targetAverageValue' %in% colnames(data))
+  testthat::expect_true( 'SMD' %in% colnames(data))
+  
+})

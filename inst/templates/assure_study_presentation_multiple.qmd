@@ -365,7 +365,7 @@ cat('\n\n::::')
     outcomeId <- outcomeIds[outcomeInd]
     outcomeName <- outcomeNames[outcomeInd]
     
-    chars <- OhdsiReportGenerator::getRiskFactors(
+    chars <- OhdsiReportGenerator::getBinaryRiskFactors(
       connectionHandler = connectionHandler,
       schema = resultsSchema,
       targetId = targetId,

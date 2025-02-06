@@ -1115,7 +1115,7 @@ return(result)
 
 
 
-#' A function to extract non-case and case characterization results
+#' A function to extract non-case and case binary characterization results
 #'
 #' @details
 #' Specify the connectionHandler, the schema and the target/outcome cohort IDs
@@ -1140,14 +1140,14 @@ return(result)
 #' 
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #' 
-#' rf <- getRiskFactors(
+#' rf <- getBinaryRiskFactors(
 #'   connectionHandler = connectionHandler, 
 #'   schema = 'main',
 #'   targetId = 1, 
 #'   outcomeId = 3
 #' )
 #' 
-getRiskFactors <- function(
+getBinaryRiskFactors <- function(
     connectionHandler,
     schema,
     cTablePrefix = 'c_',
@@ -1212,7 +1212,7 @@ getRiskFactors <- function(
     analysisIds = analysisIds
   )
   
-  result <- processRiskFactorFeatures(
+  result <- processBinaryRiskFactorFeatures(
     caseCounts = caseCounts,
     targetCounts = targetCounts,
     caseFeatures = caseFeatures,
@@ -1224,7 +1224,7 @@ return(result)
 
 
 # function that takes the counts and features and calculates the smd
-processRiskFactorFeatures <- function(
+processBinaryRiskFactorFeatures <- function(
     caseCounts = caseCounts,
     targetCounts = targetCounts,
     caseFeatures = caseFeatures,
@@ -1351,4 +1351,489 @@ processRiskFactorFeatures <- function(
 }
   
 return(allData) 
+}
+
+
+
+
+#' Extract aggregate statistics of continuous feature analysis IDs of interest for targets
+#' @description
+#' This function extracts the continuous feature extraction results for targets corresponding to specified target cohorts.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target/outcome cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetIds
+#' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
+#' @family Characterization
+#' @return
+#' Returns a data.frame with the columns:
+#' \itemize{
+#'  \item{databaseName the name of the database}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{minPriorObservation the minimum required observation days prior to index for an entry}
+#'  \item{covariateName the name of the feature}
+#'  \item{covariateId the id of the feature}
+#'  \item{countValue the number of cases who have the feature}
+#'  \item{minValue the minimum value observed for the feature}
+#'  \item{maxValue the maximum value observed for the feature}
+#'  \item{averageValue the mean value observed for the feature}
+#'  \item{standardDeviation the standard deviation of the value observed for the feature}
+#'  \item{medianValue the median value observed for the feature}
+#'  \item{p10Value the 10th percentile of the value observed for the feature}
+#'  \item{p25Value the 25th percentile of the value observed for the feature}
+#'  \item{p75Value the 75th percentile of the value observed for the feature}
+#'  \item{p90Value the 90th percentile of the value observed for the feature}
+#'  
+#' } 
+#' 
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' tcf <- getTargetContinuousFeatures(
+#' connectionHandler = connectionHandler, 
+#' schema = 'main'
+#' )
+#' 
+getTargetContinuousFeatures <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    targetIds = NULL,
+    analysisIds = NULL
+){
+  
+  sql <-  
+    "
+select 
+d.CDM_SOURCE_ABBREVIATION as database_name,
+target.cohort_name as target_name,
+t.TARGET_COHORT_ID,
+t.min_prior_observation,
+t.covariate_name,
+t.covariate_id,
+t.count_value,
+t.min_value,
+t.max_value,
+t.average_value,
+t.standard_deviation,
+t.median_value,
+t.p_10_value,
+t.p_25_value,
+t.p_75_value,
+t.p_90_value
+ 
+FROM 
+
+(select 
+c.database_id,
+cd.TARGET_COHORT_ID,
+s.min_prior_observation,
+coi.covariate_name,
+coi.covariate_id,
+c.count_value,
+c.min_value,
+c.max_value,
+c.average_value,
+c.standard_deviation,
+c.median_value,
+c.p_10_value,
+c.p_25_value,
+c.p_75_value,
+c.p_90_value
+
+from @schema.@c_table_prefixCOVARIATES_CONTINUOUS c
+ inner join
+(
+select * from @schema.@c_table_prefixCOVARIATE_REF 
+{@use_analysis}?{ where analysis_id in (@analysis_ids)}
+) coi
+
+on 
+c.database_id = coi.database_id and
+c.setting_id = coi.setting_id and
+c.covariate_id = coi.covariate_id
+
+inner join
+@schema.@c_table_prefixCOHORT_DETAILS cd
+
+on cd.TARGET_COHORT_ID = c.TARGET_COHORT_ID
+and cd.COHORT_TYPE = c.COHORT_TYPE
+and cd.database_id = c.database_id 
+and cd.setting_id = c.setting_id 
+
+inner join @schema.@c_table_prefixsettings s
+on s.setting_id = c.setting_id
+and s.database_id = c.database_id
+
+where 
+cd.COHORT_TYPE = 'Target'
+{@use_target}?{ and c.TARGET_COHORT_ID in (@target_id)}
+) t
+
+  inner join
+  @schema.@database_table d
+  on 
+  t.database_id = d.database_id
+
+  inner join 
+  @schema.@cg_table_prefixcohort_definition target
+  on 
+  target.cohort_definition_id = t.target_cohort_ID
+    
+;
+"
+
+result <- connectionHandler$queryDb(
+  sql = sql,
+  schema = schema,
+  target_id = paste0(targetIds, collapse = ','),
+  use_target = !is.null(targetIds),
+  c_table_prefix = cTablePrefix,
+  cg_table_prefix = cgTablePrefix,
+  database_table = databaseTable,
+  use_analysis = !is.null(analysisIds),
+  analysis_ids = paste0(analysisIds, collapse = ',')
+)
+
+return(result)
+}
+
+#' Extract aggregate statistics of continuous feature analysis IDs of interest for targets
+#' @description
+#' This function extracts the continuous feature extraction results for cases corresponding to specified target and outcome cohorts.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target/outcome cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetIds
+#' @template outcomeIds
+#' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
+#' @family Characterization
+#' @return
+#' Returns a data.frame with the columns:
+#' \itemize{
+#'  \item{databaseName the name of the database}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{outcomeName the outcome name}
+#'  \item{outcomeId the outcome unique identifier}
+#'  \item{minPriorObservation the minimum required observation days prior to index for an entry}
+#'  \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+#'  \item{covariateName the name of the feature}
+#'  \item{covariateId the id of the feature}
+#'  \item{countValue the number of cases who have the feature}
+#'  \item{minValue the minimum value observed for the feature}
+#'  \item{maxValue the maximum value observed for the feature}
+#'  \item{averageValue the mean value observed for the feature}
+#'  \item{standardDeviation the standard deviation of the value observed for the feature}
+#'  \item{medianValue the median value observed for the feature}
+#'  \item{p10Value the 10th percentile of the value observed for the feature}
+#'  \item{p25Value the 25th percentile of the value observed for the feature}
+#'  \item{p75Value the 75th percentile of the value observed for the feature}
+#'  \item{p90Value the 90th percentile of the value observed for the feature}
+#'  
+#' } 
+#' 
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' ccf <- getCaseContinuousFeatures(
+#' connectionHandler = connectionHandler, 
+#' schema = 'main'
+#' )
+#' 
+getCaseContinuousFeatures <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    targetIds = NULL,
+    outcomeIds = NULL,
+    analysisIds = NULL
+){
+  
+  sql <-  
+    "
+select 
+d.CDM_SOURCE_ABBREVIATION as database_name,
+target.cohort_name as target_name,
+t.TARGET_COHORT_ID,
+outcome.cohort_name as outcome_name,
+t.Outcome_COHORT_ID,
+t.min_prior_observation,
+t.outcome_washout_days,
+t.covariate_name,
+t.covariate_id,
+t.count_value,
+t.min_value,
+t.max_value,
+t.average_value,
+t.standard_deviation,
+t.median_value,
+t.p_10_value,
+t.p_25_value,
+t.p_75_value,
+t.p_90_value
+ 
+FROM 
+
+(select 
+c.database_id,
+c.TARGET_COHORT_ID,
+c.Outcome_COHORT_ID,
+s.min_prior_observation,
+s.outcome_washout_days,
+coi.covariate_name,
+coi.covariate_id,
+c.count_value,
+c.min_value,
+c.max_value,
+c.average_value,
+c.standard_deviation,
+c.median_value,
+c.p_10_value,
+c.p_25_value,
+c.p_75_value,
+c.p_90_value
+
+from @schema.@c_table_prefixCOVARIATES_CONTINUOUS c
+ inner join
+(
+select * from @schema.@c_table_prefixCOVARIATE_REF 
+{@use_analysis}?{ where analysis_id in (@analysis_ids)}
+) coi
+
+on 
+c.database_id = coi.database_id and
+c.setting_id = coi.setting_id and
+c.covariate_id = coi.covariate_id
+
+inner join
+@schema.@c_table_prefixCOHORT_DETAILS cd
+
+on cd.TARGET_COHORT_ID = c.TARGET_COHORT_ID
+and cd.OUTCOME_COHORT_ID = c.OUTCOME_COHORT_ID
+and cd.COHORT_TYPE = c.COHORT_TYPE
+and cd.database_id = c.database_id 
+and cd.setting_id = c.setting_id 
+
+inner join @schema.@c_table_prefixsettings s
+on s.setting_id = c.setting_id
+and s.database_id = c.database_id
+
+where 
+cd.COHORT_TYPE = 'Cases'
+{@use_target}?{ and c.TARGET_COHORT_ID in (@target_id)}
+{@use_outcome}?{ and c.outcome_cohort_id in (@outcome_id)}
+) t
+
+  inner join
+  @schema.@database_table d
+  on 
+  t.database_id = d.database_id
+
+  inner join 
+  @schema.@cg_table_prefixcohort_definition target
+  on 
+  target.cohort_definition_id = t.target_cohort_ID
+    
+  inner join 
+  @schema.@cg_table_prefixcohort_definition outcome
+  on 
+  outcome.cohort_definition_id = t.outcome_cohort_ID
+
+;
+"
+
+result <- connectionHandler$queryDb(
+  sql = sql,
+  schema = schema,
+  target_id = paste0(targetIds, collapse = ','),
+  use_target = !is.null(targetIds),
+  outcome_id = paste0(outcomeIds, collapse = ','),
+  use_outcome = !is.null(outcomeIds),
+  c_table_prefix = cTablePrefix,
+  cg_table_prefix = cgTablePrefix,
+  database_table = databaseTable,
+  use_analysis = !is.null(analysisIds),
+  analysis_ids = paste0(analysisIds, collapse = ',')
+)
+
+return(result)
+}
+
+
+
+
+#' A function to extract non-case and case continuous characterization results
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target/outcome cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetId
+#' @template outcomeId
+#' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the characterization results for the cases and non-cases
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' rf <- getContinuousRiskFactors(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetId = 1, 
+#'   outcomeId = 3
+#' )
+#' 
+getContinuousRiskFactors <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    targetId = NULL,
+    outcomeId = NULL,
+    analysisIds = NULL
+){
+  if(is.null(targetId)){
+    stop('targetId must be entered')
+  }
+  if(is.null(outcomeId)){
+    stop('targetId must be entered')
+  }
+  if(length(targetId) > 1){
+    stop('Must be single targetId')
+  }
+  if(length(outcomeId) > 1){
+    stop('Must be single outcomeId')
+  }
+  
+  caseFeatures <- getCaseContinuousFeatures(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = cTablePrefix,
+    cgTablePrefix = cgTablePrefix,
+    databaseTable = databaseTable,
+    targetIds = targetId,
+    outcomeIds = outcomeId,
+    analysisIds = analysisIds
+  )
+  
+  targetFeatures <- getTargetContinuousFeatures(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = cTablePrefix,
+    cgTablePrefix = cgTablePrefix,
+    databaseTable = databaseTable,
+    targetIds = targetId,
+    analysisIds = analysisIds
+  )
+  
+  result <- processContinuousRiskFactorFeatures(
+    caseFeatures = caseFeatures,
+    targetFeatures = targetFeatures
+  )
+  
+  return(result)
+}
+
+
+# function that takes the counts and features and calculates the smd
+processContinuousRiskFactorFeatures <- function(
+    caseFeatures = caseFeatures,
+    targetFeatures = targetFeatures
+){
+  
+  # get outcomes and outcomewashout
+  outcomes <- unique(caseFeatures[,c('outcomeCohortId','outcomeWashoutDays')])
+  
+  targetFeatures <- targetFeatures %>% dplyr::rename(
+    "targetCountValue" = "countValue",
+    "targetMinValue" = "minValue",
+    "targetMaxValue" = "maxValue",
+    "targetAverageValue" = "averageValue", 
+    "targetStandardDeviation" = "standardDeviation",
+    "targetMedianValue" = "medianValue",
+    "targetP10Value" = "p10Value",
+    "targetP25Value" = "p25Value",
+    "targetP75Value" = "p75Value",
+    "targetP90Value" = "p90Value"
+  )
+  
+  caseFeatures <- caseFeatures %>% dplyr::rename(
+    "caseCountValue" = "countValue",
+    "caseMinValue" = "minValue",
+    "caseMaxValue" = "maxValue",
+    "caseAverageValue" = "averageValue", 
+    "caseStandardDeviation" = "standardDeviation",
+    "caseMedianValue" = "medianValue",
+    "caseP10Value" = "p10Value",
+    "caseP25Value" = "p25Value",
+    "caseP75Value" = "p75Value",
+    "caseP90Value" = "p90Value"
+  )
+  
+  allData <- c()
+  for(i in 1:nrow(outcomes)){
+    
+    res <- merge(
+      x = targetFeatures %>% 
+        dplyr::filter(
+          .data$targetCohortId != outcomes[i,]$outcomeCohortId 
+          ), 
+      y = caseFeatures %>% 
+        dplyr::filter(
+          .data$outcomeCohortId == outcomes[i,]$outcomeCohortId &
+            .data$outcomeWashoutDays == outcomes[i,]$outcomeWashoutDays
+        ),
+      
+      by = c('databaseName','targetName','targetCohortId','minPriorObservation',
+             'covariateName', 'covariateId'),
+      all.x = T
+        )
+    
+    allData <- rbind(allData, res)
+  }
+  
+  allData <- allData %>% dplyr::mutate(
+        SMD = (.data$caseAverageValue - .data$targetAverageValue)/sqrt((.data$caseStandardDeviation^2 + .data$targetStandardDeviation^2)/2),
+        absSMD = abs((.data$caseAverageValue - .data$targetAverageValue)/sqrt((.data$caseStandardDeviation^2 + .data$targetStandardDeviation^2)/2))
+      ) 
+
+  return(allData) 
 }
