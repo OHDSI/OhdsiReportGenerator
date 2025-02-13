@@ -21,10 +21,12 @@ Imports:
   dplyr,
   ggplot2,
   ggpubr,
+  kableExtra,
   ParallelLogger,
   quarto,
   reactable,
   rlang,
+  rmarkdown,
   SqlRender,
   tibble,
   tidyr
@@ -32,7 +34,6 @@ Suggests:
   knitr,
   markdown,
   ResultModelManager,
-  rmarkdown,
   testthat
 RoxygenNote: 7.3.2
 Encoding: UTF-8

@@ -252,6 +252,8 @@ plotSccsEstimates <- function(
   fmtIncidenceRate <- "%.1f"
   incidenceRateMult <- 365.25 * 1000 
   
+  maxVal <- max(sccsData$calibratedRr, na.rm = T)
+  
   estimates <- sccsData %>%
     dplyr::filter(.data$analysisId == !!selectedAnalysisId) %>%
     dplyr::select(
@@ -263,7 +265,11 @@ plotSccsEstimates <- function(
       "calibratedLogRr",
       "calibratedP",
       "outcomeSubjects":"observedDays") %>%
-    tidyr::drop_na() %>%
+    tidyr::drop_na("databaseName","calibratedRr","calibratedLogRr","calibratedP","outcomeSubjects":"observedDays") %>%
+    dplyr::mutate(
+      calibratedCi95Lb = tidyr::replace_na(0),
+      calibratedCi95Ub = tidyr::replace_na(!!maxVal)
+    ) %>%
     dplyr::arrange(.data$databaseName) %>%
     dplyr::mutate(db = .data$databaseName) %>%
     dplyr::mutate(

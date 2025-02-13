@@ -68,12 +68,12 @@ test_that("getPredictionModelDesigns", {
   data <- getPredictionModelDesigns(
     connectionHandler = connectionHandler, 
     schema = schema, 
-    targetIds = 1, 
+    targetIds = 1002, 
     outcomeIds = 3
   )
   
   testthat::expect_true(nrow(data) > 0)
-  testthat::expect_true(max(data$developmentTargetId) == 1)
+  testthat::expect_true(max(data$developmentTargetId) == 1002)
   testthat::expect_true(max(data$developmentOutcomeId) == 3)
   
 })

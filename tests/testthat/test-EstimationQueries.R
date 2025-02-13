@@ -94,4 +94,88 @@ test_that("getCmMetaEstimation", {
 # getSccsDiagnosticsData 
 # getSccsMetaEstimation
 
+test_that("getSccsEstimation", {
+  
+  data <- getSccsEstimation(
+    connectionHandler = connectionHandler,
+    schema = schema
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  
+  testthat::expect_true('databaseName' %in% colnames(data))
+  testthat::expect_true('analysisId' %in% colnames(data))
+  testthat::expect_true('description' %in% colnames(data))
+  testthat::expect_true('targetName' %in% colnames(data))
+  testthat::expect_true('outcomeName' %in% colnames(data))
+  testthat::expect_true('calibratedRr' %in% colnames(data))
+  testthat::expect_true('calibratedP' %in% colnames(data))
+  testthat::expect_true('calibratedLogRr' %in% colnames(data))
+  testthat::expect_true('calibratedSeLogRr' %in% colnames(data))
+  testthat::expect_true('outcomeSubjects' %in% colnames(data))
+  testthat::expect_true('outcomeEvents' %in% colnames(data))
+  testthat::expect_true('outcomeObservationPeriods' %in% colnames(data))
+  testthat::expect_true('covariateSubjects' %in% colnames(data))
+  testthat::expect_true('covariateDays' %in% colnames(data))
+  testthat::expect_true('covariateEras' %in% colnames(data))
+  testthat::expect_true('covariateOutcomes' %in% colnames(data))
+  testthat::expect_true('observedDays' %in% colnames(data))
+})
 
+
+test_that("getSccsDiagnosticsData", {
+  
+  data <- getSccsDiagnosticsData(
+    connectionHandler = connectionHandler,
+    schema = schema
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  
+  testthat::expect_true('databaseName' %in% colnames(data))
+  testthat::expect_true('analysisId' %in% colnames(data))
+  testthat::expect_true('description' %in% colnames(data))
+  testthat::expect_true('targetName' %in% colnames(data))
+  testthat::expect_true('outcomeName' %in% colnames(data))
+  testthat::expect_true('mdrr' %in% colnames(data))
+  testthat::expect_true('ease' %in% colnames(data))
+  testthat::expect_true('timeTrendP' %in% colnames(data))
+  testthat::expect_true('preExposureP' %in% colnames(data))
+  testthat::expect_true('mdrrDiagnostic' %in% colnames(data))
+  testthat::expect_true('easeDiagnostic' %in% colnames(data))
+  testthat::expect_true('timeTrendDiagnostic' %in% colnames(data))
+  testthat::expect_true('preExposureDiagnostic' %in% colnames(data))
+  testthat::expect_true('unblind' %in% colnames(data))
+  testthat::expect_true('unblindForEvidenceSynthesis' %in% colnames(data))
+  testthat::expect_true('summaryValue' %in% colnames(data))
+  
+})
+
+
+test_that("getSccsMetaEstimation", {
+  
+  # TODO get results into example?
+  data <- getSccsMetaEstimation(
+    connectionHandler = connectionHandler,
+    schema = schema
+  )
+  
+  testthat::expect_true('databaseName' %in% colnames(data))
+  testthat::expect_true('analysisId' %in% colnames(data))
+  testthat::expect_true('description' %in% colnames(data))
+  testthat::expect_true('targetName' %in% colnames(data))
+  testthat::expect_true('outcomeName' %in% colnames(data))
+  
+  testthat::expect_true('outcomeSubjects' %in% colnames(data))
+  testthat::expect_true('outcomeEvents' %in% colnames(data))
+  testthat::expect_true('outcomeObservationPeriods' %in% colnames(data))
+  testthat::expect_true('covariateSubjects' %in% colnames(data))
+  testthat::expect_true('observedDays' %in% colnames(data))
+
+  testthat::expect_true('calibratedRr' %in% colnames(data))
+  testthat::expect_true('calibratedP' %in% colnames(data))
+  testthat::expect_true('calibratedOneSidedP' %in% colnames(data))
+  testthat::expect_true('calibratedLogRr' %in% colnames(data))
+  testthat::expect_true('calibratedSeLogRr' %in% colnames(data))
+  testthat::expect_true('nDatabases' %in% colnames(data))
+})

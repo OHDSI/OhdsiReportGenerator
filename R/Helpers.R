@@ -187,8 +187,47 @@ getDbs <- function(
 }
 
 
-
-
+#' output a nicely formatted html table
+#'
+#' @description
+#' This returns a html table with the input data
+#'
+#' @details
+#' Input the data that you want to be shown via a dark html table 
+#' 
+#' @param data A data.frame containing data of interest to show via a table
+#' @param caption A caption for the table
+#' @param position The position for the table if used within a quarto document.  
+#'        This is the "real" or say floating position for the latex table environment. 
+#'        The kable only puts tables in a table environment when a caption is provided. 
+#'        That is also the reason why your tables will be floating around if you specify 
+#'        captions for your table. Possible choices are h (here), t (top, default), 
+#'        b (bottom) and p (on a dedicated page).
+#' 
+#' @return
+#' An object of class `knitr_kable` that will show the data via a nice html table
+#'
+#' @family helper
+#'
+#' @export
+#' @examples 
+#' kableDark(
+#' data = data.frame(a=1,b=4), 
+#' caption = 'A made up table to demonstrate this function',
+#' position = 'h'
+#' )
+#' 
+kableDark <- function(data, caption = NULL, position = NULL){
+  result <- data %>%
+    kableExtra::kbl(
+      caption = caption, 
+      position = position
+    ) %>%
+    kableExtra::kable_material_dark(
+      lightable_options = 'hover'
+    )
+  return(result)
+}
 
 
 
