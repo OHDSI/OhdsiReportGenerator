@@ -2,7 +2,6 @@ template:
   bootstrap: 5
   params:
     bootswatch: cosmo
-  light-switch: true
 
 development:
   mode: auto
@@ -15,20 +14,20 @@ home:
     
 navbar:
   structure:
-    left:
-    - home
-    - reference
-    - articles
-    - news
-    right: [hades, github]
+    left: [home, reference, articles, news]
+    right: [hades, github, lightswitch]
   components:
     home:
       icon: fa-home fa-lg
+      text: Home
       href: index.html
     reference:
+      icon: fa-info-circle fa-lg
       text: Reference
+      href: reference/index.html
     news:
-      text: Changelog
+      icon: fa-newspaper-o fa-lg
+      text: News
       href: news/index.html
     github:
       icon: fa-github fa-lg

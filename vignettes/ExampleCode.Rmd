@@ -1,0 +1,335 @@
+---
+title: "Using Observational Health Data Sciences and Informatics (OHDSI) Report Generator"
+author: "Jenna Reps, Anthony Sena"
+date: "`r Sys.Date() `"
+output: html_document
+vignette: >
+  %\VignetteIndexEntry{guide}
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+```
+
+# Using the OhdsiReportGenerator Package
+
+This package enables users to extract characterization, estimation and prediction results from the OHDSI results (see [result model](https://ohdsi.github.io/Strategus/results-schema/index.html)) generated via R packages such as `PatientLevelPrediction`, `Characterization`, `CohortMethod` and `SelfControlledCaseSeries`.
+
+## Example Result Database
+
+This package provides users with an example OHDSI result database.  This can be accessed via `getExampleConnectionDetails()` and contains the results of running a demo analysis using the Eunomia R package sample OMOP CDM data.    
+
+```{r echo=TRUE}
+library(OhdsiReportGenerator)
+# create a connection details object to 
+connectionDetails <- getExampleConnectionDetails()
+
+# create a connection handler to the results
+library(ResultModelManager)
+ConnectionHandler <- ResultModelManager::ConnectionHandler$new(connectionDetails)
+
+```
+
+## Extracting Cohorts
+
+The cohort details can be extracted using the function `getCohortDefinitions` that requires the user to input the connection handler, schema, table prefix used by CohortGenerator (default is 'cg\_') and target cohort ids to restrict to.
+
+The example results are in a sqlite database and use the schema 'main'.
+
+```{r echo=TRUE}
+
+cohorts <- getCohortDefinitions(
+    connectionHandler = ConnectionHandler,
+    schema = 'main',
+    cgTablePrefix = 'cg_',
+    targetIds = NULL
+)
+
+knitr::kable(
+  x = cohorts %>% 
+    dplyr::select(-"json", -"sqlCommand"), 
+  caption = 'The data.frame extracted containing the cohort details minus the json and sqlCommand columns.'
+  )
+
+```
+
+You can process the cohorts definitions to extract the parent cohorts and the children for each parent cohort.  
+
+```{r echo=TRUE}
+
+processedCohorts <- processCohorts(cohorts)
+
+knitr::kable(
+  x = data.frame(
+    parentId = processedCohorts$parents,
+    parentName= names(processedCohorts$parents)
+    ), 
+  caption = 'The parent cohorts.'
+  )
+
+knitr::kable(
+  x = processedCohorts$cohortList[[1]] %>% 
+    dplyr::select(-"json", -"sqlCommand"),
+  caption = 'The children/subset cohorts for the first parent cohort.'
+  )
+
+```
+
+For example, if you created a cohort corresponding to all patients exposed to drug A with an id of 1 and then created 'children' subset cohorts corresponding to patients exposed to drug A for indication X with an id 1001 and patients exposed to drug A aged 60+ with a cohort id 1002, then `getCohortDefinition()` would extract all three of these cohorts and `processCohorts()` would identify cohort 1 as the parent and cohorts 1,1001,1002 as the children/subset of cohort 1.
+
+You can also extract the subset logic for a subset id:
+
+```{r echo=TRUE}
+
+subsets <- getCohortSubsetDefinitions(
+    connectionHandler = ConnectionHandler,
+    schema = 'main',
+    cgTablePrefix = 'cg_'
+)
+
+knitr::kable(
+  x = subsets, 
+  caption = 'The subset cohort logic used in the analysis.'
+  )
+
+```
+
+
+## Extracting Characterization Results
+
+The characterization analysis contains time to event results, dechallenge-rechallenge, risk factor and cohort incidence results.
+
+The time-to-event results tell you how often a outcome occurs relative to some target cohort index date on a 1-day, 30-day and 365-day scale.
+
+```{r echo=TRUE}
+
+tte <- getTimeToEvent(
+    connectionHandler = ConnectionHandler,
+    schema = 'main'
+)
+
+knitr::kable(
+  x = tte %>% dplyr::filter(.data$timeScale == 'per 365-day'), 
+  caption = 'Example time-to-event results for the 365-day scale.'
+  )
+
+```
+
+The dechallenge-rechallenge analysis shows you how often an outcome occurs during some target exposure and then how often the target exposure is stopped shortly after the outcome and whether the outcome re-occurs when the target exposure restarts:
+
+```{r echo=TRUE}
+
+drc <- getDechallengeRechallenge(
+    connectionHandler = ConnectionHandler,
+    schema = 'main'
+)
+
+knitr::kable(
+  x = drc, 
+  caption = 'Example dechallenge-rechallenge results.'
+  )
+
+```
+
+It is also possible to find the incidence rates (where we restrict to all ages, genders and start years):
+
+```{r echo=TRUE}
+
+ir <- getIncidenceRates(
+    connectionHandler = ConnectionHandler,
+    schema = 'main', 
+    targetIds = 1
+)
+
+knitr::kable(
+  x = ir %>% dplyr::filter(
+    subgroupName == 'All' &
+    ageGroupName == 'Any' &	
+    genderName == 'Any' &	
+    startYear == 'Any'
+  ), 
+  caption = 'Example incidence rate results.'
+  )
+
+```
+
+Finally, it is possible to get risk factors (associations between features and the occurrence of the outcome during a time-at-risk) using `getBinaryRiskFactors` to identify the binary features:
+
+```{r echo=TRUE}
+
+rf <- getBinaryRiskFactors(
+    connectionHandler = ConnectionHandler,
+    schema = 'main', 
+    targetId = 1, 
+    outcomeId = 3
+)
+
+knitr::kable(
+  x = rf, 
+  caption = 'Example risk factors for binary features results.'
+  )
+
+```
+
+and `getContinuousRiskFactors` for the continuous features:
+
+```{r echo=TRUE}
+
+rf <- getContinuousRiskFactors(
+    connectionHandler = ConnectionHandler,
+    schema = 'main', 
+    targetId = 1, 
+    outcomeId = 3
+)
+
+knitr::kable(
+  x = rf, 
+  caption = 'Example risk factors for continuous features results.'
+  )
+
+```
+
+## Extracting Prediction Results
+
+The model designs used to develop prediction models in an analysis can be extracted using `getPredictionModelDesigns`:
+
+```{r echo=TRUE}
+
+modelDesigns <- getPredictionModelDesigns(
+    connectionHandler = ConnectionHandler,
+    schema = 'main', 
+    targetIds = 1002, 
+    outcomeIds = 3
+)
+
+knitr::kable(
+  x = modelDesigns %>%
+    dplyr::select(
+      "modelDesignId",	
+      "modelType",
+      "developmentTargetId",
+      "developmentTargetName",
+      "developmentOutcomeId",	
+      "developmentOutcomeName",	
+      "timeAtRisk",
+      "meanAuroc", 
+      "noDevelopmentDatabases"
+    ), 
+  caption = 'Example model designs for the prediction results.'
+  )
+
+```
+
+Once you know the modelDesignId of interest, you can then extract the model performance:
+
+```{r echo=TRUE}
+
+perform <- getPredictionPerformances(
+    connectionHandler = ConnectionHandler,
+    schema = 'main', 
+    modelDesignId = 1
+)
+
+knitr::kable(
+  x = perform, 
+  caption = 'Example performance for the prediction results.'
+  )
+
+```
+
+As well as the top predictors, in this case we will return the top 5:
+
+```{r echo=TRUE}
+
+top5 <- getPredictionTopPredictors(
+    connectionHandler = ConnectionHandler,
+    schema = 'main', 
+    targetIds = 1002, 
+    outcomeIds = 3,
+    numberPredictors = 5
+)
+
+knitr::kable(
+  x = top5 , 
+  caption = 'Example top five predictors.'
+  )
+
+```
+
+You can also select certain results such as the attrition:
+
+```{r echo=TRUE}
+
+attrition <- getPredictionPerformanceTable(
+    connectionHandler = ConnectionHandler,
+    schema = 'main', 
+    table = 'attrition',
+    performanceId = 1
+)
+
+knitr::kable(
+  x = attrition , 
+  caption = 'Example prediction attrition for performance 1.'
+  )
+
+```
+
+
+## Extracting Estimation Results
+
+It is possible to extract cohort method and self controlled case series results and make nice plots.
+
+To extract all the cohort method estimations for target id 1002 and outcome 3: 
+```{r echo=TRUE}
+
+cmEst <- getCMEstimation(
+    connectionHandler = ConnectionHandler,
+    schema = 'main', 
+    targetIds = 1002, 
+    comparatorIds = 2002,
+    outcomeIds = 3
+)
+
+knitr::kable(
+  x = cmEst , 
+  caption = 'Example cohort method estimation results.'
+  )
+
+```
+
+You can also extract any meta-analysis estimate for cohort method:
+
+```{r echo=TRUE}
+
+cmMe <- getCmMetaEstimation(
+    connectionHandler = ConnectionHandler,
+    schema = 'main'
+)
+
+knitr::kable(
+  x = cmMe , 
+  caption = 'Example cohort method meta analysis estimation results.'
+  )
+
+```
+
+and you can create a nice plot to show the results:
+
+```{r echo=TRUE}
+
+plotCmEstimates(
+  cmData = cmEst, 
+  cmMeta = NULL,
+  targetName = 'Example Target', 
+  comparatorName = 'Example Comp', 
+  selectedAnalysisId = 1
+)
+
+
+```
+
+
+

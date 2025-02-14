@@ -119,7 +119,7 @@ cat('\n\n:::: {.columns}')
 cat('\n\n::: {.column width="50%"}')
 cat(paste0('\n\n> Target: ', targetName,' @sec-target'))
 
-cat(paste0('\n\n> Comparators: ',paste0(comparatorNames, ' @sec-',ReportGenerator::removeSpaces(comparatorNames), collapse =', ')))
+cat(paste0('\n\n> Comparators: ',paste0(comparatorNames, ' @sec-',OhdsiReportGenerator::removeSpaces(comparatorNames), collapse =', ')))
 
 if(!is.null(sccsSubsetId)){
 cat(paste0('\n\n> Indication: ', subsetName,' @sec-indication'))

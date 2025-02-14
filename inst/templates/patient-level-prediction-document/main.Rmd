@@ -19,14 +19,12 @@ output:
     toc: FALSE
     toc_depth: 5
     toc_float: true
-runtime: shiny
 ---
 
 # Project Details
   
 Study Title: PatientLevelPrediction Report
 Prepared on: ``r Sys.Date()``
-Created by: shinyApp
 
 # Abbreviations
 

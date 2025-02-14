@@ -49,6 +49,33 @@ getCohortDefinitions <- function(
   return(result)
 }
 
+#' Extract the cohort parents and children cohorts (cohorts derieved from the parent cohort)
+#' @description
+#' This function lets you split the cohort data.frame into the parents and the children per parent.
+#'
+#' @details
+#' Finds the parent cohorts and children cohorts
+#'
+#' @param cohort The data.frame extracted using `getCohortDefinitions()` 
+#' @family Cohorts
+#' @return
+#' Returns a list containing parents: a named vector of all the parent cohorts and cohortList: a list 
+#' the same length as the parent vector with the first element containing all the children
+#' of the first parent cohort, the second element containing the children of the second parent, etc.
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohortDef <- getCohortDefinitions(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+#' parents <- processCohorts(cohortDef)
+#' 
 processCohorts <- function(cohort){
   
   parentCodes <- unique(cohort$subsetParent)
@@ -77,7 +104,34 @@ processCohorts <- function(cohort){
 # TODO - find which analyses each cohort is used and whether target or outcome
 
 
-# Code below doesnt work as the table doesnt exist?
+#' Extract the cohort subset definition details
+#' @description
+#' This function extracts all cohort subset definitions for the subsets of interest.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the subset IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cgTablePrefix
+#' @param subsetIds A vector of subset cohort ids or NULL
+#' @family Cohorts
+#' @return
+#' Returns a data.frame with the columns:
+#' \itemize{
+#'  } 
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' subsetDef <- getCohortSubsetDefinitions(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
 getCohortSubsetDefinitions <- function(
     connectionHandler,
     schema,
