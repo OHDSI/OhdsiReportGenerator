@@ -5,7 +5,7 @@ Version: 1.0.0
 Date: 2024-12-05
 Authors@R: c(
   person("Jenna", "Reps", email = "jreps@its.jnj.com", role = c("aut", "cre")),
-  person("Anthony", "Sena", email = "...@its.jnj.com", role = c("aut"))
+  person("Anthony", "Sena", email = "sena@ohdsi.org", role = c("aut"))
   )
 Maintainer: Jenna Reps <jreps@its.jnj.com>
 Description: Extract analysis results into R data.frames from the Observational Health Data Sciences and Informatics result database and generate reports that summarize results in HTML format.
@@ -34,6 +34,7 @@ Suggests:
   knitr,
   markdown,
   ResultModelManager,
+  RSQLite,
   testthat
 RoxygenNote: 7.3.2
 Encoding: UTF-8

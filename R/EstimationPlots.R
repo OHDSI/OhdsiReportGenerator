@@ -223,7 +223,8 @@ plotCmEstimates <- function(
 #' Returns a ggplot with the estimates
 #' 
 #' @export
-#' @examples 
+#' @examples
+#' \dontrun{ 
 #' conDet <- getExampleConnectionDetails()
 #' 
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
@@ -240,7 +241,7 @@ plotCmEstimates <- function(
 #'   targetName = 'target', 
 #'   selectedAnalysisId = 1
 #' )
-#' 
+#' }
 plotSccsEstimates <- function(
     sccsData,
     sccsMeta = NULL,
