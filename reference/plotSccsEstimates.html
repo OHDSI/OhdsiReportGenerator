@@ -84,11 +84,10 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">conDet</span> <span class="op">&lt;-</span> <span class="fu"><a href="getExampleConnectionDetails.html">getExampleConnectionDetails</a></span><span class="op">(</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{ </span></span></span>
+<span class="r-in"><span><span class="va">conDet</span> <span class="op">&lt;-</span> <span class="fu"><a href="getExampleConnectionDetails.html">getExampleConnectionDetails</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">connectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/ResultModelManager/man/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">conDet</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Connecting using SQLite driver</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> ‘RSQLite’ must be installed for this functionality.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">sccsEst</span> <span class="op">&lt;-</span> <span class="fu"><a href="getSccsEstimation.html">getSccsEstimation</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  connectionHandler <span class="op">=</span> <span class="va">connectionHandler</span>, </span></span>
@@ -96,15 +95,13 @@
 <span class="r-in"><span>  targetIds <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  outcomeIds <span class="op">=</span> <span class="fl">3</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'connectionHandler' not found</span>
 <span class="r-in"><span><span class="fu">plotSccsEstimates</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  sccsData <span class="op">=</span> <span class="va">sccsEst</span>, </span></span>
 <span class="r-in"><span>  sccsMeta <span class="op">=</span> <span class="cn">NULL</span>, </span></span>
 <span class="r-in"><span>  targetName <span class="op">=</span> <span class="st">'target'</span>, </span></span>
 <span class="r-in"><span>  selectedAnalysisId <span class="op">=</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'sccsEst' not found</span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
