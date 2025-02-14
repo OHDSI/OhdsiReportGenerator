@@ -1,0 +1,64 @@
+template:
+  bootstrap: 5
+  params:
+    bootswatch: cosmo
+  light-switch: true
+
+development:
+  mode: auto
+  development: docs/dev
+
+home:
+  links:
+  - text: Ask a question
+    href: http://forums.ohdsi.org
+    
+navbar:
+  structure:
+    left:
+    - home
+    - reference
+    - articles
+    - news
+    right: [hades, github]
+  components:
+    home:
+      icon: fa-home fa-lg
+      href: index.html
+    reference:
+      text: Reference
+    news:
+      text: Changelog
+      href: news/index.html
+    github:
+      icon: fa-github fa-lg
+      href: https://github.com/OHDSI/OhdsiReportGenerator
+    hades:
+      text: hadesLogo
+      href: https://ohdsi.github.io/Hades
+
+reference:
+  - title: "Cohort Extraction"
+    desc: >
+      These functions can be used to extract analyses cohort details.
+    contents: has_concept("Cohorts")
+  - title: "Characterization Extractions and Plots"
+    desc: >
+      These functions can be used to extract results from characterization and cohort incidence analyses and plot results.
+    contents: has_concept("Characterization")
+  - title: "Estimation Extractions and Plots"
+    desc: >
+      These functions can be used to extract results from estimation studies and plot results.
+    contents: has_concept("Estimation")
+  - title: "Prediction Extractions and Plots"
+    desc: >
+      These functions can be used to extract results from prediction studies and plot results.
+    contents: has_concept("Prediction")
+  - title: "Reporting"
+    desc: >
+      These functions can be used to generate reports using quarto templates.
+    contents: has_concept("Reporting")
+  - title: "Helpers"
+    desc: >
+      These functions are used to help result extraction.
+    contents: has_concept("helper")

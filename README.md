@@ -1,19 +1,17 @@
-OhdsiReportGenerator
-===============
+# OhdsiReportGenerator
 
-Introduction
-============
+# Introduction
 
-This package contains functions for extracting characterization, estimation and prediction results from the OHDSI result database (see https://ohdsi.github.io/Strategus/results-schema/index.html).
+This package contains functions for extracting characterization, estimation and prediction results from the OHDSI result database (see <https://ohdsi.github.io/Strategus/results-schema/index.html>).
 
 It also contains codes to create useful plots, presentations templates and report templates.
 
-Examples
-========
+# Examples
 
-Download this repository and using RStudio, install the packgage. Then you can make use of the report generator by running:
+Download this repository and using RStudio, install the package. Then you can make use of the report generator by running:
 
 ```{r}
+
 # Install OhdsiReportGenerator using remotes
 install.packages('remotes')
 remotes::install_github('OHDSI/OhdsiReportGenerator')
@@ -51,52 +49,18 @@ generatePresentation(
 
 ```
 
-
-Technology
-==========
+# Technology
 
 OhdsiReportGenerator is an R package.
 
+# System Requirements
 
-System Requirements
-===================
+Running the package requires R and Java.
 
-Running the package requires R.
+# License
 
+ReportGenerator is licensed under Apache License 2.0.
 
-Installation
-============
-
-  
-User Documentation
-==================
-
-
-Support
-=======
-
-
-Contributing
-============
-
-
-License
-=======
-
-ReportGenerator is licensed under Apache License 2.0. 
-
-
-Development
-===========
+# Development
 
 ReportGenerator is being developed in R Studio.
-
-
-### Development status
-
-Under development
-
-
-Acknowledgements
-================
-
