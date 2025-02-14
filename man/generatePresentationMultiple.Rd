@@ -10,15 +10,16 @@ generatePresentationMultiple(
   password,
   dbms,
   resultsSchema = NULL,
-  targetId,
-  subsetId = NULL,
-  includeIndication = TRUE,
-  outcomeIds,
-  comparatorIds,
+  targetId = 1,
+  targetName = "target cohort",
+  cmSubsetId = 2,
+  sccsSubsetId = NULL,
+  indicationName = NULL,
+  outcomeIds = 3,
+  outcomeNames = "outcome cohort",
+  comparatorIds = c(2, 4),
+  comparatorNames = c("comparator cohort 1", "comparator cohort 2"),
   covariateIds = NULL,
-  friendlyNames = list(targetName = "target cohort", comparatorNames =
-    c("comparator cohort 1", "comparator cohort 2"), indicationName =
-    "indication cohort", outcomeNames = c("outcome name 1", "outcome name 2")),
   details = list(studyPeriod = "All Time", restrictions = "Age - None"),
   title = "ASSURE 001 ...",
   lead = "add name",
@@ -44,17 +45,23 @@ generatePresentationMultiple(
 
 \item{targetId}{The cohort definition id for the target cohort}
 
-\item{subsetId}{Optional a subset ID for the cohort method/characterization and prediction results}
+\item{targetName}{A friendly name for the target cohort}
 
-\item{includeIndication}{Whether an indication was used in this study}
+\item{cmSubsetId}{Optional a subset ID for the cohort method/prediction results}
+
+\item{sccsSubsetId}{Optional a subset ID for the SCCS and characterization results}
+
+\item{indicationName}{A name for the indication if used or NULL}
 
 \item{outcomeIds}{The cohort definition id for the outcome}
 
+\item{outcomeNames}{Friendly names for the outcomes}
+
 \item{comparatorIds}{The cohort method comparator cohort id}
 
-\item{covariateIds}{A vector of covariateIds to include in the characterization}
+\item{comparatorNames}{Friendly names for the comparators}
 
-\item{friendlyNames}{a data.frame with friendly name conversions}
+\item{covariateIds}{A vector of covariateIds to include in the characterization}
 
 \item{details}{a list with the studyPeriod and restrictions}
 

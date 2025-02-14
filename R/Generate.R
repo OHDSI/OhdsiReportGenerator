@@ -13,12 +13,15 @@
 #' @param dbms The dbms used to access the result database
 #' @param resultsSchema The result database schema
 #' @param targetId The cohort definition id for the target cohort
-#' @param subsetId Optional a subset ID for the cohort method/characterization and prediction results
-#' @param includeIndication Whether an indication was used in this study
+#' @param targetName A friendly name for the target cohort
+#' @param cmSubsetId Optional a subset ID for the cohort method/prediction results
+#' @param sccsSubsetId Optional a subset ID for the SCCS and characterization results 
+#' @param indicationName A name for the indication if used or NULL
 #' @param outcomeIds The cohort definition id for the outcome
+#' @param outcomeNames Friendly names for the outcomes
 #' @param comparatorIds The cohort method comparator cohort id
+#' @param comparatorNames Friendly names for the comparators
 #' @param covariateIds A vector of covariateIds to include in the characterization
-#' @param friendlyNames a data.frame with friendly name conversions
 #' @param details a list with the studyPeriod and restrictions 
 #' @param title A title for the presentation
 #' @param lead The name of the presentor
@@ -41,18 +44,16 @@ generatePresentationMultiple <- function(
     password,
     dbms,
     resultsSchema = NULL,
-    targetId,
-    subsetId = NULL,
-    includeIndication = TRUE,
-    outcomeIds,
-    comparatorIds,
+    targetId = 1,
+    targetName = "target cohort",
+    cmSubsetId = 2,
+    sccsSubsetId = NULL,
+    indicationName = NULL,
+    outcomeIds = 3,
+    outcomeNames = 'outcome cohort',
+    comparatorIds = c(2,4),
+    comparatorNames = c("comparator cohort 1", "comparator cohort 2"),
     covariateIds = NULL,
-    friendlyNames = list(
-      targetName = "target cohort",
-      comparatorNames = c("comparator cohort 1", "comparator cohort 2"),
-      indicationName = "indication cohort",
-      outcomeNames = c("outcome name 1", "outcome name 2")
-    ),
     details = list(
       studyPeriod = 'All Time',
       restrictions = "Age - None"
@@ -111,12 +112,15 @@ generatePresentationMultiple <- function(
       dbms = dbms,
       resultsSchema = resultsSchema,
       targetId = targetId,
-      subsetId = subsetId,
-      includeIndication = includeIndication,
+      targetName = targetName,
+      cmSubsetId = cmSubsetId,
+      sccsSubsetId = sccsSubsetId,
+      indicationName = indicationName,
       outcomeIds = outcomeIds,
+      outcomeNames = outcomeNames,
       comparatorIds = comparatorIds,
+      comparatorNames = comparatorNames,
       covariateIds = covariateIds,
-      friendlyNames = friendlyNames,
       title = title,
       lead = lead,
       date = date,

@@ -38,6 +38,7 @@ position = 'h'
 \seealso{
 Other helper: 
 \code{\link{getExampleConnectionDetails}()},
+\code{\link{printReactable}()},
 \code{\link{removeSpaces}()}
 }
 \concept{helper}

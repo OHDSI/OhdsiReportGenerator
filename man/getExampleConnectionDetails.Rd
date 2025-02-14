@@ -24,6 +24,7 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 \seealso{
 Other helper: 
 \code{\link{kableDark}()},
+\code{\link{printReactable}()},
 \code{\link{removeSpaces}()}
 }
 \concept{helper}

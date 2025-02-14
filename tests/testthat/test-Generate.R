@@ -13,18 +13,16 @@ test_that("generatePresentationMultiple", {
     password = conDet$password(),
     dbms = conDet$dbms,
     resultsSchema = schema,
-    targetId = 1002,
-    subsetId = NULL,
-    includeIndication = F,
+    targetId = 1,
+    targetName = 'target',
+    cmSubsetId = 2,
+    sccsSubsetId = NULL,
+    indicationName = NULL,
     outcomeIds = 3,
-    comparatorIds = 2002,
+    outcomeNames = 'outcome',
+    comparatorIds = 2,
+    comparatorNames = 'Comp',
     covariateIds = NULL,
-    friendlyNames = list(
-      targetName = "target cohort",
-      comparatorNames = c("comparator cohort 1"),
-      indicationName = "indication cohort",
-      outcomeNames = c("outcome name 1")
-    ),
     details = list(
       studyPeriod = 'All Time',
       restrictions = "Age - None"

@@ -24,14 +24,18 @@ params:
   lead: NULL
   date: NULL
   targetId: NULL
+  targetName: NULL
   outcomeIds: NULL
+  outcomeNames: NULL
   comparatorIds: NULL
-  subsetId: NULL
-  includeIndication: "yes"
+  comparatorNames: NULL
+  cmSubsetId: NULL
+  sccsSubsetId: NULL
+  indicationName: NULL
   covariateIds: NULL
-  friendlyNames: NULL
   details: NULL
   evaluationText: NULL
+  runSCCS: NULL
 ---
 
 ## Signal Evaluation Overview
@@ -62,26 +66,28 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(
   connectionDetails = connectionDetails
   )
 
-subsetId <- params$subsetId
+runSCCS <- F #params$runSCCS == 'yes'
+
+cmSubsetId <- params$cmSubsetId
+sccsSubsetId <- params$sccsSubsetId
+indicationName <- params$indicationName
+
 outcomeIds <- unlist(params$outcomeIds)
-sccsTargetId <- params$targetId
-targetId <- params$targetId
-comparatorIds <- unlist(params$comparatorIds)
-includeIndication <- params$includeIndication == 'yes'
+outcomeNames <- unlist(params$outcomeNames)
 
 # if a subset is specified then update the ids - run for all subsets?
-if(!is.null(subsetId)){
- targetId <- targetId*1000 + subsetId 
- comparatorIds <- comparatorIds*1000 + subsetId 
+targetId <- params$targetId
+targetName <- params$targetName
+comparatorIds <- unlist(params$comparatorIds)
+comparatorNames <- unlist(params$comparatorNames)
+if(!is.null(cmSubsetId)){
+ targetId <- targetId*1000 + cmSubsetId 
+ comparatorIds <- comparatorIds*1000 + cmSubsetId 
 }
-
-# TODO - This approach needs some discussion
-friendlyNames <- params$friendlyNames
-
-targetName <- params$friendlyNames$targetName
-comparatorNames <- params$friendlyNames$comparatorNames
-indicationName <- params$friendlyNames$indicationName
-outcomeNames <- params$friendlyNames$outcomeNames
+sccsTargetId <- params$targetId
+if(!is.null(sccsSubsetId)){
+ sccsTargetId  <- targetId*1000 + sccsSubsetId 
+}
 
 studyPeriod <- params$details$studyPeriod
 restrictions <- params$details$restrictions
@@ -115,11 +121,11 @@ cat(paste0('\n\n> Target: ', targetName,' @sec-target'))
 
 cat(paste0('\n\n> Comparators: ',paste0(comparatorNames, ' @sec-',ReportGenerator::removeSpaces(comparatorNames), collapse =', ')))
 
-if(includeIndication){
-cat(paste0('\n\n> Indication: ', indicationName,' @sec-indication'))
+if(!is.null(sccsSubsetId)){
+cat(paste0('\n\n> Indication: ', subsetName,' @sec-indication'))
 }
 
-cat(paste0('\n\n> Outcomes: ', paste0(outcomeNames, ' @sec-',ReportGenerator::removeSpaces(outcomeNames), collapse =', ')))
+cat(paste0('\n\n> Outcomes: ', paste0(outcomeNames, ' @sec-',OhdsiReportGenerator::removeSpaces(outcomeNames), collapse =', ')))
 cat('\n\n:::')
 
 cat('\n\n::: {.column width="10%"}')
@@ -180,7 +186,7 @@ for(outcomeInd in 1:length(outcomeIds)){
 incidence <- OhdsiReportGenerator::getIncidenceRates(
     connectionHandler = connectionHandler,
     schema = resultsSchema,
-    targetIds = targetId,
+    targetIds = sccsTargetId,
     outcomeIds = outcomeId
 )
 
@@ -223,7 +229,7 @@ for(tar in tars){
   if( nrow(idata) > 0 ){
         cat(paste0('\n\n#### TAR: ',paste0('(',tar$tarStartWith, " + ", tar$tarStartOffset, ') - (', tar$tarEndWith, " + ", tar$tarEndOffset, ')'),'\n\n'))
     
-    reactObj <- reactable::reactable(
+    OhdsiReportGenerator::printReactable(
   data = idata, 
 columns = list(
   personOutcomes = reactable::colDef(
@@ -247,9 +253,6 @@ columns = list(
  striped = T, 
  defaultPageSize = defaultPageSize
 )
-print(htmltools::tagList(reactObj))
-#print(knitr::kable(idata))
-#print(DT::datatable(idata))
 cat("\n")
 }
 
@@ -282,14 +285,14 @@ cat('\n\n::::')
     ageData <- OhdsiReportGenerator::getCharacterizationDemographics(
       connectionHandler = connectionHandler,
       schema = resultsSchema,
-      targetId = targetId,
+      targetId = sccsTargetId,
       outcomeId = outcomeId,
       type = 'age'
     )
    sexData <- OhdsiReportGenerator::getCharacterizationDemographics(
       connectionHandler = connectionHandler,
       schema = resultsSchema,
-      targetId = targetId,
+      targetId = sccsTargetId,
       outcomeId = outcomeId,
       type = 'sex'
     )
@@ -368,7 +371,7 @@ cat('\n\n::::')
     chars <- OhdsiReportGenerator::getBinaryRiskFactors(
       connectionHandler = connectionHandler,
       schema = resultsSchema,
-      targetId = targetId,
+      targetId = sccsTargetId,
       outcomeId = outcomeId,
       analysisIds = c(201,401,210,410)
     )
@@ -404,9 +407,10 @@ cat('\n\n::::')
           # only include tab if there are results
           cat(paste0('\n\n#### TAR: ',paste0('(',tar$startAnchor, " + ", tar$riskWindowStart, ') - (', tar$endAnchor, " + ", tar$riskWindowEnd, ')'),' \n\n')) 
           
-          print(
-            shiny::tagList(
-              reactable::reactable(
+          #print(
+            #htmltools::tagList(
+              #reactable::reactable(
+          OhdsiReportGenerator::printReactable(
                 data = charsData, 
                 columns = list(
                   covariateName = reactable::colDef(
@@ -434,14 +438,13 @@ cat('\n\n::::')
                     format = reactable::colFormat(digits = 2)
                   )
                 ),
-                #groupBy = c('database'), 
                 groupBy = c('covariateName'), 
                 defaultPageSize = defaultPageSize,
                 highlight = TRUE, 
                 striped = T
               )
-            )
-          )
+            #)
+          #)
         }
         
       }
@@ -491,9 +494,7 @@ for(outcomeId in outcomeIds){
   if(nrow(cmTableDiag) > 0){
     
     # add table
-    print(
-      shiny::tagList(
-        reactable::reactable(
+    OhdsiReportGenerator::printReactable(
           data = cmTableDiag %>%
             dplyr::select(
               "databaseName",
@@ -528,7 +529,6 @@ for(outcomeId in outcomeIds){
           highlight = TRUE, 
           striped = T
         )
-      ))
   }
   
   cat('\n\n:::')
@@ -559,9 +559,7 @@ for(outcomeId in outcomeIds){
     comparatorIds = comparatorIds
   )
   
-  print(
-    shiny::tagList(
-      reactable::reactable(
+  OhdsiReportGenerator::printReactable(
         data = cmTable %>% # ToDo rbind meta?
           dplyr::select(
             'databaseName',
@@ -605,7 +603,6 @@ for(outcomeId in outcomeIds){
         highlight = TRUE, 
         striped = T
       )
-    ))
   
   if(nrow(cmTable)>0){
     cat('\n\n#### Plot Results')
@@ -676,7 +673,7 @@ cat('\n\n:::::')
 
 ```{r}
 #| label: sccs diagostics
-runSCCS <- F
+
 if(runSCCS){
   sccsTableDiag <- OhdsiReportGenerator::getSccsDiagnosticsData(
     connectionHandler = connectionHandler,
@@ -863,9 +860,7 @@ for(outcomeId in outcomeIds){
     schema = resultsSchema
   )
   
-  print(
-    shiny::tagList(
-      reactable::reactable(
+ OhdsiReportGenerator::printReactable(
         data = pTable %>% 
 dplyr::filter(
 .data$developmentTargetId == !!targetId &
@@ -906,7 +901,6 @@ dplyr::filter(
         highlight = TRUE, 
         striped = T
       )
-    ))
   
 }
 cat('\n:::') # outcome tabs
@@ -959,9 +953,7 @@ for(outcomeId in outcomeIds){
       cat(paste0('\n\n##### ', database))
       cat('\n\n')
       
-      print(
-        shiny::tagList(
-          reactable::reactable(
+      OhdsiReportGenerator::printReactable(
             data = topPreds %>% 
               dplyr::filter(.data$databaseName == !!database) %>%
               dplyr::mutate(
@@ -1008,7 +1000,6 @@ for(outcomeId in outcomeIds){
             highlight = TRUE, 
             striped = T
           )
-        ))
     }
     cat('\n\n:::')
   }
@@ -1077,7 +1068,7 @@ cat(markdown)
 #| echo: false
 #| results: 'asis'
 # if subset is not null then add that here
-if(!is.null(subsetId)){
+if(!is.null(cmSubsetId)){
   mainCohort <- OhdsiReportGenerator::getCohortDefinitions(
   connectionHandler = connectionHandler, 
   schema = resultsSchema, 
@@ -1092,6 +1083,26 @@ if(!is.null(subsetId)){
   
   cat("\n\n::: {.callout-note title='Subset'}")
   cat('\n\n### Subset (not used in SCCS)')
+  
+  cat('\n\n')
+  cat(substring(subCohort, nchar(mainCohort)+5, nchar(subCohort)))
+  cat('\n\n:::')
+}
+  if(!is.null(sccsSubsetId)){
+    mainCohort <- OhdsiReportGenerator::getCohortDefinitions(
+  connectionHandler = connectionHandler, 
+  schema = resultsSchema, 
+  targetIds = params$targetId
+  )$cohortName
+  
+  subCohort <- OhdsiReportGenerator::getCohortDefinitions(
+  connectionHandler = connectionHandler, 
+  schema = resultsSchema, 
+  targetIds = sccsTargetId
+  )$cohortName
+  
+  cat("\n\n::: {.callout-note title='Subset'}")
+  cat('\n\n### Subset used in SCCS')
   
   cat('\n\n')
   cat(substring(subCohort, nchar(mainCohort)+5, nchar(subCohort)))
@@ -1139,9 +1150,15 @@ for(i in 1:length(outcomeNames)){
 #| label: indication
 #| echo: false
 #| results: 'asis'
-if(!is.null(subsetId) & includeIndication){
+if(!is.null(indicationName)){
   # Indication
   # subCohort from the target code
+    subCohort <- OhdsiReportGenerator::getCohortDefinitions(
+  connectionHandler = connectionHandler, 
+  schema = resultsSchema, 
+  targetIds = targetId
+  )$cohortName
+  
   indicationId <- strsplit(
     strsplit(subCohort, '\\)')[[1]][1], 
     '\\('
@@ -1154,7 +1171,8 @@ if(!is.null(subsetId) & includeIndication){
   iName <- OhdsiReportGenerator::getCohortDefinitions(
   connectionHandler = connectionHandler, 
   schema = resultsSchema, 
-  targetIds = indicationId)$cohortName
+  targetIds = indicationId
+  )$cohortName
   
   cat(paste0("\n\n> Full name: ", iName))
   cat('\n\n::: {.callout-note title="Cohort Definition"}')
@@ -1208,7 +1226,7 @@ for(i in 1:length(comparatorNames)){
   cat('\n\n:::')
   
   # if subset is not null then add that here
-  if(!is.null(subsetId)){
+  if(!is.null(cmSubsetId)){
     mainCohort <- OhdsiReportGenerator::getCohortDefinitions(
   connectionHandler = connectionHandler, 
   schema = resultsSchema, 

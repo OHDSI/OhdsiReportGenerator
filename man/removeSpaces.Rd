@@ -21,6 +21,7 @@ Removes spaces and replaces with under scroll
 \seealso{
 Other helper: 
 \code{\link{getExampleConnectionDetails}()},
-\code{\link{kableDark}()}
+\code{\link{kableDark}()},
+\code{\link{printReactable}()}
 }
 \concept{helper}
