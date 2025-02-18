@@ -1,5 +1,8 @@
 # OhdsiReportGenerator
 
+[![Build Status](https://github.com/OHDSI/OhdsiReportGenerator/workflows/R-CMD-check/badge.svg)](https://github.com/OHDSI/OhdsiReportGenerator/actions?query=workflow%3AR-CMD-check+branch%3Amain)
+[![codecov.io](https://codecov.io/github/OHDSI/OhdsiReportGenerator/coverage.svg?branch=main)](https://app.codecov.io/github/OHDSI/OhdsiReportGenerator?branch=main)
+
 # Introduction
 
 This package contains functions for extracting characterization, estimation and prediction results from the OHDSI result database (see <https://ohdsi.github.io/Strategus/results-schema/index.html>).

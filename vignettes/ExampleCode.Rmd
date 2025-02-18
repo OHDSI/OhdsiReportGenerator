@@ -59,7 +59,7 @@ knitr::kable(
 You can process the cohorts definitions to extract the parent cohorts and the children for each parent cohort.  
 
 ```{r echo=TRUE}
-
+if(nrow(cohorts) > 0){
 processedCohorts <- processCohorts(cohorts)
 
 knitr::kable(
@@ -75,6 +75,7 @@ knitr::kable(
     dplyr::select(-"json", -"sqlCommand"),
   caption = 'The children/subset cohorts for the first parent cohort.'
   )
+}
 
 ```
 
