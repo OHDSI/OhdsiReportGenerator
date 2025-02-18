@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Extract results and generate plots, presentations and reports from the Observational Health Data Sciences and Informatics results database • OhdsiReportGenerator</title>
-<script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -18,7 +18,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="index.html">OhdsiReportGenerator</a>
 
@@ -31,9 +31,15 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="active nav-item"><a class="nav-link" href="index.html"><span class="fa fa-home fa-lg"></span></a></li>
-<li class="nav-item"><h6 class="dropdown-header" data-toc-skip>Reference</h6></li>
-<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
+<li class="active nav-item"><a class="nav-link" href="index.html"><span class="fa fa-home fa-lg"></span> Home</a></li>
+<li class="nav-item"><a class="nav-link" href="reference/index.html"><span class="fa fa-info-circle fa-lg"></span> Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/ExampleCode.html">Using Observational Health Data Sciences and Informatics (OHDSI) Report Generator</a></li>
+  </ul>
+</li>
+<li class="nav-item"><a class="nav-link" href="news/index.html"><span class="fa fa-newspaper-o fa-lg"></span> News</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><a class="external-link nav-link" href="https://ohdsi.github.io/Hades"><img src='https://ohdsi.github.io/Hades/images/hadesMini.png' width=80 height=17 style='vertical-align: top;'></a></li>
@@ -48,6 +54,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="ohdsireportgenerator">OhdsiReportGenerator<a class="anchor" aria-label="anchor" href="#ohdsireportgenerator"></a>
 </h1></div>
+<p><a href="https://github.com/OHDSI/OhdsiReportGenerator/actions?query=workflow%3AR-CMD-check+branch%3Amain" class="external-link"><img src="https://github.com/OHDSI/OhdsiReportGenerator/workflows/R-CMD-check/badge.svg" alt="Build Status"></a> <a href="https://app.codecov.io/github/OHDSI/OhdsiReportGenerator?branch=main" class="external-link"><img src="https://codecov.io/github/OHDSI/OhdsiReportGenerator/coverage.svg?branch=main" alt="codecov.io"></a></p>
 </div>
 <div class="section level1">
 <h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
@@ -59,23 +66,46 @@
 <h1 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h1>
 <p>Download this repository and using RStudio, install the package. Then you can make use of the report generator by running:</p>
-<p>```{r}</p>
-</div>
-<div class="section level1">
-<h1 id="install-ohdsireportgenerator-using-remotes">Install OhdsiReportGenerator using remotes<a class="anchor" aria-label="anchor" href="#install-ohdsireportgenerator-using-remotes"></a>
-</h1>
-<p>install.packages(‘remotes’) remotes::install_github(‘OHDSI/OhdsiReportGenerator’)</p>
-</div>
-<div class="section level1">
-<h1 id="load-the-library-to-start-using-it">Load the library to start using it<a class="anchor" aria-label="anchor" href="#load-the-library-to-start-using-it"></a>
-</h1>
-<p>library(OhdsiReportGenerator)</p>
-</div>
-<div class="section level1">
-<h1 id="to-run-the-report-generator-with-a-demo-set-of-results">to run the report generator with a demo set of results<a class="anchor" aria-label="anchor" href="#to-run-the-report-generator-with-a-demo-set-of-results"></a>
-</h1>
-<p>generatePresentation( dbms = “&lt;dbms e.g., postgresql&gt;”, server = ‘<add database server with study results>’, user = ‘<add username for account with read access to server>’, password = ‘<add password for account with read access to server>’, resultsSchema = “<result schema name>”, targetId = 1082, outcomeId = 11123, comparatorId = 5373, covariateIds = c( 316139,320128210,443454210, 4282096210,441542210 ), friendlyNames = list( targetName = ‘Drug of interest’, comparatorName = ‘Comparator drug’, indicationName = ‘Indication A’, outcomeName = ‘Outcome B’ ), title = ‘Study investigating outcome B in new users of drug of interest’, lead = ‘Lead Investigator Name Here’, date = Sys.Date(), backgroundText = ’‘, # Add any background information about the project here outputLocation = file.path(getwd(), “extras/reportTest”), outputName = paste0(’presentation_’, gsub(‘:’, ‘<em>’,gsub(’ ’,’</em>’,as.character(date()))),‘.html’) )</result></add></add></add></p>
-<p>```</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Install OhdsiReportGenerator using remotes}</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'remotes'</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'OHDSI/OhdsiReportGenerator'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load the library to start using it</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ohdsi.github.io/OhdsiReportGenerator" class="external-link">OhdsiReportGenerator</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># to run the report generator with a demo set of results</span></span>
+<span><span class="va">conDet</span> <span class="op">&lt;-</span> <span class="fu">OhdsiReportGenerator</span><span class="fu">:::</span><span class="fu"><a href="reference/getExampleConnectionDetails.html">getExampleConnectionDetails</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/generatePresentationMultiple.html">generatePresentationMultiple</a></span><span class="op">(</span></span>
+<span>    server <span class="op">=</span> <span class="va">conDet</span><span class="op">$</span><span class="fu">server</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    username <span class="op">=</span> <span class="va">conDet</span><span class="op">$</span><span class="fu">user</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    password <span class="op">=</span> <span class="va">conDet</span><span class="op">$</span><span class="fu">password</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    dbms <span class="op">=</span> <span class="va">conDet</span><span class="op">$</span><span class="va">dbms</span>,</span>
+<span>    resultsSchema <span class="op">=</span> <span class="st">'main'</span>,</span>
+<span>    targetId <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    targetName <span class="op">=</span> <span class="st">'target'</span>,</span>
+<span>    cmSubsetId <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>    sccsSubsetId <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    indicationName <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    outcomeIds <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>    outcomeNames <span class="op">=</span> <span class="st">'outcome'</span>,</span>
+<span>    comparatorIds <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>    comparatorNames <span class="op">=</span> <span class="st">'comparator'</span>,</span>
+<span>    covariateIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    details <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>      studyPeriod <span class="op">=</span> <span class="st">'All Time'</span>,</span>
+<span>      restrictions <span class="op">=</span> <span class="st">"Age - None"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    title <span class="op">=</span> <span class="st">'Example results repport'</span>,</span>
+<span>    lead <span class="op">=</span> <span class="st">'John Doe'</span>,</span>
+<span>    date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    backgroundText <span class="op">=</span> <span class="st">''</span>,</span>
+<span>    evaluationText <span class="op">=</span> <span class="st">''</span>,</span>
+<span>  outputLocation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"extras/reportTest"</span><span class="op">)</span>,</span>
+<span>  outputName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'presentation_'</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">':'</span>, <span class="st">'_'</span>,<span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">' '</span>,<span class="st">'_'</span>,<span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/date.html" class="external-link">date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,<span class="st">'.html'</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="technology">Technology<a class="anchor" aria-label="anchor" href="#technology"></a>
@@ -90,12 +120,12 @@
 <div class="section level1">
 <h1 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h1>
-<p>ReportGenerator is licensed under Apache License 2.0.</p>
+<p>OhdsiReportGenerator is licensed under Apache License 2.0.</p>
 </div>
 <div class="section level1">
 <h1 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>
 </h1>
-<p>ReportGenerator is being developed in R Studio.</p>
+<p>OhdsiReportGenerator is being developed in R Studio.</p>
 </div>
 
   </main><aside class="col-md-3"><div class="links">

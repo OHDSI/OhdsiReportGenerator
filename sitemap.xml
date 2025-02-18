@@ -1,5 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>/404.html</loc></url>
+<url><loc>/articles/ExampleCode.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
 <url><loc>/news/index.html</loc></url>
@@ -15,6 +17,7 @@
 <url><loc>/reference/getCmDiagnosticsData.html</loc></url>
 <url><loc>/reference/getCmMetaEstimation.html</loc></url>
 <url><loc>/reference/getCohortDefinitions.html</loc></url>
+<url><loc>/reference/getCohortSubsetDefinitions.html</loc></url>
 <url><loc>/reference/getContinuousCaseSeries.html</loc></url>
 <url><loc>/reference/getContinuousRiskFactors.html</loc></url>
 <url><loc>/reference/getDechallengeRechallenge.html</loc></url>
@@ -43,6 +46,7 @@
 <url><loc>/reference/plotSccsEstimates.html</loc></url>
 <url><loc>/reference/plotSexDistributions.html</loc></url>
 <url><loc>/reference/printReactable.html</loc></url>
+<url><loc>/reference/processCohorts.html</loc></url>
 <url><loc>/reference/removeSpaces.html</loc></url>
 </urlset>
 
