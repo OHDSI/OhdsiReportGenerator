@@ -70,7 +70,6 @@ generatePresentationMultiple <- function(
   
   # calling random functions used in quarto doc 
   # as otherwise check fails
-  pointless <- reactable::JS('')
   pointless <- ggpubr::bgcolor('red')
   
   templateLoc <- system.file(
