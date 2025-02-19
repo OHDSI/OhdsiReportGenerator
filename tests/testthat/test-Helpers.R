@@ -90,10 +90,7 @@ test_that("getDbs", {
   
   x <- OhdsiReportGenerator:::getDbs(
     schema = schema,
-    server = conDet$server(),
-    username = conDet$user(),
-    password = conDet$password(),
-    dbms = conDet$dbms,
+    connectionHandler = connectionHandler,
     dbDetails = data.frame(
       CDM_SOURCE_ABBREVIATION = c(
         "eunomia"

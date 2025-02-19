@@ -22,6 +22,8 @@
 #' @details
 #' Finds the location of the example result database in the package and calls `DatabaseConnector::createConnectionDetails` to create a `ConnectionDetails` object for connecting to the database. 
 #' 
+#' @param exdir a directory to unzip the example result data into.  Default is tempdir().
+#' 
 #' @return
 #' An object of class `ConnectionDetails` with the details to connect to the example OHDSI result database
 #'
@@ -33,8 +35,15 @@
 #' 
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #' 
-getExampleConnectionDetails <- function() {
-  server <- system.file("exampledata", "results.sqlite", package = "OhdsiReportGenerator")
+getExampleConnectionDetails <- function(exdir = tempdir()) {
+  
+  # unzip the data - it is compressed to save space
+  utils::unzip(
+    zipfile = system.file('exampledata','results.sqlite.zip', package = 'OhdsiReportGenerator'), 
+    exdir = exdir
+  )
+  
+  server <- file.path(exdir, 'results.sqlite')
   cd <- DatabaseConnector::createConnectionDetails(
     dbms = "sqlite", 
     server = server
@@ -145,10 +154,7 @@ getAnalyses <- function(
 # TODO remove or have an input for the name to type?
 getDbs <- function(
     schema,
-    server,
-    username,
-    password,
-    dbms,
+    connectionHandler,
     dbDetails = data.frame(
       CDM_SOURCE_ABBREVIATION = c(
         "AMBULATORY EMR", "IBM CCAE", "German DA",
@@ -161,24 +167,11 @@ getDbs <- function(
     )
 ){
   
-  connectionDetails <- DatabaseConnector::createConnectionDetails(
-    dbms = dbms,
-    server = server,
-    user = username,
-    password = password
-  )
-  
-  con <- DatabaseConnector::connect(
-    connectionDetails = connectionDetails
-  )
-  on.exit(DatabaseConnector::disconnect(con))
-  
-  sql <- "select CDM_SOURCE_ABBREVIATION from @schema.database_meta_data;"
-  sql <- SqlRender::render(
-    sql = sql,
+  res <- connectionHandler$queryDb(
+    "select CDM_SOURCE_ABBREVIATION from @schema.database_meta_data;",
     schema = schema
   )
-  res <- DatabaseConnector::querySql(con, sql)
+
   dbs <- merge(res, dbDetails)$type
   
   types <- lapply(unique(dbs), function(type){sum(dbs == type)})
