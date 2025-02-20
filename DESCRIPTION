@@ -8,7 +8,7 @@ Authors@R: c(
   person("Anthony", "Sena", email = "sena@ohdsi.org", role = c("aut"))
   )
 Maintainer: Jenna Reps <jreps@its.jnj.com>
-Description: Extract analysis results into R data.frames from the Observational Health Data Sciences and Informatics result database and generate reports that summarize results in HTML format.
+Description: Extract analysis results into R data.frames from the Observational Health Data Sciences and Informatics result database and generate reports that summarize results in HTML format or plots.
 License: Apache License 2.0
 URL: https://ohdsi.github.io/OhdsiReportGenerator, https://github.com/OHDSI/OhdsiReportGenerator
 BugReports: https://github.com/OHDSI/OhdsiReportGenerator/issues

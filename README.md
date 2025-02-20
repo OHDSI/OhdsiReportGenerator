@@ -25,6 +25,8 @@ library(OhdsiReportGenerator)
 # to run the report generator with a demo set of results
 conDet <- OhdsiReportGenerator:::getExampleConnectionDetails()
 
+# render a quarto template report with the results in the 
+# example database for targetId 1, comparatorId 2 and outcomeId 3.
 generatePresentationMultiple(
     server = conDet$server(),
     username = conDet$user(),
