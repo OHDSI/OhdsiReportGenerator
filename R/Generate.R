@@ -31,6 +31,7 @@
 #' @param outputLocation The file location and name to save the protocol 
 #' @param outputName The name of the html protocol that is created
 #' @param intermediateDir The work directory for quarto
+#' 
 #' @return
 #' An named R list with the elements 'standard' and 'source'
 #' 

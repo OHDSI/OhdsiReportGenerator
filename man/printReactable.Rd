@@ -10,7 +10,7 @@ printReactable(
   groupBy = NULL,
   defaultPageSize = 20,
   highlight = TRUE,
-  striped = T
+  striped = TRUE
 )
 }
 \arguments{
@@ -27,7 +27,7 @@ printReactable(
 \item{striped}{whether the rows change color to give a striped appearance}
 }
 \value{
-Nothing but the table is printed in the quarto document
+Nothing but the html code for the table is printed (to be used in a quarto document)
 }
 \description{
 This function lets you print a reactable in a quarto document

@@ -1,2 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^_pkgdown\.yml$
+^\.github$
+^extras$
+man-roxygen
+^README\.md$
+^NEWS\.md$
+^\.Rhistory$

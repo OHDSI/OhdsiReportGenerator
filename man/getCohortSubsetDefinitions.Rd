@@ -21,9 +21,7 @@ getCohortSubsetDefinitions(
 \item{subsetIds}{A vector of subset cohort ids or NULL}
 }
 \value{
-Returns a data.frame with the columns:
-\itemize{
- }
+Returns a data.frame with the cohort subset details
 }
 \description{
 This function extracts all cohort subset definitions for the subsets of interest.

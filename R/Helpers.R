@@ -64,6 +64,9 @@ getExampleConnectionDetails <- function(exdir = tempdir()) {
 #' A string without spaces
 #' 
 #' @family helper
+#' 
+#' @examples 
+#' removeSpaces(' made up.   string')
 #'
 #' @export
 removeSpaces <- function(x){
@@ -95,7 +98,6 @@ getTars <- function(
   return(tar)
 }
 
-# TODO: make this nice and add to Helpers.R
 addTar <- function(data){
   result <- paste0(
     data$riskWindowStart,
@@ -239,7 +241,7 @@ kableDark <- function(data, caption = NULL, position = NULL){
 #' @param striped whether the rows change color to give a striped appearance 
 #' 
 #' @return
-#' Nothing but the table is printed in the quarto document
+#' Nothing but the html code for the table is printed (to be used in a quarto document)
 #'
 #' @family helper
 #'
@@ -255,7 +257,7 @@ printReactable <- function(
     groupBy = NULL,
     defaultPageSize = 20,
     highlight = TRUE, 
-    striped = T
+    striped = TRUE
 ){
   print(
     htmltools::tagList(

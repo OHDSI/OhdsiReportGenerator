@@ -1,4 +1,4 @@
-# Copyright 2023 Observational Health Data Sciences and Informatics
+# Copyright 2025 Observational Health Data Sciences and Informatics
 #
 # This file is part of OhdsiReportGenerator
 #
@@ -14,10 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-#' @keywords internal
-"_PACKAGE"
-
+#' OhdsiReportGenerator
+#' 
+#' @description A package for extracting analyses results and creating reports.
+#'
+#' @name OhdsiReportGenerator
 #' @importFrom dplyr %>%
 #' @importFrom rlang .data
-NULL
+"_PACKAGE"

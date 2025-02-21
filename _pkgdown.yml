@@ -61,3 +61,8 @@ reference:
     desc: >
       These functions are used to help result extraction.
     contents: has_concept("helper")
+  - title: "OhdsiReportGenerator"
+    desc: >
+      A package for extracting analyses results and generating reports.
+    contents: 
+      - OhdsiReportGenerator
