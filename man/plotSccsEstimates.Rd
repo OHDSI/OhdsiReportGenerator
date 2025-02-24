@@ -25,7 +25,7 @@ Creates nice self controlled case series plots
 Input the self controlled case series data
 }
 \examples{
-\dontrun{ 
+
 conDet <- getExampleConnectionDetails()
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
@@ -42,7 +42,7 @@ plotSccsEstimates(
   targetName = 'target', 
   selectedAnalysisId = 1
 )
-}
+
 }
 \seealso{
 Other Estimation: 

@@ -1823,7 +1823,7 @@ processContinuousRiskFactorFeatures <- function(
       
       by = c('databaseName','targetName','targetCohortId','minPriorObservation',
              'covariateName', 'covariateId'),
-      all.x = T
+      all.x = TRUE
         )
     
     allData <- rbind(allData, res)

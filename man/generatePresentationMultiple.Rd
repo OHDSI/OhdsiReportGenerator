@@ -26,7 +26,7 @@ generatePresentationMultiple(
   date = Sys.Date(),
   backgroundText = "",
   evaluationText = "",
-  outputLocation = getwd(),
+  outputLocation,
   outputName = paste0("presentation_", gsub(":", "_", gsub(" ", "_",
     as.character(date()))), ".html"),
   intermediateDir = tempdir()

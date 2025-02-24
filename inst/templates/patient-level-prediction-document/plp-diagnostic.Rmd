@@ -80,7 +80,7 @@ where b.model_design_id = @model_design_id
   names(probastDefs) <- c('probastId', 'probast category', 'consideration', 'explanation')
   row.names(probastDefs) <- NULL
   
-  res <- merge(probastDefs, res, by = 'probastId', all.x = T)
+  res <- merge(probastDefs, res, by = 'probastId', all.x = TRUE)
 
 ```
   

@@ -780,7 +780,7 @@ getSccsDiagnosticsData <- function(
       if(sum(x %in% c('FAIL'))>0){
         return('Fail')
       } else if(sum(x %in% c('WARNING')) >0){
-        return(sum(x %in% c('WARNING'), na.rm = T))
+        return(sum(x %in% c('WARNING'), na.rm = TRUE))
       } else{
         return('Pass')
       }

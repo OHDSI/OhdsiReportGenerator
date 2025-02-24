@@ -73,7 +73,7 @@ plotCmEstimates <- function(
       mean = .data$calibratedRr,
       lower = .data$calibratedCi95Lb,
       upper = .data$calibratedCi95Ub,
-      summary = F
+      summary = FALSE
     ) %>%
     dplyr::mutate(
       hr = ifelse(is.na(.data$calibratedRr), "--", .data$hr),
@@ -123,7 +123,7 @@ plotCmEstimates <- function(
         eventsComparator = "",
         targetIr = "",
         comparatorIr = "",
-        summary = T
+        summary = TRUE
       ) %>%
       dplyr::mutate(
         hr = ifelse(is.na(.data$calibratedRr), "--", .data$hr),
@@ -154,7 +154,7 @@ plotCmEstimates <- function(
     targetIr = c("Target", "IR"),
     comparatorIr = c("Comparator", "IR"),
     hr = c("Hazard Ratio", "(95% CI)"),
-    summary = T
+    summary = TRUE
   )
   
   plotData <- dplyr::bind_rows(
@@ -175,10 +175,10 @@ plotCmEstimates <- function(
   names(dividers) <- as.character(c(3, nrow(plotData) - 1))
   
   # edit to enable log scale
-  if(sum(plotData$lower < 0.01, na.rm = T) > 0){
+  if(sum(plotData$lower < 0.01, na.rm = TRUE) > 0){
     plotData$lower[plotData$lower < 0.01] <- 0.01
   }
-  if(sum(plotData$upper > 50, na.rm = T) > 0){
+  if(sum(plotData$upper > 50, na.rm = TRUE) > 0){
     plotData$lower[plotData$lower > 50] <- 50
   }
   
@@ -224,7 +224,7 @@ plotCmEstimates <- function(
 #' 
 #' @export
 #' @examples
-#' \dontrun{ 
+#' 
 #' conDet <- getExampleConnectionDetails()
 #' 
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
@@ -241,7 +241,7 @@ plotCmEstimates <- function(
 #'   targetName = 'target', 
 #'   selectedAnalysisId = 1
 #' )
-#' }
+#' 
 plotSccsEstimates <- function(
     sccsData,
     sccsMeta = NULL,
@@ -253,7 +253,7 @@ plotSccsEstimates <- function(
   fmtIncidenceRate <- "%.1f"
   incidenceRateMult <- 365.25 * 1000 
   
-  maxVal <- max(sccsData$calibratedRr, na.rm = T)
+  maxVal <- max(sccsData$calibratedRr, na.rm = TRUE)
   
   estimates <- sccsData %>%
     dplyr::filter(.data$analysisId == !!selectedAnalysisId) %>%
@@ -290,7 +290,7 @@ plotSccsEstimates <- function(
       mean = .data$calibratedRr,
       lower = .data$calibratedCi95Lb,
       upper = .data$calibratedCi95Ub,
-      summary = F)
+      summary = FALSE)
   
   if (nrow(estimates) == 0) {
     # No data
@@ -353,12 +353,20 @@ plotSccsEstimates <- function(
       plotData,
       tibble::tibble(calibratedRr = NA_real_),
       meta
+      
     )
   }
   
   dividers <- list(grid::gpar(lty = 1),
                    grid::gpar(lty = 1))
   names(dividers) <- as.character(c(3, nrow(plotData) - 1))
+  
+  # check lower is not 0
+  xlog <- TRUE
+  if(min(plotData$lower, na.rm = TRUE) == 0){
+    warning('lower bound is zero - can not use log scale')
+    xlog <- FALSE
+  }
   
   p <- plotData %>%
     forestplot::forestplot(
@@ -373,7 +381,7 @@ plotSccsEstimates <- function(
         "irr"
       ),
       is.summary = summary,
-      xlog = TRUE,
+      xlog = xlog,
       boxsize = 0.5,
       hrzl_lines = dividers,
       # align = c("l", "c", "c", "c"),

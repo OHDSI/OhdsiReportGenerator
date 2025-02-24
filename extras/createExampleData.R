@@ -93,7 +93,7 @@ DatabaseConnector::insertTable(
     PCT_RECHALLENGE_SUCCESS = 0.8,
     PCT_RECHALLENGE_FAIL = 0.2
   ), 
-  dropTableIfExists = T)
+  dropTableIfExists = TRUE)
 
 #"c_rechallenge_fail_case_series"
 DatabaseConnector::insertTable(
@@ -119,7 +119,7 @@ DatabaseConnector::insertTable(
     RECHALLENGE_OUTCOME_NUMBER = 2,
     RECHALLENGE_OUTCOME_START_DATE_OFFSET = 36
   ), 
-  dropTableIfExists = T)
+  dropTableIfExists = TRUE)
 DatabaseConnector::disconnect(con)
 }
 

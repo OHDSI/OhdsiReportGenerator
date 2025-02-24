@@ -64,10 +64,14 @@ generatePresentationMultiple <- function(
     date = Sys.Date(),
     backgroundText = '',
     evaluationText = '',
-    outputLocation = getwd(),
+    outputLocation,
     outputName = paste0('presentation_', gsub(':', '_',gsub(' ','_',as.character(date()))),'.html'),
     intermediateDir = tempdir()
 ){
+  
+  if(missing(outputLocation)){
+    stop('Must enter location for outputLocation')
+  }
   
   # calling random functions used in quarto doc 
   # as otherwise check fails
@@ -79,7 +83,7 @@ generatePresentationMultiple <- function(
   )
   
   if(!dir.exists(file.path(intermediateDir, 'presentation'))){
-    dir.create(file.path(intermediateDir, 'presentation'), recursive = T)
+    dir.create(file.path(intermediateDir, 'presentation'), recursive = TRUE)
   }
   
   filesOfInt <- c(
@@ -95,7 +99,7 @@ generatePresentationMultiple <- function(
   
   # move img folder
   if(!dir.exists(file.path(intermediateDir, 'presentation', 'img'))){
-    dir.create(file.path(intermediateDir, 'presentation', 'img'), recursive = T)
+    dir.create(file.path(intermediateDir, 'presentation', 'img'), recursive = TRUE)
   }
   imgOfInt <- dir(file.path(templateLoc, 'img'))
   file.copy(
@@ -131,7 +135,7 @@ generatePresentationMultiple <- function(
   
   # now move html output to output location
   if(!dir.exists(outputLocation)){
-    dir.create(outputLocation, recursive = T)
+    dir.create(outputLocation, recursive = TRUE)
   }
   file.copy(
     from = file.path(intermediateDir, 'presentation', 'assure_study_presentation_multiple.html'), 

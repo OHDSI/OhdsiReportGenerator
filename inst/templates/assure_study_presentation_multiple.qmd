@@ -247,7 +247,7 @@ columns = list(
     )
 ),
  highlight = TRUE, 
- striped = T, 
+ striped = TRUE, 
  defaultPageSize = defaultPageSize
 )
 cat("\n")
@@ -411,7 +411,7 @@ cat('\n\n::::')
                 data = charsData, 
                 columns = list(
                   covariateName = reactable::colDef(
-                    filterable = T, 
+                    filterable = TRUE, 
                     minWidth = 300 
                   ),
                  caseAverage = reactable::colDef(
@@ -438,7 +438,7 @@ cat('\n\n::::')
                 groupBy = c('covariateName'), 
                 defaultPageSize = defaultPageSize,
                 highlight = TRUE, 
-                striped = T
+                striped = TRUE
               )
             #)
           #)
@@ -505,7 +505,7 @@ for(outcomeId in outcomeIds){
               name = 'Database'
             ),
             comparatorName = reactable::colDef(
-              filterable = T
+              filterable = TRUE
             ),
             summaryValue = reactable::colDef(
               name = "Overall Diagnostic",
@@ -524,7 +524,7 @@ for(outcomeId in outcomeIds){
           ), 
           defaultPageSize = defaultPageSize,
           highlight = TRUE, 
-          striped = T
+          striped = TRUE
         )
   }
   
@@ -572,7 +572,7 @@ for(outcomeId in outcomeIds){
           ),
         columns = list(
           comparatorName = reactable::colDef(
-            filterable = T
+            filterable = TRUE
           ),
           calibratedRr = reactable::colDef(
             format = reactable::colFormat(digits = 2)
@@ -598,7 +598,7 @@ for(outcomeId in outcomeIds){
         ),
         defaultPageSize = defaultPageSize,
         highlight = TRUE, 
-        striped = T
+        striped = TRUE
       )
   
   if(nrow(cmTable)>0){
@@ -709,7 +709,7 @@ if(runSCCS){
     ), 
     defaultPageSize = defaultPageSize,
     highlight = TRUE, 
-    striped = T
+    striped = TRUE
   )
 }
 ```
@@ -787,7 +787,7 @@ if(runSCCS){
     ),
     defaultPageSize = defaultPageSize,
     highlight = TRUE, 
-    striped = T
+    striped = TRUE
   )
 }
 ```
@@ -896,7 +896,7 @@ dplyr::filter(
         ),
         defaultPageSize = defaultPageSize,
         highlight = TRUE, 
-        striped = T
+        striped = TRUE
       )
   
 }
@@ -995,7 +995,7 @@ for(outcomeId in outcomeIds){
             ),
             defaultPageSize = defaultPageSize,
             highlight = TRUE, 
-            striped = T
+            striped = TRUE
           )
     }
     cat('\n\n:::')
