@@ -1,0 +1,219 @@
+# Characterization {.break-slides}
+
+## Cohort Demographics
+
+::: {style='font-size: 50%;'}
+
+```{r}
+#| label: cohort demographics
+#| echo: false
+#| results: 'asis'
+  # add text for outcome tabs
+
+
+# figure out which targets are in char
+charTargetIds <- connectionHandler$queryDb("select distinct target_cohort_id from @schema.c_cohort_details where cohort_type = 'Target';", schema = resultsSchema)
+
+targetsC <- targets %>% filter(
+.data$cohortDefinitionId %in% !!charTargetIds$targetCohortId
+)
+
+# add targets loop
+#cat('\n::: {.panel-tabset .nav-pills}')
+for(targetInd in 1:length(targetsC$cohortDefinitionId)){
+cat(paste0('\n\n### ',targetsC$cohortFriendlyName[targetInd], ' \n\n'))
+
+  cat('\n\n:::: {.panel-tabset .nav-pills}')
+  for(outcomeInd in 1:length(outcomes$cohortDefinitionId)){
+    outcomeId <- outcomes$cohortDefinitionId[outcomeInd]
+    outcomeName <- outcomes$cohortFriendlyName[outcomeInd]
+    
+    ageData <- OhdsiReportGenerator::getCharacterizationDemographics(
+      connectionHandler = connectionHandler,
+      schema = resultsSchema,
+      targetId = targetsC$cohortDefinitionId[targetInd],
+      outcomeId = outcomeId,
+      type = 'age'
+    )
+   sexData <- OhdsiReportGenerator::getCharacterizationDemographics(
+      connectionHandler = connectionHandler,
+      schema = resultsSchema,
+      targetId = targetsC$cohortDefinitionId[targetInd],
+      outcomeId = outcomeId,
+      type = 'sex'
+    )
+    
+    if(nrow(sexData) >0 | nrow(ageData) > 0){
+      # add outcome tab
+      cat(paste0('\n\n### ',outcomeName, ' \n\n'))
+      
+      # loop over tar settings as tabs
+      tars <- OhdsiReportGenerator:::getTars(
+        data = sexData,  
+        tarColumnNames = c(
+          'startAnchor', 
+          'riskWindowStart',
+          'endAnchor',
+          'riskWindowEnd'
+        )
+      )
+      
+      cat('\n::: {.panel-tabset .nav-pills}')
+      for(tar in tars){
+        cat(paste0('\n#### TAR: ',paste0('(',tar$startAnchor, " + ", tar$riskWindowStart, ') - (', tar$endAnchor, " + ", tar$riskWindowEnd, ')'),' \n'))
+        
+sexPlot <- NULL
+        if(nrow(sexData)>0){
+        sexPlot <- OhdsiReportGenerator::plotSexDistributions(
+          sexData = sexData,
+          riskWindowStart = tar$riskWindowStart,
+          riskWindowEnd = tar$riskWindowEnd, 
+          startAnchor = tar$startAnchor, 
+          endAnchor = tar$endAnchor
+        )
+        }
+agePlot <- NULL
+if(nrow(ageData)>0){
+        agePlot <- OhdsiReportGenerator::plotAgeDistributions(
+          ageData = ageData,
+          riskWindowStart = tar$riskWindowStart,
+          riskWindowEnd = tar$riskWindowEnd, 
+          startAnchor = tar$startAnchor, 
+          endAnchor = tar$endAnchor
+        )
+}
+        
+        print(
+          ggpubr::annotate_figure(
+            p = ggpubr::ggarrange(
+              sexPlot, 
+              agePlot, 
+              heights = c(1, 2),
+              ncol = 1, 
+              nrow = 2,
+              labels = c("A", "B") 
+            ), 
+            fig.lab = "Demographics for patients with outcome during time-at-risk vs patients without outcome during time-at-risk when first exposed.", 
+            fig.lab.pos = "bottom.left"
+          )
+        )
+      }
+      cat('\n\n:::') # tars
+    }
+  }
+  cat('\n\n::::\n') # outcomes
+}
+#cat('\n\n:::') # targets
+
+```
+
+:::
+  
+## Cohort Characterization
+  
+::: {style='font-size: 50%;'}
+
+```{r}
+#| label: cohort characterization
+#| echo: false
+#| results: 'asis'
+
+for(targetInd in 1:length(targetsC$cohortDefinitionId)){
+cat(paste0('\n\n### ',targetsC$cohortFriendlyName[targetInd], ' \n\n'))
+
+  # add text for outcome tabs
+  cat('\n:::: {.panel-tabset .nav-pills}')
+  for(outcomeInd in 1:length(outcomes$cohortDefinitionId)){
+    outcomeId <- outcomes$cohortDefinitionId[outcomeInd]
+    outcomeName <- outcomes$cohortFriendlyName[outcomeInd]
+    
+    chars <- OhdsiReportGenerator::getBinaryRiskFactors(
+      connectionHandler = connectionHandler,
+      schema = resultsSchema,
+      targetId = targetsC$cohortDefinitionId[targetInd],
+      outcomeId = outcomeId,
+      analysisIds = c(201,401,210,410)
+    )
+    
+    if(nrow(chars) > 0 ){
+      
+      # add outcome tab
+      cat(paste0('\n\n### ',outcomeName, ' \n\n'))
+      
+      tars <- OhdsiReportGenerator:::getTars(
+        data = chars,  
+        tarColumnNames = c(
+          'startAnchor', 
+          'riskWindowStart',
+          'endAnchor',
+          'riskWindowEnd'
+        )
+      )
+      
+      cat('\n::: {.panel-tabset .nav-pills}')
+      for(tar in tars){
+        
+        charsData <- chars %>% 
+         dplyr::filter(
+          .data$startAnchor == !!tar$startAnchor &
+          .data$endAnchor == !!tar$endAnchor &
+          .data$riskWindowStart == !!tar$riskWindowStart &
+          .data$riskWindowEnd == !!tar$riskWindowEnd
+         )
+        
+        
+        if(nrow(charsData) > 0 ){
+          # only include tab if there are results
+          cat(paste0('\n\n#### TAR: ',paste0('(',tar$startAnchor, " + ", tar$riskWindowStart, ') - (', tar$endAnchor, " + ", tar$riskWindowEnd, ')'),' \n\n')) 
+          
+          #print(
+            #htmltools::tagList(
+              #reactable::reactable(
+          OhdsiReportGenerator::printReactable(
+                data = charsData, 
+                columns = list(
+                  covariateName = reactable::colDef(
+                    filterable = TRUE, 
+                    minWidth = 300 
+                  ),
+                 caseAverage = reactable::colDef(
+                    aggregate = "mean",
+                    name = 'With Outcome',
+                    format = reactable::colFormat(digits = 2)
+                  ),
+                  nonCaseAverage = reactable::colDef(
+                    aggregate = "mean",
+                    name = 'No Outcome',
+                    format = reactable::colFormat(digits = 2)
+                  ),
+                  SMD = reactable::colDef(
+                    aggregate = "mean",
+                    name = 'SMD',
+                    format = reactable::colFormat(digits = 2)
+                  ),
+                  absSMD = reactable::colDef(
+                    aggregate = "mean",
+                    name = 'SMD',
+                    format = reactable::colFormat(digits = 2)
+                  )
+                ),
+                groupBy = c('covariateName'), 
+                defaultPageSize = defaultPageSize,
+                highlight = TRUE, 
+                striped = TRUE
+              )
+            #)
+          #)
+        }
+        
+      }
+      cat('\n:::')
+    }
+  }
+  cat('\n::::')
+
+} # end target loop
+
+```
+
+:::

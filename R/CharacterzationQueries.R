@@ -135,6 +135,10 @@ getIncidenceRates <- function(
     database_table_name = databaseTable
   )
   
+  result$incidenceProportionP100p[is.na(result$incidenceProportionP100p)] <- result$outcomes[is.na(result$incidenceProportionP100p)]/result$personsAtRisk[is.na(result$incidenceProportionP100p)]*100
+  result$incidenceProportionP100p[is.na(result$incidenceProportionP100p)] <- 0
+  result$incidenceRateP100py[is.na(result$incidenceRateP100py)] <- result$outcomes[is.na(result$incidenceRateP100py)]/(result$personDays[is.na(result$incidenceRateP100py)]/365)*100
+  result$incidenceRateP100py[is.na(result$incidenceRateP100py)] <- 0
   result[is.na(result)] <- 'Any'
   result <- unique(result)
   

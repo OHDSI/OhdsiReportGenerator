@@ -1,37 +1,42 @@
 context("Generate")
 
-test_that("generatePresentationMultiple", {
+test_that("generatePresentation", {
   
   savLoc <- file.path(tempdir(), 'example')
   if(!dir.exists(savLoc)){
     dir.create(savLoc)
   }
   
-  generatePresentationMultiple(
+  generatePresentation(
     server = conDet$server(),
     username = conDet$user(),
     password = conDet$password(),
     dbms = conDet$dbms,
     resultsSchema = schema,
+    
+    dbDetails = NULL,
+    lead = 'add name',
+    team = c('name 1', 'name 2'),
+    trigger = 'A signal was found in spontaneous reports',
+    safetyQuestion = '',
+    objective = '',
+    date = as.character(Sys.Date()),
+    
     targetId = 1,
-    targetName = 'target',
-    cmSubsetId = 2,
-    sccsSubsetId = NULL,
-    indicationName = NULL,
     outcomeIds = 3,
-    outcomeNames = 'outcome',
-    comparatorIds = 2,
-    comparatorNames = 'Comp',
+    cohortNames = c('target','outcome'),
+    cohortIds = c(1,3),
     covariateIds = NULL,
     details = list(
       studyPeriod = 'All Time',
       restrictions = "Age - None"
     ),
-    title = 'ASSURE 001 ...',
-    lead = 'add name',
-    date = Sys.Date(),
-    backgroundText = '',
     evaluationText = '',
+    includeCI = TRUE,
+    includeCharacterization = TRUE,
+    includeCM = TRUE,
+    includeSCCS = FALSE,
+    includePLP = FALSE,
     outputLocation = savLoc,
     outputName = paste0('presentation_', gsub(':', '_',gsub(' ','_',as.character(date()))),'.html'),
     intermediateDir = tempdir()

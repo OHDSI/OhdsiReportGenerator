@@ -485,6 +485,8 @@ getCmMetaEstimation <- function(
 #'  \item{targetId the target cohort id}
 #'  \item{outcomeName the outcome name}
 #'  \item{outcomeId the outcome cohort id}
+#'  \item{indicationName the indication name}
+#'  \item{indicatonId the indication cohort id}
 #'  \item{covariateName whether main or secondary analysis}
 #'  \item{outcomeSubjects The number of subjects with at least one outcome.}
 #'  \item{outcomeEvents The number of outcome events.}
@@ -544,6 +546,8 @@ getSccsEstimation <- function(
     sc.era_id as target_id,
     cg1.cohort_name as outcome_name,
     eos.outcome_id,
+    cg3.cohort_name as indication_name,
+    eos.nesting_cohort_id as indication_id,
     sc.covariate_name,
     
   sr.outcome_subjects,
@@ -613,6 +617,10 @@ getSccsEstimation <- function(
 	inner join 
   @schema.@cg_table_prefixcohort_definition cg2
 	on cg2.cohort_definition_id = sc.era_id
+	
+	 left join
+   @schema.@cg_table_prefixcohort_definition as cg3
+   on eos.nesting_cohort_id = cg3.cohort_definition_id
   
   WHERE
   1 = 1 
@@ -664,6 +672,8 @@ getSccsEstimation <- function(
 #'  \item{targetId the target cohort id}
 #'  \item{outcomeName the outcome name}
 #'  \item{outcomeId the outcome cohort id}
+#'  \item{indicationName the indication name}
+#'  \item{indicatonId the indication cohort id}
 #'  \item{covariateName whether main or secondary analysis}
 #'  \item{mdrr the maximum passable minimum detectable relative risk (mdrr) value.  If the mdrr is greater than this the diagnostics will fail.}
 #'  \item{ease The expected absolute systematic error (ease) measures residual bias.}
@@ -710,6 +720,8 @@ getSccsDiagnosticsData <- function(
   cov.era_id as target_id,
   c.cohort_name as outcome_name,
   eos.outcome_id,
+  cg3.cohort_name as indication_name,
+  eos.nesting_cohort_id as indication_id,
   cov.covariate_name,
   ds.mdrr,
   ds.ease,
@@ -748,6 +760,10 @@ getSccsDiagnosticsData <- function(
    inner join
    @schema.@cg_table_prefixcohort_definition as c2
    on cov.era_id = c2.cohort_definition_id
+   
+   left join
+   @schema.@cg_table_prefixcohort_definition as cg3
+   on eos.nesting_cohort_id = cg3.cohort_definition_id
    
    
    where
@@ -815,6 +831,8 @@ getSccsDiagnosticsData <- function(
 #'  \item{targetId the target cohort id}
 #'  \item{outcomeName the outcome name}
 #'  \item{outcomeId the outcome cohort id}
+#'  \item{indicationName the indicationname}
+#'  \item{indicationId the indication cohort id}
 #'  \item{covariateName whether main or secondary analysis}
 #'  \item{outcomeSubjects The number of subjects with at least one outcome.}
 #'  \item{outcomeEvents The number of outcome events.}
@@ -865,6 +883,8 @@ getSccsMetaEstimation <- function(
   cov.era_id as target_id, 
   c3.cohort_name as outcome_name,
   eos.outcome_id,
+  cg3.cohort_name as indication_name,
+  eos.nesting_cohort_id as indication_id,
   cov.covariate_name,
 
   r.outcome_subjects,
@@ -930,6 +950,10 @@ getSccsMetaEstimation <- function(
    inner join
    @schema.@es_table_prefixanalysis as ev
    on ev.evidence_synthesis_analysis_id = r.evidence_synthesis_analysis_id
+   
+   left join
+   @schema.@cg_table_prefixcohort_definition as cg3
+   on eos.nesting_cohort_id = cg3.cohort_definition_id
    
    where 
    r.calibrated_rr != 0 and

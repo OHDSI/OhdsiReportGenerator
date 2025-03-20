@@ -10,7 +10,9 @@ printReactable(
   groupBy = NULL,
   defaultPageSize = 20,
   highlight = TRUE,
-  striped = T
+  striped = TRUE,
+  searchable = TRUE,
+  filterable = TRUE
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ printReactable(
 \item{highlight}{whether to highlight the row of interest}
 
 \item{striped}{whether the rows change color to give a striped appearance}
+
+\item{searchable}{whether you can search in the table}
+
+\item{filterable}{whether you can filter the table}
 }
 \value{
 Nothing but the table is printed in the quarto document

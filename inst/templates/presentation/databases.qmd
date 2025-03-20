@@ -1,0 +1,32 @@
+## Database
+
+::: {style="font-size: 50%;"}
+```{r}
+#| label: database_sub
+#| echo: false
+#| results: 'asis'
+
+# add table with the dbs
+databases <- connectionHandler$queryDb("SELECT * FROM @schema.database_meta_data;", schema = resultsSchema)
+
+reactable::reactable( 
+  data = databases %>% 
+    select("cdmSourceAbbreviation", "sourceDescription", "sourceReleaseDate",
+         "sourceDocumentationReference",
+         "cdmEtlReference", "maxObsPeriodEndDate"),  
+  columns = list(
+cdmSourceAbbreviation = reactable::colDef(
+name = 'Database'
+  ),
+sourceDescription = reactable::colDef(
+name = 'Description',
+minWidth = 400,
+  )),
+  searchable = TRUE, 
+  filterable = TRUE, 
+  highlight = TRUE, 
+  striped = TRUE
+)
+
+```
+:::

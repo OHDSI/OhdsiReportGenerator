@@ -1,0 +1,185 @@
+## Self Controlled Case Series
+  
+::: {style='font-size: 50%;'}
+::: {.panel-tabset .nav-pills}
+
+### Study Diagnostics
+:::: {.columns}
+
+::: {.column width="85%"}
+
+```{r}
+#| label: sccs diagostics
+
+  sccsTableDiag <- OhdsiReportGenerator::getSccsDiagnosticsData(
+    connectionHandler = connectionHandler,
+    schema = resultsSchema,
+    targetIds = targets$cohortDefinitionId,
+    outcomeIds = outcomes$cohortDefinitionId
+)
+  
+  # add table
+  reactable::reactable(
+    data = sccsTableDiag %>%
+      dplyr::select(
+        "databaseName",
+        "targetName",
+        "outcomeName",
+        'indicationName',
+        "analysisId",
+        "summaryValue"
+      )
+    ,
+    columns = list(
+      databaseName = reactable::colDef(
+        name = 'Database'
+      ),
+      summaryValue = reactable::colDef(
+        name = "Overall Diagnostic",
+        style = function(value) {
+          color <- 'orange'
+          if(is.na(value)){
+            color <- 'black'
+          }else if(value == 'Pass'){
+            color <- '#AFE1AF'
+          }else if(value == 'Fail'){
+            color <- '#E97451'
+          }
+          list(background = color)
+        }
+      )
+    ), 
+    defaultPageSize = defaultPageSize,
+    highlight = TRUE, 
+    striped = TRUE, 
+    searchable = TRUE,
+    filterable = TRUE
+  )
+```
+
+:::
+  
+::: {.column width="15%"}
+
+> Fail: Study failed ASSURE diagnostics
+
+> Pass: Study passed without warnings
+
+> Number: Passed wth Number of warnings
+
+:::
+  
+::::
+  
+```{r}
+#| label: sccs estimation
+
+  sccsTable <- OhdsiReportGenerator::getSccsEstimation(
+    connectionHandler = connectionHandler,
+    schema = resultsSchema,
+    targetIds = targets$cohortDefinitionId,
+    outcomeIds = outcomes$cohortDefinitionId
+  )
+  
+  sccsMeta <- OhdsiReportGenerator::getSccsMetaEstimation(
+    connectionHandler = connectionHandler,
+    schema = resultsSchema,
+    targetIds = targets$cohortDefinitionId,
+    outcomeIds = outcomes$cohortDefinitionId
+  )
+```
+
+### Table Results
+```{r}
+#| label: sccs estimation table
+
+  reactable::reactable(
+    data = sccsTable %>% 
+      dplyr::bind_rows(sccsMeta) %>% 
+      dplyr::select(
+        'databaseName',
+        'targetName',
+        'outcomeName',
+        'indicationName',
+        'description',
+        'calibratedRr',
+        'calibratedCi95Lb',
+        'calibratedCi95Ub',
+        'calibratedP',
+        'calibratedLogRr',
+        'calibratedSeLogRr'
+      ),
+    columns = list(
+      description = reactable::colDef(
+        minWidth = 300
+      ),
+      calibratedRr = reactable::colDef(
+        format = reactable::colFormat(digits = 2)
+      ),
+      calibratedCi95Lb = reactable::colDef(
+        format = reactable::colFormat(digits = 2)
+      ),
+      calibratedCi95Ub = reactable::colDef(
+        format = reactable::colFormat(digits = 2)
+      ),
+      calibratedP = reactable::colDef(
+        format = reactable::colFormat(digits = 2)
+      ),
+      calibratedLogRr = reactable::colDef(
+        format = reactable::colFormat(digits = 2)
+      ),
+      calibratedSeLogRr = reactable::colDef(
+        format = reactable::colFormat(digits = 2)
+      )
+    ),
+    defaultPageSize = defaultPageSize,
+    highlight = TRUE, 
+    striped = TRUE,
+    searchable = TRUE,
+    filterable = TRUE
+  )
+```
+
+### Plot Results
+::: {.panel-tabset}
+```{r}
+#| label: sccs estimation plot
+#| echo: false
+#| results: 'asis'
+
+  analyses <- unique(sccsTable$description)
+  analysisIds <- unique(sccsTable$analysisId)
+  
+  for (i in seq_along(analyses)) {
+    analysis <- analyses[[i]]
+    analysisId <- analysisIds[[i]]
+    cat(paste0('\n\n#### ', analysis ,'\n\n'))
+    
+   # for each outcome?
+for(j in 1:nrow(outcomes)){
+
+mdata <- sccsTable %>% 
+    dplyr::filter(.data$outcomeId == outcomes$cohortDefinitionId[j])
+esData <- sccsMeta %>% 
+    dplyr::filter(.data$outcomeId == outcomes$cohortDefinitionId[j])
+if(nrow(esData) == 0){
+esData <- NULL
+}
+if(nrow(mdata) >0 ){
+    cat(paste0('\n',outcomes$cohortFriendlyName[j], ' plot: \n\n')) 
+    p <- OhdsiReportGenerator::plotSccsEstimates(
+      sccsData = mdata,
+      sccsMeta = esData,
+      targetName = targets$cohortFriendlyName[targets$cohortDefinitionId == params$targetId], # can this handle multiple targets?
+      selectedAnalysisId = analysisId
+    )
+    print(p)
+}
+}
+}
+
+```
+:::
+  
+:::
+:::

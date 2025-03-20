@@ -58,7 +58,7 @@ getExampleConnectionDetails <- function() {
 #'
 #' @export
 removeSpaces <- function(x){
-  return(gsub(' ', '_', x))
+  return(gsub(' ', '_', gsub("[[:punct:]]", "", x)))
 }
 
 formatCohortType <- function(
@@ -145,10 +145,7 @@ getAnalyses <- function(
 # TODO remove or have an input for the name to type?
 getDbs <- function(
     schema,
-    server,
-    username,
-    password,
-    dbms,
+    connectionHandler,
     dbDetails = data.frame(
       CDM_SOURCE_ABBREVIATION = c(
         "AMBULATORY EMR", "IBM CCAE", "German DA",
@@ -161,24 +158,11 @@ getDbs <- function(
     )
 ){
   
-  connectionDetails <- DatabaseConnector::createConnectionDetails(
-    dbms = dbms,
-    server = server,
-    user = username,
-    password = password
-  )
-  
-  con <- DatabaseConnector::connect(
-    connectionDetails = connectionDetails
-  )
-  on.exit(DatabaseConnector::disconnect(con))
-  
-  sql <- "select CDM_SOURCE_ABBREVIATION from @schema.database_meta_data;"
-  sql <- SqlRender::render(
-    sql = sql,
+  res <- connectionHandler$queryDb(
+    "select CDM_SOURCE_ABBREVIATION from @schema.database_meta_data;",
     schema = schema
   )
-  res <- DatabaseConnector::querySql(con, sql)
+  
   dbs <- merge(res, dbDetails)$type
   
   types <- lapply(unique(dbs), function(type){sum(dbs == type)})
@@ -244,6 +228,8 @@ kableDark <- function(data, caption = NULL, position = NULL){
 #' @param defaultPageSize The number of rows in the table
 #' @param highlight whether to highlight the row of interest
 #' @param striped whether the rows change color to give a striped appearance 
+#' @param searchable whether you can search in the table
+#' @param filterable whether you can filter the table
 #' 
 #' @return
 #' Nothing but the table is printed in the quarto document
@@ -262,7 +248,9 @@ printReactable <- function(
     groupBy = NULL,
     defaultPageSize = 20,
     highlight = TRUE, 
-    striped = T
+    striped = TRUE,
+    searchable = TRUE, 
+    filterable = TRUE
 ){
   print(
     htmltools::tagList(
@@ -272,7 +260,9 @@ printReactable <- function(
         groupBy = groupBy,
         defaultPageSize = defaultPageSize,
         highlight = highlight, 
-        striped = striped
+        striped = striped,
+        searchable = searchable, 
+        filterable = filterable
       )
     )
   )

@@ -39,6 +39,8 @@ Returns a data.frame with the columns:
  \item{targetId the target cohort id}
  \item{outcomeName the outcome name}
  \item{outcomeId the outcome cohort id}
+ \item{indicationName the indication name}
+ \item{indicatonId the indication cohort id}
  \item{covariateName whether main or secondary analysis}
  \item{mdrr the maximum passable minimum detectable relative risk (mdrr) value.  If the mdrr is greater than this the diagnostics will fail.}
  \item{ease The expected absolute systematic error (ease) measures residual bias.}
