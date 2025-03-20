@@ -21,9 +21,7 @@ getCohortDefinitions(
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 }
 \value{
-Returns a data.frame with the columns:
-\itemize{
- }
+Returns a data.frame with the cohort details
 }
 \description{
 This function extracts all cohort definitions for the targets of interest.

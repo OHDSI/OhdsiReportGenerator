@@ -11,9 +11,7 @@
 #' @template targetIds
 #' @family Cohorts
 #' @return
-#' Returns a data.frame with the columns:
-#' \itemize{
-#'  } 
+#' Returns a data.frame with the cohort details
 #' 
 #' @export
 #' @examples 
@@ -117,9 +115,7 @@ processCohorts <- function(cohort){
 #' @param subsetIds A vector of subset cohort ids or NULL
 #' @family Cohorts
 #' @return
-#' Returns a data.frame with the columns:
-#' \itemize{
-#'  } 
+#' Returns a data.frame with the cohort subset details
 #' 
 #' @export
 #' @examples 

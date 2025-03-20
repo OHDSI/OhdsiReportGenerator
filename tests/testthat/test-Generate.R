@@ -43,9 +43,9 @@ test_that("generatePresentation", {
   )
   
   # ensure report is generated
-  testthat::expect_true(length(dir(savLoc, pattern = '.html', full.names = T)) > 0)
+  testthat::expect_true(length(dir(savLoc, pattern = '.html', full.names = TRUE)) > 0)
  
   # clean up and remove file
-  file.remove(dir(savLoc, pattern = '.html', full.names = T))
+  file.remove(dir(savLoc, pattern = '.html', full.names = TRUE))
    
 })

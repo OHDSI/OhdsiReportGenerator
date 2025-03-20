@@ -22,6 +22,8 @@
 #' @details
 #' Finds the location of the example result database in the package and calls `DatabaseConnector::createConnectionDetails` to create a `ConnectionDetails` object for connecting to the database. 
 #' 
+#' @param exdir a directory to unzip the example result data into.  Default is tempdir().
+#' 
 #' @return
 #' An object of class `ConnectionDetails` with the details to connect to the example OHDSI result database
 #'
@@ -33,8 +35,15 @@
 #' 
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #' 
-getExampleConnectionDetails <- function() {
-  server <- system.file("exampledata", "results.sqlite", package = "OhdsiReportGenerator")
+getExampleConnectionDetails <- function(exdir = tempdir()) {
+  
+  # unzip the data - it is compressed to save space
+  utils::unzip(
+    zipfile = system.file('exampledata','results.sqlite.zip', package = 'OhdsiReportGenerator'), 
+    exdir = exdir
+  )
+  
+  server <- file.path(exdir, 'results.sqlite')
   cd <- DatabaseConnector::createConnectionDetails(
     dbms = "sqlite", 
     server = server
@@ -55,6 +64,9 @@ getExampleConnectionDetails <- function() {
 #' A string without spaces
 #' 
 #' @family helper
+#' 
+#' @examples 
+#' removeSpaces(' made up.   string')
 #'
 #' @export
 removeSpaces <- function(x){
@@ -86,7 +98,6 @@ getTars <- function(
   return(tar)
 }
 
-# TODO: make this nice and add to Helpers.R
 addTar <- function(data){
   result <- paste0(
     data$riskWindowStart,
@@ -147,7 +158,7 @@ getDbs <- function(
     schema,
     connectionHandler,
     dbDetails = data.frame(
-      CDM_SOURCE_ABBREVIATION = c(
+      cdmSourceAbbreviation = c(
         "AMBULATORY EMR", "IBM CCAE", "German DA",
         "JMDC", "Optum EHR", "OPTUM Extended SES", "IBM MDCD",
         "IBM MDCR"
@@ -162,7 +173,6 @@ getDbs <- function(
     "select CDM_SOURCE_ABBREVIATION from @schema.database_meta_data;",
     schema = schema
   )
-  
   dbs <- merge(res, dbDetails)$type
   
   types <- lapply(unique(dbs), function(type){sum(dbs == type)})
@@ -232,7 +242,7 @@ kableDark <- function(data, caption = NULL, position = NULL){
 #' @param filterable whether you can filter the table
 #' 
 #' @return
-#' Nothing but the table is printed in the quarto document
+#' Nothing but the html code for the table is printed (to be used in a quarto document)
 #'
 #' @family helper
 #'

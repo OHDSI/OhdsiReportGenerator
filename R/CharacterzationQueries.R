@@ -1553,7 +1553,6 @@ return(result)
 #'  \item{p25Value the 25th percentile of the value observed for the feature}
 #'  \item{p75Value the 75th percentile of the value observed for the feature}
 #'  \item{p90Value the 90th percentile of the value observed for the feature}
-#'  
 #' } 
 #' 
 #' @export
@@ -1828,7 +1827,7 @@ processContinuousRiskFactorFeatures <- function(
       
       by = c('databaseName','targetName','targetCohortId','minPriorObservation',
              'covariateName', 'covariateId'),
-      all.x = T
+      all.x = TRUE
         )
     
     allData <- rbind(allData, res)

@@ -2,6 +2,8 @@
 
 [![Build Status](https://github.com/OHDSI/OhdsiReportGenerator/workflows/R-CMD-check/badge.svg)](https://github.com/OHDSI/OhdsiReportGenerator/actions?query=workflow%3AR-CMD-check+branch%3Amain)
 [![codecov.io](https://codecov.io/github/OHDSI/OhdsiReportGenerator/coverage.svg?branch=main)](https://app.codecov.io/github/OHDSI/OhdsiReportGenerator?branch=main)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/OhdsiReportGenerator)](https://cran.r-project.org/package=OhdsiReportGenerator)
+[![CRAN_Status_Badge](https://cranlogs.r-pkg.org/badges/OhdsiReportGenerator)](https://cran.r-project.org/package=OhdsiReportGenerator)
 
 # Introduction
 

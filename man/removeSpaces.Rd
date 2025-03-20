@@ -18,6 +18,10 @@ Removes spaces and replaces with under scroll
 \details{
 Removes spaces and replaces with under scroll
 }
+\examples{
+removeSpaces(' made up.   string')
+
+}
 \seealso{
 Other helper: 
 \code{\link{getExampleConnectionDetails}()},

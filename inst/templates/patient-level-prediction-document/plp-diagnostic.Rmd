@@ -80,7 +80,7 @@ where b.model_design_id = @model_design_id
   names(probastDefs) <- c('probastId', 'probast category', 'consideration', 'explanation')
   row.names(probastDefs) <- NULL
   
-  res <- merge(probastDefs, res, by = 'probastId', all.x = T)
+  res <- merge(probastDefs, res, by = 'probastId', all.x = TRUE)
 
 ```
   
@@ -91,67 +91,4 @@ The PatientLevelPrediction objective assessment of PROBAST risk of bias:
 ```{r, echo=FALSE, result = 'asis'}
   knitr::kable(x = res, caption = 'Diagnostic results')
 ```
-
-### Diagnostic Plots
-
-```{r, echo=FALSE, results='asis'}
-  
-sql <- "select a.* from @result_schema.@my_table_appenddiagnostic_predictors a 
-inner join @result_schema.@my_table_appenddiagnostics b
-  on a.DIAGNOSTIC_ID = b.DIAGNOSTIC_ID
-  where b.model_design_id = @model_design_id
-  and a.input_type = 'populationSettings';"  
-
-  tempPredTable <- connectionHandler$queryDb(
-    sql = sql, 
-    result_schema = params$resultSchema,
-    my_table_append = params$myTableAppend,
-    model_design_id = modelDesignId
-  )
-
-
-```
- 
-
-```{r, echo=FALSE, result = 'asis'}
-library(plotly)
-if(nrow(tempPredTable)>0){
-tempPredTable <-  tempPredTable %>% 
-                  dplyr::select(
-                    c(
-                    "daysToEvent", 
-                    "outcomeAtTime", 
-                    "observedAtStartOfDay"
-                    )
-                  ) %>%
-                  dplyr::mutate(
-                    survivalT = (.data$observedAtStartOfDay -.data$outcomeAtTime)/.data$observedAtStartOfDay
-                  ) %>%
-                  dplyr::filter(
-                    !is.na(.data$daysToEvent)
-                  )
-                
-tempPredTable$probSurvT  <- unlist(
-                  lapply(
-                    1:length(tempPredTable$daysToEvent), 
-                    function(x){prod(tempPredTable$survivalT[tempPredTable$daysToEvent <= tempPredTable$daysToEvent[x]])}
-                  )
-                )
-                
-plotly::plot_ly(x = ~ tempPredTable$daysToEvent) %>% 
-                  plotly::add_lines(
-                    y = tempPredTable$probSurvT, 
-                    name = "hv", 
-                    line = list(shape = "hv")
-                  ) %>%
-                  plotly::layout(
-                    title = 'Outcome survival', 
-                    plot_bgcolor = "#e5ecf6", 
-                    xaxis = list(title = 'Time (days)'), 
-                    yaxis = list(title = 'Outcome free (0 = 0%, 1 = 100%)')
-                  )
-}
-
-```              
-
 

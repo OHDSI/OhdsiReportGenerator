@@ -4,7 +4,10 @@
 \alias{getExampleConnectionDetails}
 \title{create a connection detail for an example OHDSI results database}
 \usage{
-getExampleConnectionDetails()
+getExampleConnectionDetails(exdir = tempdir())
+}
+\arguments{
+\item{exdir}{a directory to unzip the example result data into.  Default is tempdir().}
 }
 \value{
 An object of class `ConnectionDetails` with the details to connect to the example OHDSI result database

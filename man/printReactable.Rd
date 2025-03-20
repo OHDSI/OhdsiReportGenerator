@@ -33,7 +33,7 @@ printReactable(
 \item{filterable}{whether you can filter the table}
 }
 \value{
-Nothing but the table is printed in the quarto document
+Nothing but the html code for the table is printed (to be used in a quarto document)
 }
 \description{
 This function lets you print a reactable in a quarto document

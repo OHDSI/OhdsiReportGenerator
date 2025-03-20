@@ -34,6 +34,7 @@
 #' @param outputLocation The file location and name to save the protocol 
 #' @param outputName The name of the html protocol that is created
 #' @param intermediateDir The work directory for quarto
+#' 
 #' @return
 #' An named R list with the elements 'standard' and 'source'
 #' 
@@ -74,9 +75,12 @@ generatePresentation <- function(
     intermediateDir = tempdir()
 ){
   
+  if(missing(outputLocation)){
+    stop('Must enter location for outputLocation')
+  }
+  
   # calling random functions used in quarto doc 
   # as otherwise check fails
-  pointless <- reactable::JS('')
   pointless <- ggpubr::bgcolor('red')
   
   templateLoc <- system.file(
@@ -85,7 +89,7 @@ generatePresentation <- function(
   )
   
   if(!dir.exists(file.path(intermediateDir, 'presentation'))){
-    dir.create(file.path(intermediateDir, 'presentation'), recursive = T)
+    dir.create(file.path(intermediateDir, 'presentation'), recursive = TRUE)
   }
   
   filesOfInt <- c(
@@ -141,7 +145,7 @@ generatePresentation <- function(
   
   # now move html output to output location
   if(!dir.exists(outputLocation)){
-    dir.create(outputLocation, recursive = T)
+    dir.create(outputLocation, recursive = TRUE)
   }
   file.copy(
     from = file.path(intermediateDir, 'presentation', 'assure_presentation.html'), 
