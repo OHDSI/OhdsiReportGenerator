@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>prints a reactable in a quarto document</h1>
-      <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/main/R/Helpers.R" class="external-link"><code>R/Helpers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/develop/R/Helpers.R" class="external-link"><code>R/Helpers.R</code></a></small>
       <div class="d-none name"><code>printReactable.Rd</code></div>
     </div>
 
@@ -49,7 +49,9 @@
 <span>  groupBy <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  defaultPageSize <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  highlight <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  striped <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  striped <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  searchable <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  filterable <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -80,10 +82,18 @@
 <dt id="arg-striped">striped<a class="anchor" aria-label="anchor" href="#arg-striped"></a></dt>
 <dd><p>whether the rows change color to give a striped appearance</p></dd>
 
+
+<dt id="arg-searchable">searchable<a class="anchor" aria-label="anchor" href="#arg-searchable"></a></dt>
+<dd><p>whether you can search in the table</p></dd>
+
+
+<dt id="arg-filterable">filterable<a class="anchor" aria-label="anchor" href="#arg-filterable"></a></dt>
+<dd><p>whether you can filter the table</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Nothing but the html code for the table is printed (to be used in a quarto document)</p>
+    <p>Nothing but the table is printed in the quarto document</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -103,7 +113,7 @@
 <span class="r-in"><span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a<span class="op">=</span><span class="fl">1</span>,b<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div class="reactable html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:auto;height:auto;"&gt;&lt;/div&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3"&gt;{"x":{"tag":{"name":"Reactable","attribs":{"data":{"a":[1],"b":[4]},"columns":[{"id":"a","name":"a","type":"numeric"},{"id":"b","name":"b","type":"numeric"}],"defaultPageSize":20,"highlight":true,"striped":true,"dataKey":"74006b58611cd0240b77609648c1a054"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}&lt;/script&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3"&gt;{"x":{"tag":{"name":"Reactable","attribs":{"data":{"a":[1],"b":[4]},"columns":[{"id":"a","name":"a","type":"numeric"},{"id":"b","name":"b","type":"numeric"}],"filterable":true,"searchable":true,"defaultPageSize":20,"highlight":true,"striped":true,"dataKey":"74006b58611cd0240b77609648c1a054"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}&lt;/script&gt;</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
