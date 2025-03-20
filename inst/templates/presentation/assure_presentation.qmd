@@ -26,6 +26,9 @@ params:
   trigger: NULL
   safetyQuestion: NULL
   objective: NULL
+  topline1: NULL
+  topline2: NULL
+  topline3: NULL
   date: "!expr: as.character(Sys.Date())"
   targetId: NULL
   outcomeIds: NULL
@@ -198,7 +201,7 @@ cat(result, sep = '\n')
 
 # add code to auto generate the topline via LLM?
 
-result <- knitr::knit_child("topline.qmd", quiet = TRUE, envir = environment())
+result <- knitr::knit_child(text = knitr::knit_expand("topline.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
 cat(result, sep = '\n')
 ```
 

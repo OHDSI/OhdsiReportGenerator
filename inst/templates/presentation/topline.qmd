@@ -1,7 +1,7 @@
 ## Top Line
 
-- [Very brief executive summary. You can copy-paste language from the conclusion.]
+- {{params$topline1}}
 
-- [If an estimation was requested but not feasible, this should be mentioned here.]
+- {{params$topline2}}
 
-- [If no estimation study was requested, this high-level summary might be skipped.]
+- {{params$topline3}}

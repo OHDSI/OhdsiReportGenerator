@@ -16,6 +16,12 @@ generatePresentation(
   trigger = "A signal was found in spontaneous reports",
   safetyQuestion = "",
   objective = "",
+  topline1 =
+    "Very brief executive summary. You can copy-paste language from the conclusion.",
+  topline2 =
+    "If an estimation was requested but not feasible, this should be mentioned here.",
+  topline3 =
+    "If no estimation study was requested, this high-level summary might be skipped.",
   date = as.character(Sys.Date()),
   targetId = 1,
   outcomeIds = 3,
@@ -57,6 +63,12 @@ generatePresentation(
 \item{safetyQuestion}{What is the general safety question}
 
 \item{objective}{What is the request/objective of the work.}
+
+\item{topline1}{add a very brief executive summary for the topline slide}
+
+\item{topline2}{add estimation summary here for the topline slide}
+
+\item{topline3}{add any other statement summary here for the topline slide}
 
 \item{date}{The date of the presentation}
 

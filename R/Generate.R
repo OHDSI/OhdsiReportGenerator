@@ -18,6 +18,9 @@
 #' @param trigger What triggered the request
 #' @param safetyQuestion What is the general safety question
 #' @param objective What is the request/objective of the work.
+#' @param topline1 add a very brief executive summary for the topline slide
+#' @param topline2 add estimation summary here for the topline slide
+#' @param topline3 add any other statement summary here for the topline slide
 #' @param date The date of the presentation
 #' @param targetId The cohort definition id for the target cohort
 #' @param outcomeIds The cohort definition id for the outcome
@@ -54,6 +57,9 @@ generatePresentation <- function(
     trigger = 'A signal was found in spontaneous reports',
     safetyQuestion = '',
     objective = '',
+    topline1 = 'Very brief executive summary. You can copy-paste language from the conclusion.',
+    topline2 = 'If an estimation was requested but not feasible, this should be mentioned here.',
+    topline3 = 'If no estimation study was requested, this high-level summary might be skipped.',
     date = as.character(Sys.Date()),
     targetId = 1,
     outcomeIds = 3,
@@ -127,6 +133,9 @@ generatePresentation <- function(
       trigger = trigger,
       safetyQuestion = safetyQuestion,
       objective = objective,
+      topline1 = topline1,
+      topline2 = topline2,
+      topline3 = topline3,
       date = date,
       targetId = targetId,
       outcomeIds = outcomeIds,
