@@ -12,7 +12,7 @@
 #' @template cgTablePrefix
 #' @template databaseTable
 #' @template targetIds
-#' @template outcomeIds
+#' @template outcomeCohortIds
 #' @family Characterization
 #' @return
 #' Returns a data.frame with the columns:
@@ -22,6 +22,7 @@
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{outcomeName the outcome name}
 #'  \item{outcomeId the outcome unique identifier}
+#'  \item{outcomeCohortId the outcome cohort Id}
 #'  \item{cleanWindow clean windown around outcome}
 #'  \item{subgroupName name for the result subgroup}
 #'  \item{ageGroupName name for the result age group}
@@ -62,7 +63,7 @@ getIncidenceRates <- function(
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
     targetIds = NULL,
-    outcomeIds = NULL
+    outcomeCohortIds = NULL
 ){
   
   sql <- 'select 
@@ -70,13 +71,15 @@ getIncidenceRates <- function(
     cg1.cohort_name as target_name,
     i.target_cohort_definition_id as target_id,
     cg2.cohort_name as outcome_name,
-    i.outcome_cohort_definition_id as outcome_id, 
+    i.outcome_id,
+    i.outcome_cohort_definition_id as outcome_cohort_id, 
     
     i.clean_window,
     i.subgroup_name,
     i.age_group_name,
     i.gender_name,
     i.start_year,
+    i.tar_id,
     i.tar_start_with,
     i.tar_start_offset,
     i.tar_end_with,
@@ -120,7 +123,7 @@ getIncidenceRates <- function(
     where 
     1 = 1
     {@use_target}?{ and target_cohort_definition_id in (@target_id)}
-    {@use_outcome}?{ and outcome_cohort_definition_id in (@outcome_id)}
+    {@use_outcome}?{ and outcome_cohort_definition_id in (@outcome_cohort_id)}
     ;'
   
   result <- connectionHandler$queryDb(
@@ -130,14 +133,14 @@ getIncidenceRates <- function(
     cg_table_prefix = cgTablePrefix,
     target_id = paste0(targetIds, collapse = ','),
     use_target = !is.null(targetIds),
-    outcome_id = paste0(outcomeIds, collapse = ','),
-    use_outcome = !is.null(outcomeIds),
+    outcome_cohort_id = paste0(outcomeCohortIds, collapse = ','),
+    use_outcome = !is.null(outcomeCohortIds),
     database_table_name = databaseTable
   )
   
   result$incidenceProportionP100p[is.na(result$incidenceProportionP100p)] <- result$outcomes[is.na(result$incidenceProportionP100p)]/result$personsAtRisk[is.na(result$incidenceProportionP100p)]*100
   result$incidenceProportionP100p[is.na(result$incidenceProportionP100p)] <- 0
-  result$incidenceRateP100py[is.na(result$incidenceRateP100py)] <- result$outcomes[is.na(result$incidenceRateP100py)]/(result$personDays[is.na(result$incidenceRateP100py)]/365)*100
+  result$incidenceRateP100py[is.na(result$incidenceRateP100py)] <- result$outcomes[is.na(result$incidenceRateP100py)]/(result$personDays[is.na(result$incidenceRateP100py)]/365.25)*100
   result$incidenceRateP100py[is.na(result$incidenceRateP100py)] <- 0
   result[is.na(result)] <- 'Any'
   result <- unique(result)

@@ -11,7 +11,7 @@ getIncidenceRates(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   targetIds = NULL,
-  outcomeIds = NULL
+  outcomeCohortIds = NULL
 )
 }
 \arguments{
@@ -27,7 +27,7 @@ getIncidenceRates(
 
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 
-\item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
+\item{outcomeCohortIds}{A vector of integers corresponding to the outcome cohort IDs}
 }
 \value{
 Returns a data.frame with the columns:
@@ -37,6 +37,7 @@ Returns a data.frame with the columns:
  \item{targetId the target cohort unique identifier}
  \item{outcomeName the outcome name}
  \item{outcomeId the outcome unique identifier}
+ \item{outcomeCohortId the outcome cohort Id}
  \item{cleanWindow clean windown around outcome}
  \item{subgroupName name for the result subgroup}
  \item{ageGroupName name for the result age group}
