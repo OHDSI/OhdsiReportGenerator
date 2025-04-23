@@ -12,6 +12,7 @@
 #' @template cgTablePrefix
 #' @template databaseTable
 #' @template targetIds
+#' @template outcomeIds
 #' @template outcomeCohortIds
 #' @family Characterization
 #' @return
@@ -63,7 +64,8 @@ getIncidenceRates <- function(
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
     targetIds = NULL,
-    outcomeCohortIds = NULL
+    outcomeIds = NULL, # This should be removed in next major release in favor of 'outcomeCohortIds'.
+    outcomeCohortIds = outcomeIds
 ){
   
   sql <- 'select 

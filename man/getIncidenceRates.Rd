@@ -11,7 +11,8 @@ getIncidenceRates(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   targetIds = NULL,
-  outcomeCohortIds = NULL
+  outcomeIds = NULL,
+  outcomeCohortIds = outcomeIds
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ getIncidenceRates(
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
+
+\item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
 
 \item{outcomeCohortIds}{A vector of integers corresponding to the outcome cohort IDs}
 }
