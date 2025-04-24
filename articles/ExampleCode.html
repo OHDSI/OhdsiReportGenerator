@@ -59,7 +59,7 @@
                         <h4 data-toc-skip class="author">Jenna Reps,
 Anthony Sena</h4>
             
-            <h4 data-toc-skip class="date">2025-03-20</h4>
+            <h4 data-toc-skip class="date">2025-04-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/develop/vignettes/ExampleCode.Rmd" class="external-link"><code>vignettes/ExampleCode.Rmd</code></a></small>
       <div class="d-none name"><code>ExampleCode.Rmd</code></div>
@@ -720,10 +720,10 @@ features and the occurrence of the outcome during a time-at-risk) using
 <span>  x <span class="op">=</span> <span class="va">rf</span>, </span>
 <span>  caption <span class="op">=</span> <span class="st">'Example risk factors for binary features results.'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<table class="table">
+<table style="width:100%;" class="table">
 <caption>Example risk factors for binary features results.</caption>
 <colgroup>
-<col width="5%">
+<col width="4%">
 <col width="4%">
 <col width="5%">
 <col width="4%">
@@ -732,12 +732,13 @@ features and the occurrence of the outcome during a time-at-risk) using
 <col width="7%">
 <col width="6%">
 <col width="5%">
-<col width="5%">
 <col width="4%">
-<col width="8%">
+<col width="4%">
+<col width="7%">
+<col width="4%">
 <col width="3%">
 <col width="4%">
-<col width="5%">
+<col width="4%">
 <col width="5%">
 <col width="4%">
 <col width="3%">
@@ -755,6 +756,7 @@ features and the occurrence of the outcome during a time-at-risk) using
 <th align="left">startAnchor</th>
 <th align="left">endAnchor</th>
 <th align="left">covariateName</th>
+<th align="right">covariateId</th>
 <th align="right">caseCount</th>
 <th align="right">caseAverage</th>
 <th align="right">nonCaseCount</th>
@@ -776,6 +778,7 @@ features and the occurrence of the outcome during a time-at-risk) using
 <td align="left">cohort start</td>
 <td align="left">cohort end</td>
 <td align="left">age group: 30 - 34</td>
+<td align="right">6003</td>
 <td align="right">35</td>
 <td align="right">0.0985916</td>
 <td align="right">171</td>
@@ -796,6 +799,7 @@ features and the occurrence of the outcome during a time-at-risk) using
 <td align="left">cohort start</td>
 <td align="left">cohort end</td>
 <td align="left">age group: 35 - 39</td>
+<td align="right">7003</td>
 <td align="right">177</td>
 <td align="right">0.4985915</td>
 <td align="right">685</td>
@@ -816,6 +820,7 @@ features and the occurrence of the outcome during a time-at-risk) using
 <td align="left">cohort start</td>
 <td align="left">cohort end</td>
 <td align="left">age group: 40 - 44</td>
+<td align="right">8003</td>
 <td align="right">129</td>
 <td align="right">0.3633803</td>
 <td align="right">531</td>
@@ -836,6 +841,7 @@ features and the occurrence of the outcome during a time-at-risk) using
 <td align="left">cohort start</td>
 <td align="left">cohort end</td>
 <td align="left">age group: 45 - 49</td>
+<td align="right">9003</td>
 <td align="right">14</td>
 <td align="right">0.0394366</td>
 <td align="right">58</td>
@@ -866,25 +872,29 @@ features:</p>
 <col width="1%">
 <col width="2%">
 <col width="3%">
-<col width="18%">
-<col width="2%">
-<col width="3%">
-<col width="2%">
-<col width="2%">
-<col width="3%">
-<col width="4%">
-<col width="3%">
-<col width="2%">
-<col width="2%">
-<col width="2%">
+<col width="17%">
+<col width="1%">
 <col width="2%">
 <col width="2%">
 <col width="2%">
 <col width="3%">
+<col width="3%">
 <col width="2%">
 <col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="1%">
 <col width="2%">
 <col width="3%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="1%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
 <col width="3%">
 <col width="2%">
 <col width="2%">
@@ -914,6 +924,10 @@ features:</p>
 <th align="left">outcomeName</th>
 <th align="right">outcomeCohortId</th>
 <th align="right">outcomeWashoutDays</th>
+<th align="right">riskWindowStart</th>
+<th align="right">riskWindowEnd</th>
+<th align="left">startAnchor</th>
+<th align="left">endAnchor</th>
 <th align="right">caseCountValue</th>
 <th align="right">caseMinValue</th>
 <th align="right">caseMaxValue</th>
@@ -948,6 +962,10 @@ features:</p>
 <td align="left">GI bleed</td>
 <td align="right">3</td>
 <td align="right">365</td>
+<td align="right">1</td>
+<td align="right">365</td>
+<td align="left">cohort start</td>
+<td align="left">cohort end</td>
 <td align="right">355</td>
 <td align="right">32</td>
 <td align="right">46</td>
@@ -981,6 +999,10 @@ features:</p>
 <td align="left">GI bleed</td>
 <td align="right">3</td>
 <td align="right">365</td>
+<td align="right">1</td>
+<td align="right">365</td>
+<td align="left">cohort start</td>
+<td align="left">cohort end</td>
 <td align="right">355</td>
 <td align="right">10</td>
 <td align="right">27390</td>
@@ -1014,6 +1036,10 @@ features:</p>
 <td align="left">GI bleed</td>
 <td align="right">3</td>
 <td align="right">365</td>
+<td align="right">1</td>
+<td align="right">365</td>
+<td align="left">cohort start</td>
+<td align="left">cohort end</td>
 <td align="right">355</td>
 <td align="right">11550</td>
 <td align="right">16805</td>
@@ -1047,6 +1073,10 @@ features:</p>
 <td align="left">GI bleed</td>
 <td align="right">3</td>
 <td align="right">365</td>
+<td align="right">1</td>
+<td align="right">365</td>
+<td align="left">cohort start</td>
+<td align="left">cohort end</td>
 <td align="right">355</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -1081,6 +1111,10 @@ features:</p>
 <td align="left">NA</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
 <td align="right">NA</td>

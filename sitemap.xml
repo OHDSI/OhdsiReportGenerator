@@ -6,6 +6,9 @@
 <url><loc>/index.html</loc></url>
 <url><loc>/news/index.html</loc></url>
 <url><loc>/reference/OhdsiReportGenerator.html</loc></url>
+<url><loc>/reference/addTarColumn.html</loc></url>
+<url><loc>/reference/formatBinaryCovariateName.html</loc></url>
+<url><loc>/reference/generateFullReport.html</loc></url>
 <url><loc>/reference/generatePresentation.html</loc></url>
 <url><loc>/reference/getBinaryCaseSeries.html</loc></url>
 <url><loc>/reference/getBinaryRiskFactors.html</loc></url>
