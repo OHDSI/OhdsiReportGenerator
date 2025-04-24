@@ -378,3 +378,95 @@ test_that("getContinuousCaseSeries", {
   testthat::expect_true( 'type' %in% colnames(data))
   
 })
+
+
+test_that("processBinaryRiskFactorFeatures with values", {
+  
+  caseCounts <- data.frame(
+    databaseName = 'madeup',
+    minPriorObservation = 365,
+    outcomeWashoutDays = 9999,
+    riskWindowStart = 1,
+    riskWindowEnd = 365,
+    startAnchor = 'cohort start',
+    endAnchor = 'cohort start',
+    personCount = c(2000)
+  )
+  
+  caseFeatures <- data.frame(
+    databaseName = rep('madeup',2),
+    minPriorObservation = rep(365,2),
+    outcomeWashoutDays = rep(9999,2),
+    riskWindowStart = rep(1,2),
+    riskWindowEnd = rep(365,2),
+    startAnchor = rep('cohort start',2),
+    endAnchor = rep('cohort start',2),
+    covariateName = c('cov 1','cov 10'),
+    covariateId = c(1,10),
+    targetName = rep('target',2),
+    targetCohortId = rep(2,2),
+    outcomeName = rep('outcome',2),
+    outcomeCohortId = rep(3,2),
+    sumValue = c(5, 20),
+    averageValue = c(5/2000, 20/2000)
+  )
+  
+  targetCounts <- data.frame(
+    databaseName = 'madeup',
+    minPriorObservation = 365,
+    outcomeWashoutDays = 9999,
+    personCount = 10000
+  )
+  
+  targetFeatures <- data.frame(
+    databaseName = rep('madeup',2),
+    minPriorObservation = rep(365,2),
+    outcomeWashoutDays = rep(9999,2),
+    covariateName = c('cov 1','cov 10'),
+    covariateId = c(1,10),
+    targetName = rep('target',2),
+    targetCohortId = rep(2,2),
+    outcomeName = rep('outcome',2),
+    outcomeCohortId = rep(3,2),
+    sumValue = c(7, 20),
+    averageValue = c(5, 20)/10000
+  )
+  
+
+  res <- processBinaryRiskFactorFeatures(
+    caseCounts = caseCounts,
+    targetCounts = targetCounts,
+    caseFeatures = caseFeatures,
+    targetFeatures = targetFeatures
+  )
+  
+  testthat::expect_true(nrow(res) == 2)
+  testthat::expect_true(sum(c('cov 1', 'cov 10') %in% res$covariateName) == 2)
+  testthat::expect_true(res$covariateId[res$covariateName == 'cov 1'] == 1)
+  testthat::expect_true(res$covariateId[res$covariateName == 'cov 10'] == 10)
+  
+  # check the cov 1 values
+  # non case should be target minus case
+  cov1Ind <- res$covariateName == 'cov 1'
+  testthat::expect_true(res$caseCount[cov1Ind] == 5)
+  testthat::expect_true(res$caseAverage[cov1Ind] == 5/2000)
+  testthat::expect_true(res$nonCaseCount[cov1Ind] == (7-5))
+  testthat::expect_true(res$nonCaseAverage[cov1Ind] == 2/(10000-2000))
+  
+  # check the cov 10 values
+  # non case should be target minus case
+  cov10Ind <- res$covariateName == 'cov 10'
+  testthat::expect_true(res$caseCount[cov10Ind] == 20)
+  testthat::expect_true(res$caseAverage[cov10Ind] == 20/2000)
+  testthat::expect_true(res$nonCaseCount[cov10Ind] == (20-20))
+  testthat::expect_true(res$nonCaseAverage[cov10Ind] == 0)
+  
+})
+
+
+# add test for getting target count and features
+# to check exclude is working correctly 
+
+# target count - make sqlite tables
+# requires: database table, cohort_counts, settings, 
+#.          cohort_details, cohort_definition

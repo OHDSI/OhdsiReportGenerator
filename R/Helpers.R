@@ -73,6 +73,112 @@ removeSpaces <- function(x){
   return(gsub(' ', '_', gsub("[[:punct:]]", "", x)))
 }
 
+#' addTarColumn
+#'
+#' @description
+#' Finds the four TAR columns and creates a new column called tar that pastes the columns
+#' into a nice string
+#'
+#' @details
+#' Create a friendly single tar column
+#' 
+#' @param data The data.frame with the individual TAR columns that you want to 
+#'              combine into one column
+#' @return
+#' The data data.frame object with the tar column added if seperate TAR columns are found 
+#' 
+#' @family helper
+#' 
+#' @examples 
+#' addTarColumn(data.frame(
+#' tarStartWith = 'cohort start',
+#' tarStartOffset = 1,
+#' tarEndWith = 'cohort start',
+#' tarEndOffset = 0
+#' ))
+#'
+#' @export
+addTarColumn <- function(
+    data
+){
+  
+    if(sum(c("tarStartWith","tarStartOffset","tarEndWith","tarEndOffset") %in%
+           colnames(data)) == 4){
+      message('Found CI TAR columns')
+      data$tar <- paste0(
+        '(',data$tarStartWith,' + ',data$tarStartOffset, ') - ',
+        '(',data$tarEndWith,' + ', data$tarEndOffset, ')'
+      )
+    }
+  
+  if(sum(c("tarStartDay","tarStartAnchor","tarEndDay","tarEndAnchor") %in%
+         colnames(data)) == 4){
+    message('Found PLP TAR columns')
+    data$tar <- paste0(
+      '(',data$tarStartAnchor,' + ',data$tarStartDay, ') - ',
+      '(',data$tarEndAnchor,' + ', data$tarEndDay, ')'
+    )
+  }
+    
+    if(sum(c("startAnchor","riskWindowStart","endAnchor","riskWindowEnd") %in%
+           colnames(data)) == 4){
+      message('Found CM TAR columns')
+      data$tar <- paste0(
+        '(',data$startAnchor,' + ',data$riskWindowStart, ') - ',
+        '(',data$endAnchor,' + ', data$riskWindowEnd, ')'
+      )
+    }
+  
+  return(data)
+}
+
+#' formatBinaryCovariateName
+#'
+#' @description
+#' Removes the long part of the covariate name to make it friendly 
+#'
+#' @details
+#' Makes the covariateName more friendly and shorter
+#' 
+#' @param data The data.frame with the covariateName column
+#' @return
+#' The data data.frame object with the ovariateName column changed to be more friendly
+#' 
+#' @family helper
+#' 
+#' @examples 
+#' formatBinaryCovariateName(data.frame(
+#' covariateName = c("fdfgfgf: dgdgff","made up test")
+#' ))
+#'
+#' @export
+formatBinaryCovariateName <- function(data){
+  if('covariateName' %in% colnames(data)){
+    
+    #riskFactorsBinary$covariateName[nchar(riskFactorsBinary$covariateName) < 25]
+    
+    tempNames <- data$covariateName
+    for(val in c('ethnicity = ','gender = ','race = ','age group: ')){
+      rfIds <- grep(val, tempNames)
+      if(length(rfIds) > 0){
+        tempNames[rfIds] <- gsub(val, ': ', tempNames[rfIds])
+      }
+    }
+    
+    data$covariateName <- unlist(lapply(tempNames, function(x) ifelse(length(strsplit(x,':')[[1]])>=2, strsplit(x,': ')[[1]][2], 'Unknown covariate')))
+  } 
+  
+  # add conceptId to the name
+  if('covariateId' %in% colnames(data)){
+    if(sum(is.null(data$covariateId)) > 0){
+      data$covariateId[is.null(data$covariateId)] <- 0
+    }
+  data$covariateName <- paste0(data$covariateName, ' (', floor(data$covariateId/1000) ,')')
+  }
+  
+  return(data)
+}
+
 formatCohortType <- function(
     cohortType
 ){
@@ -108,6 +214,8 @@ addTar <- function(data){
   
   return(result)
 }
+
+
 
 getAnalyses <- function(
     server,

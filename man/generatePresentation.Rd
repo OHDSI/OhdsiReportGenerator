@@ -112,4 +112,8 @@ Generates a presentation from a Strategus result
 Specify the connection details to the result database and the schema name
 to generate a presentation.
 }
+\seealso{
+Other Reporting: 
+\code{\link{generateFullReport}()}
+}
 \concept{Reporting}

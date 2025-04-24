@@ -1,0 +1,28 @@
+```{r}
+#| echo: false
+#| results: 'asis'
+
+cat('\n# Summary\n')
+
+cat(paste0('\nA retrospective epidemiological analysis was conducted to assess the relationship between ', targetName, ' and ', outcomeName,'.'))
+
+if(includeCohortMethod | includeSccs){
+  cat(paste0(
+    "In addition to descriptive analyses, ",sum(c(includeCohortMethod ,includeSccs))," causal analytic designs were employed:", 
+    ifelse(includeCohortMethod , "an active comparator new user cohort design", ""), 
+    ifelse(sum(c(includeCohortMethod ,includeSccs)) == 2, ' and ', ''),
+    ifelse(includeSccs, "a self-controlled case series design", ""),             
+    ifelse(includeCohortMethod ,paste0("In the active comparator new user cohort design, new users of ", targetName, " were compared to new users of ", comparatorText,"."), ""),
+    ifelse(includeSccs, paste0(" In the self-controlled case series design, the incidence of ", outcomeName, " was compared between periods of ",targetName ," use and periods of non-use."), "")
+  ))
+}
+cat("\n\n")
+
+if(includePrediction){
+  cat(paste0(
+    "A patient-level prediction model was developed to see whether we can identify a sub population of ",targetName," that is high-risk of developing ", outcomeName,".  The model learns uses the retrospectively collected data to find associations between predictors and the development of ", outcomeName," during an at risk period of time following exposure to ",targetName,"." 
+  ))
+}
+cat("\n\n")
+
+```

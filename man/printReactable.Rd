@@ -49,6 +49,8 @@ data = data.frame(a=1,b=4)
 }
 \seealso{
 Other helper: 
+\code{\link{addTarColumn}()},
+\code{\link{formatBinaryCovariateName}()},
 \code{\link{getExampleConnectionDetails}()},
 \code{\link{kableDark}()},
 \code{\link{removeSpaces}()}

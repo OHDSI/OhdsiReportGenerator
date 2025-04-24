@@ -1,0 +1,63 @@
+# Characterization
+
+## Method
+
+```{r}
+#| echo: false
+#| results: 'asis'
+if(!is.null(params$webAPI)){
+val <- paste0("\n\nThe index breakdown section shows how often each outcome concept id occurred for the patients in ",targetName," with ",outcomeName," during the time-at-risk after exposure.  We restrict to concept ids that occurs for one percent of the popualtion or more.  This gives insight into how the outcome is being observed in the data.\n\n")
+cat(val)
+}
+```
+
+The demographics (age/gender), prior observation and post observation will be calculated for the patients in `r targetName`, for the indications, the outcome `r outcomeName` and the comparators: `r comparatorText`.
+
+The risk factors section shows the demographics, medication or comorbidities that are associated to having the `r outcomeName` during the time-at-risk after `r targetName` exposure.  We present the top 50 covariates that are associated to having `r outcomeName` during the time-at-risk for the patients exposed to `r targetName`.
+
+## Results
+```{r}
+#| label: index_breakdown
+#| echo: false
+#| results: 'asis'
+
+if(!is.null(params$webAPI)){
+result <- knitr::knit_child(text = knitr::knit_expand("characterization/index_breakdown.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+cat(result, sep = '\n')
+}
+```
+
+```{r}
+#| label: demo
+#| echo: false
+#| results: 'asis'
+
+# run this per type - 
+demoList <- list(
+  `Exposure Target` = unique(cohortDefinitions$cohortDefinitionId[cohortDefinitions$subsetParent == params$targetId]),
+  `Outcome/s` = unique(cohortDefinitions$cohortDefinitionId[cohortDefinitions$subsetParent %in% params$outcomeIds]),
+  `Indication/s` = unique(cohortDefinitions$cohortDefinitionId[cohortDefinitions$subsetParent %in% indicationIds]), # what about null?
+  `Comparator/s` = unique(cohortDefinitions$cohortDefinitionId[cohortDefinitions$subsetParent %in% comparatorIds])
+)
+cat('\n\n### Index Demographics\n\n')
+for(demoListInd in 1:length(demoList)){
+  result <- knitr::knit_child(
+    text = knitr::knit_expand(
+      file = "characterization/demographics.qmd", 
+      quiet = TRUE, 
+      envir = environment()), 
+    quiet = TRUE
+    )
+cat(result, sep = '\n')
+}
+```
+
+```{r}
+#| label: risk_factors
+#| echo: false
+#| results: 'asis'
+
+#result <- knitr::knit_child(text = knitr::knit_expand("characterization/risk_factors.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+result <- knitr::knit_child("characterization/risk_factors.qmd", quiet = TRUE)
+cat(result, sep = '\n')
+```

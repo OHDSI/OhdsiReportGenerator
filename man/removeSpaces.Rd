@@ -24,6 +24,8 @@ removeSpaces(' made up.   string')
 }
 \seealso{
 Other helper: 
+\code{\link{addTarColumn}()},
+\code{\link{formatBinaryCovariateName}()},
 \code{\link{getExampleConnectionDetails}()},
 \code{\link{kableDark}()},
 \code{\link{printReactable}()}

@@ -1,0 +1,6 @@
+# References
+Austin PC (2009). Balance diagnostics for comparing the distribution of baseline covariates between treatment groups in propensity-score matched samples. Stat Med. 2009 Nov 10;28(25):3083-107. doi: 10.1002/sim.3697. PMID: 19757444; PMCID: PMC3472075.
+
+Schuemie MJ (2016), Hripcsak G, Ryan PB, Madigan D, Suchard MA. Robust empirical calibration of p-values using observational data. Statistics in medicine. 2016;35(22):3883-3888.
+
+Schuemie MJ (2018), Hripcsak G, Ryan PB, Madigan D, Suchard MA. Empirical confidence interval calibration for population-level effect estimation studies in observational healthcare data. Proceedings of the National Academy of Sciences of the United States of America. 2018;115(11):2571-2577.
