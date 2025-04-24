@@ -110,7 +110,7 @@ for(description in descriptions){
   cmIds <- unique(cohortMethodDiagnosticsTemp[,c('targetId', 'outcomeId')])
   
   for(cmInd in 1:nrow(cmIds)){
-    print(shiny::tagList(cohortMethodDiagnostics %>% 
+    print(htmltools::tagList(cohortMethodDiagnostics %>% 
                            dplyr::filter(.data$description == !!description) %>%
                            dplyr::filter(.data$targetId == !!cmIds$targetId[cmInd]) %>%
                            dplyr::filter(.data$outcomeId == !!cmIds$outcomeId[cmInd]) %>%
@@ -202,7 +202,7 @@ for(description in descriptions){
   cmIds <- unique(cohortMethodResultsTemp[,c('targetId', 'outcomeId')])
   
   for(cmInd in 1:nrow(cmIds)){
-    print(shiny::tagList(cohortMethodResults %>% 
+    print(htmltools::tagList(cohortMethodResults %>% 
                            dplyr::filter(.data$description == !!description) %>%
                            dplyr::filter(.data$targetId == !!cmIds$targetId[cmInd]) %>%
                            dplyr::filter(.data$outcomeId == !!cmIds$outcomeId[cmInd]) %>% 
@@ -292,7 +292,7 @@ sccsDiagnostics <- merge(sccsDiagnostics,
 sccsIds <- unique(sccsDiagnostics[,c('targetId', 'outcomeId')])
 
 for(sccsInd in 1:nrow(sccsIds)){
-  print(shiny::tagList(sccsDiagnostics %>% 
+  print(htmltools::tagList(sccsDiagnostics %>% 
                          dplyr::filter(.data$targetId == !!sccsIds$targetId[sccsInd]) %>%
                          dplyr::filter(.data$outcomeId == !!sccsIds$outcomeId[sccsInd]) %>%
                          dplyr::select("databaseName", "subsetTextTarget", "description",
@@ -366,7 +366,7 @@ sccsResults <- merge(sccsResults,
 sccsIds <- unique(sccsResults[,c('targetId', 'outcomeId')])
 
 for(sccsInd in 1:nrow(sccsIds)){
-  print(shiny::tagList(sccsResults %>% 
+  print(htmltools::tagList(sccsResults %>% 
                          dplyr::filter(.data$targetId == !!sccsIds$targetId[sccsInd]) %>%
                          dplyr::filter(.data$outcomeId == !!sccsIds$outcomeId[sccsInd]) %>%
                          dplyr::select("databaseName","subsetTextTarget", "description",

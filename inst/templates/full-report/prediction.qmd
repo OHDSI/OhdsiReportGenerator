@@ -30,7 +30,7 @@ cat('\n\n### Performance Summary\n\n')
   cat('\n\n::: {.callout-note collapse="true"}')
   cat(paste0("\n# All models developed in ",databaseName,"\n\n"))
   
-  print(shiny::tagList(
+  print(htmltools::tagList(
     topPreds %>%  
       dplyr::filter(.data$developmentDatabase == !!databaseName) %>%
       dplyr::select(
@@ -110,7 +110,7 @@ if(nrow(topPreds)){
   cat('\n\n::: {.callout-note collapse="true"}')
   cat(paste0("\n# Top ",numberPredictors," predictors in ",databaseName,"\n\n"))
   
-  print(shiny::tagList(
+  print(htmltools::tagList(
     topPreds %>%  
       dplyr::filter(.data$databaseName == !!databaseName) %>%
       dplyr::arrange(.data$rn) %>%

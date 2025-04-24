@@ -43,7 +43,7 @@ for(ind in 1:nrow(ciTars)){
       cat('\n\n::: {.callout-note collapse="true"}')
       cat(paste0("\n# ",boxTitle, '\n\n'))
       
-      print(shiny::tagList(
+      print(htmltools::tagList(
         data %>% 
           dplyr::select("friendlyNameTarget","subsetTextTarget", "databaseName","personsAtRisk", "personDays", "personOutcomes", "incidenceProportionP100p", "incidenceRateP100py") %>%
           dplyr::group_by(

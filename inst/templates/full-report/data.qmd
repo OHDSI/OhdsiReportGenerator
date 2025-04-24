@@ -32,7 +32,7 @@ cat(paste0("\nThe data feasibiliy determines whether ", targetName ," and ", out
 
 cat(paste0(nDatabases," databases in total passed initial feasibility tests with sufficient sample sizes, including ", databaseText,"."))
 
-print(shiny::tagList(
+print(htmltools::tagList(
   databases %>% 
     dplyr::select("cdmSourceAbbreviation", "cdmSourceName",  "sourceDescription","sourceReleaseDate") %>%
     gt::gt() %>%

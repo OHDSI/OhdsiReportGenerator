@@ -122,7 +122,7 @@ boxName <- paste0('Frequency of ',ibOutcome,' concept codes when the patient exp
   cat('\n\n::: {.callout-note collapse="true"}')
   cat(paste0("\n# ",boxName, '\n\n'))
       
-print(shiny::tagList(
+print(htmltools::tagList(
   index  %>%  
     gt::gt() %>%
     gt::fmt_percent(

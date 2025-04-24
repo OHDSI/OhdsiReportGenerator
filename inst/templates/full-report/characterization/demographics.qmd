@@ -83,7 +83,7 @@ if(nrow(cohortIdsDemo) > 0){
   cat(paste0("\n# ",boxName, '\n\n'))
     
     # display
-    print(shiny::tagList(
+    print(htmltools::tagList(
       data %>%  
         gt::gt() %>%
         gt::fmt_number(

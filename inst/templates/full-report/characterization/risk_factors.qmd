@@ -81,7 +81,7 @@ if( nrow(charIdsOfInt) >0 ){
           "absSMD"
           )
 
-         print(shiny::tagList(
+         print(htmltools::tagList(
     temp %>%
       dplyr::filter(
         .data$absSMD > 0.1,
