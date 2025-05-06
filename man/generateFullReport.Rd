@@ -90,6 +90,7 @@ to generate the full report.
 }
 \seealso{
 Other Reporting: 
-\code{\link{generatePresentation}()}
+\code{\link{generatePresentation}()},
+\code{\link{generatePresentationMultiple}()}
 }
 \concept{Reporting}

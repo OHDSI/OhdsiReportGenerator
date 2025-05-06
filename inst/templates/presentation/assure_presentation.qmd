@@ -105,6 +105,8 @@ outcomes <- cohorts %>%
   filter(
     .data$subsetParent %in% unlist(!!params$outcomeIds)
   )
+# used by prediction
+outcomeIds <- outcomes$cohortDefinitionId
 
 
 # get candidate indictor cohorts:

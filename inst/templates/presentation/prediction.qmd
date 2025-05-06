@@ -13,7 +13,7 @@
 ::: {.column width="80%"}
 
 ```{r}
-#| label: prediction
+#| label: prediction_model_summary
 #| echo: false
 #| results: 'asis'
 
@@ -94,7 +94,7 @@ cat('\n:::') # outcome tabs
 ### Top Predictors
   
 ```{r}
-#| label: predictors
+#| label: prediction_top_pred
 #| echo: false
 #| results: 'asis'
 

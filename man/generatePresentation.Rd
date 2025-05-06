@@ -114,6 +114,7 @@ to generate a presentation.
 }
 \seealso{
 Other Reporting: 
-\code{\link{generateFullReport}()}
+\code{\link{generateFullReport}()},
+\code{\link{generatePresentationMultiple}()}
 }
 \concept{Reporting}
