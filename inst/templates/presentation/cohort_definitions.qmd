@@ -23,7 +23,7 @@ cat(markdown)
 cat('\n\n:::')
 
 # if subset is not null then add that here
-if(F){ # figure out why this causes issue
+if(FALSE){ # figure out why this causes issue
 #if(!is.null(cmSubsetIds)){
   
   for(i in 1:length(cmSubsetIds)){
