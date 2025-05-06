@@ -48,7 +48,7 @@ plotCmEstimates <- function(
   
   # check there are some results
   noDbResults <- sum(is.na(cmData$calibratedRr)) == length(cmData$calibratedRr)
-  noMetaResults <- T
+  noMetaResults <- TRUE
   if(!is.null(cmMeta)){
     noMetaResults <- nrow(cmMeta) == 0
   }

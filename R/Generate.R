@@ -257,7 +257,7 @@ generateFullReport <- function(
   }
   
   filesOfInt <- c(
-    dir(templateLoc, pattern = '.qmd', recursive = T)
+    dir(templateLoc, pattern = '.qmd', recursive = TRUE)
   )
   
   file.copy(

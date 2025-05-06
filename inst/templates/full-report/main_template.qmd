@@ -122,7 +122,7 @@ cohortDefinitions <-
     ), 
     by.x = 'subsetParent', 
     by.y = 'cohortId', 
-    all.x = T # TODO - change this if we want to ignore all other cohorts? 
+    all.x = TRUE # TODO - change this if we want to ignore all other cohorts? 
   )
 cohortDefinitions$friendlyName[is.na(cohortDefinitions$friendlyName)] <- cohortDefinitions$cohortName[is.na(cohortDefinitions$friendlyName)]
 
@@ -133,7 +133,7 @@ cohortDefinitions <-
     orderDf, 
     by.x = 'subsetParent', 
     by.y = 'subsetParent', 
-    all.x = T
+    all.x = TRUE
   )
 
 subsetDef <- OhdsiReportGenerator::getCohortSubsetDefinitions(
@@ -206,7 +206,7 @@ subsetDefFriendly <- data.frame(
 )
 
 # add subset text or '' if no subset
-cohortDefinitions <- merge(cohortDefinitions, subsetDefFriendly, by = 'subsetDefinitionId', all.x = T)
+cohortDefinitions <- merge(cohortDefinitions, subsetDefFriendly, by = 'subsetDefinitionId', all.x = TRUE)
 if(sum(is.na(cohortDefinitions$subsetText))>0){
   cohortDefinitions$subsetText[is.na(cohortDefinitions$subsetText)] <- ''
 }
@@ -318,7 +318,7 @@ if(includeCharacterization){
   # ===================================
   
   # TODO add tte?
-  if(F){
+  if(FALSE){
     tte <- OhdsiReportGenerator::getTimeToEvent(
       connectionHandler = connectionHandler, 
       schema = params$schema
