@@ -1,3 +1,15 @@
+OhdsiReportGenerator v1.1.0
+======================
+- Added full report function generateFullReport() that generates a html file with all the results for a given target, set of outcomes, indications and comparators.
+- Added column covariateId to data.frame output when running getCaseBinaryFeatures(), getTargetBinaryFeatures() and processBinaryRiskFactorFeatures()
+- Added columns rawSum and rawAverage to getTargetBinaryFeatures() that has the target counts without removing any excluded people who had the outcome during the washout.
+- Added time-at-risk columns to output of getCaseContinuousFeatures()
+- Added column unblindForEvidenceSynthesis for getCMEstimation()
+- Added columns indicationName, indicationId and calibratedOneSidedP to getCmMetaEstimation()
+- Added columns indicationName and indicationId to getSccsDiagnosticsData() and getSccsMetaEstimation()
+- added new helper functions addTarColumn() and formatBinaryCovariateName()
+
+
 OhdsiReportGenerator v1.0.1
 ======================
 - Compressed example results sqlite database to save space

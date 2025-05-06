@@ -330,12 +330,14 @@ if(includeCharacterization){
     connectionHandler = connectionHandler, 
     schema = params$schema
   )
+  if(nrow(caseContinuous)>0){
   caseContinuousOfInterest <- caseContinuous %>% 
     dplyr::filter(.data$covariateId %in% c(1002,1008,1009,1010))
   caseContinuousOfInterest$tar <- paste0(
     '(',caseContinuousOfInterest$startAnchor,' + ',caseContinuousOfInterest$riskWindowStart, ') - ',
     '(',caseContinuousOfInterest$endAnchor,' + ', caseContinuousOfInterest$riskWindowEnd, ')'
   )
+  } 
   
   targetContinuous <- OhdsiReportGenerator::getTargetContinuousFeatures(
     connectionHandler = connectionHandler, 

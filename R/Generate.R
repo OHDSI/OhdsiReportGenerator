@@ -238,6 +238,10 @@ generateFullReport <- function(
   # add code for gt?
   test <- gt::gt
   
+  # add dummy code for CirceR as that is used in quarto
+  # so needs to be in Description and used in the R folder
+  CirceROptions <- CirceR::createGenerateOptions()
+  
   templateLoc <- system.file(
     'templates','full-report', 
     package = "OhdsiReportGenerator"
