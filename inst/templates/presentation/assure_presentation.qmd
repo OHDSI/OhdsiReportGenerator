@@ -1,0 +1,404 @@
+---
+title: "ASSURE Analysis"
+format:
+  revealjs: 
+    self-contained: true
+    scrollable: true
+    theme: [default, presentation_style.scss]
+    logo: img/logo.png
+    title-slide-attributes:
+      data-background-color: "#EB1700"
+    footer: "ASSURE Analysis"
+    slide-number: true
+    show-slide-number: all
+    menu:
+      side: left
+      numbers: true
+params: 
+  server: NULL
+  password: NULL
+  username: NULL
+  dbms: NULL
+  resultsSchema: NULL
+  dbDetails: NULL
+  lead: NULL
+  team: NULL
+  trigger: NULL
+  safetyQuestion: NULL
+  objective: NULL
+  topline1: NULL
+  topline2: NULL
+  topline3: NULL
+  date: "!expr: as.character(Sys.Date())"
+  targetId: NULL
+  outcomeIds: NULL
+  cohortNames: NULL
+  cohortIds: NULL
+  covariateIds: NULL
+  details: NULL
+  evaluationText: NULL
+  includeCI: true
+  includeCharacterization: true
+  includeCM: true
+  includeSCCS: true
+  includePLP: true
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| hide: true
+
+defaultPageSize <- 10
+
+library(reactable)
+library(dplyr)
+resultsSchema <- params$resultsSchema
+server <- params$server
+username <- params$username
+password <- params$password
+dbms <- params$dbms
+
+# connect
+connectionDetails <- DatabaseConnector::createConnectionDetails(
+  server = server,
+    user = username,
+    password = password,
+    dbms = dbms
+)
+connectionHandler <- ResultModelManager::ConnectionHandler$new(
+  connectionDetails = connectionDetails
+  )
+
+# get all the cohorts
+
+cohortFriendlyNames <- data.frame(
+  cohortFriendlyName = 'madeup',
+  cohortId = -1
+)
+if(!is.null(params$cohortNames)){
+  cohortFriendlyNames = data.frame(
+    cohortFriendlyName = unlist(params$cohortNames),
+    cohortDefinitionId = unlist(params$cohortIds)
+  )
+}
+
+cohorts <- OhdsiReportGenerator::getCohortDefinitions(
+  connectionHandler = connectionHandler, 
+  schema = resultsSchema
+  )
+
+# add cohortFriendlyName to the cohorts
+cohorts <- merge(cohorts, cohortFriendlyNames, by = 'cohortDefinitionId', all.x = T)
+cohorts$cohortFriendlyName[is.na(cohorts$cohortFriendlyName)] <- cohorts$cohortName[is.na(cohorts$cohortFriendlyName)]
+
+# get the target and all children in each analyses
+# return data.frame with targetId, analyses, targetName, friendlyName, ...
+targetId <- unlist(params$targetId)
+# get all the children cohorts of the target
+targets <- cohorts %>%
+  filter(
+    .data$subsetParent == !!targetId
+  )
+
+outcomes <- cohorts %>%
+  filter(
+    .data$subsetParent %in% unlist(!!params$outcomeIds)
+  )
+# used by prediction
+outcomeIds <- outcomes$cohortDefinitionId
+
+
+# get candidate indictor cohorts:
+# there will always be a subset for CM so dont need to check empty
+subsets <- OhdsiReportGenerator::getCohortSubsetDefinitions(
+  connectionHandler = connectionHandler, 
+  schema = resultsSchema, 
+  subsetIds = unique(na.omit(targets$subsetDefinitionId))
+)
+
+subsetCohorts <- lapply(1:nrow(subsets), function(i){
+  unlist(lapply(ParallelLogger::convertJsonToSettings(subsets$json[i])$subsetOperators,
+               function(x){
+                 if(x$subsetType == "CohortSubsetOperator") 
+                   if(!x$negate){
+                    return(x$cohortIds)
+                   }
+               }
+               ))})
+
+indications <- NULL
+if(length(unlist(subsetCohorts))>0){
+  indications <- cohorts %>% filter(
+    .data$cohortDefinitionId %in% unlist(subsetCohorts)
+  )
+}
+
+
+# figure out comparators - what if no cm?
+comparators <- NULL
+if(params$includeCM){
+  cmDiag <- OhdsiReportGenerator::getCmDiagnosticsData(
+    connectionHandler = connectionHandler, 
+    schema = resultsSchema, 
+    targetIds = targets$cohortDefinitionId, 
+    outcomeIds = outcomes$cohortDefinitionId
+    )
+  
+  comparatorIds <- unique(cmDiag$comparatorId)
+  comparatorParent <- unique(cohorts$subsetParent[cohorts$cohortDefinitionId %in% comparatorIds])
+  
+  # restrict to parent comps
+  comparators <- cohorts %>%
+  filter(
+    .data$cohortDefinitionId %in% !!comparatorParent
+  )
+  
+}
+
+# get databases
+if(!is.null(params$dbDetails)){
+dbs <- OhdsiReportGenerator:::getDbs(
+  schema = resultsSchema,
+  connectionHandler = connectionHandler, 
+  dbDetails = params$dbDetails
+)} else{
+ dbs <- OhdsiReportGenerator:::getDbs(
+  schema = resultsSchema,
+  connectionHandler = connectionHandler
+) 
+}
+
+# If this first initialization isn't run, tabs won't print
+#reactable::reactable(data.frame(Study = "Multiple comparators and/or multiple outcomes."))
+
+```
+
+```{r}
+#| label: background
+#| echo: false
+#| results: 'asis'
+
+targetName <- cohorts$cohortFriendlyName[which(cohorts$cohortDefinitionId == params$targetId)]
+outcomeNames <- cohorts$cohortFriendlyName[which(cohorts$cohortDefinitionId %in% params$outcomeIds)]
+
+# add these to the first slide
+title <- paste0(targetName , ' and ', paste0(outcomeNames, collapse = '/'))
+lead <- params$lead
+team <- params$team
+date <- params$date
+
+trigger <- params$trigger
+safetyQuestion <- params$safetyQuestion
+objective <- params$objective
+
+result <- knitr::knit_child(text = knitr::knit_expand("background.qmd", quiet = TRUE, envir = environment()), quiet = TRUE, envir = environment())
+cat(result, sep = '\n')
+```
+
+```{r}
+#| label: topline
+#| echo: false
+#| results: 'asis'
+
+# add code to auto generate the topline via LLM?
+
+result <- knitr::knit_child(text = knitr::knit_expand("topline.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+cat(result, sep = '\n')
+```
+
+```{r}
+#| label: overview
+#| echo: false
+#| results: 'asis'
+
+studyPeriod <- params$details$studyPeriod
+restrictions <- params$details$restrictions
+
+result <- knitr::knit_child("intro_summary.qmd", quiet = TRUE, envir = environment())
+cat(result, sep = '\n')
+
+```
+
+```{r}
+#| label: databases
+#| echo: false
+#| results: 'asis'
+result <- knitr::knit_child("databases.qmd", quiet = TRUE, envir = environment())
+cat(result, sep = '\n')
+```
+
+
+```{r}
+#| label: characterization
+#| echo: false
+#| results: 'asis'
+
+# age, gender, top 10 covs
+
+if(params$includeCharacterization){
+result <- knitr::knit_child("characterization.qmd", quiet = TRUE, envir = environment())
+cat(result, sep = '\n')
+}
+
+```
+
+```{r}
+#| label: cohort incidence
+#| echo: false
+#| results: 'asis'
+#| 
+#incidence for target, comp and indications
+if(params$includeCI){
+
+  cat('\n# Cohort Incidence {.break-slides} \n\n')
+  #cat('{{< pagebreak >}}')
+
+# figure out which targets are in char
+ciTargetIds <- connectionHandler$queryDb("select distinct target_cohort_definition_id from @schema.ci_target_def;", schema = resultsSchema)
+
+# targets
+targetsCi <- targets %>% filter(
+.data$cohortDefinitionId %in% !!ciTargetIds$targetCohortDefinitionId
+)
+
+if(nrow(targetsCi)>0 & nrow(outcomes)>0){
+heading <- 'Targets'
+ciIds <- targetsCi$cohortDefinitionId
+
+res <- knitr::knit_child(text = knitr::knit_expand("cohort_incidence_template.qmd", quiet = TRUE, envir = environment()),quiet = TRUE)
+cat(res, sep = '\n')
+}
+
+# indications
+if(!is.null(indications)){
+indicationCis <- cohorts %>%
+  filter(
+    .data$subsetParent %in% !!indications$cohortDefinitionId
+  ) %>%
+ filter(
+    .data$cohortDefinitionId %in% !!ciTargetIds$targetCohortDefinitionId
+  )
+
+if(nrow(indicationCis)>0 & nrow(outcomes)>0){
+heading <- 'Indications'
+ciIds <- indicationCis$cohortDefinitionId
+
+res <- knitr::knit_child(text = knitr::knit_expand("cohort_incidence_template.qmd", quiet = TRUE, envir = environment()),quiet = TRUE)
+cat(res, sep = '\n')
+}
+}
+
+# comparators
+if(!is.null(comparators)){
+comparatorCis <- cohorts %>%
+  filter(
+    .data$subsetParent %in% !!comparators$cohortDefinitionId
+  ) %>%
+ filter(
+    .data$cohortDefinitionId %in% !!ciTargetIds$targetCohortDefinitionId
+  )
+
+heading <- 'Comparators'
+ciIds <- comparatorCis$cohortDefinitionId
+
+res <- knitr::knit_child(text = knitr::knit_expand("cohort_incidence_template.qmd", quiet = TRUE, envir = environment()),quiet = TRUE)
+cat(res, sep = '\n')
+}
+
+}
+```
+
+```{r}
+#| label: methods_theory
+#| echo: false
+#| results: 'asis'
+
+if(params$includeCM | params$includeSCCS){
+result <- knitr::knit_child("methods_theory.qmd", quiet = TRUE, envir = environment())
+cat(result, sep = '\n')
+}
+
+```
+
+
+```{r}
+#| label: causal_inference
+#| echo: false
+#| results: 'asis'
+
+cmSubsetIds <- NULL
+if(params$includeCM){
+result <- knitr::knit_child("cohort_method.qmd", quiet = TRUE, envir = environment())
+cat(result, sep = '\n')
+}
+
+sccsSubsetIds <- NULL
+if(params$includeSCCS){
+result <- knitr::knit_child("sccs.qmd", quiet = TRUE, envir = environment())
+cat(result, sep = '\n')
+# create sccsSubsetIds
+}
+
+```
+  
+```{r}
+#| label: prediction
+#| echo: false
+#| results: 'asis'
+
+if(params$includePLP){
+result <- knitr::knit_child("prediction.qmd", quiet = TRUE, envir = environment())
+cat(result, sep = '\n')
+}
+
+```
+   
+  
+  
+# Conclusions {.break-slides}
+  
+```{r}
+#| label: executive summary
+#| echo: false
+#| results: 'asis'
+
+# can potentially automate this part - summary or CI, summary of CM/SCCS
+evaluationText <- params$evaluationText
+
+cat('## Executive Summary\n\n')
+cat(paste(unlist(lapply(
+  evaluationText, 
+  function(txt){
+    paste0('\n* ', txt)
+  }
+)), collapse = '\n'))
+
+
+```
+
+```{r}
+#| label: comment
+#| echo: false
+#| results: 'asis'
+
+# Fixed text
+result <- knitr::knit_child("comment.qmd", quiet = TRUE, envir = environment())
+cat(result, sep = '\n')
+
+```
+
+
+# Supplementary {.break-slides}
+
+```{r}
+#| label: cohort_definitions
+#| echo: false
+#| results: 'asis'
+
+# creates the target details, comparator details, indication details and outcome details.
+result <- knitr::knit_child("cohort_definitions.qmd", quiet = TRUE, envir = environment())
+cat(result, sep = '\n')
+
+```
+

@@ -1,0 +1,69 @@
+```{r}
+#| echo: false
+#| results: 'asis'
+
+# ===================================
+# Get Databases
+# ===================================
+
+# need to add that function
+##databases <- OhdsiReportGenerator::getDatabases()
+databases <- connectionHandler$queryDb(
+  "SELECT cdm_source_name, cdm_source_abbreviation, source_description, SOURCE_RELEASE_DATE FROM @schema.database_meta_data;",
+  schema = params$schema
+)
+
+nDatabases <- nrow(databases)
+
+# add the database names into a friendly string
+databaseText <- databases$cdmSourceAbbreviation[1]
+if(nDatabases > 1){
+  if(nDatabases > 2){
+    databaseText <- paste0(databases$cdmSourceAbbreviation[-length(databases$cdmSourceName)], collapse = ', ')
+  }
+  databaseText <- paste0(databaseText, ' and ', databases$cdmSourceAbbreviation[length(databases$cdmSourceAbbreviation)])
+}
+
+cat('\n# Epidemiology Data\n')
+
+cat(paste0("Assessments were conducted to determine the feasibility of retrospective real world (RWD) analyses of ", outcomeName, " while exposed to ", targetName ," across a global research network comprised of 12 healthcare databases. The research network included electronic medical record databases, insurance claims databases, and primary care/general practitioner databases, representing a broad range of patient populations (privately insured employees or patients with limited income). Cross-network analyses are enabled by mapping data sources to the Observational Medical Outcomes Partnership (OMOP) Common Data Model (CDM). The OMOP CDM maps source data on drug exposures and outcomes to RxNorm and the Systematized Nomenclature of Medicine Clinical Terms (SNOMED CT), respectively.")) 
+
+cat(paste0("\nThe data feasibiliy determines whether ", targetName ," and ", outcomeName, " are recorded in each database.  Additional diagnostics are applied during each analysis that may result in less databases being included in specific analyses."))
+
+cat(paste0(nDatabases," databases in total passed initial feasibility tests with sufficient sample sizes, including ", databaseText,"."))
+
+print(htmltools::tagList(
+  databases %>% 
+    dplyr::select("cdmSourceAbbreviation", "cdmSourceName",  "sourceDescription","sourceReleaseDate") %>%
+    gt::gt() %>%
+    gt::cols_label(
+      cdmSourceAbbreviation = 'Database',
+      cdmSourceName = "Full Database Name", 
+      sourceDescription = "Database Description",
+      sourceReleaseDate = "Release Date"
+    ) %>%
+    gt::tab_options(
+      heading.align = "left",
+      data_row.padding = gt::px(7),
+      column_labels.font.size = gt::px(12),
+      column_labels.background.color = "#EB1800",
+      column_labels.font.weight = "bold",
+      row_group.background.color = "#D3D3D3",
+      row_group.font.weight = "bold"
+    ) %>%
+    gt::tab_style(
+      style = gt::cell_text(
+        color = "darkgrey",
+        font = gt::google_font("Source Sans Pro"),
+        transform = "uppercase"
+      ),
+      locations = gt::cells_column_labels(gt::everything())
+    ) %>%
+    gt::tab_header(
+      title = "Databases that pass database diagostic feasibility.", 
+      subtitle = "Note: not all of these databases may pass analyses diagnostics."
+    )
+))
+
+
+```

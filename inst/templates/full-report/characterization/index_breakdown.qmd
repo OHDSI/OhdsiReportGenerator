@@ -1,0 +1,171 @@
+### Index breakdown
+
+```{r}
+#| label: characterization_index_target
+#| echo: false
+#| results: 'asis'
+
+# TARGET
+  
+targetIds <- cohortDefinitions %>%
+  dplyr::filter(.data$subsetParent == params$targetId) %>%
+  dplyr::arrange(.data$order, .data$cohortDefinitionId) %>%
+  dplyr::select("cohortDefinitionId") 
+targetIds <- targetIds$cohortDefinitionId
+
+for(i in 1:length(params$outcomeIds)){
+  jsonList <- ParallelLogger::convertJsonToSettings(json = cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == params$outcomeIds[i]])
+  
+  if(!is.null(params$authMethod)){
+  ROhdsiWebApi::authorizeWebApi(
+    baseUrl = params$webAPI, 
+    authMethod = params$authMethod, 
+    webApiUsername = params$webApiUsername, 
+    webApiPassword = params$webApiPassword
+  )
+  }
+  
+  conceptsInOutcome <- c()
+  if(length(jsonList$ConceptSets)>0){
+    for(jListInd in 1:length(jsonList$ConceptSets)){
+      conceptsInOutcome <- unique(c(conceptsInOutcome, ROhdsiWebApi::resolveConceptSet(
+        conceptSetDefinition = jsonList$ConceptSets[[jListInd]], 
+        baseUrl = params$webAPI
+      )))
+    }
+  }
+  
+  for(j in 1:length(targetIds)){
+    res <- OhdsiReportGenerator::getBinaryCaseSeries(
+      connectionHandler = connectionHandler, 
+      schema = params$schema, 
+      targetId = targetIds[j], 
+      outcomeId = params$outcomeIds[i] 
+    ) %>%
+      dplyr::filter(.data$averageValue >= 1/100)
+    # add the TAR
+    
+    if(nrow(res)>0){
+    
+    res <- OhdsiReportGenerator::addTarColumn(res) 
+    
+    # make the covariateName nicer
+    res <- OhdsiReportGenerator::formatBinaryCovariateName(res)
+    
+    counts <- OhdsiReportGenerator::getCaseCounts(
+      connectionHandler = connectionHandler, 
+      schema = params$schema, 
+      targetIds = targetIds[j], 
+      outcomeIds = params$outcomeIds[i] 
+    ) 
+    counts <- OhdsiReportGenerator::addTarColumn(counts) %>%
+      dplyr::select("databaseName", "personCount", "tar")
+    
+    index <- res %>% dplyr::filter(
+      floor(.data$covariateId/1000) %in%conceptsInOutcome
+    ) %>%
+      dplyr::filter(.data$type == 'During') %>%
+      dplyr::select("databaseName", "targetCohortId", "outcomeCohortId",
+                    "covariateName", 
+                    "averageValue", "tar") %>% 
+      dplyr::inner_join(counts, by = c("databaseName", "tar"))
+    
+    aggreggateIndex <- index %>% 
+      dplyr::group_by(.data$targetCohortId, .data$outcomeCohortId, .data$covariateName, .data$tar) %>%
+      dplyr::summarise(
+        averageValue = mean(.data$averageValue, na.rm = T),
+        personCount = 0
+      ) %>%
+      dplyr::mutate(
+        databaseName = 'all'
+      )
+    
+    # add the combined that will be used to order table
+    index <- dplyr::bind_rows(index, aggreggateIndex)
+    
+  tempCd <- cohortDefinitions[,c("friendlyName","subsetText","cohortDefinitionId")]
+colnames(tempCd) <- paste0(colnames(tempCd), 'Target')
+index <- merge(index, tempCd, by.x = 'targetCohortId', by.y = 'cohortDefinitionIdTarget')
+tempCd <- cohortDefinitions[,c("friendlyName","subsetText","cohortDefinitionId")]
+colnames(tempCd) <- paste0(colnames(tempCd), 'Outcome')
+index <- merge(index, tempCd, by.x = 'outcomeCohortId', by.y = 'cohortDefinitionIdOutcome')
+
+ibOutcome <- unique(index$friendlyNameOutcome)
+
+# now we add the N to the databaseName we need to loop over TAR
+for(ibTar in unique(index$tar)){
+  
+index <- tidyr::pivot_wider(
+  data = index %>%
+    dplyr::filter(.data$tar == !!ibTar) %>% 
+    dplyr::select(-"tar") %>%
+    dplyr::mutate(
+      databaseName = paste0(.data$databaseName, ' (N = ', 
+                            ifelse(.data$personCount >= 0 ,
+                                   .data$personCount,
+                                   paste0('<',abs(.data$personCount))
+                                   ),')')
+      ) 
+    , 
+  names_from = "databaseName", 
+  #values_from = c("sumValue","averageValue"), 
+  values_from = c("averageValue"), 
+  id_cols = c("covariateName","friendlyNameTarget","subsetTextTarget")
+) %>%
+    dplyr::arrange(-1*.data$`all (N = 0)`) %>%
+  dplyr::select(-"all (N = 0)") %>%
+  dplyr::group_by(
+    .data$friendlyNameTarget,.data$subsetTextTarget
+  )
+
+# display
+
+boxName <- paste0('Frequency of ',ibOutcome,' concept codes when the patient exposed to ', index$friendlyNameTarget[1], ' ', index$subsetTextTarget[1],' has the outcome during ', ibTar)
+
+  cat('\n\n::: {.callout-note collapse="true"}')
+  cat(paste0("\n# ",boxName, '\n\n'))
+      
+print(htmltools::tagList(
+  index  %>%  
+    gt::gt() %>%
+    gt::fmt_percent(
+      columns = colnames(index)[! colnames(index) %in% c("covariateName","friendlyNameTarget","subsetTextTarget", "friendlyNameOutcome", "tar")],
+      decimals = 2
+    ) %>%
+    gt::cols_label(
+      covariateName = "Covariate"
+    ) %>%
+    gt::tab_options(
+      heading.align = "left",
+      data_row.padding = gt::px(7),
+      column_labels.font.size = gt::px(12),
+      column_labels.background.color = "#EB1800",
+      column_labels.font.weight = "bold",
+      row_group.background.color = "#D3D3D3",
+      row_group.font.weight = "bold"
+    ) %>%
+    gt::tab_style(
+      style = gt::cell_text(
+        color = "darkgrey",
+        font = gt::google_font("Source Sans Pro"),
+        transform = "uppercase"
+      ),
+      locations = gt::cells_column_labels(gt::everything())
+    ) %>%
+    gt::tab_header(
+      title = paste0('Frequency of ',ibOutcome,' concept codes when the patient in the target cohort has the outcome during ', ibTar)
+    )
+))
+
+cat('\n\n:::\n\n')
+
+} # end tar loop
+  
+    } # if res has results
+  
+  }
+
+
+}
+
+```

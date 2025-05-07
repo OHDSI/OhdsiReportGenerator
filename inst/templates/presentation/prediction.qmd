@@ -1,0 +1,181 @@
+# Prediction {.break-slides}
+  
+## Models
+  
+::: {style='font-size: 50%;'}
+
+:::: {.panel-tabset .nav-pills}
+
+### Model Summary
+
+:::: {.columns}
+
+::: {.column width="80%"}
+
+```{r}
+#| label: prediction_model_summary
+#| echo: false
+#| results: 'asis'
+
+# panel for outcomes
+cat('\n::: {.panel-tabset .nav-pills}')
+for(outcomeId in outcomeIds){
+  
+  outcomeName <- outcomeNames[which(outcomeIds == outcomeId)]
+  cat(paste0('\n\n#### ', outcomeName, '\n'))
+  
+  pTable <- OhdsiReportGenerator::getPredictionPerformances(
+    connectionHandler = connectionHandler,
+    schema = resultsSchema
+  )
+  
+ OhdsiReportGenerator::printReactable(
+        data = pTable %>% 
+dplyr::filter(
+.data$developmentTargetId == !!targetId &
+.data$developmentOutcomeId == !!outcomeId
+) %>%
+          dplyr::select(
+            'modelDesignId',
+            #'modelType',
+            'developmentTargetName',
+            'developmentOutcomeName',
+            'developmentDatabase',
+            'validationDatabase',
+            'validationTimeAtRisk',
+            'populationSize',
+            'outcomeCount',
+            'auroc',
+            'eStatistic',
+            'brierScore'
+          ),
+        columns = list(
+          auroc = reactable::colDef(
+            name = 'AUROC',
+            format = reactable::colFormat(digits = 2)
+          ),
+          eStatistic = reactable::colDef(
+            name = 'e-stat',
+            format = reactable::colFormat(digits = 2)
+          ),
+          brierScore = reactable::colDef(
+            name = 'brier',
+            format = reactable::colFormat(digits = 2)
+          ),
+          populationSize = reactable::colDef(
+            name = 'N'
+          )
+        ),
+        defaultPageSize = defaultPageSize,
+        highlight = TRUE, 
+        striped = TRUE
+      )
+  
+}
+cat('\n:::') # outcome tabs
+
+```
+
+:::
+  
+::: {.column width="20%"}
+
+> AUROC: A measure of model discrimination. 1 is best.  Probability a random person with the outcome has a higher risk than an random person without the outcome.
+
+> e-stat: A measure of calibration.  Smaller is better. How accurate the predicted risks are.
+
+> brier: Overall error. Smaller is better.
+
+:::
+  
+::::
+  
+  
+### Top Predictors
+  
+```{r}
+#| label: prediction_top_pred
+#| echo: false
+#| results: 'asis'
+
+# panel for outcomes
+cat('\n\n:::: {.panel-tabset .nav-pills}')
+for(outcomeId in outcomeIds){
+  
+  outcomeName <- outcomeNames[which(outcomeIds == outcomeId)]
+  cat(paste0('\n\n#### ', outcomeName, '\n\n'))
+  
+  topPreds <- OhdsiReportGenerator::getPredictionTopPredictors(
+    connectionHandler = connectionHandler,
+    schema = resultsSchema,
+    targetIds = targetId,
+    outcomeIds = outcomeId, # ToDo loop outcomes
+    numberPredictors = 50
+  )
+  
+  if(nrow(topPreds) >0 ){
+    databases <- unique(topPreds$databaseName)
+    
+    cat('\n\n::: {.panel-tabset .nav-pills}')
+    for(database in databases){
+      
+      cat(paste0('\n\n##### ', database))
+      cat('\n\n')
+      
+      OhdsiReportGenerator::printReactable(
+            data = topPreds %>% 
+              dplyr::filter(.data$databaseName == !!database) %>%
+              dplyr::mutate(
+                tar = paste0(
+                  '( ',.data$tarStartAnchor, ' + ', .data$tarStartDay, ' ) - ( ', 
+                  .data$tarEndAnchor, ' + ', .data$tarEndDay, ' )'
+                )
+              ) %>%
+              dplyr::select(
+                'tar',
+                'covariateName',
+                'covariateValue',
+                'withNoOutcomeCovariateMean',
+                'withOutcomeCovariateMean',
+                'standardizedMeanDiff'
+              ),
+            columns = list(
+              standardizedMeanDiff = reactable::colDef(
+                name = 'SMD',
+                format = reactable::colFormat(digits = 2)
+              ),
+              withOutcomeCovariateMean = reactable::colDef(
+                name = 'With Outcome',
+                format = reactable::colFormat(digits = 2)
+              ),
+              withNoOutcomeCovariateMean = reactable::colDef(
+                name = 'No Outcome',
+                format = reactable::colFormat(digits = 2)
+              ),
+              covariateValue = reactable::colDef(
+                name = 'Value',
+                format = reactable::colFormat(digits = 2)
+              ),
+              
+              
+              covariateName = reactable::colDef(
+                name = 'Predictor'
+              ),
+              tar = reactable::colDef(
+                name = 'Time-at-risk'
+              )
+            ),
+            defaultPageSize = defaultPageSize,
+            highlight = TRUE, 
+            striped = TRUE
+          )
+    }
+    cat('\n\n:::')
+  }
+}
+cat('\n\n::::')
+```
+
+::::
+  
+:::

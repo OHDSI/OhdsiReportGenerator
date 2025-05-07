@@ -89,7 +89,7 @@ test_that("getAnalyses", {
 test_that("getDbs", {
   
   x <- OhdsiReportGenerator:::getDbs(
-    schema = schema,
+    schema = schema, 
     connectionHandler = connectionHandler,
     dbDetails = data.frame(
       CDM_SOURCE_ABBREVIATION = c(
@@ -107,4 +107,115 @@ result <- kableDark( data = data.frame(a=1,b=4),
            position = 'h')
 
 testthat::expect_is(result, 'knitr_kable')
+})
+
+test_that("addTarColumn", {
+  
+  # check it works when the three valid columns are there
+  # settings 1:
+  data = data.frame(
+    tarStartWith = 'cohort start',
+    tarStartOffset = 34,
+    tarEndWith = 'cohort start',
+    tarEndOffset = 99
+  )
+res <- addTarColumn(data)
+testthat::expect_true(ncol(res) == 5)
+testthat::expect_true('tar' %in% colnames(res))
+testthat::expect_true(res$tar == "(cohort start + 34) - (cohort start + 99)") 
+testthat::expect_true(sum(colnames(data) %in% colnames(res)) == 4)
+
+# settings 2:
+data = data.frame(
+  tarStartAnchor = 'cohort start',
+  tarStartDay = 34,
+  tarEndAnchor = 'cohort start',
+  tarEndDay = 99
+)
+res <- addTarColumn(data)
+testthat::expect_true(ncol(res) == 5)
+testthat::expect_true('tar' %in% colnames(res))
+testthat::expect_true(res$tar == "(cohort start + 34) - (cohort start + 99)") 
+testthat::expect_true(sum(colnames(data) %in% colnames(res)) == 4)
+
+# settings 3:
+data = data.frame(
+  startAnchor = 'cohort start',
+  riskWindowStart = 34,
+  endAnchor = 'cohort start',
+  riskWindowEnd = 99
+)
+res <- addTarColumn(
+  data
+)
+testthat::expect_true(ncol(res) == 5)
+testthat::expect_true('tar' %in% colnames(res))
+testthat::expect_true(res$tar == "(cohort start + 34) - (cohort start + 99)") 
+testthat::expect_true(sum(colnames(data) %in% colnames(res)) == 4)
+
+# Now check it does not add for invalid columns
+data = data.frame(
+  startAnchor = 'cohort start',
+  riskWindowStart = 34,
+  endAnchor = 'cohort start',
+  tarEndDay = 99
+)
+res <- addTarColumn(data)
+testthat::expect_true(!'tar' %in% colnames(res))
+testthat::expect_true(sum(colnames(data) %in% colnames(res)) == 4)
+
+})
+
+
+
+test_that("formatBinaryCovariateName", {
+  
+  # check ethnicity
+  data <- data.frame(
+    covariateName = c('ethnicity = madeup'),
+    covariateId = 1
+  )
+  newData <- formatBinaryCovariateName(data)
+  testthat::expect_true(newData$covariateName == "madeup (0)")
+  
+  # check race
+  data <- data.frame(
+    covariateName = c('race = madeup'),
+    covariateId = 1
+  )
+  newData <- formatBinaryCovariateName(data)
+  testthat::expect_true(newData$covariateName == "madeup (0)")
+  
+  # check gender
+  data <- data.frame(
+    covariateName = c('gender = madeup'),
+    covariateId = 1002
+  )
+  newData <- formatBinaryCovariateName(data)
+  testthat::expect_true(newData$covariateName == "madeup (1)")
+  
+  # check age
+  data <- data.frame(
+    covariateName = c('age group: 0-4'),
+    covariateId = 10001
+  )
+  newData <- formatBinaryCovariateName(data)
+  testthat::expect_true(newData$covariateName == "0-4 (10)")
+  
+  # check condition and covariateId
+  data <- data.frame(
+    covariateName = c('condition occurrence -10 to 0 days prior: madeup'),
+    covariateId = 123210
+  )
+  newData <- formatBinaryCovariateName(data)
+  testthat::expect_true(newData$covariateName == "madeup (123)")
+  
+  # check it works when no covariateId
+  data <- data.frame(
+    covariateName = c('condition occurrence -10 to 0 days prior: madeup')
+  )
+  newData <- formatBinaryCovariateName(data)
+  testthat::expect_true(newData$covariateName == "madeup")
+  
+  
 })

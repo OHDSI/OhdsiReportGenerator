@@ -39,6 +39,8 @@ Returns a data.frame with the columns:
  \item{targetId the target cohort id}
  \item{outcomeName the outcome name}
  \item{outcomeId the outcome cohort id}
+ \item{indicationName the indicationname}
+ \item{indicationId the indication cohort id}
  \item{covariateName whether main or secondary analysis}
  \item{outcomeSubjects The number of subjects with at least one outcome.}
  \item{outcomeEvents The number of outcome events.}

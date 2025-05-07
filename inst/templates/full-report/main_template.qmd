@@ -1,0 +1,489 @@
+---
+title: "ASSURE Full Report"
+format: html
+self-contained: true
+toc: true
+toc-depth: 4
+toc-title: "Contents"
+number-sections: true
+prefer-html: true
+execute:
+  echo: false
+  warning: false
+params: 
+  server: NULL
+  password: NULL
+  username: NULL
+  dbms: "postgresql"
+  schema: 'main'
+  targetId: 1
+  outcomeIds: 3
+  indicationIds: ""
+  comparatorIds: !expr "c(2)"
+  cohortIds: !expr "c(1,3,2)"
+  cohortNames: !expr "c('target', 'outcome', 'comp')"
+  includeCI: true
+  includeCharacterization: true
+  includeCohortMethod: true
+  includeSccs: true
+  includePrediction: true
+  numberPredictors: 25
+  excludeText: NULL
+  timeRestrictionText: NULL
+  drugGap: 30
+  webAPI: NULL
+  authMethod: NULL
+  webApiUsername: NULL 
+  webApiPassword: NULL
+---
+  
+```{r}
+#| label: configuration
+#| echo: false
+#| hide: true
+
+library(dplyr)
+
+targetName <- params$cohortNames[params$cohortIds == params$targetId]
+outcomeName <- paste0(params$cohortNames[params$cohortIds %in% params$outcomeIds], collapse = '/')
+
+#====================================
+# first create connection details
+#====================================
+
+connectionDetails <- DatabaseConnector::createConnectionDetails(
+  dbms = params$dbms,
+  user = params$username, 
+  password = params$password,
+  server = params$server
+)
+#====================================
+
+#====================================
+# Figure out what sections to include in report
+#====================================
+
+# get prefixes - this only works with standard prefixes
+con <- DatabaseConnector::connect(connectionDetails)
+tableNames <- DatabaseConnector::getTableNames(
+  connection = con,
+  databaseSchema = params$schema
+)
+DatabaseConnector::disconnect(con)
+
+prefixes <- unique(unlist(lapply(tableNames, function(x) strsplit(x,'_')[[1]][1])))
+
+includeCI <- 'ci' %in% prefixes & params$includeCI
+includeCharacterization <- 'c' %in% prefixes & params$includeCharacterization
+includeCohortMethod <- 'cm' %in% prefixes & params$includeCohortMethod 
+includeSccs <- 'sccs' %in% prefixes & params$includeSccs 
+includePrediction <- 'plp' %in% prefixes & params$includePrediction 
+#====================================
+
+#====================================
+# create connection handler
+#====================================
+connectionHandler <- ResultModelManager::ConnectionHandler$new(
+  connectionDetails = connectionDetails
+)
+#====================================
+
+# ===================================
+# Get Cohorts
+# ===================================
+
+orderDf <- data.frame(
+  subsetParent = c(
+    params$targetId,
+    params$outcomeIds, 
+    params$indicationIds,
+    params$comparatorIds
+  ),
+  order = 1:length(c(
+    params$targetId,
+    params$outcomeIds, 
+    params$indicationIds,
+    params$comparatorIds
+  ))
+)
+
+cohortDefinitions <- OhdsiReportGenerator::getCohortDefinitions(
+  connectionHandler = connectionHandler, 
+  schema = params$schema
+)
+
+# add the friendly names 
+cohortDefinitions <- 
+  merge(
+    cohortDefinitions,
+    data.frame(
+      cohortId = params$cohortIds,
+      friendlyName = params$cohortNames
+    ), 
+    by.x = 'subsetParent', 
+    by.y = 'cohortId', 
+    all.x = TRUE # TODO - change this if we want to ignore all other cohorts? 
+  )
+cohortDefinitions$friendlyName[is.na(cohortDefinitions$friendlyName)] <- cohortDefinitions$cohortName[is.na(cohortDefinitions$friendlyName)]
+
+# add order column
+cohortDefinitions <- 
+  merge(
+    cohortDefinitions,
+    orderDf, 
+    by.x = 'subsetParent', 
+    by.y = 'subsetParent', 
+    all.x = TRUE
+  )
+
+subsetDef <- OhdsiReportGenerator::getCohortSubsetDefinitions(
+  connectionHandler = connectionHandler, 
+  schema = params$schema
+)
+
+# function to convert subset to friendly text
+getSubsetString <- function(x){
+  if(x$subsetType == "CohortSubsetOperator"){
+    txt <- paste0(ifelse(x$negate, 'Not in','In'), ' cohorts ', 
+                  paste0(cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId %in% x$cohortIds],
+                         collapse = ifelse(x$cohortCombinationOperator == 'all', ' and ', ' or ')
+                  ))
+    return(paste0(txt, '.'))
+  }
+  
+  if(x$subsetType == "DemographicSubsetOperator"){
+    gender <- ''
+    if(sum(c(8507,8532) %in% x$gender) == 2){
+      gender = ''
+    } else if( 8507 %in% x$gender){
+      gender = 'Resticted to males.'
+    } else if( 8532 %in% x$gender){
+      gender = 'Resticted to females.'
+    }
+    return(paste0('Aged between ', x$ageMin, ' to ', x$ageMax, '.', 
+                  gender
+    ))
+  }
+  
+  if(x$subsetType == "LimitSubsetOperator"){
+    txt <- ''
+    joiner <- ' and '
+    if(!is.null(x$calendarStartDate)){
+      txt <-  paste0(txt,paste0(
+        'Restict to exposures occurring after ', x$calendarStartDate, 
+        ifelse(!is.null(x$calendarEndDate), paste0(joiner,' before ', x$calendarEndDate), '')
+      ))
+    } else{
+      if(!is.null(x$calendarEndDate)){
+        txt <-  paste0(txt,paste0('Restict to exposures occurring before ', x$calendarEndDate))
+      }
+    }
+    
+    if(x$priorTime > 0){
+      txt <- paste0(txt, ifelse(txt == '', 'Requiring ',paste0(joiner, ' requiring ')) , x$priorTime, ' days observation prior to index')
+    }
+    
+    if(x$followUpTime > 0){
+      txt <- paste0(txt, ifelse(txt == '', 'Requiring ',paste0(joiner, ' requiring ')), x$followUpTime, ' days follow up post index')
+    }
+    
+    if(x$limitTo == 'firstEver'){
+      txt <- paste0(txt, ifelse(txt == '', 'Limit ', ' and limit '), 'to first exposure')
+    }
+    
+    txt <- paste0(txt, '.')
+    return(txt)
+  }
+  
+}
+
+# add friendly subset text to cohorts
+subsetDefFriendly <- data.frame(
+  subsetDefinitionId = subsetDef$subsetDefinitionId,
+  subsetText = unlist(lapply(1:length(subsetDef$json), function(i) 
+    paste0(unlist(lapply(ParallelLogger::convertJsonToSettings(subsetDef$json[i])$subsetOperators, function(sub) getSubsetString(sub))), collapse = ' ')
+  ))
+)
+
+# add subset text or '' if no subset
+cohortDefinitions <- merge(cohortDefinitions, subsetDefFriendly, by = 'subsetDefinitionId', all.x = TRUE)
+if(sum(is.na(cohortDefinitions$subsetText))>0){
+  cohortDefinitions$subsetText[is.na(cohortDefinitions$subsetText)] <- ''
+}
+
+
+# for indications extract out the subsetDef cohorts and restrict to params$indicationIds
+# then get vector of indicationIds for the target
+indicationIds <- params$indicationIds
+if(is.null(indicationIds)){
+  indicationIds <- ''
+}
+
+# for each indication get the comps in CM
+comparatorIds <- params$comparatorIds
+comparatorText <- paste0(unique(cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId %in% comparatorIds]), collapse = '/')
+
+# ===================================
+
+
+
+# ===================================
+
+#nNegativeControls <- 100 # remove?
+
+
+
+```
+
+
+```{r}
+#| label: summary
+#| echo: false
+#| results: 'asis'
+
+result <- knitr::knit_child(text = knitr::knit_expand("summary.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+cat(result, sep = '\n')
+```
+
+```{r}
+#| label: data
+#| echo: false
+#| results: 'asis'
+
+result <- knitr::knit_child(text = knitr::knit_expand("data.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+cat(result, sep = '\n')
+```
+
+```{r}
+#| label: definitions
+#| echo: false
+#| results: 'asis'
+
+result <- knitr::knit_child(text = knitr::knit_expand("definitions.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+cat(result, sep = '\n')
+```
+
+
+```{r}
+#| label: cohort_incidence
+#| echo: false
+#| results: 'asis'
+
+if(includeCI){
+  # ===================================
+  # Get CI
+  # ===================================
+  cohortIncidence <- OhdsiReportGenerator::getIncidenceRates(
+    connectionHandler = connectionHandler, 
+    schema = params$schema
+  )
+  
+  cohortIncidenceUnstatified <- cohortIncidence %>%
+    dplyr::filter(.data$ageGroupName == 'Any') %>%
+    dplyr::filter(.data$genderName == 'Any') %>%
+    dplyr::filter(.data$startYear == 'Any')
+  
+  ciTargets <- unique(cohortIncidenceUnstatified$targetId)
+  ciCohorts <- cohortDefinitions[cohortDefinitions$cohortDefinitionId %in% ciTargets,]
+  
+  ciParents <- unique(ciCohorts$subsetParent)
+  ciSubset <- unique(ciCohorts$subsetDefinitionId) # different for comp vs ind
+  
+  ciOutcomes <- unique(cohortIncidenceUnstatified$outcomeId)
+  
+  ciTars <- unique(cohortIncidenceUnstatified[,c('tarStartWith','tarStartOffset',
+                                                 'tarEndWith','tarEndOffset')])
+  
+  ciTars$friendlyTarStart <- paste0(ciTars$tarStartWith, ' + ', ciTars$tarStartOffset)
+  ciTars$friendlyTarEnd <- paste0(ciTars$tarEndWith, ' + ', ciTars$tarEndOffset)
+  
+  tarStart <- ciTars$friendlyTarStart[1]
+  tarEnd <- ciTars$friendlyTarEnd[1]
+  # ===================================
+result <- knitr::knit_child(text = knitr::knit_expand("cohort_incidence.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+cat(result, sep = '\n')
+}
+```
+
+
+
+```{r}
+#| label: characterization
+#| echo: false
+#| results: 'asis'
+
+if(includeCharacterization){
+  # ===================================
+  # Get Characterization
+  # ===================================
+  
+  # TODO add tte?
+  if(FALSE){
+    tte <- OhdsiReportGenerator::getTimeToEvent(
+      connectionHandler = connectionHandler, 
+      schema = params$schema
+    )
+  }
+  
+  # Age and observation time extraction for all Ts and Os
+  caseContinuous <- OhdsiReportGenerator::getCaseContinuousFeatures(
+    connectionHandler = connectionHandler, 
+    schema = params$schema
+  )
+  if(nrow(caseContinuous)>0){
+  caseContinuousOfInterest <- caseContinuous %>% 
+    dplyr::filter(.data$covariateId %in% c(1002,1008,1009,1010))
+  caseContinuousOfInterest$tar <- paste0(
+    '(',caseContinuousOfInterest$startAnchor,' + ',caseContinuousOfInterest$riskWindowStart, ') - ',
+    '(',caseContinuousOfInterest$endAnchor,' + ', caseContinuousOfInterest$riskWindowEnd, ')'
+  )
+  } 
+  
+  targetContinuous <- OhdsiReportGenerator::getTargetContinuousFeatures(
+    connectionHandler = connectionHandler, 
+    schema = params$schema
+  )
+  targetContinuousOfInterest <- targetContinuous %>% 
+    dplyr::filter(.data$covariateId %in% c(1002,1008,1009,1010))
+  
+  # remove binary age group if age continuous is available  
+  binaryAnalyses <- c(1,2,3,4,5)
+  if(nrow(targetContinuousOfInterest) > 0){
+    if(1002 %in% unique(targetContinuousOfInterest$covariateId)){
+      binaryAnalyses <- c(1,2,4,5)
+    }
+  }
+  
+  targetBinaryOfInterest <- OhdsiReportGenerator::getTargetBinaryFeatures(
+    connectionHandler = connectionHandler, 
+    schema = params$schema, 
+    analysisIds = binaryAnalyses
+  )
+  
+  
+  # Binary risk factors
+  # how to get this list if continuous not done?
+  tempToGetIds <- OhdsiReportGenerator::getCaseBinaryFeatures(
+    connectionHandler = connectionHandler, 
+    schema = params$schema, 
+    analysisIds = c(1,2,3,4,5) # one of these should be run - add char and drug?
+  )
+  
+  
+  # TODO - need below?
+  #cTars <-  unique(caseContinuousOfInterest[, c('riskWindowStart', 'riskWindowEnd', 'startAnchor', 'endAnchor')])
+  #cTars$friendlyTarStart <- paste0(cTars$startAnchor, ' + ', cTars$riskWindowStart)
+  #cTars$friendlyTarEnd <- paste0(cTars$endAnchor, ' + ', cTars$riskWindowEnd)
+  
+  # ===================================
+result <- knitr::knit_child(text = knitr::knit_expand("characterization.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+cat(result, sep = '\n')
+}
+```
+
+
+```{r}
+#| label: causal_inference
+#| echo: false
+#| results: 'asis'
+
+if(includeSccs || includeCohortMethod){
+if(includeCohortMethod){
+  # ===================================
+  # Get CohortMethod
+  # ===================================
+  
+  cohortMethodDiagnostics <- OhdsiReportGenerator::getCmDiagnosticsData(
+    connectionHandler = connectionHandler, 
+    schema = params$schema 
+  )
+  
+  cohortMethodResults <- OhdsiReportGenerator::getCMEstimation(
+    connectionHandler = connectionHandler, 
+    schema = params$schema
+  )
+  
+  cohortMethodES <- OhdsiReportGenerator::getCmMetaEstimation(
+    connectionHandler = connectionHandler, 
+    schema = params$schema
+  )
+  
+  cmTargets <- unique(cohortMethodDiagnostics$targetId)
+  cmComparators <- unique(cohortMethodDiagnostics$comparatorId)
+  cmOutcomes <- unique(cohortMethodDiagnostics$outcomeId)
+  cmDesc <- unique(cohortMethodDiagnostics$description) # can we extract this?
+  
+  # ===================================
+}
+
+if(includeSccs){
+  # ===================================
+  # Get Sccs
+  # ===================================
+  
+  sccsDiagnostics <- OhdsiReportGenerator::getSccsDiagnosticsData(
+    connectionHandler = connectionHandler, 
+    schema = params$schema 
+  )
+  
+  sccsResults <- OhdsiReportGenerator::getSccsEstimation(
+    connectionHandler = connectionHandler, 
+    schema = params$schema
+  )
+  
+  sccsES <- OhdsiReportGenerator::getSccsMetaEstimation(
+    connectionHandler = connectionHandler, 
+    schema = params$schema
+  )
+  
+  sccsTargets <- unique(sccsDiagnostics$targetId)
+  sccsOutcomes <- unique(sccsDiagnostics$outcomeId)
+  sccsDesc <- unique(sccsDiagnostics$description)
+
+  # ===================================
+}
+  
+result <- knitr::knit_child(text = knitr::knit_expand("causal_inference.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+cat(result, sep = '\n')
+}
+```
+
+
+```{r}
+#| label: prediction
+#| echo: false
+#| results: 'asis'
+
+if(includePrediction){
+  
+    prediction <- OhdsiReportGenerator::getPredictionPerformances(
+    connectionHandler = connectionHandler, 
+    schema = params$schema 
+  )
+  
+  predictionPreds <- OhdsiReportGenerator::getPredictionTopPredictors(
+    connectionHandler = connectionHandler, 
+    schema = params$schema, 
+    numberPredictors = params$numberPredictors
+  )
+  
+  predictionTargets <- unique(prediction$developmentTargetId)
+  predictionOutcomes <- unique(prediction$developmentOutcomeId)
+  predictionTars <- unique(prediction$validationTimeAtRisk)
+  
+result <- knitr::knit_child(text = knitr::knit_expand("prediction.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+cat(result, sep = '\n')
+
+}
+```
+
+
+```{r}
+#| label: references
+#| echo: false
+#| results: 'asis'
+
+result <- knitr::knit_child(text = knitr::knit_expand("references.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+cat(result, sep = '\n')
+```
+

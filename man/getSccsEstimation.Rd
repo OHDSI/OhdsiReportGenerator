@@ -39,6 +39,8 @@ Returns a data.frame with the columns:
  \item{targetId the target cohort id}
  \item{outcomeName the outcome name}
  \item{outcomeId the outcome cohort id}
+ \item{indicationName the indication name}
+ \item{indicatonId the indication cohort id}
  \item{covariateName whether main or secondary analysis}
  \item{outcomeSubjects The number of subjects with at least one outcome.}
  \item{outcomeEvents The number of outcome events.}
@@ -58,6 +60,7 @@ Returns a data.frame with the columns:
  \item{calibratedCi95Lb the lower bound of the 95 percent confidence interval for the calibrated relative risk}
  \item{calibratedCi95Ub the upper bound of the 95 percent confidence interval for the calibrated relative risk}
  \item{calibratedP the calibrated p-value}
+ \item{calibratedOneSidedP the calibrated one sided p-value}
  \item{calibratedLogRr the calibrated log of the relative risk}
  \item{calibratedSeLogRr the calibrated log of the relative risk standard error}
  \item{llr The log of the likelihood ratio (of the MLE vs the null hypothesis of no effect).}

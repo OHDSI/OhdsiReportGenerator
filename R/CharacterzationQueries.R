@@ -135,6 +135,10 @@ getIncidenceRates <- function(
     database_table_name = databaseTable
   )
   
+  result$incidenceProportionP100p[is.na(result$incidenceProportionP100p)] <- result$outcomes[is.na(result$incidenceProportionP100p)]/result$personsAtRisk[is.na(result$incidenceProportionP100p)]*100
+  result$incidenceProportionP100p[is.na(result$incidenceProportionP100p)] <- 0
+  result$incidenceRateP100py[is.na(result$incidenceRateP100py)] <- result$outcomes[is.na(result$incidenceRateP100py)]/(result$personDays[is.na(result$incidenceRateP100py)]/365)*100
+  result$incidenceRateP100py[is.na(result$incidenceRateP100py)] <- 0
   result[is.na(result)] <- 'Any'
   result <- unique(result)
   
@@ -660,6 +664,7 @@ getCaseCounts <- function(
 #' \item{startAnchor the start anchor is either the target cohort start or cohort end date}
 #' \item{riskWindowEnd the number of days ofset the end anchor that is the end of the time-at-risk}
 #' \item{endAnchor the end anchor is either the target cohort start or cohort end date}
+#' \item{covariateId the id of the feature}
 #' \item{covariateName the name of the feature}
 #' \item{sumValue the number of cases who have the feature value of 1}
 #' \item{averageValue the mean feature value}
@@ -702,6 +707,7 @@ s.RISK_WINDOW_START,
 s.RISK_WINDOW_END,
 s.START_ANCHOR,
 s.END_ANCHOR,
+coi.covariate_id,
 coi.covariate_name,
 c.sum_value,
 c.average_value
@@ -925,8 +931,11 @@ return(allData)
 #'  \item{outcomeId the outcome unique identifier}
 #'  \item{minPriorObservation the minimum required observation days prior to index for an entry}
 #'  \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+#'  \item{covariateId the id of the feature}
 #'  \item{covariateName the name of the feature}
-#'  \item{sumValue the number of cases who have the feature value of 1}
+#'  \item{sumValue the number of target patients who have the feature value of 1 (minus those excluded due to having the outcome prior)}
+#'  \item{rawSum the number of target patients who have the feature value of 1 (ignoring exclusions)}
+#'  \item{rawAverage the fraction of target patients who have the feature value of 1 (ignoring exclusions)}
 #' } 
 #' 
 #' @export
@@ -962,9 +971,12 @@ outcome.cohort_name as outcome_name,
 t.Outcome_COHORT_ID,
 t.min_prior_observation,
 t.outcome_washout_days,
+t.covariate_id,
 t.covariate_name,
 case when e.sum_value is NULL then t.sum_value
-else t.sum_value - e.sum_value end as sum_value
+else t.sum_value - e.sum_value end as sum_value,
+t.sum_value as raw_sum,
+t.average_value as raw_average
  
 FROM 
 
@@ -974,8 +986,10 @@ cd.TARGET_COHORT_ID,
 s2.Outcome_COHORT_ID,
 s.min_prior_observation,
 s2.outcome_washout_days,
+coi.covariate_id,
 coi.covariate_name,
-c.sum_value
+c.sum_value,
+c.average_value
 
 from @schema.@c_table_prefixCOVARIATES c
  inner join
@@ -1035,6 +1049,7 @@ left join
   cd.Outcome_COHORT_ID,
   s.min_prior_observation,
   s.outcome_washout_days,
+  coi.covariate_id,
   coi.covariate_name,
   c.sum_value
   
@@ -1078,6 +1093,7 @@ and t.outcome_COHORT_ID = e.outcome_COHORT_ID
 and t.min_prior_observation = e.min_prior_observation
 and t.outcome_washout_days = e.outcome_washout_days
 and t.covariate_name = e.covariate_name
+and t.covariate_id = e.covariate_id
 
   inner join
   @schema.@database_table d
@@ -1161,7 +1177,7 @@ getBinaryRiskFactors <- function(
     stop('targetId must be entered')
   }
   if(is.null(outcomeId)){
-    stop('targetId must be entered')
+    stop('outcomeId must be entered')
   }
   if(length(targetId) > 1){
     stop('Must be single targetId')
@@ -1307,8 +1323,17 @@ processBinaryRiskFactorFeatures <- function(
         "outcomeCohortId",
         "minPriorObservation",
         "outcomeWashoutDays",
-        "covariateName")
+        "covariateName",
+        "covariateId")
       ) %>%
+    tidyr::replace_na(list(
+      riskWindowStart = riskWindowStart, 
+      riskWindowEnd = riskWindowEnd,
+      startAnchor = startAnchor,
+      endAnchor = endAnchor,
+      caseCount = 0,
+      caseAverage = 0
+      )) %>%
     dplyr::mutate(
       nonCaseCount = .data$sumValue - .data$caseCount,
       nonCaseAverage = (.data$sumValue - .data$caseCount)/!!nonCaseCount
@@ -1339,6 +1364,7 @@ processBinaryRiskFactorFeatures <- function(
     "startAnchor",
     "endAnchor",
     "covariateName",
+    "covariateId",
     "caseCount",
     "caseAverage",
     "nonCaseCount",
@@ -1537,6 +1563,10 @@ return(result)
 #'  \item{outcomeId the outcome unique identifier}
 #'  \item{minPriorObservation the minimum required observation days prior to index for an entry}
 #'  \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+#'  \item{riskWindowStart the time at risk start point}
+#'  \item{riskWindowEnd the time at risk end point}
+#'  \item{startAnchor the time at risk start point offset}
+#'  \item{endAnchor the time at risk end point offset}
 #'  \item{covariateName the name of the feature}
 #'  \item{covariateId the id of the feature}
 #'  \item{countValue the number of cases who have the feature}
@@ -1584,6 +1614,10 @@ outcome.cohort_name as outcome_name,
 t.Outcome_COHORT_ID,
 t.min_prior_observation,
 t.outcome_washout_days,
+t.risk_window_start,
+t.risk_window_end,
+t.start_anchor,
+t.end_anchor,
 t.covariate_name,
 t.covariate_id,
 t.count_value,
@@ -1605,6 +1639,10 @@ c.TARGET_COHORT_ID,
 c.Outcome_COHORT_ID,
 s.min_prior_observation,
 s.outcome_washout_days,
+s.risk_window_start,
+s.risk_window_end,
+s.start_anchor,
+s.end_anchor,
 coi.covariate_name,
 coi.covariate_id,
 c.count_value,

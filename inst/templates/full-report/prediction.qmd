@@ -1,0 +1,170 @@
+# Prediction
+
+## Method
+
+The patient level prediction can identify who is a risk of having the outcome during some time-at-risk within the population at risk (target population).  The common metrics are:
+
+1. Discrimination (AUC and AUPRC) that indicate how well the model ranks patients based on their risk.  An AUC of 1 means all the patients who will have the outcome are predicted a higher risk than those who will not have the outcome during the time-at-risk.  An AUC of 0.5 means the model is predicting randomly.
+
+2. Calibration (eStatistic, calibrationInLarge) that indicate how accurate the predicted risk is.  For example, if a model is well calibrated and predicts that 10 patients have a 10% risk, then one of those patients should have the outcome (1 in 10 is 10% risk).  The calibration in the large compares the mean predicted risk with the mean observed risk, if the model is well calibrated these values should be equal and the calibration in the large ratio (mean predicted risk/ mean observed risk) should be 1.
+
+3. Accuracy (Brier score) that measures the prediction error such as the sum of the squared difference between the predicted risk and true label for each patient.
+
+A good model should have a high AUC (ideally >= 0.7) and be well calibrated.  However, it is also important to consider the sensitivity and positive prediction value at different thresholds, as these are the key metrics that show how well the model is likely to perform when used to guide an intervention.
+
+## Results
+
+```{r}
+#| echo: false
+#| hide: true
+
+performances <- OhdsiReportGenerator::getPredictionPerformances(
+    connectionHandler = connectionHandler, 
+    schema = params$schema
+)
+
+if(nrow(performances)){
+cat('\n\n### Performance Summary\n\n')
+  
+  for(databaseName in unique(performances$developmentDatabase)){
+  cat('\n\n::: {.callout-note collapse="true"}')
+  cat(paste0("\n# All models developed in ",databaseName,"\n\n"))
+  
+  print(htmltools::tagList(
+    topPreds %>%  
+      dplyr::filter(.data$developmentDatabase == !!databaseName) %>%
+      dplyr::select(
+        -"developmentDatabaseId", -"developmentTargetId", 
+        -"developmentOutcomeId", -"developmentDatabase",
+        -"validationDatabaseId", -"predictionResultType"
+        ) %>%
+      dplyr::group_by(.data$developmentTargetName) %>%
+      gt::gt() %>%
+      gt::fmt_number(
+        columns = c("auroc", "auroc95lb", "auroc95ub",
+                    "calibrationInLarge", "eStatistic",
+                    "brierScore", "auprc"), 
+        decimals = 2
+      ) %>%
+      gt::fmt_integer(
+        columns = c("populationSize", "outcomeCount")
+      ) %>%
+      gt::fmt_percent(
+        columns = c("evalPercent", "outcomePercent"),
+        decimals = 2
+    ) %>%
+    gt::tab_options(
+      heading.align = "left",
+      data_row.padding = gt::px(7),
+      column_labels.font.size = gt::px(12),
+      column_labels.background.color = "#EB1800",
+      column_labels.font.weight = "bold",
+      row_group.background.color = "#D3D3D3",
+      row_group.font.weight = "bold"
+    ) %>%
+    gt::tab_style(
+      style = gt::cell_text(
+        color = "darkgrey",
+        font = gt::google_font("Source Sans Pro"),
+        transform = "uppercase"
+      ),
+      locations = gt::cells_column_labels(gt::everything())
+    ) %>%
+    gt::tab_header(
+      title = databaseName
+    )
+  ))
+  
+  cat('\n\n:::\n\n')
+  }
+  
+}
+
+```
+
+
+```{r}
+#| echo: false
+#| hide: true
+
+numberPredictors <- 100
+
+topPreds <-  OhdsiReportGenerator::getPredictionTopPredictors(
+    connectionHandler = connectionHandler, 
+    schema = params$schema, 
+    plpTablePrefix = 'plp_',
+    cgTablePrefix = 'cg_',
+    targetIds = unique(cohortDefinitions$cohortDefinitionId[cohortDefinitions$subsetParent == params$targetId]),
+    outcomeIds = params$outcomeIds,
+    numberPredictors = numberPredictors
+)
+
+if(nrow(topPreds)){
+  topPreds <- OhdsiReportGenerator::addTarColumn(topPreds)
+  topPreds <- OhdsiReportGenerator::formatBinaryCovariateName(topPreds)
+  
+  cat('\n\n### Top Predictors\n\n')
+  
+  for(databaseName in unqiue(topPreds$databaseName)){
+    
+  cat('\n\n::: {.callout-note collapse="true"}')
+  cat(paste0("\n# Top ",numberPredictors," predictors in ",databaseName,"\n\n"))
+  
+  print(htmltools::tagList(
+    topPreds %>%  
+      dplyr::filter(.data$databaseName == !!databaseName) %>%
+      dplyr::arrange(.data$rn) %>%
+      dplyr::select(
+        "tar", "performanceId",
+        "covariateName", "covariateCount", "withNoOutcomeCovariateMean",
+        "withOutcomeCovariateMean", "standardizedMeanDiff"
+        ) %>%
+      dplyr::group_by(.data$tar, .data$performanceId) %>%
+      gt::gt() %>%
+      gt::fmt_number(
+        columns = "standardizedMeanDiff", 
+        decimals = 2
+      ) %>%
+      gt::fmt_integer(
+        columns = "covariateCount"
+      ) %>%
+      gt::fmt_percent(
+        columns = c("withNoOutcomeCovariateMean","withOutcomeCovariateMean"),
+        decimals = 2
+    ) %>%
+    gt::cols_label(
+      covariateName = "Covariate",
+      databaseName = "Database"
+    ) %>%
+    gt::tab_options(
+      heading.align = "left",
+      data_row.padding = gt::px(7),
+      column_labels.font.size = gt::px(12),
+      column_labels.background.color = "#EB1800",
+      column_labels.font.weight = "bold",
+      row_group.background.color = "#D3D3D3",
+      row_group.font.weight = "bold"
+    ) %>%
+    gt::tab_style(
+      style = gt::cell_text(
+        color = "darkgrey",
+        font = gt::google_font("Source Sans Pro"),
+        transform = "uppercase"
+      ),
+      locations = gt::cells_column_labels(gt::everything())
+    ) %>%
+    gt::tab_header(
+      title = databaseName
+    )
+  ))
+  
+  cat('\n\n:::\n\n')
+  
+  }
+  
+  
+}
+
+
+
+```

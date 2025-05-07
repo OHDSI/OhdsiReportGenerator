@@ -1,0 +1,434 @@
+# Causal Inference
+
+## Methods
+### Active Comparator New User Design
+In the active comparator new user design, large-scale propensity scores were used to match new users of `r targetName` to new users of the comparator in a 1:n ratio (max n=100). Propensity score models included all variables available in the observational medical history, including all previously observed conditions, diagnoses, medications dispensed, measurements, and procedures recorded in the 30 and 365 days preceding the index date. Comorbidity indices calculated using all pre-index medical history and demographic variables (age, sex, race/ethnicity, index year, index month) were also included. Poisson models were used to estimate incidence rate ratios comparing the incidence of `r outcomeName` between new users of `r targetName` and new users of the comparator.
+
+```{r, echo = F, results = 'asis'}
+
+nNegativeControls <- 100
+
+if(includeCohortMethod){
+for(i in 1:length(indicationIds)){
+  
+  indication <- 'No indication'
+  if(!indicationIds[i] == ''){
+    indication <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == indicationIds[i]]
+  }
+  
+  cohortMethodDiagnostics %>%
+    dplyr::filter(.data$targetId == !!params$targetId) %>%
+    dplyr::filter(.data$outcomeId %in% !!params$outcomeIds)
+  
+  exposures <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId %in% comparatorIds]
+  
+  cat(paste0("\n\n##### ", indication))
+  
+  cat(paste0("\n", length(exposures)+1, " exposure cohorts were created for the active comparator new user cohort design: new users of ", targetName, " (target) and new users of ", paste0(exposures, collapse ='/')," (comparators)."))
+  
+  cat(paste0("The index date was defined as the first observed use of either the, ", targetName, ", or ",paste0(exposures, collapse ='/'),  ". "))
+  
+  cat(paste0("Patients were only included if they had a history of ", indication, ".\n")) 
+  
+  if(!is.null(params$excludeText)){ # replace this using cohort subset logic
+    cat(
+      paste0(
+        "Patients were excluded if ", 
+        params$excludeText, 
+        "."
+      )
+    )
+  }
+  
+  
+  cat(paste0(
+    "\nPatients were followed from the index date until the earliest of discontinuation of the index ", targetName, "  or switch to or addition of the comparator agent, end of observation in the database, or the occurrence of ",  outcomeName, " for an on-treatment analysis. Patients were considered to have discontinued their index exposure at the first occurrence of a gap of > ",  params$drugGap, " days between the end of one dispensing’s supply and the beginning of the next dispensing. We restricted the cohorts to patients with >= 365 days of prior database observation."
+  ))
+  
+  cat(paste0(
+    "\n\nFor the self-controlled case series design and incidence rate the exposure cohort was all exposures of ",  targetName,". Patients were only included if they had a history of ", indication, ". "
+  )
+  )
+  
+  
+}
+}
+
+```
+
+
+### Self-Controlled Case Series Design
+In the self-controlled case series design, Poisson regression was used to compare the incidence of `r outcomeName` between the day of `r targetName` exposure and periods of non-use. Spline terms for calendar time, season, and age were included in the model to adjust for time-varying confounding.
+
+### Diagnostics
+In both designs, negative control outcomes were used to quantify and correct for systematic bias via empirical calibration (Schuemie 2016; 2018). `r nNegativeControls` conditions with no association to `r targetName`, as identified in the literature, drug product labels, or AE reports, were selected as negative controls. Objective diagnostics related to statistical power and systematic error observed in negative controls were employed in both designs, while additional diagnostics related to covariate balance and temporal trends in incidence were employed in the active comparator new user and self-controlled case series analyses, respectively. These diagnostics were used to determine whether a given analysis could be unblinded and included in meta-analyses and are described in the table below.
+
+All analyses were conducted separately within each database and Bayesian random-effects meta-analysis was used to summarize across databases.
+
+
+| Diagnostic | Description | Relevant Analytic Design | 
+  |-------|--------|-------|
+  | Equipoise |  	We compute the percent of the population with a preference score between 0.3 and 0.7, called equipoise. The preference score is a linear transformation of the propensity score. The diagnostic failure threshold is an equipoise value of less than 20%. |	Comparative Cohort |
+  | Covariate Balance |	We compute the standardized difference of mean (SDM) for every covariate that was used to balance any two exposure groups. The diagnostic failure threshold is any covariate having a SDM greater than or equal to 0.1. |	Comparative Cohort |
+  | Systematic Error |	We fit a systematic error distribution using negative control estimates and summarize this as the Expected Absolute Systematic Error (EASE). An EASE of 0 means all variations in the negative control estimates can be explained by random error (as expressed for example in the CI). The diagnostic failure threshold for EASE is a value of greater than or equal to 0.25. |	Comparative Cohort; SCCS |
+  | Study Power |	We compute the minimally detectable rate ratio which represents a transformation of study power noting the smallest observed effect estimate that we could expect to generate a significant finding (at an alpha level of 0.05), given the observed number of people and outcomes within the relevant study populations.  The diagnostic failure threshold for MDRR is a value of greater than or equal to 10. |	Comparative Cohort; SCCS |
+  | Time Trend | The rate of an outcome may change as a function of calendar time. This may occur in instances because of data capture lag (incurred but not documented is expected to occur close to the date of data extraction), leading to (within subject) confounding. Although our design adjusts for this using a spline function over calendar time, we test if this adjustment was sufficient. For each month, we compute the rate of the outcome after adjustment using the spline, and test whether the rate after adjustment differs from the mean monthly rate before adjustment. We use a family-wise alpha of 0.05 and apply a Bonferroni correction for the number of months. The diagnostic failure threshold is the detection of at least one month having a rate statistically different from the mean. |	SCCS |
+  | Reverse Causality | We test if the risk of the outcome is already increased just prior to the outcome. We compute p for (rate 30 days before exposure) > (rate 30 days after exposure). The diagnostic failure threshold for reverse causality test is a P < 0.05. |	SCCS |
+  : Table 1:	Diagnostics For Each Analysis Design
+  
+  
+## Results  
+### Active Comparator New User Design Diagnostics
+```{r}
+#| label: cohort_method_results
+#| echo: false
+#| results: 'asis'
+
+if(includeCohortMethod){
+
+tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId', 'subsetText')]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Target')
+cohortMethodDiagnostics <- merge(cohortMethodDiagnostics, 
+                                 tempDf, by.x = 'targetId', by.y = 'cohortDefinitionIdTarget')
+tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Outcome')
+cohortMethodDiagnostics <- merge(cohortMethodDiagnostics, 
+                                 tempDf, by.x = 'outcomeId', by.y = 'cohortDefinitionIdOutcome')
+tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Comp')
+cohortMethodDiagnostics <- merge(cohortMethodDiagnostics, 
+                                 tempDf, by.x = 'comparatorId', by.y = 'cohortDefinitionIdComp')
+
+descriptions <- unique(cohortMethodDiagnostics$description)
+
+for(description in descriptions){
+  
+  cat(paste0('\n\n#### ',description,'\n\n'))
+  
+  cohortMethodDiagnosticsTemp <- cohortMethodDiagnostics %>% 
+    dplyr::filter(.data$description == !!description)
+  cmIds <- unique(cohortMethodDiagnosticsTemp[,c('targetId', 'outcomeId')])
+  
+  for(cmInd in 1:nrow(cmIds)){
+    print(htmltools::tagList(cohortMethodDiagnostics %>% 
+                           dplyr::filter(.data$description == !!description) %>%
+                           dplyr::filter(.data$targetId == !!cmIds$targetId[cmInd]) %>%
+                           dplyr::filter(.data$outcomeId == !!cmIds$outcomeId[cmInd]) %>%
+                           dplyr::select("databaseName", "subsetTextTarget", #"description",
+                                         "friendlyNameComp", 
+                                         #"friendlyNameTarget","friendlyNameOutcome",
+                                         "balanceDiagnostic", "sharedBalanceDiagnostic","equipoiseDiagnostic",
+                                         "mdrrDiagnostic", "attritionDiagnostic", "easeDiagnostic",
+                                         'unblindForEvidenceSynthesis',
+                                         'unblind')%>%
+                           dplyr::group_by(
+                             .data$friendlyNameComp,
+                             .data$subsetTextTarget
+                           ) %>%
+                           gt::gt() %>%
+                           gt::cols_label(
+                             databaseName = 'Database',
+                             #description = "Analysis Description", 
+                             friendlyNameComp = "Comparator",
+                             balanceDiagnostic = "balance",
+                             sharedBalanceDiagnostic = "shared balance",
+                             equipoiseDiagnostic = "equipoise",
+                             mdrrDiagnostic = "mdrr", 
+                             attritionDiagnostic = "attrition", 
+                             easeDiagnostic = "ease",
+                             unblindForEvidenceSynthesis = "unblind For ES"
+                           ) %>%
+                           gt::tab_options(
+                             heading.align = "left",
+                             data_row.padding = gt::px(7),
+                             column_labels.font.size = gt::px(12),
+                             column_labels.background.color = "#EB1800",
+                             column_labels.font.weight = "bold",
+                             row_group.background.color = "#D3D3D3",
+                             row_group.font.weight = "bold"
+                           ) %>%
+                           gt::tab_style(
+                             style = gt::cell_text(
+                               color = "darkgrey",
+                               font = gt::google_font("Source Sans Pro"),
+                               transform = "uppercase"
+                             ),
+                             locations = gt::cells_column_labels(gt::everything())
+                           ) %>%
+                           gt::tab_header(
+                             title = paste0('Target: ', cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == cmIds$targetId[cmInd]]), 
+                             subtitle = paste0('Outcome: ', cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == cmIds$outcomeId[cmInd]])
+                           )
+    ))
+  }
+}
+
+}
+
+```
+
+### Active Comparator New User Design Estimates
+```{r}
+#| label: cohort_method_diagnostics
+#| echo: false
+#| results: 'asis'
+
+if(includeCohortMethod){
+  
+cohortMethodResults <- dplyr::bind_rows(cohortMethodResults, cohortMethodES)
+
+tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId', 'subsetText')]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Target')
+cohortMethodResults <- merge(cohortMethodResults, 
+                             tempDf, by.x = 'targetId', by.y = 'cohortDefinitionIdTarget')
+tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Outcome')
+cohortMethodResults <- merge(cohortMethodResults, 
+                             tempDf, by.x = 'outcomeId', by.y = 'cohortDefinitionIdOutcome')
+tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Comp')
+cohortMethodResults <- merge(cohortMethodResults, 
+                             tempDf, by.x = 'comparatorId', by.y = 'cohortDefinitionIdComp')
+
+
+descriptions <- unique(cohortMethodResults$description)
+
+for(description in descriptions){
+  
+  cat(paste0('\n\n#### ',description,'\n\n'))
+  
+  cohortMethodResultsTemp <- cohortMethodResults %>% 
+    dplyr::filter(.data$description == !!description)
+  cmIds <- unique(cohortMethodResultsTemp[,c('targetId', 'outcomeId')])
+  
+  for(cmInd in 1:nrow(cmIds)){
+    print(htmltools::tagList(cohortMethodResults %>% 
+                           dplyr::filter(.data$description == !!description) %>%
+                           dplyr::filter(.data$targetId == !!cmIds$targetId[cmInd]) %>%
+                           dplyr::filter(.data$outcomeId == !!cmIds$outcomeId[cmInd]) %>% 
+                           dplyr::select("databaseName","subsetTextTarget", #"description",
+                                         "friendlyNameComp", 
+                                         #"friendlyNameOutcome","friendlyNameTarget", 
+                                         "targetSubjects", "comparatorSubjects",
+                                         "targetOutcomes", "comparatorOutcomes",
+                                         "calibratedRr", "calibratedCi95Lb", "calibratedOneSidedP")%>%
+                           dplyr::group_by(
+                             .data$friendlyNameComp,
+                             .data$subsetTextTarget
+                           ) %>%
+                           gt::gt() %>%
+                           gt::cols_label(
+                             databaseName = 'Database',
+                             #description = "Analysis Description", 
+                             friendlyNameComp = "Comparator",
+                             targetSubjects = "Target N",
+                             comparatorSubjects = "Comp N",
+                             calibratedRr  = "Cal. RR", 
+                             calibratedCi95Lb = "Cal. Ci95%Lb",
+                             calibratedOneSidedP = "Cal. OneSidedP"
+                           ) %>%
+                           gt::fmt_integer(
+                             columns = c("targetSubjects", "comparatorSubjects")
+                           ) %>%
+                           gt::fmt_number(
+                             columns = c( "calibratedRr", "calibratedCi95Lb", "calibratedOneSidedP"), 
+                             decimals = 4
+                           ) %>%
+                           gt::fmt(
+                             columns = c("targetOutcomes", "comparatorOutcomes"),
+                             fns = function(x){ 
+                               if(sum(x < 0) > 0){ 
+                                 x[x < 0] <- paste('<', abs(x[x < 0]))
+                               }
+                               return(x)
+                             }) %>%
+                           gt::tab_options(
+                             heading.align = "left",
+                             data_row.padding = gt::px(7),
+                             column_labels.font.size = gt::px(12),
+                             column_labels.background.color = "#EB1800",
+                             column_labels.font.weight = "bold",
+                             row_group.background.color = "#D3D3D3",
+                             row_group.font.weight = "bold"
+                           ) %>%
+                           gt::tab_style(
+                             style = gt::cell_text(
+                               color = "darkgrey",
+                               font = gt::google_font("Source Sans Pro"),
+                               transform = "uppercase"
+                             ),
+                             locations = gt::cells_column_labels(gt::everything())
+                           ) %>%
+                           gt::tab_header(
+                             title = paste0('Target: ', cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == cmIds$targetId[cmInd]]), 
+                             subtitle = paste0('Outcome: ', cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == cmIds$outcomeId[cmInd]])
+                           )
+    ))
+  }
+}
+
+}
+```
+
+
+### Self-Controlled Case Series Design Diagnostics
+```{r}
+#| label: sccs_diagnostics
+#| echo: false
+#| results: 'asis'
+
+if(includeSccs){
+
+tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId', 'subsetText')]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Target')
+sccsDiagnostics <- merge(sccsDiagnostics, 
+                         tempDf, by.x = 'targetId', by.y = 'cohortDefinitionIdTarget')
+tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Outcome')
+sccsDiagnostics <- merge(sccsDiagnostics, 
+                         tempDf, by.x = 'outcomeId', by.y = 'cohortDefinitionIdOutcome')
+
+
+sccsIds <- unique(sccsDiagnostics[,c('targetId', 'outcomeId')])
+
+for(sccsInd in 1:nrow(sccsIds)){
+  print(htmltools::tagList(sccsDiagnostics %>% 
+                         dplyr::filter(.data$targetId == !!sccsIds$targetId[sccsInd]) %>%
+                         dplyr::filter(.data$outcomeId == !!sccsIds$outcomeId[sccsInd]) %>%
+                         dplyr::select("databaseName", "subsetTextTarget", "description",
+                                       #"friendlyNameTarget","friendlyNameOutcome",
+                                       "mdrrDiagnostic", "easeDiagnostic","timeTrendDiagnostic",
+                                       "preExposureDiagnostic", 
+                                       "unblindForEvidenceSynthesis",
+                                       'unblind'
+                         )%>%
+                         dplyr::group_by(
+                           .data$description,
+                           .data$subsetTextTarget
+                         ) %>%
+                         gt::gt() %>%
+                         gt::cols_label(
+                           databaseName = 'Database',
+                           description = "Analysis Description",
+                           mdrrDiagnostic = "mdrr", 
+                           easeDiagnostic = "ease",
+                           timeTrendDiagnostic = "timeTrend",
+                           preExposureDiagnostic = "preExposure",
+                           unblindForEvidenceSynthesis = "unblind for ES"
+                         ) %>%
+                         gt::tab_options(
+                           heading.align = "left",
+                           data_row.padding = gt::px(7),
+                           column_labels.font.size = gt::px(12),
+                           column_labels.background.color = "#EB1800",
+                           column_labels.font.weight = "bold",
+                           row_group.background.color = "#D3D3D3",
+                           row_group.font.weight = "bold"
+                         ) %>%
+                         gt::tab_style(
+                           style = gt::cell_text(
+                             color = "darkgrey",
+                             font = gt::google_font("Source Sans Pro"),
+                             transform = "uppercase"
+                           ),
+                           locations = gt::cells_column_labels(gt::everything())
+                         ) %>%
+                         gt::tab_header(
+                           title = paste0('Target: ', cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == sccsIds$targetId[sccsInd]]), 
+                           subtitle = paste0('Outcome: ', cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == sccsIds$outcomeId[sccsInd]])
+                         )
+  ))
+}
+
+}
+
+```
+
+### Self-Controlled Case Series Design Estimates
+```{r}
+#| label: sccs_results
+#| echo: false
+#| results: 'asis'
+
+
+if(includeSccs){
+sccsResults <- dplyr::bind_rows(sccsResults, sccsES)
+
+tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId', 'subsetText')]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Target')
+sccsResults <- merge(sccsResults, 
+                     tempDf, by.x = 'targetId', by.y = 'cohortDefinitionIdTarget')
+tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Outcome')
+sccsResults <- merge(sccsResults, 
+                     tempDf, by.x = 'outcomeId', by.y = 'cohortDefinitionIdOutcome')
+
+sccsIds <- unique(sccsResults[,c('targetId', 'outcomeId')])
+
+for(sccsInd in 1:nrow(sccsIds)){
+  print(htmltools::tagList(sccsResults %>% 
+                         dplyr::filter(.data$targetId == !!sccsIds$targetId[sccsInd]) %>%
+                         dplyr::filter(.data$outcomeId == !!sccsIds$outcomeId[sccsInd]) %>%
+                         dplyr::select("databaseName","subsetTextTarget", "description",
+                                       #"friendlyNameOutcome","friendlyNameTarget", 
+                                       "outcomeSubjects", "covariateSubjects",
+                                       "outcomeEvents", "covariateOutcomes",
+                                       "calibratedRr", "calibratedCi95Lb", 
+                                       "calibratedP","calibratedOneSidedP")%>%
+                         dplyr::group_by(
+                           .data$description,
+                           .data$subsetTextTarget
+                         ) %>%
+                         gt::gt() %>%
+                         gt::cols_label(
+                           databaseName = 'Database',
+                           description = "Analysis Description",
+                           covariateSubjects = "Covariate N",
+                           outcomeSubjects = "Outcome N",
+                           calibratedRr  = "Cal. RR", 
+                           calibratedCi95Lb = "Cal. Ci95%Lb",
+                           calibratedOneSidedP = "Cal. OneSidedP"
+                         ) %>%
+                         gt::fmt_integer(
+                           columns = c("outcomeSubjects")
+                         ) %>%
+                         gt::fmt_number(
+                           columns = c( "calibratedRr", "calibratedCi95Lb", "calibratedP"), 
+                           decimals = 4
+                         ) %>%
+                         gt::fmt(
+                           columns = c("covariateSubjects","outcomeEvents", "covariateOutcomes"),
+                           fns = function(x){ 
+                             if(sum(x < 0) > 0){ 
+                               x[x < 0] <- paste('<', abs(x[x < 0]))
+                             }
+                             return(x)
+                           }) %>%
+                         gt::tab_options(
+                           heading.align = "left",
+                           data_row.padding = gt::px(7),
+                           column_labels.font.size = gt::px(12),
+                           column_labels.background.color = "#EB1800",
+                           column_labels.font.weight = "bold",
+                           row_group.background.color = "#D3D3D3",
+                           row_group.font.weight = "bold"
+                         ) %>%
+                         gt::tab_style(
+                           style = gt::cell_text(
+                             color = "darkgrey",
+                             font = gt::google_font("Source Sans Pro"),
+                             transform = "uppercase"
+                           ),
+                           locations = gt::cells_column_labels(gt::everything())
+                         ) %>%
+                         gt::tab_header(
+                           title = paste0('Target: ', cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == sccsIds$targetId[sccsInd]]), 
+                           subtitle = paste0('Outcome: ', cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == sccsIds$outcomeId[sccsInd]])
+                         )
+  ))
+}
+
+}
+
+```
+

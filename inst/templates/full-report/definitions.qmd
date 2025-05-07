@@ -1,0 +1,105 @@
+# Definitions
+
+```{r}
+#| label: exposure
+#| echo: false
+#| results: 'asis'
+
+
+cat('\n\n## Exposure Identification\n')
+
+cat(paste0('Patients in the ', targetName,' cohort were identified using the following logic: \n\n'))
+
+cat('\n::: {.callout-important}\n')
+cat(paste0('\n### ', targetName, ' definition\n'))
+cat(CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == params$targetId])
+)
+cat('\n:::\n')
+
+cat("\n\n")
+cat(paste0("The analysis was implemented for ", sum(indicationIds !='')," indication/s (",
+           paste0(unique(cohortDefinitions$friendlyName[cohortDefinitions$subsetParent %in% indicationIds]), collapse = '/')
+           ,").",
+           ifelse('' %in% indicationIds, ' The analysis was also implemented for no indication restriction (using all patients exposed).', '')))
+
+```   
+
+```{r}
+#| label: outcome
+#| echo: false
+#| results: 'asis'
+
+outcomeNames <- params$cohortNames[params$cohortIds %in% params$outcomeIds]
+
+for(ind in 1:length(outcomeNames)){
+  cat(paste0("\n\n## Outcome: ",outcomeNames[ind]," \n"))
+  
+  cat(paste0('Patients in the ', outcomeNames[ind],' cohort were identified using the following logic: \n\n'))
+  
+  cat('\n::: {.callout-important}\n')
+  cat(paste0('\n### ', outcomeNames[ind], ' definition\n'))
+  
+  cat(
+    CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == params$outcomeIds[ind]])
+  )
+  cat('\n:::\n')
+  
+}
+
+```   
+
+```{r}
+#| label: indications
+#| echo: false
+#| results: 'asis'
+
+for(i in 1:length(indicationIds)){
+  if(!indicationIds[i] == ''){
+    indication <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == indicationIds[i]]
+    
+    cat(paste0("\n\n## Indication: ",indication," \n"))
+    
+    cat(paste0('Patients in the ', indication,' cohort were identified using the following logic: \n\n'))
+    
+    cat('\n::: {.callout-important}\n')
+    cat(paste0('\n### ', indication, ' definition\n'))
+    
+    cat(
+      CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == indicationIds[i]])
+    )
+    cat('\n:::\n')
+    
+  }
+}
+
+
+```   
+
+```{r}
+#| label: comparators_def
+#| echo: false
+#| results: 'asis'
+
+if(length(comparatorIds) > 0 ){
+  for(i in 1:length(comparatorIds)){
+    if(!is.na(comparatorIds[i])){  
+      name <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == comparatorIds[i]]
+      
+      cat(paste0("\n\n## Comparator: ",name," \n"))
+      
+      cat(paste0('Patients in the ', name,' cohort were identified using the following logic: \n\n'))
+      
+      cat('\n::: {.callout-important}\n')
+      cat(paste0('\n### ', name, ' definition\n'))
+      
+      cat(
+        CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == comparatorIds[i]])
+      )
+      
+      cat('\n:::\n')
+    }
+  }
+}
+
+
+```       

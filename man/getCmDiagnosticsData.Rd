@@ -56,6 +56,7 @@ Returns a data.frame with the columns:
  \item{mdrrDiagnostic whether the mdrr (power) diagnostic passed or failed.}
  \item{attritionDiagnostic (depreciated) whether the attrition diagnostic passed or failed.}
  \item{easeDiagnostic whether the ease diagnostic passed or failed.}
+ \item{unblindForEvidenceSynthesis whether the results can be unblinded for the meta analysis.}
  \item{unblind whether the results can be unblinded.}
  \item{summaryValue summary of diagnostics results. FAIL, PASS or number of warnings.}
  }

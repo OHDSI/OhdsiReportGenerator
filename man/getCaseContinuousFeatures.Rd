@@ -42,6 +42,10 @@ Returns a data.frame with the columns:
  \item{outcomeId the outcome unique identifier}
  \item{minPriorObservation the minimum required observation days prior to index for an entry}
  \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+ \item{riskWindowStart the time at risk start point}
+ \item{riskWindowEnd the time at risk end point}
+ \item{startAnchor the time at risk start point offset}
+ \item{endAnchor the time at risk end point offset}
  \item{covariateName the name of the feature}
  \item{covariateId the id of the feature}
  \item{countValue the number of cases who have the feature}

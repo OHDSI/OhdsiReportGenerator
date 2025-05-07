@@ -1,0 +1,108 @@
+## {{heading}}
+
+```{r}
+#| echo: false
+#| results: 'asis'
+#| 
+# add text for outcome tabs
+cat("\n::: {style='font-size: 50%;'}\n\n")
+cat('\n\n:::: {.panel-tabset .nav-pills}\n')
+for(outcomeInd in 1:nrow(outcomes)){
+  outcomeId <- outcomes$cohortDefinitionId[outcomeInd]
+  outcomeName <- outcomes$cohortFriendlyName[outcomeInd]
+  
+incidence <- OhdsiReportGenerator::getIncidenceRates(
+    connectionHandler = connectionHandler,
+    schema = resultsSchema,
+    targetIds = ciIds,
+    outcomeIds = outcomeId
+)
+
+if(nrow(incidence) > 0 ){
+  # add outcome tab
+  cat(paste0('\n\n### ',outcomeName, ' \n\n'))
+
+tars <- OhdsiReportGenerator:::getTars(
+  data = incidence
+  )
+
+# add text for tabs
+cat('\n::: {.panel-tabset .nav-pills}\n')
+for(tar in tars){
+  
+  idata <- incidence %>% 
+    dplyr::filter(
+      .data$ageGroupName == 'Any' &
+      .data$genderName == 'Any' &
+      .data$startYear == 'Any' &
+      .data$tarStartWith == tar$tarStartWith  &
+      .data$tarStartOffset == tar$tarStartOffset &
+      .data$tarEndWith == tar$tarEndWith &
+      .data$tarEndOffset ==  tar$tarEndOffset
+    ) %>%
+    dplyr::select(
+      'databaseName',
+      'targetName',
+      'targetId',
+      'cleanWindow',
+      #'ageGroupName',
+      #'genderName',
+      #'startYear',
+      'personsAtRisk',
+      'personDays',
+      'personOutcomes',
+      'outcomes',
+      'incidenceProportionP100p',
+      'incidenceRateP100py'
+    )
+  
+  # if there is data
+  if( nrow(idata) > 0 ){
+        cat(paste0('\n\n#### TAR: ',paste0('(',tar$tarStartWith, " + ", tar$tarStartOffset, ') - (', tar$tarEndWith, " + ", tar$tarEndOffset, ')'),'\n\n'))
+    
+    OhdsiReportGenerator::printReactable(
+  data = idata, 
+columns = list(
+  targetName = reactable::colDef(minWidth = 300),
+  personOutcomes = reactable::colDef(
+    cell = function(value) {
+    if (value == -5) "< 5" else value
+  }
+    ),
+  outcomes = reactable::colDef(
+    cell = function(value) {
+    if (value == -5) "< 5" else value
+  }
+    ),
+  incidenceProportionP100p = reactable::colDef(
+    cell = function(value) {
+    if (value < 0 ){paste0("<",round(abs(value), digits = 3))}else{round(value, digits = 3)}
+  }
+    ),
+  incidenceRateP100py = reactable::colDef(
+    cell = function(value) {
+    if (value < 0 ){paste0("<",round(abs(value), digits = 3))}else{round(value, digits = 3)}
+  }
+    )
+),
+ highlight = TRUE, 
+ striped = TRUE, 
+ defaultPageSize = defaultPageSize, 
+searchable = TRUE, 
+filterable = TRUE
+)
+cat("\n")
+}
+
+  # end inner tab
+}
+
+cat('\n\n:::')
+
+}
+}
+# end outer tab
+cat('\n\n::::\n\n')
+
+cat('\n\n:::\n\n')
+```

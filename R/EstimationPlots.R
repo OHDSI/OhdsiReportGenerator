@@ -43,13 +43,24 @@ plotCmEstimates <- function(
     selectedAnalysisId
 ){
   
+  cmData <- cmData %>%
+    dplyr::filter(.data$analysisId == !!selectedAnalysisId)
+  
+  # check there are some results
+  noDbResults <- sum(is.na(cmData$calibratedRr)) == length(cmData$calibratedRr)
+  noMetaResults <- TRUE
+  if(!is.null(cmMeta)){
+    noMetaResults <- nrow(cmMeta) == 0
+  }
+  if(noDbResults & noMetaResults){
+    return(NULL)
+  }
+  
   fmtHazardRatio <- "%.2f"
   fmtIncidenceRate <- "%.1f"
   incidenceRateMult <- 365.25 * 1000 
   
-  
   estimates <- cmData %>%
-    dplyr::filter(.data$analysisId == !!selectedAnalysisId) %>%
     dplyr::mutate(
       hr = paste0(
         sprintf(fmtHazardRatio, .data$calibratedRr),
@@ -103,7 +114,9 @@ plotCmEstimates <- function(
     return(NULL)
   }
   
+  meta <- NULL
   if (!is.null(cmMeta)) {
+    if(nrow(cmMeta) > 0){
     meta <- cmMeta %>%
       dplyr::filter(.data$analysisId == !!selectedAnalysisId) %>%
       dplyr::mutate(
@@ -143,7 +156,7 @@ plotCmEstimates <- function(
         "upper", 
         "lower"
       )
-  }
+  }}
   
   header <- tibble::tibble(
     databaseName = c("Data", "Source"),
@@ -252,8 +265,13 @@ plotSccsEstimates <- function(
   fmtHazardRatio <- "%.2f"
   fmtIncidenceRate <- "%.1f"
   incidenceRateMult <- 365.25 * 1000 
-  
+
+  # cap this to something like 1000?
   maxVal <- max(sccsData$calibratedRr, na.rm = TRUE)
+  
+  # make sure these are double
+  sccsData$calibratedCi95Ub <- as.double(sccsData$calibratedCi95Ub)
+  sccsData$calibratedCi95Lb <- as.double(sccsData$calibratedCi95Lb)
   
   estimates <- sccsData %>%
     dplyr::filter(.data$analysisId == !!selectedAnalysisId) %>%
@@ -267,9 +285,10 @@ plotSccsEstimates <- function(
       "calibratedP",
       "outcomeSubjects":"observedDays") %>%
     tidyr::drop_na("databaseName","calibratedRr","calibratedLogRr","calibratedP","outcomeSubjects":"observedDays") %>%
+    dplyr::rowwise() %>%
     dplyr::mutate(
-      calibratedCi95Lb = tidyr::replace_na(0),
-      calibratedCi95Ub = tidyr::replace_na(!!maxVal)
+      calibratedCi95Lb = tidyr::replace_na(.data$calibratedCi95Lb, 0),
+      calibratedCi95Ub = tidyr::replace_na(.data$calibratedCi95Ub,!!maxVal)
     ) %>%
     dplyr::arrange(.data$databaseName) %>%
     dplyr::mutate(db = .data$databaseName) %>%

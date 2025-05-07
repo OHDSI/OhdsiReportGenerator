@@ -1,0 +1,32 @@
+/*-- scss:defaults --*/
+$jnj-grey: #5E4F47;
+$jnj-red: #EB1700;
+$white: #FFFFFF;
+
+/*-- scss:rules --*/
+.reveal section h2 {
+  color: $jnj-red;
+}
+
+[role="tab"][aria-selected="true"]{
+  color: $white;
+  font-weight: bold;
+  background-color: $jnj-red !important;
+}
+[role="tab"][aria-selected="false"]{
+  color: $jnj-red;
+  font-weight: normal;
+}
+
+.break-slides {
+  color: $white;
+  background-color: $jnj-grey !important;
+}
+
+.title {
+  font-size: 120px !important;
+  color: $white !important;
+  background-color: $jnj-red !important;
+}
+
+

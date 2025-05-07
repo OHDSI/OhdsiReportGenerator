@@ -1,0 +1,109 @@
+# Cohort Incidence 
+
+## Method
+Incidence proportion per 100 patients, in each database, was calculated by finding the number of patients with `r targetName` recorded in the database who have `r outcomeName` recorded during a time-at-risk relative to exposure divided by the number of patients with `r targetName` recorded in the database multiplied by 100.
+
+Incidence rate per 100 patient years, in each database, was calculated by finding the number of patients with `r targetName` recorded in the database who have `r outcomeName` recorded during a time-at-risk relative to exposure divided by the total number of patient years exposed to `r targetName` in the database multiplied by 100.
+
+## Results
+```{r}
+#| label: ci_results
+#| echo: false
+#| results: 'asis'
+
+if(includeCI){
+cleanWindows <- unique(cohortIncidenceUnstatified$cleanWindow)
+ciOutcomeIds <- unique(cohortIncidenceUnstatified$outcomeId)
+
+tempDf <- cohortDefinitions[,c('friendlyName','cohortDefinitionId',"subsetText")]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Target')
+cohortIncidenceUnstatified <- merge(cohortIncidenceUnstatified, tempDf, by.x = 'targetId', by.y = 'cohortDefinitionIdTarget')
+tempDf <- cohortDefinitions[,c('friendlyName','cohortDefinitionId',"subsetText")]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Outcome')
+cohortIncidenceUnstatified <- merge(cohortIncidenceUnstatified, tempDf, by.x = 'outcomeId', by.y = 'cohortDefinitionIdOutcome')
+
+countId <- 0
+for(ind in 1:nrow(ciTars)){
+  for(cleanWindow in cleanWindows){
+    for(ciOutcomeId in ciOutcomeIds){
+      
+      countId <- countId + 1
+      
+      data <- cohortIncidenceUnstatified %>%
+        filter(.data$outcomeId == !!ciOutcomeId) %>%
+        filter(.data$tarStartWith == !!ciTars$tarStartWith[ind]) %>%
+        filter(.data$tarStartOffset == !!ciTars$tarStartOffset[ind]) %>%
+        filter(.data$tarEndWith == !!ciTars$tarEndWith[ind]) %>%
+        filter(.data$tarEndOffset == !!ciTars$tarEndOffset[ind]) %>%
+        filter(.data$cleanWindow == !!cleanWindow)
+      
+      
+      boxTitle <- paste0('The incidence proportion/rate for outcome ', cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == ciOutcomeId], ' occuring between ', ciTars$friendlyTarStart[ind], ' and ', ciTars$friendlyTarEnd[ind], ' after exposure when the outcome clean window is ', cleanWindow )
+      
+      cat('\n\n::: {.callout-note collapse="true"}')
+      cat(paste0("\n# ",boxTitle, '\n\n'))
+      
+      print(htmltools::tagList(
+        data %>% 
+          dplyr::select("friendlyNameTarget","subsetTextTarget", "databaseName","personsAtRisk", "personDays", "personOutcomes", "incidenceProportionP100p", "incidenceRateP100py") %>%
+          dplyr::group_by(
+            .data$friendlyNameTarget,
+            .data$subsetTextTarget
+          ) %>%
+          gt::gt() %>%
+          gt::fmt_integer(
+            columns = c("personsAtRisk", "personDays", "personOutcomes"), 
+            suffixing = TRUE
+          ) %>%
+          gt::fmt_number(
+            columns = c("incidenceProportionP100p", "incidenceRateP100py"),
+            decimals = 4
+          ) %>%
+          gt::fmt(
+            columns = c("personOutcomes","incidenceProportionP100p", "incidenceRateP100py"),
+            fns = function(x){ 
+              x <- round(x, digits = 4)
+              if(sum(x < 0) > 0){ 
+                x[x < 0] <- paste('<', abs(x[x < 0]))
+              }
+              return(x)
+            }
+          ) %>%
+          gt::cols_label(
+            databaseName = 'Database',
+            personsAtRisk = "Persons at risk", 
+            personDays = "Person Days",
+            personOutcomes = "Outcome count",
+            incidenceProportionP100p = " Incidence proportion per 100 persons",
+            incidenceRateP100py = "Incidence rate per 100 person years"
+          ) %>%
+          gt::tab_options(
+            heading.align = "left",
+            data_row.padding = gt::px(7),
+            column_labels.font.size = gt::px(12),
+            column_labels.background.color = "#EB1800",
+            column_labels.font.weight = "bold",
+            row_group.background.color = "#D3D3D3",
+            row_group.font.weight = "bold"
+          ) %>%
+          gt::tab_style(
+            style = gt::cell_text(
+              color = "darkgrey",
+              font = gt::google_font("Source Sans Pro"),
+              transform = "uppercase"
+            ),
+            locations = gt::cells_column_labels(gt::everything())
+          ) %>%
+          gt::tab_header(
+            title = cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == ciOutcomeId]
+          )
+      ))
+      cat('\n\n:::')
+      
+      
+    }
+  }
+}
+}
+
+```

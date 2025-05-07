@@ -1,0 +1,129 @@
+### Risk Factors
+```{r}
+#| echo: false
+#| results: 'asis'
+
+# Should this only be for the target?
+
+# TODO restrict to T and O cohorts of interest
+targetIds <- cohortDefinitions %>%
+  dplyr::filter(.data$subsetParent == params$targetId) %>%
+  dplyr::arrange(.data$order, .data$cohortDefinitionId) %>%
+  dplyr::select("cohortDefinitionId") 
+
+charIdsOfInt <- unique(tempToGetIds[,c('targetCohortId','outcomeCohortId')]) %>%
+  dplyr::filter(outcomeCohortId %in% !!params$outcomeIds) %>%
+  dplyr::filter(targetCohortId %in% !!targetIds$cohortDefinitionId)
+
+# order by id 
+charIdsOfInt <- merge(
+  x = charIdsOfInt, 
+  y = cohortDefinitions[c('cohortDefinitionId', 'order')], 
+  by.x = 'targetCohortId', 
+  by.y = 'cohortDefinitionId'
+) %>%
+  dplyr::arrange(dplyr::desc(-1*.data$order), .data$targetCohortId)
+
+
+if( nrow(charIdsOfInt) >0 ){
+  for(cind in 1:nrow(charIdsOfInt)){
+    # need to run this per t and o
+    riskFactorsBinary <- OhdsiReportGenerator::getBinaryRiskFactors(
+      connectionHandler = connectionHandler, 
+      schema = params$schema, 
+      targetId = charIdsOfInt$targetCohortId[cind], #12401, 
+      outcomeId = charIdsOfInt$outcomeCohortId[cind], #19970,
+      analysisIds = c(1,4,5,210,410)
+    )
+    riskFactorsBinary <- OhdsiReportGenerator::formatBinaryCovariateName(riskFactorsBinary)
+    riskFactorsBinary <- OhdsiReportGenerator::addTarColumn(riskFactorsBinary)
+    
+    csets <- unique(riskFactorsBinary[, c('tar', 'minPriorObservation','outcomeWashoutDays')])
+    
+    for(cind2 in 1:nrow(csets)){
+      minPriorObservation <- csets$minPriorObservation[cind2]
+      outcomeWashoutDays <- csets$outcomeWashoutDays[cind2]
+      tar <- csets$tar[cind2]
+      
+      boxTitle <- paste0(
+          'Risk Factors for ', 
+          cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == charIdsOfInt$outcomeCohortId[cind]],
+          ' occuring for the first time in ',
+          outcomeWashoutDays,
+          ' days during ',
+          tar,
+          ' for patients exposed to ',
+          cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == charIdsOfInt$targetCohortId[cind]], ' ' , cohortDefinitions$subsetText[cohortDefinitions$cohortDefinitionId == charIdsOfInt$targetCohortId[cind]], 
+          ' with >= ',
+          minPriorObservation,
+          ' days prior observation'
+        )
+      
+      # print the binary risk factors in a collapseable box
+      cat('\n\n::: {.callout-note collapse="true"}')
+      cat(paste0("\n# ",boxTitle, '\n\n'))
+      
+      temp <- riskFactorsBinary %>%
+          dplyr::arrange(-1*.data$absSMD) %>%
+          dplyr::filter(
+            .data$minPriorObservation == !!minPriorObservation,
+            .data$outcomeWashoutDays ==  !!outcomeWashoutDays,
+            .data$tar == !!tar
+          ) %>%
+        dplyr::select(
+          "covariateName",
+          "databaseName",
+          "caseCount", 
+          "caseAverage",
+          "nonCaseCount", 
+          "nonCaseAverage",
+          "SMD", 
+          "absSMD"
+          )
+
+         print(htmltools::tagList(
+    temp %>%
+      dplyr::filter(
+        .data$absSMD > 0.1,
+        .data$caseCount >= 0
+        ) %>%
+      dplyr::group_by(.data$covariateName) %>%
+      gt::gt() %>%
+      gt::fmt_percent(
+        columns = c("caseAverage","nonCaseAverage"), 
+        decimals = 2
+      ) %>%
+      gt::fmt_number(
+        columns = c("SMD", "absSMD"), 
+        decimals = 2
+      ) %>%
+      gt::fmt_integer(
+        columns = c("caseCount", "nonCaseCount")
+      ) %>%
+      gt::cols_label(
+        covariateName = "Covariate"
+      ) %>%
+      gt::tab_options(
+        heading.align = "left",
+        data_row.padding = gt::px(7),
+        column_labels.font.size = gt::px(12),
+        column_labels.background.color = "#EB1800",
+        column_labels.font.weight = "bold",
+        row_group.background.color = "#D3D3D3",
+        row_group.font.weight = "bold"
+      ) %>%
+      gt::tab_style(
+        style = gt::cell_text(
+          color = "darkgrey",
+          font = gt::google_font("Source Sans Pro"),
+          transform = "uppercase"
+        ),
+        locations = gt::cells_column_labels(gt::everything())
+      ) 
+  ))
+  
+      cat("\n\n:::\n\n")
+      
+    }}}
+
+```

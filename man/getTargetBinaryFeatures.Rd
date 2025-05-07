@@ -42,8 +42,11 @@ Returns a data.frame with the columns:
  \item{outcomeId the outcome unique identifier}
  \item{minPriorObservation the minimum required observation days prior to index for an entry}
  \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
+ \item{covariateId the id of the feature}
  \item{covariateName the name of the feature}
- \item{sumValue the number of cases who have the feature value of 1}
+ \item{sumValue the number of target patients who have the feature value of 1 (minus those excluded due to having the outcome prior)}
+ \item{rawSum the number of target patients who have the feature value of 1 (ignoring exclusions)}
+ \item{rawAverage the fraction of target patients who have the feature value of 1 (ignoring exclusions)}
 }
 }
 \description{

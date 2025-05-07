@@ -1,0 +1,123 @@
+```{r}
+#| echo: false
+#| results: 'asis'
+
+cohortIds <- demoList[[demoListInd]]
+cohortIdsDemo <- unique(targetBinaryOfInterest %>% 
+                          dplyr::filter(.data$targetCohortId %in% !!cohortIds) %>%
+                          dplyr::select("targetCohortId","minPriorObservation"))
+
+if(nrow(cohortIdsDemo) > 0){
+  cat(paste0('\n\n#### ',names(demoList)[demoListInd],' \n\n'))
+  for(tId in 1:nrow(cohortIdsDemo)){
+    # add the target age/sex/race/ethnicity
+    dataC <- targetContinuousOfInterest %>% 
+      dplyr::filter(.data$targetCohortId == !!cohortIdsDemo$targetCohortId[tId]) %>%
+      dplyr::filter(.data$minPriorObservation == !!cohortIdsDemo$minPriorObservation[tId]) %>%
+      dplyr::select(-c("p10Value", "p25Value", "p75Value", "p90Value")) %>%
+      tidyr::pivot_longer(
+        cols = c("minValue","maxValue", "averageValue", "standardDeviation", "medianValue",
+        )
+      ) %>%
+      dplyr:: mutate(
+        covariateName = paste0(.data$covariateName, ' (', .data$name, ')'),
+        averageValue = .data$value
+      ) %>%
+      dplyr::select(-"name", -"value") %>%
+      dplyr::rowwise() %>%
+      dplyr:: mutate(
+        type = if(.data$covariateId == 1002){
+          'Age'
+        } else if(.data$covariateId == 1008){
+          'Prior Observation'
+        } else if(.data$covariateId == 1009){
+          'Post Observation'
+        } else if(.data$covariateId == 1010){
+          'Between Observation'
+        }
+      ) %>%
+      dplyr::select("databaseName","covariateName","averageValue", "type") 
+    
+    
+    dataB <- targetBinaryOfInterest %>% 
+      dplyr::filter(.data$targetCohortId == !!cohortIdsDemo$targetCohortId[tId]) %>%
+      dplyr::filter(.data$minPriorObservation == !!cohortIdsDemo$minPriorObservation[tId]) %>%
+      dplyr::select("databaseName","covariateName","rawAverage") %>%
+      dplyr::mutate(
+        averageValue = .data$rawAverage
+      ) %>%
+      dplyr::select(-"rawAverage")  
+    
+    dataB$type <- rep('Age Group', nrow(dataB))
+    genderId <- grep('gender = ', dataB$covariateName)
+    if(length(genderId) > 0){
+      dataB$type[genderId] <- 'Gender'
+    }
+    raceId <- grep('race = ', dataB$covariateName)
+    if(length(raceId) > 0){
+      dataB$type[raceId] <- 'Race'
+    }
+    ethnicityId <- grep('ethnicity = ', dataB$covariateName)
+    if(length(ethnicityId ) > 0){
+      dataB$type[ethnicityId ] <- 'Ethnicity'
+    }
+    
+    # group by type and order by name
+    data <- dataC %>%
+      dplyr::bind_rows(dataB) 
+    
+    databaseCols <- unique(data$databaseName)
+    
+    data <- tidyr::pivot_wider(
+      data = data,
+      id_cols =  c("covariateName", "type"),
+      names_from = "databaseName", 
+      values_from = "averageValue"
+    ) %>%
+      dplyr::group_by(.data$type) %>%
+      dplyr::arrange(.data$covariateName)
+    
+  boxName <- paste0(cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == cohortIdsDemo$targetCohortId[tId]], ' - ' , cohortDefinitions$subsetText[cohortDefinitions$cohortDefinitionId == cohortIdsDemo$targetCohortId[tId]], ' with min prior obs ', cohortIdsDemo$minPriorObservation[tId], ' days')
+    
+  cat('\n\n::: {.callout-note collapse="true"}')
+  cat(paste0("\n# ",boxName, '\n\n'))
+    
+    # display
+    print(htmltools::tagList(
+      data %>%  
+        gt::gt() %>%
+        gt::fmt_number(
+          columns = databaseCols, # defined above 
+          decimals = 2
+        ) %>%
+        gt::cols_label(
+          covariateName = "Covariate"
+        ) %>%
+        gt::tab_options(
+          heading.align = "left",
+          data_row.padding = gt::px(7),
+          column_labels.font.size = gt::px(12),
+          column_labels.background.color = "#EB1800",
+          column_labels.font.weight = "bold",
+          row_group.background.color = "#D3D3D3",
+          row_group.font.weight = "bold"
+        ) %>%
+        gt::tab_style(
+          style = gt::cell_text(
+            color = "darkgrey",
+            font = gt::google_font("Source Sans Pro"),
+            transform = "uppercase"
+          ),
+          locations = gt::cells_column_labels(gt::everything())
+        ) %>%
+        gt::tab_header(
+          title = paste0(cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == cohortIdsDemo$targetCohortId[tId]], ' - ' , cohortDefinitions$subsetText[cohortDefinitions$cohortDefinitionId == cohortIdsDemo$targetCohortId[tId]], ' with min prior obs ', cohortIdsDemo$minPriorObservation[tId], ' days')
+        )
+    ))
+    
+    cat('\n\n:::\n\n')
+    
+  }
+}
+
+```

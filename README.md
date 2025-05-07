@@ -28,35 +28,40 @@ library(OhdsiReportGenerator)
 conDet <- OhdsiReportGenerator:::getExampleConnectionDetails()
 
 # render a quarto template report with the results in the 
-# example database for targetId 1, comparatorId 2 and outcomeId 3.
-generatePresentationMultiple(
-    server = conDet$server(),
-    username = conDet$user(),
-    password = conDet$password(),
-    dbms = conDet$dbms,
-    resultsSchema = 'main',
-    targetId = 1,
-    targetName = 'target',
-    cmSubsetId = 2,
-    sccsSubsetId = NULL,
-    indicationName = NULL,
-    outcomeIds = 3,
-    outcomeNames = 'outcome',
-    comparatorIds = 2,
-    comparatorNames = 'comparator',
-    covariateIds = NULL,
-    details = list(
-      studyPeriod = 'All Time',
-      restrictions = "Age - None"
-    ),
-    title = 'Example results repport',
-    lead = 'John Doe',
-    date = Sys.Date(),
-    backgroundText = '',
-    evaluationText = '',
+# example database for targetId 1 and outcomeId 3.
+generatePresentation(
+  server = conDet$server(),
+  username = conDet$user(),
+  password = conDet$password(),
+  dbms = conDet$dbms,
+  resultsSchema = 'main',
+  dbDetails = NULL,
+  lead = 'John Doe',
+  team = 'name 1, name 2',
+  trigger = 'A signal was found in spontaneous reports',
+  safetyQuestion = '',
+  objective = '',
+  date = as.character(Sys.Date()),
+  targetId = 1,
+  outcomeIds = 3,
+  cohortNames = c('target','outcome'),
+  cohortIds = c(1,3),
+  covariateIds = NULL,
+  details = list(
+    studyPeriod = 'All Time',
+    restrictions = "Age - None"
+  ),
+  evaluationText = '',
+  includeCI = TRUE,
+  includeCharacterization = TRUE,
+  includeCM = TRUE,
+  includeSCCS = TRUE,
+  includePLP = FALSE,
   outputLocation = file.path(getwd(), "extras/reportTest"),
   outputName = paste0('presentation_', gsub(':', '_',gsub(' ','_',as.character(date()))),'.html')
+  intermediateDir = tempdir()
 )
+
 ```
 
 # Technology

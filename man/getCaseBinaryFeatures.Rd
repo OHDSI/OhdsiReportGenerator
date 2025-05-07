@@ -46,6 +46,7 @@ Returns a data.frame with the columns:
 \item{startAnchor the start anchor is either the target cohort start or cohort end date}
 \item{riskWindowEnd the number of days ofset the end anchor that is the end of the time-at-risk}
 \item{endAnchor the end anchor is either the target cohort start or cohort end date}
+\item{covariateId the id of the feature}
 \item{covariateName the name of the feature}
 \item{sumValue the number of cases who have the feature value of 1}
 \item{averageValue the mean feature value}
