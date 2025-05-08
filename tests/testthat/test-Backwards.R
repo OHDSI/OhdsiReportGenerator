@@ -1,6 +1,13 @@
 context("Generate")
 
+#if skipQuarto skip this
+
 test_that("generatePresentationMultiple old works", {
+  
+  #if skipQuarto skip this on CRAN
+  if(skipQuarto){
+    testthat::skip_on_cran('Quarto not found so skipping old generate presentation multiple')
+  }
   
   savLoc <- file.path(tempdir(), 'example_old')
   if(!dir.exists(savLoc)){
