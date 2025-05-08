@@ -1,3 +1,7 @@
+OhdsiReportGenerator v1.1.1
+======================
+- added skip quarto tests on CRAN if quarto:::find_quarto() errors as it means quarto not installed correctly 
+
 OhdsiReportGenerator v1.1.0
 ======================
 - Added full report function generateFullReport() that generates a html file with all the results for a given target, set of outcomes, indications and comparators.
