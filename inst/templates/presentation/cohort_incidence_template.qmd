@@ -8,14 +8,14 @@
 cat("\n::: {style='font-size: 50%;'}\n\n")
 cat('\n\n:::: {.panel-tabset .nav-pills}\n')
 for(outcomeInd in 1:nrow(outcomes)){
-  outcomeId <- outcomes$cohortDefinitionId[outcomeInd]
+  outcomeCohortId <- outcomes$cohortDefinitionId[outcomeInd]
   outcomeName <- outcomes$cohortFriendlyName[outcomeInd]
   
 incidence <- OhdsiReportGenerator::getIncidenceRates(
     connectionHandler = connectionHandler,
     schema = resultsSchema,
     targetIds = ciIds,
-    outcomeIds = outcomeId
+    outcomeCohortIds = outcomeCohortId
 )
 
 if(nrow(incidence) > 0 ){
