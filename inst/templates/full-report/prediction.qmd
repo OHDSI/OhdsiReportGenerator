@@ -133,8 +133,7 @@ if(nrow(topPreds) > 0 ){
         decimals = 2
     ) %>%
     gt::cols_label(
-      covariateName = "Covariate",
-      databaseName = "Database"
+      covariateName = "Covariate"
     ) %>%
     gt::tab_options(
       heading.align = "left",
