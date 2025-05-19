@@ -16,7 +16,7 @@ A good model should have a high AUC (ideally >= 0.7) and be well calibrated.  Ho
 
 ```{r}
 #| echo: false
-#| hide: true
+#| results: 'asis'
 
 performances <- OhdsiReportGenerator::getPredictionPerformances(
     connectionHandler = connectionHandler, 
@@ -85,7 +85,7 @@ cat('\n\n### Performance Summary\n\n')
 
 ```{r}
 #| echo: false
-#| hide: true
+#| results: 'asis'
 
 numberPredictors <- 100
 
