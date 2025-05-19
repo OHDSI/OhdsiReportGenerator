@@ -105,7 +105,7 @@ if(nrow(topPreds) > 0 ){
   
   cat('\n\n### Top Predictors\n\n')
   
-  for(databaseName in unqiue(topPreds$databaseName)){
+  for(databaseName in unique(topPreds$databaseName)){
     
   cat('\n\n::: {.callout-note collapse="true"}')
   cat(paste0("\n# Top ",numberPredictors," predictors in ",databaseName,"\n\n"))
