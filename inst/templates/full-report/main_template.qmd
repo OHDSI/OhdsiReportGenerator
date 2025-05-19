@@ -462,21 +462,6 @@ cat(result, sep = '\n')
 
 if(includePrediction){
   
-    prediction <- OhdsiReportGenerator::getPredictionPerformances(
-    connectionHandler = connectionHandler, 
-    schema = params$schema 
-  )
-  
-  predictionPreds <- OhdsiReportGenerator::getPredictionTopPredictors(
-    connectionHandler = connectionHandler, 
-    schema = params$schema, 
-    numberPredictors = params$numberPredictors
-  )
-  
-  predictionTargets <- unique(prediction$developmentTargetId)
-  predictionOutcomes <- unique(prediction$developmentOutcomeId)
-  predictionTars <- unique(prediction$validationTimeAtRisk)
-  
 result <- knitr::knit_child(text = knitr::knit_expand("prediction.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
 cat(result, sep = '\n')
 

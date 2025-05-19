@@ -23,7 +23,7 @@ performances <- OhdsiReportGenerator::getPredictionPerformances(
     schema = params$schema
 )
 
-if(nrow(performances)){
+if(nrow(performances) > 0){
 cat('\n\n### Performance Summary\n\n')
   
   for(databaseName in unique(performances$developmentDatabase)){
@@ -31,7 +31,7 @@ cat('\n\n### Performance Summary\n\n')
   cat(paste0("\n# All models developed in ",databaseName,"\n\n"))
   
   print(htmltools::tagList(
-    topPreds %>%  
+    performances %>%  
       dplyr::filter(.data$developmentDatabase == !!databaseName) %>%
       dplyr::select(
         -"developmentDatabaseId", -"developmentTargetId", 
@@ -99,7 +99,7 @@ topPreds <-  OhdsiReportGenerator::getPredictionTopPredictors(
     numberPredictors = numberPredictors
 )
 
-if(nrow(topPreds)){
+if(nrow(topPreds) > 0 ){
   topPreds <- OhdsiReportGenerator::addTarColumn(topPreds)
   topPreds <- OhdsiReportGenerator::formatBinaryCovariateName(topPreds)
   
