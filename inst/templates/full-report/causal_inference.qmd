@@ -175,7 +175,10 @@ for(description in descriptions){
 
 if(includeCohortMethod){
   
-cohortMethodResults <- dplyr::bind_rows(cohortMethodResults, cohortMethodES)
+  # add Evidence synth if the results exist
+  if(!is.null(cohortMethodES)){
+    cohortMethodResults <- dplyr::bind_rows(cohortMethodResults, cohortMethodES)
+  } 
 
 tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId', 'subsetText')]
 colnames(tempDf) <- paste0(colnames(tempDf), 'Target')
@@ -352,7 +355,10 @@ for(sccsInd in 1:nrow(sccsIds)){
 
 
 if(includeSccs){
-sccsResults <- dplyr::bind_rows(sccsResults, sccsES)
+  # add evidence synth results exist
+  if(!is.null(sccsES)){
+    sccsResults <- dplyr::bind_rows(sccsResults, sccsES)
+  }
 
 tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId', 'subsetText')]
 colnames(tempDf) <- paste0(colnames(tempDf), 'Target')

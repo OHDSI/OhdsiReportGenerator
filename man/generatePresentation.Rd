@@ -38,7 +38,8 @@ generatePresentation(
   outputLocation,
   outputName = paste0("presentation_", gsub(":", "_", gsub(" ", "_",
     as.character(date()))), ".html"),
-  intermediateDir = tempdir()
+  intermediateDir = tempdir(),
+  pathToDriver = Sys.getenv("DATABASECONNECTOR_JAR_FOLDER")
 )
 }
 \arguments{
@@ -101,6 +102,8 @@ generatePresentation(
 \item{outputName}{The name of the html protocol that is created}
 
 \item{intermediateDir}{The work directory for quarto}
+
+\item{pathToDriver}{Path to a folder containing the JDBC driver JAR files.}
 }
 \value{
 An named R list with the elements 'standard' and 'source'

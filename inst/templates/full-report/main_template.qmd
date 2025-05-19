@@ -35,6 +35,7 @@ params:
   authMethod: NULL
   webApiUsername: NULL 
   webApiPassword: NULL
+  pathToDriver: !expr "Sys.getenv('DATABASECONNECTOR_JAR_FOLDER')"
 ---
   
 ```{r}
@@ -55,7 +56,8 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
   dbms = params$dbms,
   user = params$username, 
   password = params$password,
-  server = params$server
+  server = params$server, 
+  pathToDriver =  params$pathToDriver
 )
 #====================================
 
@@ -64,7 +66,9 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
 #====================================
 
 # get prefixes - this only works with standard prefixes
-con <- DatabaseConnector::connect(connectionDetails)
+con <- DatabaseConnector::connect(
+  connectionDetails = connectionDetails
+  )
 tableNames <- DatabaseConnector::getTableNames(
   connection = con,
   databaseSchema = params$schema
@@ -84,7 +88,7 @@ includePrediction <- 'plp' %in% prefixes & params$includePrediction
 # create connection handler
 #====================================
 connectionHandler <- ResultModelManager::ConnectionHandler$new(
-  connectionDetails = connectionDetails
+  connectionDetails = connectionDetails 
 )
 #====================================
 
@@ -403,10 +407,11 @@ if(includeCohortMethod){
     schema = params$schema
   )
   
-  cohortMethodES <- OhdsiReportGenerator::getCmMetaEstimation(
+  # return NULL if the evidence synth tables do not exist
+  cohortMethodES <- tryCatch({OhdsiReportGenerator::getCmMetaEstimation(
     connectionHandler = connectionHandler, 
     schema = params$schema
-  )
+  )}, error = function(e){return(NULL)})
   
   cmTargets <- unique(cohortMethodDiagnostics$targetId)
   cmComparators <- unique(cohortMethodDiagnostics$comparatorId)
@@ -431,10 +436,11 @@ if(includeSccs){
     schema = params$schema
   )
   
-  sccsES <- OhdsiReportGenerator::getSccsMetaEstimation(
+  # return NULL if the evidence synth tables do not exist
+  sccsES <- tryCatch({OhdsiReportGenerator::getSccsMetaEstimation(
     connectionHandler = connectionHandler, 
     schema = params$schema
-  )
+  )}, error = function(e){return(NULL)})
   
   sccsTargets <- unique(sccsDiagnostics$targetId)
   sccsOutcomes <- unique(sccsDiagnostics$outcomeId)

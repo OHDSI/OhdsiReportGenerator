@@ -37,6 +37,7 @@
 #' @param outputLocation The file location and name to save the protocol 
 #' @param outputName The name of the html protocol that is created
 #' @param intermediateDir The work directory for quarto
+#' @param pathToDriver Path to a folder containing the JDBC driver JAR files.
 #' 
 #' @return
 #' An named R list with the elements 'standard' and 'source'
@@ -78,7 +79,8 @@ generatePresentation <- function(
     includePLP = TRUE,
     outputLocation,
     outputName = paste0('presentation_', gsub(':', '_',gsub(' ','_',as.character(date()))),'.html'),
-    intermediateDir = tempdir()
+    intermediateDir = tempdir(),
+    pathToDriver = Sys.getenv("DATABASECONNECTOR_JAR_FOLDER")
 ){
   
   if(missing(outputLocation)){
@@ -148,7 +150,8 @@ generatePresentation <- function(
       includeCharacterization = includeCharacterization,
       includeCM = includeCM,
       includeSCCS = includeSCCS,
-      includePLP = includePLP
+      includePLP = includePLP,
+      pathToDriver = pathToDriver
     )
   )
   
@@ -197,6 +200,7 @@ generatePresentation <- function(
 #' @param outputLocation The file location and name to save the protocol 
 #' @param outputName The name of the html protocol that is created
 #' @param intermediateDir The work directory for quarto
+#' @param pathToDriver Path to a folder containing the JDBC driver JAR files.
 #' 
 #' @return
 #' An html document containing the full results for the target, comparators, indications and outcomes specified.
@@ -228,7 +232,8 @@ generateFullReport <- function(
     webApiPassword = NULL,
     outputLocation,
     outputName = paste0('full_report_', gsub(':', '_',gsub(' ','_',as.character(date()))),'.html'),
-    intermediateDir = tempdir()
+    intermediateDir = tempdir(),
+    pathToDriver = Sys.getenv("DATABASECONNECTOR_JAR_FOLDER")
 ){
   
   if(missing(outputLocation)){
@@ -287,7 +292,8 @@ generateFullReport <- function(
       webAPI = webAPI,
       authMethod = authMethod,
       webApiUsername = webApiUsername, 
-      webApiPassword = webApiPassword
+      webApiPassword = webApiPassword,
+      pathToDriver = pathToDriver
     )
   )
   

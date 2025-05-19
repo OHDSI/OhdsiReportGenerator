@@ -28,7 +28,8 @@ generateFullReport(
   outputLocation,
   outputName = paste0("full_report_", gsub(":", "_", gsub(" ", "_",
     as.character(date()))), ".html"),
-  intermediateDir = tempdir()
+  intermediateDir = tempdir(),
+  pathToDriver = Sys.getenv("DATABASECONNECTOR_JAR_FOLDER")
 )
 }
 \arguments{
@@ -77,6 +78,8 @@ generateFullReport(
 \item{outputName}{The name of the html protocol that is created}
 
 \item{intermediateDir}{The work directory for quarto}
+
+\item{pathToDriver}{Path to a folder containing the JDBC driver JAR files.}
 }
 \value{
 An html document containing the full results for the target, comparators, indications and outcomes specified.
