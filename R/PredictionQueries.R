@@ -551,7 +551,7 @@ getPredictionPerformances <- function(
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
-        ) AS devoutcomes ON model_designs.target_id = devoutcomes.cohort_id
+        ) AS devoutcomes ON model_designs.outcome_id = devoutcomes.cohort_id
 
 
         LEFT JOIN

@@ -43,16 +43,13 @@ cat('\n\n### Performance Summary\n\n')
       gt::fmt_number(
         columns = c("auroc", "auroc95lb", "auroc95ub",
                     "calibrationInLarge", "eStatistic",
-                    "brierScore", "auprc"), 
+                    "brierScore", "auprc",
+                    "evalPercent", "outcomePercent"), 
         decimals = 2
       ) %>%
       gt::fmt_integer(
         columns = c("populationSize", "outcomeCount")
       ) %>%
-      gt::fmt_percent(
-        columns = c("evalPercent", "outcomePercent"),
-        decimals = 2
-    ) %>%
     gt::tab_options(
       heading.align = "left",
       data_row.padding = gt::px(7),
@@ -88,6 +85,9 @@ cat('\n\n### Performance Summary\n\n')
 #| results: 'asis'
 
 numberPredictors <- 100
+
+
+# loop over outcomes?
 
 topPreds <-  OhdsiReportGenerator::getPredictionTopPredictors(
     connectionHandler = connectionHandler, 
