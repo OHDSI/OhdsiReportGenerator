@@ -363,21 +363,7 @@ if(includeCharacterization){
     schema = params$schema, 
     analysisIds = binaryAnalyses
   )
-  
-  
-  # Binary risk factors
-  # how to get this list if continuous not done?
-  tempToGetIds <- OhdsiReportGenerator::getCaseBinaryFeatures(
-    connectionHandler = connectionHandler, 
-    schema = params$schema, 
-    analysisIds = c(1,2,3,4,5) # one of these should be run - add char and drug?
-  )
-  
-  
-  # TODO - need below?
-  #cTars <-  unique(caseContinuousOfInterest[, c('riskWindowStart', 'riskWindowEnd', 'startAnchor', 'endAnchor')])
-  #cTars$friendlyTarStart <- paste0(cTars$startAnchor, ' + ', cTars$riskWindowStart)
-  #cTars$friendlyTarEnd <- paste0(cTars$endAnchor, ' + ', cTars$riskWindowEnd)
+
   
   # ===================================
 result <- knitr::knit_child(text = knitr::knit_expand("characterization.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
@@ -411,7 +397,7 @@ if(includeCohortMethod){
   cohortMethodES <- tryCatch({OhdsiReportGenerator::getCmMetaEstimation(
     connectionHandler = connectionHandler, 
     schema = params$schema
-  )}, error = function(e){return(NULL)})
+  )}, error = function(e){return(invisible(NULL))})
   
   cmTargets <- unique(cohortMethodDiagnostics$targetId)
   cmComparators <- unique(cohortMethodDiagnostics$comparatorId)
@@ -440,7 +426,7 @@ if(includeSccs){
   sccsES <- tryCatch({OhdsiReportGenerator::getSccsMetaEstimation(
     connectionHandler = connectionHandler, 
     schema = params$schema
-  )}, error = function(e){return(NULL)})
+  )}, error = function(e){return(invisible(NULL))})
   
   sccsTargets <- unique(sccsDiagnostics$targetId)
   sccsOutcomes <- unique(sccsDiagnostics$outcomeId)

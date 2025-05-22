@@ -3,6 +3,8 @@ OhdsiReportGenerator v1.1.1
 - added skip quarto tests on CRAN if quarto:::find_quarto() errors as it means quarto not installed correctly 
 - fixed issue with CM/SCCS if evidence synth tables do not exist
 - pass drivers path for connection into generate
+- fixing indication in SCCS results
+- adding message to risk factors in Characterization to state when there are no results.
 
 OhdsiReportGenerator v1.1.0
 ======================
