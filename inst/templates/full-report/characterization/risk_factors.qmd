@@ -4,7 +4,15 @@
 #| results: 'asis'
 
 # Should this only be for the target?
-
+  
+  # Binary risk factors
+  # how to get this list if continuous not done?
+  tempToGetIds <- OhdsiReportGenerator::getCaseBinaryFeatures(
+    connectionHandler = connectionHandler, 
+    schema = params$schema, 
+    analysisIds = c(1,2,3,4,5) # one of these should be run - add char and drug?
+  )
+  
 # TODO restrict to T and O cohorts of interest
 targetIds <- cohortDefinitions %>%
   dplyr::filter(.data$subsetParent == params$targetId) %>%
@@ -24,8 +32,8 @@ charIdsOfInt <- merge(
 ) %>%
   dplyr::arrange(dplyr::desc(-1*.data$order), .data$targetCohortId)
 
-
 if( nrow(charIdsOfInt) >0 ){
+  
   for(cind in 1:nrow(charIdsOfInt)){
     # need to run this per t and o
     riskFactorsBinary <- OhdsiReportGenerator::getBinaryRiskFactors(
@@ -124,6 +132,11 @@ if( nrow(charIdsOfInt) >0 ){
   
       cat("\n\n:::\n\n")
       
-    }}}
+    }}} else{
+      cat('\n\n::: {.callout-note collapse="true"}')
+      cat(paste0("\n# No risk factors \n\n"))
+      cat("\n\n No risk factors for the target of interest")
+      cat("\n\n:::\n\n")
+    }
 
 ```

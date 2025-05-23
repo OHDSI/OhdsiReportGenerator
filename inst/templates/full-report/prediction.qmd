@@ -16,14 +16,14 @@ A good model should have a high AUC (ideally >= 0.7) and be well calibrated.  Ho
 
 ```{r}
 #| echo: false
-#| hide: true
+#| results: 'asis'
 
 performances <- OhdsiReportGenerator::getPredictionPerformances(
     connectionHandler = connectionHandler, 
     schema = params$schema
 )
 
-if(nrow(performances)){
+if(nrow(performances) > 0){
 cat('\n\n### Performance Summary\n\n')
   
   for(databaseName in unique(performances$developmentDatabase)){
@@ -31,7 +31,7 @@ cat('\n\n### Performance Summary\n\n')
   cat(paste0("\n# All models developed in ",databaseName,"\n\n"))
   
   print(htmltools::tagList(
-    topPreds %>%  
+    performances %>%  
       dplyr::filter(.data$developmentDatabase == !!databaseName) %>%
       dplyr::select(
         -"developmentDatabaseId", -"developmentTargetId", 
@@ -43,16 +43,13 @@ cat('\n\n### Performance Summary\n\n')
       gt::fmt_number(
         columns = c("auroc", "auroc95lb", "auroc95ub",
                     "calibrationInLarge", "eStatistic",
-                    "brierScore", "auprc"), 
+                    "brierScore", "auprc",
+                    "evalPercent", "outcomePercent"), 
         decimals = 2
       ) %>%
       gt::fmt_integer(
         columns = c("populationSize", "outcomeCount")
       ) %>%
-      gt::fmt_percent(
-        columns = c("evalPercent", "outcomePercent"),
-        decimals = 2
-    ) %>%
     gt::tab_options(
       heading.align = "left",
       data_row.padding = gt::px(7),
@@ -85,9 +82,12 @@ cat('\n\n### Performance Summary\n\n')
 
 ```{r}
 #| echo: false
-#| hide: true
+#| results: 'asis'
 
 numberPredictors <- 100
+
+
+# loop over outcomes?
 
 topPreds <-  OhdsiReportGenerator::getPredictionTopPredictors(
     connectionHandler = connectionHandler, 
@@ -99,13 +99,13 @@ topPreds <-  OhdsiReportGenerator::getPredictionTopPredictors(
     numberPredictors = numberPredictors
 )
 
-if(nrow(topPreds)){
+if(nrow(topPreds) > 0 ){
   topPreds <- OhdsiReportGenerator::addTarColumn(topPreds)
   topPreds <- OhdsiReportGenerator::formatBinaryCovariateName(topPreds)
   
   cat('\n\n### Top Predictors\n\n')
   
-  for(databaseName in unqiue(topPreds$databaseName)){
+  for(databaseName in unique(topPreds$databaseName)){
     
   cat('\n\n::: {.callout-note collapse="true"}')
   cat(paste0("\n# Top ",numberPredictors," predictors in ",databaseName,"\n\n"))
@@ -133,8 +133,7 @@ if(nrow(topPreds)){
         decimals = 2
     ) %>%
     gt::cols_label(
-      covariateName = "Covariate",
-      databaseName = "Database"
+      covariateName = "Covariate"
     ) %>%
     gt::tab_options(
       heading.align = "left",

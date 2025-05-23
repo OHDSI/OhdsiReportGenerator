@@ -57,7 +57,7 @@ cat(result, sep = '\n')
 #| echo: false
 #| results: 'asis'
 
-#result <- knitr::knit_child(text = knitr::knit_expand("characterization/risk_factors.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
-result <- knitr::knit_child("characterization/risk_factors.qmd", quiet = TRUE)
+result <- knitr::knit_child(text = knitr::knit_expand("characterization/risk_factors.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+#result <- knitr::knit_child("characterization/risk_factors.qmd", quiet = TRUE)
 cat(result, sep = '\n')
 ```

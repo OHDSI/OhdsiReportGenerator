@@ -42,6 +42,7 @@ params:
   includeCM: true
   includeSCCS: true
   includePLP: true
+  pathToDriver: !expr "Sys.getenv('DATABASECONNECTOR_JAR_FOLDER')"
 ---
 
 ```{r}
@@ -62,9 +63,10 @@ dbms <- params$dbms
 # connect
 connectionDetails <- DatabaseConnector::createConnectionDetails(
   server = server,
-    user = username,
-    password = password,
-    dbms = dbms
+  user = username,
+  password = password,
+  dbms = dbms,
+  pathToDriver =  params$pathToDriver
 )
 connectionHandler <- ResultModelManager::ConnectionHandler$new(
   connectionDetails = connectionDetails

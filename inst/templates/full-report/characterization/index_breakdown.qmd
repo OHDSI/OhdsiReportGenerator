@@ -5,6 +5,9 @@
 #| echo: false
 #| results: 'asis'
 
+# check ROhdsiWebApi installed and skip otherwise
+if(system.file(package = "ROhdsiWebApi") != ""){
+
 # TARGET
   
 targetIds <- cohortDefinitions %>%
@@ -165,6 +168,8 @@ cat('\n\n:::\n\n')
   
   }
 
+
+}
 
 }
 

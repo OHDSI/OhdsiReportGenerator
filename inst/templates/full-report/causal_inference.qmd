@@ -175,7 +175,10 @@ for(description in descriptions){
 
 if(includeCohortMethod){
   
-cohortMethodResults <- dplyr::bind_rows(cohortMethodResults, cohortMethodES)
+  # add Evidence synth if the results exist
+  if(!is.null(cohortMethodES)){
+    cohortMethodResults <- dplyr::bind_rows(cohortMethodResults, cohortMethodES)
+  } 
 
 tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId', 'subsetText')]
 colnames(tempDf) <- paste0(colnames(tempDf), 'Target')
@@ -288,6 +291,12 @@ colnames(tempDf) <- paste0(colnames(tempDf), 'Outcome')
 sccsDiagnostics <- merge(sccsDiagnostics, 
                          tempDf, by.x = 'outcomeId', by.y = 'cohortDefinitionIdOutcome')
 
+# join by "indicationId" to add friendlyNameIndication
+tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Indication')
+sccsDiagnostics <- merge(sccsDiagnostics, 
+                     tempDf, by.x = 'indicationId', by.y = 'cohortDefinitionIdIndication', all.x = T)
+
 
 sccsIds <- unique(sccsDiagnostics[,c('targetId', 'outcomeId')])
 
@@ -295,7 +304,7 @@ for(sccsInd in 1:nrow(sccsIds)){
   print(htmltools::tagList(sccsDiagnostics %>% 
                          dplyr::filter(.data$targetId == !!sccsIds$targetId[sccsInd]) %>%
                          dplyr::filter(.data$outcomeId == !!sccsIds$outcomeId[sccsInd]) %>%
-                         dplyr::select("databaseName", "subsetTextTarget", "description",
+                         dplyr::select("databaseName", "subsetTextTarget", "description","friendlyNameIndication",
                                        #"friendlyNameTarget","friendlyNameOutcome",
                                        "mdrrDiagnostic", "easeDiagnostic","timeTrendDiagnostic",
                                        "preExposureDiagnostic", 
@@ -304,7 +313,8 @@ for(sccsInd in 1:nrow(sccsIds)){
                          )%>%
                          dplyr::group_by(
                            .data$description,
-                           .data$subsetTextTarget
+                           .data$subsetTextTarget,
+                           .data$friendlyNameIndication
                          ) %>%
                          gt::gt() %>%
                          gt::cols_label(
@@ -352,7 +362,10 @@ for(sccsInd in 1:nrow(sccsIds)){
 
 
 if(includeSccs){
-sccsResults <- dplyr::bind_rows(sccsResults, sccsES)
+  # add evidence synth results exist
+  if(!is.null(sccsES)){
+    sccsResults <- dplyr::bind_rows(sccsResults, sccsES)
+  }
 
 tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId', 'subsetText')]
 colnames(tempDf) <- paste0(colnames(tempDf), 'Target')
@@ -363,6 +376,13 @@ colnames(tempDf) <- paste0(colnames(tempDf), 'Outcome')
 sccsResults <- merge(sccsResults, 
                      tempDf, by.x = 'outcomeId', by.y = 'cohortDefinitionIdOutcome')
 
+# join by "indicationId" to add friendlyNameIndication
+tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
+colnames(tempDf) <- paste0(colnames(tempDf), 'Indication')
+sccsResults <- merge(sccsResults, 
+                     tempDf, by.x = 'indicationId', by.y = 'cohortDefinitionIdIndication', all.x = T)
+
+
 sccsIds <- unique(sccsResults[,c('targetId', 'outcomeId')])
 
 for(sccsInd in 1:nrow(sccsIds)){
@@ -370,6 +390,7 @@ for(sccsInd in 1:nrow(sccsIds)){
                          dplyr::filter(.data$targetId == !!sccsIds$targetId[sccsInd]) %>%
                          dplyr::filter(.data$outcomeId == !!sccsIds$outcomeId[sccsInd]) %>%
                          dplyr::select("databaseName","subsetTextTarget", "description",
+                                       'friendlyNameIndication',
                                        #"friendlyNameOutcome","friendlyNameTarget", 
                                        "outcomeSubjects", "covariateSubjects",
                                        "outcomeEvents", "covariateOutcomes",
@@ -377,7 +398,8 @@ for(sccsInd in 1:nrow(sccsIds)){
                                        "calibratedP","calibratedOneSidedP")%>%
                          dplyr::group_by(
                            .data$description,
-                           .data$subsetTextTarget
+                           .data$subsetTextTarget,
+                           .data$friendlyNameIndication
                          ) %>%
                          gt::gt() %>%
                          gt::cols_label(
