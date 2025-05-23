@@ -35,7 +35,7 @@ using the model design across databases"></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Extract the model designs and aggregate performances for the prediction results</h1>
-      <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/develop/R/PredictionQueries.R" class="external-link"><code>R/PredictionQueries.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/main/R/PredictionQueries.R" class="external-link"><code>R/PredictionQueries.R</code></a></small>
       <div class="d-none name"><code>getPredictionModelDesigns.Rd</code></div>
     </div>
 
@@ -132,7 +132,6 @@ using the model design across databases</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">connectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/ResultModelManager/man/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">conDet</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Connecting using SQLite driver</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">modDesign</span> <span class="op">&lt;-</span> <span class="fu">getPredictionModelDesigns</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  connectionHandler <span class="op">=</span> <span class="va">connectionHandler</span>, </span></span>
