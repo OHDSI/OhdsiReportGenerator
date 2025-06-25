@@ -128,6 +128,72 @@ getPredictionTopPredictors <- function(
   return(result)
 }
 
+
+#' A function to extarct the targets found in prediction
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
+#' @family Prediction
+#' 
+#' @return
+#' A data.frame with the prediction target cohort ids and names.
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohorts <- getPredictionTargets(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getPredictionTargets <- function(
+    connectionHandler,
+    schema,
+    plpTablePrefix = 'plp_',
+    cgTablePrefix = 'cg_'
+){
+  
+  sql <- "SELECT distinct 
+    cohorts.cohort_name,
+    cohorts.cohort_definition_id, 
+    'prediction' as type,
+    1 as value
+
+       FROM
+          @schema.@plp_table_prefixmodel_designs as model_designs
+          inner join
+        (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
+        inner join @schema.@cg_table_prefixcohort_definition cd
+        on c.cohort_definition_id = cd.cohort_definition_id
+        ) AS cohorts
+        ON model_designs.target_id = cohorts.cohort_id
+        ;"
+  
+  targets <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
+    cg_table_prefix = cgTablePrefix
+  ) %>%
+    tidyr::pivot_wider(
+      id_cols = c("cohortName", "cohortDefinitionId"), 
+      names_from = "type", 
+      values_from = c("value")
+    )
+  
+  return(targets)
+  
+}
+
 #' Extract a complete set of cohorts used in the prediction results
 #' @description
 #' This function extracts the target and outcome cohorts used to develop any model in the results

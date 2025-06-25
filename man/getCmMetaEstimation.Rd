@@ -85,9 +85,11 @@ cmMeta <- getCmMetaEstimation(
 Other Estimation: 
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
+\code{\link{getCmTargets}()},
 \code{\link{getSccsDiagnosticsData}()},
 \code{\link{getSccsEstimation}()},
 \code{\link{getSccsMetaEstimation}()},
+\code{\link{getSccsTargets}()},
 \code{\link{plotCmEstimates}()},
 \code{\link{plotSccsEstimates}()}
 }

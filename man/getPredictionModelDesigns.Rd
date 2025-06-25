@@ -80,6 +80,7 @@ Other Prediction:
 \code{\link{getPredictionIntercept}()},
 \code{\link{getPredictionPerformanceTable}()},
 \code{\link{getPredictionPerformances}()},
+\code{\link{getPredictionTargets}()},
 \code{\link{getPredictionTopPredictors}()}
 }
 \concept{Prediction}

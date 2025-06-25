@@ -1,5 +1,69 @@
 # cohort method
 
+#' A function to extract the targets found in cohort method
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cmTablePrefix
+#' @template cgTablePrefix
+#' @family Estimation
+#' 
+#' @return
+#' A data.frame with the cohort method target cohort ids and names.
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohorts <- getCmTargets(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getCmTargets <- function(
+    connectionHandler,
+    schema,
+    cmTablePrefix = 'cm_',
+    cgTablePrefix = 'cg_'
+){
+  
+  sql <- "SELECT distinct 
+    cd.cohort_name,
+    cr.target_id as cohort_definition_id, 
+    'cohortMethod' as type,
+    1 as value
+
+       FROM
+      
+      @schema.@cm_table_prefixresult as cr
+          
+      inner join @schema.@cg_table_prefixcohort_definition cd
+      
+      on cr.target_id = cd.cohort_definition_id
+      ;"
+  
+  targets <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cm_table_prefix = cmTablePrefix,
+    cg_table_prefix = cgTablePrefix
+  ) %>%
+    tidyr::pivot_wider(
+      id_cols = c("cohortName", "cohortDefinitionId"), 
+      names_from = "type", 
+      values_from = c("value")
+    )
+  
+  return(targets)
+  
+}
+
 #' Extract the cohort method results 
 #' @description
 #' This function extracts the single database cohort method estimates for results that can be unblinded and have a calibrated RR
@@ -460,6 +524,71 @@ getCmMetaEstimation <- function(
   )
   
   return(unique(result))
+}
+
+
+#' A function to extract the targets found in self controlled case series
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template sccsTablePrefix
+#' @template cgTablePrefix
+#' @family Estimation
+#' 
+#' @return
+#' A data.frame with the self controlled case series target cohort ids and names.
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohorts <- getSccsTargets(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getSccsTargets <- function(
+    connectionHandler,
+    schema,
+    sccsTablePrefix = 'sccs_',
+    cgTablePrefix = 'cg_'
+){
+  
+  sql <- "SELECT distinct 
+    cd.cohort_name,
+    sr.covariate_id as cohort_definition_id, 
+    'selfControlledCaseSeries' as type,
+    1 as value
+
+       FROM
+      
+      @schema.@sccs_table_prefixresult as sr
+          
+      inner join @schema.@cg_table_prefixcohort_definition cd
+      
+      on sr.covariate_id = cd.cohort_definition_id
+      ;"
+  
+  targets <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    sccs_table_prefix = sccsTablePrefix,
+    cg_table_prefix = cgTablePrefix
+  ) %>%
+    tidyr::pivot_wider(
+      id_cols = c("cohortName", "cohortDefinitionId"), 
+      names_from = "type", 
+      values_from = c("value")
+    )
+  
+  return(targets)
+  
 }
 
 #' Extract the self controlled case series (sccs) results 

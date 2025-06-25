@@ -1,3 +1,171 @@
+#' A function to extarct the targets found in characterization
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the characterization target cohort ids, names and which characterization analyses the cohorts are used in.
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohorts <- getCharacterizationTargets(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getCharacterizationTargets <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_'
+    ){
+  
+  sql <- "
+  
+  select 
+  cg.cohort_name, 
+  cohorts.*
+  
+  from 
+  (select 
+  tte.target_cohort_definition_id as cohort_definition_id,
+  'timeToEvent' as type,
+  1 as value
+  from @schema.@c_table_prefixtime_to_event tte
+  
+  union
+  
+  select distinct
+  dr.target_cohort_definition_id as cohort_definition_id,
+  'dechalRechal' as type,
+  1 as value
+  from @schema.@c_table_prefixdechallenge_rechallenge dr
+  
+  
+  union
+  
+  select distinct
+  cd.target_cohort_id as cohort_definition_id,
+  'riskFactors' as type,
+  1 as value
+  from @schema.@c_table_prefixcohort_details cd
+  where cd.cohort_type = 'Cases'
+  
+    union
+  
+  select distinct
+  cd.target_cohort_id as cohort_definition_id,
+  'databaseComparator' as type,
+  1 as value
+  from @schema.@c_table_prefixcohort_details cd
+  where cd.cohort_type = 'Target'
+  ) as cohorts
+  
+  inner join 
+  
+  @schema.@cg_table_prefixcohort_definition cg
+  
+  on cohorts.cohort_definition_id = cg.cohort_definition_id
+  
+  ;
+  "
+  
+  targets <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cg_table_prefix = cgTablePrefix,
+    c_table_prefix = cTablePrefix
+  ) %>%
+    tidyr::pivot_wider(
+      id_cols = c("cohortName", "cohortDefinitionId"), 
+      names_from = "type", 
+      values_from = c("value")
+    )
+  
+  return(targets)
+  
+}
+
+
+#' A function to extract the targets found in incidence
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template ciTablePrefix
+#' @template cgTablePrefix
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the incidence target cohort ids and names
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohorts <- getIncidenceTargets(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getIncidenceTargets <- function(
+    connectionHandler,
+    schema,
+    ciTablePrefix = 'ci_',
+    cgTablePrefix = 'cg_'
+){
+  
+  sql <- "
+  
+  select distinct
+  cg.cohort_name, 
+  ci.target_cohort_definition_id as cohort_definition_id,
+  'cohortIncidence' as type,
+  1 as value 
+  
+  from 
+  @schema.@ci_table_prefixtarget_def as ci
+  
+  inner join 
+  
+  @schema.@cg_table_prefixcohort_definition cg
+  
+  on ci.target_cohort_definition_id = cg.cohort_definition_id
+  
+  ;
+  "
+  
+  targets <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cg_table_prefix = cgTablePrefix,
+    ci_table_prefix = ciTablePrefix
+  ) %>%
+    tidyr::pivot_wider(
+      id_cols = c("cohortName", "cohortDefinitionId"), 
+      names_from = "type", 
+      values_from = c("value")
+    )
+  
+  return(targets)
+  
+}
 
 #' Extract the cohort incidence result
 #' @description

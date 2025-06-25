@@ -1,8 +1,8 @@
 Package: OhdsiReportGenerator
 Type: Package
 Title: Observational Health Data Sciences and Informatics Report Generator
-Version: 1.1.1
-Date: 2025-5-08
+Version: 1.1.1.9999
+Date: 2025-6-25
 Authors@R: c(
   person("Jenna", "Reps", email = "jreps@its.jnj.com", role = c("aut", "cre")),
   person("Anthony", "Sena", email = "sena@ohdsi.org", role = c("aut"))

@@ -83,6 +83,7 @@ Other Prediction:
 \code{\link{getPredictionIntercept}()},
 \code{\link{getPredictionModelDesigns}()},
 \code{\link{getPredictionPerformanceTable}()},
-\code{\link{getPredictionPerformances}()}
+\code{\link{getPredictionPerformances}()},
+\code{\link{getPredictionTargets}()}
 }
 \concept{Prediction}

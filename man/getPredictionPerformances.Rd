@@ -90,6 +90,7 @@ Other Prediction:
 \code{\link{getPredictionIntercept}()},
 \code{\link{getPredictionModelDesigns}()},
 \code{\link{getPredictionPerformanceTable}()},
+\code{\link{getPredictionTargets}()},
 \code{\link{getPredictionTopPredictors}()}
 }
 \concept{Prediction}
