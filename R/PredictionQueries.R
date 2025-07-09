@@ -194,6 +194,88 @@ getPredictionTargets <- function(
   
 }
 
+
+#' A function to extract the outcomes found in prediction
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
+#' @template targetId
+#' @family Prediction
+#' 
+#' @return
+#' A data.frame with the prediction outcome cohort ids and names.
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' outcomes <- getPredictionOutcomes(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getPredictionOutcomes <- function(
+    connectionHandler,
+    schema,
+    plpTablePrefix = 'plp_',
+    cgTablePrefix = 'cg_',
+    targetId = NULL
+){
+  
+  sql <- "SELECT distinct 
+    cohorts.cohort_name,
+    cohorts.cohort_definition_id, 
+    'prediction' as type,
+    1 as value
+
+       FROM
+          @schema.@plp_table_prefixmodel_designs as model_designs
+          inner join
+        (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
+        inner join @schema.@cg_table_prefixcohort_definition cd
+        on c.cohort_definition_id = cd.cohort_definition_id
+        ) AS cohorts
+        ON model_designs.outcome_id = cohorts.cohort_id
+        
+      {@use_target}?{ 
+      
+        inner join
+        (SELECT distinct cohort_id
+        FROM @schema.@plp_table_prefixcohorts 
+        where cohort_definition_id in (@target_id)
+        ) AS targets
+        ON model_designs.target_id = targets.cohort_id
+        
+        }
+        
+        ;"
+  
+  outcomes <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    use_target = !is.null(targetId),
+    target_id = paste0(targetId, collapse = ',') 
+  ) %>%
+    tidyr::pivot_wider(
+      id_cols = c("cohortName", "cohortDefinitionId"), 
+      names_from = "type", 
+      values_from = c("value")
+    )
+  
+  return(outcomes)
+  
+}
+
 #' Extract a complete set of cohorts used in the prediction results
 #' @description
 #' This function extracts the target and outcome cohorts used to develop any model in the results

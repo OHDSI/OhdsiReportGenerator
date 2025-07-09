@@ -50,6 +50,7 @@ Other Prediction:
 \code{\link{getPredictionDiagnostics}()},
 \code{\link{getPredictionHyperParamSearch}()},
 \code{\link{getPredictionModelDesigns}()},
+\code{\link{getPredictionOutcomes}()},
 \code{\link{getPredictionPerformanceTable}()},
 \code{\link{getPredictionPerformances}()},
 \code{\link{getPredictionTargets}()},

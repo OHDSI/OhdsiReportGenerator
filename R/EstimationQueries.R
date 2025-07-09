@@ -64,6 +64,77 @@ getCmTargets <- function(
   
 }
 
+
+#' A function to extract the outcomes found in cohort method
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cmTablePrefix
+#' @template cgTablePrefix
+#' @template targetId
+#' @family Estimation
+#' 
+#' @return
+#' A data.frame with the cohort method outcome ids and names.
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' outcomes <- getCmOutcomes(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getCmOutcomes <- function(
+    connectionHandler,
+    schema,
+    cmTablePrefix = 'cm_',
+    cgTablePrefix = 'cg_',
+    targetId = NULL
+){
+  
+  sql <- "SELECT distinct 
+    cd.cohort_name,
+    cr.outcome_id as cohort_definition_id, 
+    'cohortMethod' as type,
+    1 as value
+
+       FROM
+      
+      @schema.@cm_table_prefixresult as cr
+          
+      inner join @schema.@cg_table_prefixcohort_definition cd
+      
+      on cr.outcome_id = cd.cohort_definition_id
+      
+      {@use_target}?{ where cr.target_id in (@target_id)}
+      ;"
+  
+  outcomes <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cm_table_prefix = cmTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    use_target = !is.null(targetId),
+    target_id = paste0(targetId, collapse = ',')
+  ) %>%
+    tidyr::pivot_wider(
+      id_cols = c("cohortName", "cohortDefinitionId"), 
+      names_from = "type", 
+      values_from = c("value")
+    )
+  
+  return(outcomes)
+  
+}
+
 #' Extract the cohort method results 
 #' @description
 #' This function extracts the single database cohort method estimates for results that can be unblinded and have a calibrated RR
@@ -588,6 +659,84 @@ getSccsTargets <- function(
     )
   
   return(targets)
+  
+}
+
+
+#' A function to extract the outcomes found in self controlled case series
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template sccsTablePrefix
+#' @template cgTablePrefix
+#' @template targetId
+#' @family Estimation
+#' 
+#' @return
+#' A data.frame with the self controlled case series outcome ids and names.
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' outcomes <- getSccsOutcomes(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getSccsOutcomes <- function(
+    connectionHandler,
+    schema,
+    sccsTablePrefix = 'sccs_',
+    cgTablePrefix = 'cg_',
+    targetId = NULL
+){
+  
+  sql <- "SELECT distinct 
+    cd.cohort_name,
+    eos.outcome_id as cohort_definition_id, 
+    'selfControlledCaseSeries' as type,
+    1 as value
+
+       FROM
+      
+      @schema.@sccs_table_prefixresult as sr
+      
+      inner join
+      
+      @schema.@sccs_table_prefixexposures_outcome_set as eos
+      on eos.exposures_outcome_set_id = sr.exposures_outcome_set_id
+          
+      inner join @schema.@cg_table_prefixcohort_definition cd
+      
+      on eos.outcome_id = cd.cohort_definition_id
+      
+      
+  {@use_target}?{ where sr.covariate_id in (@target_id)}
+      
+      ;"
+  
+  outcomes <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    sccs_table_prefix = sccsTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    use_target = !is.null(targetId),
+    target_id = paste0(targetId, collapse = ',')
+  ) %>%
+    tidyr::pivot_wider(
+      id_cols = c("cohortName", "cohortDefinitionId"), 
+      names_from = "type", 
+      values_from = c("value")
+    )
+  
+  return(outcomes)
   
 }
 

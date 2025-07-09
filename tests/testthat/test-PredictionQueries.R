@@ -43,6 +43,33 @@ test_that("getPredictionCohorts", {
   
 })
 
+test_that("getPredictionOutcomes", {
+  
+data <- getPredictionOutcomes(
+  connectionHandler = connectionHandler, 
+  schema = schema
+)
+
+testthat::expect_true(nrow(data) > 0)
+
+data <- getPredictionOutcomes(
+  connectionHandler = connectionHandler, 
+  schema = schema, 
+  targetId = c(1002,1)
+)
+
+testthat::expect_true(nrow(data) > 0)
+
+# not a target in the prediction results
+data <- getPredictionOutcomes(
+  connectionHandler = connectionHandler, 
+  schema = schema, 
+  targetId = 1
+)
+
+testthat::expect_true(nrow(data) == 0)
+  
+})
 
 test_that("getPredictionModelDesigns", {
   

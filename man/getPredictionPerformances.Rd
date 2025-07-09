@@ -89,6 +89,7 @@ Other Prediction:
 \code{\link{getPredictionHyperParamSearch}()},
 \code{\link{getPredictionIntercept}()},
 \code{\link{getPredictionModelDesigns}()},
+\code{\link{getPredictionOutcomes}()},
 \code{\link{getPredictionPerformanceTable}()},
 \code{\link{getPredictionTargets}()},
 \code{\link{getPredictionTopPredictors}()}

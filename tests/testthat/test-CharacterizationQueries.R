@@ -470,3 +470,76 @@ test_that("processBinaryRiskFactorFeatures with values", {
 # target count - make sqlite tables
 # requires: database table, cohort_counts, settings, 
 #.          cohort_details, cohort_definition
+
+
+test_that("getCharacterizationOutcomes", {
+  
+outcomes <- getCharacterizationOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetId = NULL
+)
+
+# check there is a result
+testthat::expect_true(nrow(outcomes) > 0)
+
+# check the columns are correct
+testthat::expect_true(sum(c("cohortName", "cohortDefinitionId", "dechalRechal",
+  "riskFactors", "timeToEvent", "caseSeries") %in% colnames(outcomes)) == 6)
+
+# check results when specifying targetId
+outcomes2 <- getCharacterizationOutcomes(
+  connectionHandler = connectionHandler, 
+  schema = 'main', 
+  targetId = 1
+)
+
+testthat::expect_true(nrow(outcomes) >= nrow(outcomes2))
+testthat::expect_true(nrow(outcomes2) >= 1)
+
+# check results when specifying targetId with no outcomes
+outcomes3 <- getCharacterizationOutcomes(
+  connectionHandler = connectionHandler, 
+  schema = 'main', 
+  targetId = 3
+)
+
+testthat::expect_true(nrow(outcomes3) == 0 )
+
+
+})
+
+test_that("getIncidenceOutcomes", {
+  
+  outcomes <- getIncidenceOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetId = NULL
+  )
+  # check there is a result
+  testthat::expect_true(nrow(outcomes) > 0)
+  
+  # check the columns are correct
+  testthat::expect_true(sum(c("cohortName", "cohortDefinitionId", "cohortIncidence") %in% colnames(outcomes)) == 3)
+  
+  # check results when specifying targetId
+  outcomes2 <- getIncidenceOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetId = 1
+  )
+  
+  testthat::expect_true(nrow(outcomes) >= nrow(outcomes2))
+  testthat::expect_true(nrow(outcomes2) >= 1)
+  
+  # check results when specifying targetId with no outcomes
+  outcomes3 <- getIncidenceOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetId = 3
+  )
+  
+  testthat::expect_true(nrow(outcomes3) == 0 )
+  
+})
+

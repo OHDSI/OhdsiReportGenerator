@@ -45,9 +45,11 @@ Other Estimation:
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
+\code{\link{getCmOutcomes}()},
 \code{\link{getSccsDiagnosticsData}()},
 \code{\link{getSccsEstimation}()},
 \code{\link{getSccsMetaEstimation}()},
+\code{\link{getSccsOutcomes}()},
 \code{\link{getSccsTargets}()},
 \code{\link{plotCmEstimates}()},
 \code{\link{plotSccsEstimates}()}

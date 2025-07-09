@@ -56,6 +56,7 @@ Other Prediction:
 \code{\link{getPredictionDiagnostics}()},
 \code{\link{getPredictionIntercept}()},
 \code{\link{getPredictionModelDesigns}()},
+\code{\link{getPredictionOutcomes}()},
 \code{\link{getPredictionPerformanceTable}()},
 \code{\link{getPredictionPerformances}()},
 \code{\link{getPredictionTargets}()},

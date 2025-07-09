@@ -179,3 +179,66 @@ test_that("getSccsMetaEstimation", {
   testthat::expect_true('calibratedSeLogRr' %in% colnames(data))
   testthat::expect_true('nDatabases' %in% colnames(data))
 })
+
+
+test_that("getCmOutcomes", {
+  
+  data <- getCmOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = schema
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  testthat::expect_true(data$cohortDefinitionId[1] == 3)
+  
+  data <- getCmOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    targetId = c(1002,1)
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  
+  # not a target in the prediction results
+  data <- getCmOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    targetId = 5
+  )
+  
+  testthat::expect_true(nrow(data) == 0)
+  
+  
+  
+})
+
+test_that("getSccsOutcomes", {
+  
+  data <- getSccsOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = schema
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  testthat::expect_true(data$cohortDefinitionId[1] == 3)
+  
+  data <- getSccsOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    targetId = c(1002,1, 1001)
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  
+  # not a target in the prediction results
+  data <- getSccsOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    targetId = 5
+  )
+  
+  testthat::expect_true(nrow(data) == 0)
+  
+  
+  
+})

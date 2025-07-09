@@ -31,6 +31,27 @@ getCharacterizationTargets <- function(
     cgTablePrefix = 'cg_'
     ){
   
+  
+  # first check each table
+  useTte <- !is.null(tryCatch({connectionHandler$queryDb(
+    sql = "select * from @schema.@c_table_prefixtime_to_event where target_cohort_definition_id = 1;",
+    schema = schema,
+    c_table_prefix = cTablePrefix
+  )}, error = function(e){return(NULL)}))
+  
+  useDcrc <- !is.null(tryCatch({connectionHandler$queryDb(
+    sql = "select * from @schema.@c_table_prefixdechallenge_rechallenge where target_cohort_definition_id = 1;",
+    schema = schema,
+    c_table_prefix = cTablePrefix
+  )}, error = function(e){return(NULL)}))
+  
+  useRf <- !is.null(tryCatch({connectionHandler$queryDb(
+    sql = "select * from @schema.@c_table_prefixcohort_details where target_cohort_id = 1;",
+    schema = schema,
+    c_table_prefix = cTablePrefix
+  )}, error = function(e){return(NULL)}))
+  
+
   sql <- "
   
   select 
@@ -38,38 +59,44 @@ getCharacterizationTargets <- function(
   cohorts.*
   
   from 
-  (select 
-  tte.target_cohort_definition_id as cohort_definition_id,
-  'timeToEvent' as type,
-  1 as value
-  from @schema.@c_table_prefixtime_to_event tte
+  (
+  select 0 as cohort_definition_id, 'timeToEvent' as type, 1 as value
+
+  {@use_tte}?{
+    union
+    select tte.target_cohort_definition_id as cohort_definition_id,
+    'timeToEvent' as type,
+    1 as value
+    from @schema.@c_table_prefixtime_to_event tte
+  }
   
-  union
+  {@use_dcrc}?{
+    union
+    select distinct
+    dr.target_cohort_definition_id as cohort_definition_id,
+    'dechalRechal' as type,
+    1 as value
+    from @schema.@c_table_prefixdechallenge_rechallenge dr
+  }
   
-  select distinct
-  dr.target_cohort_definition_id as cohort_definition_id,
-  'dechalRechal' as type,
-  1 as value
-  from @schema.@c_table_prefixdechallenge_rechallenge dr
-  
-  
-  union
-  
-  select distinct
-  cd.target_cohort_id as cohort_definition_id,
-  'riskFactors' as type,
-  1 as value
-  from @schema.@c_table_prefixcohort_details cd
-  where cd.cohort_type = 'Cases'
+  {@use_rf}?{
+    union
+    select distinct
+    cd.target_cohort_id as cohort_definition_id,
+    'riskFactors' as type,
+    1 as value
+    from @schema.@c_table_prefixcohort_details cd
+    where cd.cohort_type = 'Cases'
   
     union
+    select distinct
+    cd.target_cohort_id as cohort_definition_id,
+    'databaseComparator' as type,
+    1 as value
+    from @schema.@c_table_prefixcohort_details cd
+    where cd.cohort_type = 'Target'
+  }
   
-  select distinct
-  cd.target_cohort_id as cohort_definition_id,
-  'databaseComparator' as type,
-  1 as value
-  from @schema.@c_table_prefixcohort_details cd
-  where cd.cohort_type = 'Target'
   ) as cohorts
   
   inner join 
@@ -85,7 +112,10 @@ getCharacterizationTargets <- function(
     sql = sql,
     schema = schema,
     cg_table_prefix = cgTablePrefix,
-    c_table_prefix = cTablePrefix
+    c_table_prefix = cTablePrefix,
+    use_tte = useTte,
+    use_dcrc = useDcrc,
+    use_rf = useRf
   ) %>%
     tidyr::pivot_wider(
       id_cols = c("cohortName", "cohortDefinitionId"), 
@@ -93,7 +123,169 @@ getCharacterizationTargets <- function(
       values_from = c("value")
     )
   
+  # add missing types with 0 values
+  colnameTypes <- c('timeToEvent','dechalRechal','riskFactors','databaseComparator') 
+
+  if(sum(colnameTypes %in% colnames(targets)) != 4){
+    missingCols <- colnameTypes[!colnameTypes %in% colnames(targets)]
+    for(missingCol in missingCols){
+      targets[missingCol] <- 0
+    }
+  }
+  
+  # Add redundant columns - these are dep on each other
+  # so I only wrote code to extract one for speed
+  targets$caseSeries <- targets$riskFactors
+  targets$cohortComparator <- targets$databaseComparator
+  
   return(targets)
+  
+}
+
+
+#' A function to extract the outcomes found in characterization
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template targetId
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the characterization outcome cohort ids, names and which characterization analyses the cohorts are used in.
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohorts <- getCharacterizationOutcomes(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getCharacterizationOutcomes <- function(
+  connectionHandler,
+  schema,
+  cTablePrefix = 'c_',
+  cgTablePrefix = 'cg_',
+  targetId = NULL
+){
+  
+  # first check each table
+  useTte <- !is.null(tryCatch({connectionHandler$queryDb(
+    sql = "select * from @schema.@c_table_prefixtime_to_event where target_cohort_definition_id = 1;",
+    schema = schema,
+    c_table_prefix = cTablePrefix
+  )}, error = function(e){return(NULL)}))
+  
+  useDcrc <- !is.null(tryCatch({connectionHandler$queryDb(
+    sql = "select * from @schema.@c_table_prefixdechallenge_rechallenge where target_cohort_definition_id = 1;",
+    schema = schema,
+    c_table_prefix = cTablePrefix
+  )}, error = function(e){return(NULL)}))
+  
+  useRf <- !is.null(tryCatch({connectionHandler$queryDb(
+    sql = "select * from @schema.@c_table_prefixcohort_details where target_cohort_id = 1;",
+    schema = schema,
+    c_table_prefix = cTablePrefix
+  )}, error = function(e){return(NULL)}))
+  
+  sql <- "
+  
+  select 
+  cg.cohort_name, 
+  cohorts.*
+  
+  from 
+  (
+  select 0 as cohort_definition_id, 'timeToEvent' as type, 1 as value
+
+  {@use_tte}?{
+    union
+    select tte.outcome_cohort_definition_id as cohort_definition_id,
+    'timeToEvent' as type,
+    1 as value
+    from @schema.@c_table_prefixtime_to_event tte
+    
+    {@use_target}?{where tte.target_cohort_definition_id in (@target_ids)}
+  }
+  
+  {@use_dcrc}?{
+    union
+    select distinct
+    dr.outcome_cohort_definition_id as cohort_definition_id,
+    'dechalRechal' as type,
+    1 as value
+    from @schema.@c_table_prefixdechallenge_rechallenge dr
+    
+    {@use_target}?{where dr.target_cohort_definition_id in (@target_ids)}
+  
+  }
+  
+  {@use_rf}?{
+    union
+    select distinct
+    cd.outcome_cohort_id as cohort_definition_id,
+    'riskFactors' as type,
+    1 as value
+    from @schema.@c_table_prefixcohort_details cd
+    where cd.cohort_type = 'Cases'
+    
+    {@use_target}?{and cd.target_cohort_id in (@target_ids)}
+
+  }
+  
+  ) as cohorts
+  
+  inner join 
+  
+  @schema.@cg_table_prefixcohort_definition cg
+  
+  on cohorts.cohort_definition_id = cg.cohort_definition_id
+  
+  ;
+  "
+  
+
+  outcomes <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cg_table_prefix = cgTablePrefix,
+    c_table_prefix = cTablePrefix,
+    use_tte = useTte,
+    use_dcrc = useDcrc,
+    use_rf = useRf,
+    use_target = !is.null(targetId),
+    target_ids = paste0(targetId, collapse = ',')
+  ) %>%
+    tidyr::pivot_wider(
+      id_cols = c("cohortName", "cohortDefinitionId"), 
+      names_from = "type", 
+      values_from = c("value")
+    )
+  
+  
+  # add missing types with 0 values
+  colnameTypes <- c('timeToEvent','dechalRechal','riskFactors') 
+  if(sum(colnameTypes %in% colnames(outcomes)) != 3){
+    missingCols <- colnameTypes[!colnameTypes %in% colnames(outcomes)]
+    for(missingCol in missingCols){
+      outcomes[missingCol] <- 0
+    }
+  }
+  
+  # Add redundant columns - these are dep on each other
+  # so I only wrote code to extract one for speed
+  outcomes$caseSeries <- outcomes$riskFactors
+  
+  return(outcomes)
   
 }
 
@@ -164,6 +356,87 @@ getIncidenceTargets <- function(
     )
   
   return(targets)
+  
+}
+
+
+#' A function to extract the outcomes found in incidence
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template ciTablePrefix
+#' @template cgTablePrefix
+#' @template targetId
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the incidence outcome cohort ids and names
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' outcomes <- getIncidenceOutcomes(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getIncidenceOutcomes <- function(
+    connectionHandler,
+    schema,
+    ciTablePrefix = 'ci_',
+    cgTablePrefix = 'cg_',
+    targetId = NULL
+){
+  
+  sql <- "
+  
+  select distinct
+  cg.cohort_name, 
+  ci.outcome_cohort_definition_id as cohort_definition_id,
+  'cohortIncidence' as type,
+  1 as value 
+  
+  from 
+  @schema.@ci_table_prefixoutcome_def as ci
+  
+  inner join 
+  
+  @schema.@cg_table_prefixcohort_definition cg
+  
+  on ci.outcome_cohort_definition_id = cg.cohort_definition_id
+  
+  {@use_target}?{ 
+    inner join 
+    (select distinct outcome_id from @schema.@ci_table_prefixincidence_summary
+    where target_cohort_definition_id in (@target_id)) temp
+    on temp.outcome_id = ci.outcome_id
+  }
+  
+  ;
+  "
+  
+  outcomes <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cg_table_prefix = cgTablePrefix,
+    ci_table_prefix = ciTablePrefix,
+    use_target = !is.null(targetId),
+    target_id = paste0(targetId, collapse = ',')
+  ) %>%
+    tidyr::pivot_wider(
+      id_cols = c("cohortName", "cohortDefinitionId"), 
+      names_from = "type", 
+      values_from = c("value")
+    )
+  
+  return(outcomes)
   
 }
 
