@@ -31,9 +31,13 @@ getCohortDefinitions <- function(
     targetIds = NULL
 ){
   
-  sql <- 'select * 
-  from @schema.@cg_table_prefixcohort_definition
-  {@use_targets}?{where cohort_definition_id in (@target_id)}
+  
+  sql <- 'select cd.*, csd.json as subset_definition_json
+  from @schema.@cg_table_prefixcohort_definition cd
+  left join
+  @schema.@cg_table_prefixcohort_subset_definition csd
+  on cd.subset_definition_id = csd.subset_definition_id
+  {@use_targets}?{where cd.cohort_definition_id in (@target_id)}
   ;'
   
   result <- connectionHandler$queryDb(

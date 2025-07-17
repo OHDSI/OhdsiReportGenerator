@@ -13,7 +13,12 @@ getTargetTable(
   cmTablePrefix = "cm_",
   sccsTablePrefix = "sccs_",
   plpTablePrefix = "plp_",
-  databaseTable = "database_meta_data"
+  databaseTable = "database_meta_data",
+  getIncidenceInclusion = TRUE,
+  getCharacterizationInclusion = TRUE,
+  getPredictionInclusion = TRUE,
+  getCohortMethodInclusion = TRUE,
+  getSccsInclusion = TRUE
 )
 }
 \arguments{
@@ -34,6 +39,16 @@ getTargetTable(
 \item{plpTablePrefix}{The prefix used for the patient level prediction results tables}
 
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
+
+\item{getIncidenceInclusion}{Whether to check useage of the cohort in incidence}
+
+\item{getCharacterizationInclusion}{Whether to check useage of the cohort in characterization}
+
+\item{getPredictionInclusion}{Whether to check useage of the cohort in prediction}
+
+\item{getCohortMethodInclusion}{Whether to check useage of the cohort in cohort method}
+
+\item{getSccsInclusion}{Whether to check useage of the cohort in SCCS}
 }
 \value{
 Returns a data.frame with the columns: 
@@ -42,6 +57,8 @@ Returns a data.frame with the columns:
  \item{cohortName the name of the cohort}
  \item{subsetParent the number id of the parent cohort}
  \item{subsetDefinitionId the number id of the subset}
+ \item{subsetDefinitionJson the json of the subset}
+ \item{subsetCohortIds the ids of any cohorts that are restricted to by the subset logic}
  \item{numDatabase number of databases with the cohort}
  \item{databaseString all the names of the databases with the cohort}
  \item{databaseCount all the names of the databases with the cohort and their sizes}

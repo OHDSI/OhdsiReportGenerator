@@ -14,6 +14,11 @@
 #' @template sccsTablePrefix
 #' @template plpTablePrefix
 #' @template databaseTable
+#' @param getIncidenceInclusion Whether to check useage of the cohort in incidence
+#' @param getCharacterizationInclusion Whether to check useage of the cohort in characterization
+#' @param getPredictionInclusion Whether to check useage of the cohort in prediction
+#' @param getCohortMethodInclusion Whether to check useage of the cohort in cohort method
+#' @param getSccsInclusion Whether to check useage of the cohort in SCCS
 #' @family Helpers
 #' @return
 #' Returns a data.frame with the columns: 
@@ -22,6 +27,8 @@
 #'  \item{cohortName the name of the cohort}
 #'  \item{subsetParent the number id of the parent cohort}
 #'  \item{subsetDefinitionId the number id of the subset}
+#'  \item{subsetDefinitionJson the json of the subset}
+#'  \item{subsetCohortIds the ids of any cohorts that are restricted to by the subset logic}
 #'  \item{numDatabase number of databases with the cohort}
 #'  \item{databaseString all the names of the databases with the cohort}
 #'  \item{databaseCount all the names of the databases with the cohort and their sizes}
@@ -61,15 +68,23 @@ getTargetTable <- function(
   cmTablePrefix = 'cm_',
   sccsTablePrefix = 'sccs_',
   plpTablePrefix = 'plp_',
-  databaseTable = 'database_meta_data'
+  databaseTable = 'database_meta_data',
+  getIncidenceInclusion = TRUE,
+  getCharacterizationInclusion = TRUE,
+  getPredictionInclusion = TRUE,
+  getCohortMethodInclusion = TRUE,
+  getSccsInclusion = TRUE
 ){
   
   cohorts <- getCohortDefinitions(
     connectionHandler = connectionHandler,
     schema = schema
   ) %>%
-    dplyr::select("cohortDefinitionId", "cohortName", "subsetParent", "subsetDefinitionId") %>%
+    dplyr::select("cohortDefinitionId", "cohortName", "subsetParent", "subsetDefinitionId", "subsetDefinitionJson") %>%
     dplyr::rename(cohortId = "cohortDefinitionId")
+  
+  # TODO: process subsetDefinitionJson
+  cohorts$subsetCohortId <- as.double(unlist(lapply(cohorts$subsetDefinitionJson, function(json){extractSubsetCohorts(json)})))
   
   # find parents names
   parents <- cohorts %>% 
@@ -101,7 +116,7 @@ getTargetTable <- function(
       databaseStringCount = paste0(unique(paste0(.data$databaseName,' (', .data$cohortSubjects ,')')), collapse = ', '),
       minSubjectCount = min(.data$cohortSubjects, na.rm = T),
       maxSubjectCount = max(.data$cohortSubjects, na.rm = T),
-      minEntryCount = max(.data$cohortEntries, na.rm = T),
+      minEntryCount = min(.data$cohortEntries, na.rm = T),
       maxEntryCount = max(.data$cohortEntries, na.rm = T)
     )
   
@@ -109,84 +124,94 @@ getTargetTable <- function(
   
   # now find whether it is a target for each analysis
   
-  inc <- tryCatch(getIncidenceTargets(
-    connectionHandler = connectionHandler,
-    schema = schema,
-    cgTablePrefix = cgTablePrefix,
-    ciTablePrefix = ciTablePrefix
+  if(getIncidenceInclusion){
+    inc <- tryCatch(getIncidenceTargets(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cgTablePrefix = cgTablePrefix,
+      ciTablePrefix = ciTablePrefix
     ), error = function(e){return(NULL)})
-  if(!is.null(inc)){
-    cohortCounts <- merge(
-      x = cohortCounts, 
-      y = inc, 
-      by.x = c('cohortId','cohortName'),
-      by.y = c('cohortDefinitionId','cohortName'),
-      all.x = T
+    if(!is.null(inc)){
+      cohortCounts <- merge(
+        x = cohortCounts, 
+        y = inc, 
+        by.x = c('cohortId','cohortName'),
+        by.y = c('cohortDefinitionId','cohortName'),
+        all.x = T
       )
+    }
   }
   
-  char <- tryCatch(getCharacterizationTargets(
-    connectionHandler = connectionHandler,
-    schema = schema,
-    cgTablePrefix = cgTablePrefix,
-    cTablePrefix = cTablePrefix
-  ), error = function(e){return(NULL)})
-  if(!is.null(char)){
-    cohortCounts <- merge(
-      x = cohortCounts, 
-      y = char, 
-      by.x = c('cohortId','cohortName'),
-      by.y = c('cohortDefinitionId','cohortName'),
-      all.x = T
-    )
+  if(getCharacterizationInclusion){
+    char <- tryCatch(getCharacterizationTargets(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cgTablePrefix = cgTablePrefix,
+      cTablePrefix = cTablePrefix
+    ), error = function(e){return(NULL)})
+    if(!is.null(char)){
+      cohortCounts <- merge(
+        x = cohortCounts, 
+        y = char, 
+        by.x = c('cohortId','cohortName'),
+        by.y = c('cohortDefinitionId','cohortName'),
+        all.x = T
+      )
+    }
   }
   
-  pred <- tryCatch(getPredictionTargets(
-    connectionHandler = connectionHandler,
-    schema = schema,
-    cgTablePrefix = cgTablePrefix,
-    plpTablePrefix = plpTablePrefix
-  ), error = function(e){return(NULL)})
-  if(!is.null(pred)){
-    cohortCounts <- merge(
-      x = cohortCounts, 
-      y = pred, 
-      by.x = c('cohortId','cohortName'),
-      by.y = c('cohortDefinitionId','cohortName'),
-      all.x = T
-    )
+  if(getPredictionInclusion){
+    pred <- tryCatch(getPredictionTargets(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cgTablePrefix = cgTablePrefix,
+      plpTablePrefix = plpTablePrefix
+    ), error = function(e){return(NULL)})
+    if(!is.null(pred)){
+      cohortCounts <- merge(
+        x = cohortCounts, 
+        y = pred, 
+        by.x = c('cohortId','cohortName'),
+        by.y = c('cohortDefinitionId','cohortName'),
+        all.x = T
+      )
+    }
   }
   
-  cm <- tryCatch(getCmTargets(
-    connectionHandler = connectionHandler,
-    schema = schema,
-    cgTablePrefix = cgTablePrefix,
-    cmTablePrefix = cmTablePrefix
-  ), error = function(e){return(NULL)})
-  if(!is.null(cm)){
-    cohortCounts <- merge(
-      x = cohortCounts, 
-      y = cm, 
-      by.x = c('cohortId','cohortName'),
-      by.y = c('cohortDefinitionId','cohortName'),
-      all.x = T
-    )
+  if(getCohortMethodInclusion){
+    cm <- tryCatch(getCmTargets(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cgTablePrefix = cgTablePrefix,
+      cmTablePrefix = cmTablePrefix
+    ), error = function(e){return(NULL)})
+    if(!is.null(cm)){
+      cohortCounts <- merge(
+        x = cohortCounts, 
+        y = cm, 
+        by.x = c('cohortId','cohortName'),
+        by.y = c('cohortDefinitionId','cohortName'),
+        all.x = T
+      )
+    }
   }
   
-  sccs <- tryCatch(getSccsTargets(
-    connectionHandler = connectionHandler,
-    schema = schema,
-    cgTablePrefix = cgTablePrefix,
-    sccsTablePrefix = sccsTablePrefix
-  ), error = function(e){return(NULL)})
-  if(!is.null(sccs)){
-    cohortCounts <- merge(
-      x = cohortCounts, 
-      y = sccs, 
-      by.x = c('cohortId','cohortName'),
-      by.y = c('cohortDefinitionId','cohortName'),
-      all.x = T
-    )
+  if(getSccsInclusion){
+    sccs <- tryCatch(getSccsTargets(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cgTablePrefix = cgTablePrefix,
+      sccsTablePrefix = sccsTablePrefix
+    ), error = function(e){return(NULL)})
+    if(!is.null(sccs)){
+      cohortCounts <- merge(
+        x = cohortCounts, 
+        y = sccs, 
+        by.x = c('cohortId','cohortName'),
+        by.y = c('cohortDefinitionId','cohortName'),
+        all.x = T
+      )
+    }
   }
   
   if(sum(is.na(cohortCounts)) !=0){
@@ -512,3 +537,38 @@ getOutcomeTable <- function(
   return(cohortCounts)
 }
 
+
+
+
+extractSubsetCohorts <- function(json){
+  
+  if(is.na(json)){
+    return("")
+  }
+  
+  if(is.null(json)){
+    return("")
+  }
+  
+  
+  subsetDefs <- lapply(json, function(x) ParallelLogger::convertJsonToSettings(x))
+  
+  subsetOps <- lapply(subsetDefs, function(x){
+    x$subsetOperators
+  })
+  
+  # remove name and extract cohortIds when subsetType == "CohortSubsetOperator"
+  subsetUnique <- subsetOps
+  subsetCohorts <- c()
+  for(sind in 1:length(subsetUnique)){
+    for(sind2 in 1:length(subsetUnique[[sind]])){
+      if(subsetUnique[[sind]][[sind2]]$subsetType == 'CohortSubsetOperator'){
+        subsetCohorts <- c(subsetCohorts,subsetUnique[[sind]][[sind2]]$cohortIds)
+      }
+    }
+  }
+  subsetCohorts <- paste0(unique(subsetCohorts), collapse = '')
+  
+  return(subsetCohorts)
+  
+}

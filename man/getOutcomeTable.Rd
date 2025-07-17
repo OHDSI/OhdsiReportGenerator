@@ -47,6 +47,8 @@ Returns a data.frame with the columns:
  \item{subsetDefinitionId the number id of the subset}
  \item{numDatabase number of databases with the cohort}
  \item{databaseString all the names of the databases with the cohort}
+ \item{databaseIdString all the ids of the databases with the cohort}
+ \item{databaseStringCount all the names of the databases with the cohort plus their counts}
  \item{databaseCount all the names of the databases with the cohort and their sizes}
  \item{minSubjectCount number of subjects in databases with lowest count}
  \item{maxSubjectCount number of subjects in databases with highest count}
