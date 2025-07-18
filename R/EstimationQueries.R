@@ -633,17 +633,25 @@ getSccsTargets <- function(
   
   sql <- "SELECT distinct 
     cd.cohort_name,
-    sr.covariate_id as cohort_definition_id, 
+    sc.era_id as cohort_definition_id, 
     'selfControlledCaseSeries' as type,
     1 as value
 
        FROM
       
       @schema.@sccs_table_prefixresult as sr
+      
+      INNER JOIN 
+      @schema.@sccs_table_prefixcovariate sc ON (
+    sc.exposures_outcome_set_id = sr.exposures_outcome_set_id AND
+    sc.database_id = sr.database_id AND
+    sc.analysis_id = sr.analysis_id AND
+    sc.covariate_id = sr.covariate_id
+  )
           
       inner join @schema.@cg_table_prefixcohort_definition cd
       
-      on sr.covariate_id = cd.cohort_definition_id
+      on sc.era_id = cd.cohort_definition_id
       ;"
   
   targets <- connectionHandler$queryDb(
