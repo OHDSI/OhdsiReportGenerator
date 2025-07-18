@@ -31,14 +31,30 @@ getCohortDefinitions <- function(
     targetIds = NULL
 ){
   
+  # to make this backward compatible for older CohortGenerator
+  subsetTableMissing <- is.null(tryCatch({
+    connectionHandler$queryDb(
+      sql = "select * from @schema.@cg_table_prefixcohort_subset_definition;",
+      schema = schema,
+      cg_table_prefix = cgTablePrefix
+      )
+  }, error = function(e){return(NULL)}
+  ))
   
-  sql <- 'select cd.*, csd.json as subset_definition_json
+  if(!subsetTableMissing){ 
+    sql <- 'select cd.*, csd.json as subset_definition_json
   from @schema.@cg_table_prefixcohort_definition cd
   left join
   @schema.@cg_table_prefixcohort_subset_definition csd
   on cd.subset_definition_id = csd.subset_definition_id
   {@use_targets}?{where cd.cohort_definition_id in (@target_id)}
   ;'
+  } else{
+    sql <- "select *, NULL as subset_definition_json
+  from @schema.@cg_table_prefixcohort_definition 
+  {@use_targets}?{where cohort_definition_id in (@target_id)}
+  ;"
+  }
   
   result <- connectionHandler$queryDb(
     sql = sql, 
