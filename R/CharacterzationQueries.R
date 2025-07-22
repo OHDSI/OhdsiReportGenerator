@@ -285,6 +285,49 @@ getCharacterizationOutcomes <- function(
   # so I only wrote code to extract one for speed
   outcomes$caseSeries <- outcomes$riskFactors
   
+  # get case series tar: risk_window_start/risk_window_end/start_anchor/end_anchor and outcome_washout_days
+  
+  if(useRf){
+    outcomeDetails <- tryCatch({connectionHandler$queryDb( 
+      sql = "select distinct
+        outcome_cohort_id as cohort_definition_id,
+        risk_window_start,
+        risk_window_end,
+        start_anchor,
+        end_anchor,
+        outcome_washout_days
+  
+        from @schema.@c_table_prefixcohort_counts
+      where outcome_cohort_id is not NULL and 
+      outcome_cohort_id != 0;",
+      schema = schema,
+      c_table_prefix = cTablePrefix
+    ) %>% 
+      dplyr::rowwise() %>%
+      dplyr::mutate(
+        tarName = paste0('(',.data$startAnchor, ' + ',.data$riskWindowStart , ') - (',
+                         .data$endAnchor, ' + ',.data$riskWindowEnd , ')'),
+        tarString = paste0(.data$riskWindowStart, '/',.data$startAnchor , '/',
+                           .data$riskWindowEnd, '/',.data$endAnchor )
+      ) %>%
+      dplyr::select("cohortDefinitionId", "tarName", "tarString", "outcomeWashoutDays") %>%
+      dplyr::group_by(.data$cohortDefinitionId) %>%
+      dplyr::summarise(
+        tarNames = paste0(unique(.data$tarName), collapse = ':'),
+        tarStrings = paste0(unique(.data$tarString), collapse = ':'),
+        outcomeWashoutDays = paste0(unique(.data$outcomeWashoutDays), collapse = ':')
+      )}, error = function(e){NULL})
+    
+    if(!is.null(outcomeDetails)){
+      outcomes <- merge(
+        x = outcomes,
+        y = outcomeDetails, 
+        by = 'cohortDefinitionId'
+      )
+    }
+    
+  }
+  
   return(outcomes)
   
 }
