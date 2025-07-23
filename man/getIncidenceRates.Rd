@@ -33,6 +33,7 @@ getIncidenceRates(
 Returns a data.frame with the columns:
 \itemize{
  \item{databaseName the name of the database}
+ \item{databaseId the unique id of the database}
  \item{targetName the target cohort name}
  \item{targetId the target cohort unique identifier}
  \item{outcomeName the outcome name}

@@ -502,6 +502,7 @@ getIncidenceOutcomes <- function(
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
+#'  \item{databaseId the unique id of the database}
 #'  \item{targetName the target cohort name}
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{outcomeName the outcome name}
@@ -551,6 +552,7 @@ getIncidenceRates <- function(
   
   sql <- 'select 
     d.cdm_source_abbreviation as database_name, 
+    d.database_id,
     cg1.cohort_name as target_name,
     i.target_cohort_definition_id as target_id,
     cg2.cohort_name as outcome_name,
