@@ -64,7 +64,7 @@ getCharacterizationTargets <- function(
 
   {@use_tte}?{
     union
-    select tte.target_cohort_definition_id as cohort_definition_id,
+    select distinct tte.target_cohort_definition_id as cohort_definition_id,
     'timeToEvent' as type,
     1 as value
     from @schema.@c_table_prefixtime_to_event tte
