@@ -38,6 +38,7 @@ Returns a data.frame with the columns:
  \item{targetId the target cohort unique identifier}
  \item{outcomeName the outcome name}
  \item{outcomeId the outcome unique identifier}
+ \item(tar the friendly time-at-risk string)
  \item{cleanWindow clean windown around outcome}
  \item{subgroupName name for the result subgroup}
  \item{ageGroupName name for the result age group}
@@ -83,6 +84,10 @@ Other Characterization:
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseContinuousFeatures}()},
 \code{\link{getCaseCounts}()},
+\code{\link{getCaseTargetBinaryFeatures}()},
+\code{\link{getCaseTargetCounts}()},
+\code{\link{getCharacterizationCohortBinary}()},
+\code{\link{getCharacterizationCohortContinuous}()},
 \code{\link{getCharacterizationDemographics}()},
 \code{\link{getCharacterizationOutcomes}()},
 \code{\link{getCharacterizationTargets}()},
@@ -91,9 +96,7 @@ Other Characterization:
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceTargets}()},
-\code{\link{getTargetBinaryFeatures}()},
 \code{\link{getTargetContinuousFeatures}()},
-\code{\link{getTargetCounts}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()}

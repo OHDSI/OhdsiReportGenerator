@@ -18,7 +18,8 @@ getTargetTable(
   getCharacterizationInclusion = TRUE,
   getPredictionInclusion = TRUE,
   getCohortMethodInclusion = TRUE,
-  getSccsInclusion = TRUE
+  getSccsInclusion = TRUE,
+  printTimes = FALSE
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ getTargetTable(
 \item{getCohortMethodInclusion}{Whether to check useage of the cohort in cohort method}
 
 \item{getSccsInclusion}{Whether to check useage of the cohort in SCCS}
+
+\item{printTimes}{Whether to print how long each query took}
 }
 \value{
 Returns a data.frame with the columns: 
@@ -97,7 +100,6 @@ targetTable <- getTargetTable(
 }
 \seealso{
 Other Helpers: 
-\code{\link{getOutcomeTable}()},
-\code{\link{getParentTable}()}
+\code{\link{getOutcomeTable}()}
 }
 \concept{Helpers}

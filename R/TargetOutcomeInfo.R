@@ -19,6 +19,7 @@
 #' @param getPredictionInclusion Whether to check useage of the cohort in prediction
 #' @param getCohortMethodInclusion Whether to check useage of the cohort in cohort method
 #' @param getSccsInclusion Whether to check useage of the cohort in SCCS
+#' @param printTimes Whether to print how long each query took 
 #' @family Helpers
 #' @return
 #' Returns a data.frame with the columns: 
@@ -73,8 +74,12 @@ getTargetTable <- function(
   getCharacterizationInclusion = TRUE,
   getPredictionInclusion = TRUE,
   getCohortMethodInclusion = TRUE,
-  getSccsInclusion = TRUE
+  getSccsInclusion = TRUE,
+  printTimes = FALSE
 ){
+  
+  start <- Sys.time()
+  firstStart <- start
   
   cohorts <- getCohortDefinitions(
     connectionHandler = connectionHandler,
@@ -82,6 +87,12 @@ getTargetTable <- function(
   ) %>%
     dplyr::select("cohortDefinitionId", "cohortName", "subsetParent", "subsetDefinitionId", "subsetDefinitionJson") %>%
     dplyr::rename(cohortId = "cohortDefinitionId")
+  
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('extracting target cohorts: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
   
   # TODO: process subsetDefinitionJson
   cohorts$subsetCohortId <- as.double(unlist(lapply(cohorts$subsetDefinitionJson, function(json){extractSubsetCohorts(json)})))
@@ -96,6 +107,12 @@ getTargetTable <- function(
     )
   # add the parent name to cohorts
   cohorts <- merge(cohorts, parents, by = 'subsetParent', all.x = TRUE)
+  
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('processing target cohorts: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
   
   sql <- "select 
   dt.cdm_source_abbreviation as database_name,
@@ -122,6 +139,12 @@ getTargetTable <- function(
   
   cohortCounts <- merge(cohorts, counts, by = 'cohortId')
   
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('extracting target cohort counts: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
+  
   # now find whether it is a target for each analysis
   
   if(getIncidenceInclusion){
@@ -140,6 +163,13 @@ getTargetTable <- function(
         all.x = T
       )
     }
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('extracting incidence targets: ', (end-start), ' ', units((end-start))))
+    }
+    start <- Sys.time()
+    
   }
   
   if(getCharacterizationInclusion){
@@ -147,7 +177,8 @@ getTargetTable <- function(
       connectionHandler = connectionHandler,
       schema = schema,
       cgTablePrefix = cgTablePrefix,
-      cTablePrefix = cTablePrefix
+      cTablePrefix = cTablePrefix,
+      printTimes = printTimes
     ), error = function(e){return(NULL)})
     if(!is.null(char)){
       cohortCounts <- merge(
@@ -158,6 +189,8 @@ getTargetTable <- function(
         all.x = T
       )
     }
+    
+    start <- Sys.time() # reset time if char called
   }
   
   if(getPredictionInclusion){
@@ -176,6 +209,13 @@ getTargetTable <- function(
         all.x = T
       )
     }
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('extracting prediction target cohorts: ', (end-start), ' ', units((end-start))))
+    }
+    start <- Sys.time()
+    
   }
   
   if(getCohortMethodInclusion){
@@ -194,6 +234,13 @@ getTargetTable <- function(
         all.x = T
       )
     }
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('extracting cohort method target cohorts: ', (end-start), ' ', units((end-start))))
+    }
+    start <- Sys.time()
+    
   }
   
   if(getSccsInclusion){
@@ -212,6 +259,12 @@ getTargetTable <- function(
         all.x = T
       )
     }
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('extracting sscs target cohorts: ', (end-start), ' ', units((end-start))))
+    }
+    start <- Sys.time()
   }
   
   if(sum(is.na(cohortCounts)) !=0){
@@ -238,73 +291,16 @@ getTargetTable <- function(
   cohortCounts <- cohortCounts %>% 
     dplyr::arrange(.data$parentName, .data$cohortName)
   
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('final target cohort processing: ', (end-start), ' ', units((end-start))))
+  }
+  
+  # report total time
+  print(paste0('-- Total time for extarcting target table: ', (end-firstStart), ' ', units((end-firstStart))))
   
 return(cohortCounts)
 }
-
-
-
-#' Extract the parent cohort details from the target table
-#' @description
-#' This function extracts the parents cohort details from the target table
-#'
-#' @details
-#' Input the targetTable and this function extracts the parent cohorts and summary details about them
-#'
-#' @param targetTable The output from getTargetTable()
-#' 
-#' @family Helpers
-#' @return
-#' Returns a data.frame with the parent cohorts used as targets 
-#'
-#' @export
-#' @examples 
-#' conDet <- getExampleConnectionDetails()
-#' 
-#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
-#' 
-#' targetTable <- getTargetTable(
-#'   connectionHandler = connectionHandler, 
-#'   schema = 'main'
-#' )
-#' 
-#' parentTable <- getParentTable(targetTable)
-#' 
-getParentTable <- function(
-    targetTable
-    ){
-  
-  parentTable <- targetTable %>%
-    dplyr::filter(.data$cohortId == .data$subsetParent)
-  
-  #targetTable %>%
-  childSum <- targetTable %>%
-    dplyr::filter(.data$cohortId != .data$subsetParent) %>% 
-    dplyr::group_by(.data$subsetParent) %>%
-    dplyr::summarise(
-      numChildren = length(unique(.data$cohortId)),
-      minChildrenSubjectCount = min(.data$minSubjectCount),
-      maxChildrenSubjectCount = max(.data$maxSubjectCount),
-      anyChildrenIncidence = max(.data$cohortIncidence, na.rm = T),
-      anyChildrenDatabaseComparator = max(.data$databaseComparator, na.rm = T),
-      anyChildrenDechalRechal = max(.data$dechalRechal, na.rm = T),
-      anyChildrenTimeToEvent = max(.data$timeToEvent, na.rm = T),
-      anyChildrenRiskFactors = max(.data$riskFactors, na.rm = T),
-      anyChildrenPrediction = max(.data$prediction, na.rm = T),
-      anyChildrenCohortMethod = max(.data$cohortMethod, na.rm = T),
-      anyChildrenSccs = max(.data$selfControlledCaseSeries, na.rm = T)
-    )
-  
-  parentTable <- merge(parentTable, childSum, by = 'subsetParent', all.x = T)
-    
-  if(sum(is.na(parentTable))>0){
-    parentTable[is.na(parentTable)] <- 0
-  }
-    
-  return(parentTable)
-}
-
-
 
 
 
@@ -325,6 +321,7 @@ getParentTable <- function(
 #' @template plpTablePrefix
 #' @template databaseTable
 #' @template targetId
+#' @param printTimes whether to print the time it takes to run each SQL query
 #' @family Helpers
 #' @return
 #' Returns a data.frame with the columns: 
@@ -373,8 +370,12 @@ getOutcomeTable <- function(
     sccsTablePrefix = 'sccs_',
     plpTablePrefix = 'plp_',
     databaseTable = 'database_meta_data',
-    targetId = NULL
+    targetId = NULL,
+    printTimes = FALSE
 ){
+  
+  start <- Sys.time()
+  firstStart <- start
   
   cohorts <- getCohortDefinitions(
     connectionHandler = connectionHandler,
@@ -382,6 +383,12 @@ getOutcomeTable <- function(
   ) %>%
     dplyr::select("cohortDefinitionId", "cohortName", "subsetParent", "subsetDefinitionId") %>%
     dplyr::rename(cohortId = "cohortDefinitionId")
+  
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('extracting outcome cohorts: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
   
   # find parents names
   parents <- cohorts %>% 
@@ -393,6 +400,12 @@ getOutcomeTable <- function(
     )
   # add the parent name to cohorts
   cohorts <- merge(cohorts, parents, by = 'subsetParent', all.x = TRUE)
+  
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('processing outcome parent cohorts: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
   
   sql <- "select 
   dt.cdm_source_abbreviation as database_name,
@@ -419,6 +432,12 @@ getOutcomeTable <- function(
   
   cohortCounts <- merge(cohorts, counts, by = 'cohortId')
   
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('adding outcome cohort counts: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
+  
   # now find whether it is a target for each analysis
   
   inc <- tryCatch(getIncidenceOutcomes(
@@ -438,12 +457,18 @@ getOutcomeTable <- function(
     )
   }
   
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('finding incidence outcomes: ', (end-start), ' ', units((end-start))))
+  }
+  
   char <- tryCatch(getCharacterizationOutcomes(
     connectionHandler = connectionHandler,
     schema = schema,
     cgTablePrefix = cgTablePrefix,
     cTablePrefix = cTablePrefix, 
-    targetId = targetId
+    targetId = targetId, 
+    printTimes = printTimes
   ), error = function(e){return(NULL)})
   if(!is.null(char)){
     cohortCounts <- merge(
@@ -454,6 +479,8 @@ getOutcomeTable <- function(
       all.x = T
     )
   }
+  
+  start <- Sys.time()
   
   pred <- tryCatch(getPredictionOutcomes(
     connectionHandler = connectionHandler,
@@ -472,6 +499,12 @@ getOutcomeTable <- function(
     )
   }
   
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('extracting prediction cohorts: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
+  
   cm <- tryCatch(getCmOutcomes(
     connectionHandler = connectionHandler,
     schema = schema,
@@ -489,6 +522,12 @@ getOutcomeTable <- function(
     )
   }
   
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('extracting cohort method cohorts: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
+  
   sccs <- tryCatch(getSccsOutcomes(
     connectionHandler = connectionHandler,
     schema = schema,
@@ -505,6 +544,12 @@ getOutcomeTable <- function(
       all.x = T
     )
   }
+  
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('extracting sccs cohorts: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
   
   if(sum(is.na(cohortCounts)) !=0){
     cohortCounts[is.na(cohortCounts)] <- 0
@@ -533,6 +578,13 @@ getOutcomeTable <- function(
   cohortCounts <- cohortCounts %>% 
     dplyr::arrange(.data$parentName, .data$cohortName)
   
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('final processing of outcome cohorts: ', (end-start), ' ', units((end-start))))
+  }
+  
+  # report total time
+  print(paste0('-- Total time for extarcting outcome table: ', (end-firstStart), ' ', units((end-firstStart))))
   
   return(cohortCounts)
 }

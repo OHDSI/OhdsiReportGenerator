@@ -14,7 +14,8 @@ getOutcomeTable(
   sccsTablePrefix = "sccs_",
   plpTablePrefix = "plp_",
   databaseTable = "database_meta_data",
-  targetId = NULL
+  targetId = NULL,
+  printTimes = FALSE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ getOutcomeTable(
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
 \item{targetId}{An integer corresponding to the target cohort ID}
+
+\item{printTimes}{whether to print the time it takes to run each SQL query}
 }
 \value{
 Returns a data.frame with the columns: 
@@ -83,7 +86,6 @@ outcomeTable <- getOutcomeTable(
 }
 \seealso{
 Other Helpers: 
-\code{\link{getParentTable}()},
 \code{\link{getTargetTable}()}
 }
 \concept{Helpers}

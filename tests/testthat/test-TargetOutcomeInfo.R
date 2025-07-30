@@ -27,33 +27,6 @@ test_that("getTargetTable", {
   
 })
 
-test_that("getParentTable", {
-  
-  targetTable <- getTargetTable(
-    connectionHandler, 
-    schema
-  )
-  
-  parentTable <- getParentTable(targetTable)
-  
-  testthat::expect_true(nrow(parentTable) > 0)
-  
-  testthat::expect_true("cohortId" %in% colnames(parentTable))
-  testthat::expect_true("cohortName" %in% colnames(parentTable))
-  testthat::expect_true("subsetParent" %in% colnames(parentTable))
-  testthat::expect_true("parentName" %in% colnames(parentTable))
-  testthat::expect_true("subsetDefinitionId" %in% colnames(parentTable))
-  testthat::expect_true("numDatabase" %in% colnames(parentTable))
-  testthat::expect_true("databaseString" %in% colnames(parentTable))
-  testthat::expect_true("minSubjectCount" %in% colnames(parentTable))
-  testthat::expect_true("maxSubjectCount" %in% colnames(parentTable))
-  
-  testthat::expect_true("numChildren" %in% colnames(parentTable))
-  testthat::expect_true("minChildrenSubjectCount" %in% colnames(parentTable))
-  testthat::expect_true("maxChildrenSubjectCount" %in% colnames(parentTable))
-  
-})
-
 
 test_that("getOutcomeTable", {
   

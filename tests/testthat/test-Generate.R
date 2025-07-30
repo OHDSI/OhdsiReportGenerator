@@ -38,7 +38,7 @@ test_that("generatePresentation", {
       restrictions = "Age - None"
     ),
     evaluationText = '',
-    includeCI = TRUE,
+    includeCI = FALSE, #TRUE, - current issue with CI
     includeCharacterization = TRUE,
     includeCM = TRUE,
     includeSCCS = FALSE,

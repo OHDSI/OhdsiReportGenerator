@@ -7,6 +7,7 @@
 #' @template schema
 #' @template cTablePrefix
 #' @template cgTablePrefix
+#' @param printTimes Print the time it takes to run each query
 #' @family Characterization
 #' 
 #' @return
@@ -28,29 +29,50 @@ getCharacterizationTargets <- function(
     connectionHandler,
     schema,
     cTablePrefix = 'c_',
-    cgTablePrefix = 'cg_'
+    cgTablePrefix = 'cg_',
+    printTimes = FALSE
     ){
   
+  start <- Sys.time()
   
   # first check each table
   useTte <- !is.null(tryCatch({connectionHandler$queryDb(
-    sql = "select * from @schema.@c_table_prefixtime_to_event where target_cohort_definition_id = 1;",
+    sql = "select top 1 * from @schema.@c_table_prefixtime_to_event;",
     schema = schema,
     c_table_prefix = cTablePrefix
   )}, error = function(e){return(NULL)}))
+  
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('checking time_to_event table exists: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
   
   useDcrc <- !is.null(tryCatch({connectionHandler$queryDb(
-    sql = "select * from @schema.@c_table_prefixdechallenge_rechallenge where target_cohort_definition_id = 1;",
+    sql = "select top 1 * from @schema.@c_table_prefixdechallenge_rechallenge;",
     schema = schema,
     c_table_prefix = cTablePrefix
   )}, error = function(e){return(NULL)}))
+  
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('checking dechallenge_rechallenge table exists: ',  (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
   
   useRf <- !is.null(tryCatch({connectionHandler$queryDb(
-    sql = "select * from @schema.@c_table_prefixcohort_details where target_cohort_id = 1;",
+    sql = "select top 1 * from @schema.@c_table_prefixcohort_details;",
     schema = schema,
     c_table_prefix = cTablePrefix
   )}, error = function(e){return(NULL)}))
   
+  end <- Sys.time()
+  
+  if(printTimes){
+    print(paste0('checking cohort_details table exists: ',  (end-start), ' ', units((end-start))))
+  }
+  
+  start <- Sys.time()
 
   sql <- "
   
@@ -64,10 +86,11 @@ getCharacterizationTargets <- function(
 
   {@use_tte}?{
     union
-    select distinct tte.target_cohort_definition_id as cohort_definition_id,
+    select tte.target_cohort_definition_id as cohort_definition_id,
     'timeToEvent' as type,
     1 as value
     from @schema.@c_table_prefixtime_to_event tte
+    group by tte.target_cohort_definition_id
   }
   
   {@use_dcrc}?{
@@ -123,6 +146,14 @@ getCharacterizationTargets <- function(
       values_from = c("value")
     )
   
+  end <- Sys.time()
+  
+  if(printTimes){
+    print(paste0('extracting characterization target details: ',  (end-start), ' ', units((end-start))))
+  }
+  
+  start <- Sys.time()
+  
   # add missing types with 0 values
   colnameTypes <- c('timeToEvent','dechalRechal','riskFactors','databaseComparator') 
 
@@ -137,6 +168,12 @@ getCharacterizationTargets <- function(
   # so I only wrote code to extract one for speed
   targets$caseSeries <- targets$riskFactors
   targets$cohortComparator <- targets$databaseComparator
+  
+  end <- Sys.time()
+  
+  if(printTimes){
+    print(paste0('processing characterization target details: ', (end-start), ' ', units((end-start))))
+  }
   
   return(targets)
   
@@ -153,6 +190,8 @@ getCharacterizationTargets <- function(
 #' @template cTablePrefix
 #' @template cgTablePrefix
 #' @template targetId
+#' @param printTimes Print the time it takes to run each query
+#' 
 #' @family Characterization
 #' 
 #' @return
@@ -175,27 +214,49 @@ getCharacterizationOutcomes <- function(
   schema,
   cTablePrefix = 'c_',
   cgTablePrefix = 'cg_',
-  targetId = NULL
+  targetId = NULL,
+  printTimes = FALSE
 ){
+  
+  start <- Sys.time()
   
   # first check each table
   useTte <- !is.null(tryCatch({connectionHandler$queryDb(
-    sql = "select * from @schema.@c_table_prefixtime_to_event where target_cohort_definition_id = 1;",
+    sql = "select top 1 * from @schema.@c_table_prefixtime_to_event;",
     schema = schema,
     c_table_prefix = cTablePrefix
   )}, error = function(e){return(NULL)}))
+  
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('checking time_to_event table exists: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
   
   useDcrc <- !is.null(tryCatch({connectionHandler$queryDb(
-    sql = "select * from @schema.@c_table_prefixdechallenge_rechallenge where target_cohort_definition_id = 1;",
+    sql = "select top 1 * from @schema.@c_table_prefixdechallenge_rechallenge;",
     schema = schema,
     c_table_prefix = cTablePrefix
   )}, error = function(e){return(NULL)}))
   
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('checking dechallenge_rechallenge table exists: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
+  
   useRf <- !is.null(tryCatch({connectionHandler$queryDb(
-    sql = "select * from @schema.@c_table_prefixcohort_details where target_cohort_id = 1;",
+    sql = "select top 1 * from @schema.@c_table_prefixcohort_details;",
     schema = schema,
     c_table_prefix = cTablePrefix
   )}, error = function(e){return(NULL)}))
+  
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('checking cohort_details table exists: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
+  
   
   sql <- "
   
@@ -209,7 +270,7 @@ getCharacterizationOutcomes <- function(
 
   {@use_tte}?{
     union
-    select tte.outcome_cohort_definition_id as cohort_definition_id,
+    select distinct tte.outcome_cohort_definition_id as cohort_definition_id,
     'timeToEvent' as type,
     1 as value
     from @schema.@c_table_prefixtime_to_event tte
@@ -271,6 +332,12 @@ getCharacterizationOutcomes <- function(
       values_from = c("value")
     )
   
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('extracting characterization outcome cohort details: ', (end-start), ' ', units((end-start))))
+  }
+  start <- Sys.time()
+  
   
   # add missing types with 0 values
   colnameTypes <- c('timeToEvent','dechalRechal','riskFactors') 
@@ -326,6 +393,11 @@ getCharacterizationOutcomes <- function(
       )
     }
     
+  }
+  
+  end <- Sys.time()
+  if(printTimes){
+    print(paste0('processing characterization outcomes and adding tars/washout: ', (end-start), ' ', units((end-start))))
   }
   
   return(outcomes)
@@ -507,6 +579,7 @@ getIncidenceOutcomes <- function(
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{outcomeName the outcome name}
 #'  \item{outcomeId the outcome unique identifier}
+#'  \item(tar the friendly time-at-risk string)
 #'  \item{cleanWindow clean windown around outcome}
 #'  \item{subgroupName name for the result subgroup}
 #'  \item{ageGroupName name for the result age group}
@@ -628,6 +701,11 @@ getIncidenceRates <- function(
   result[is.na(result)] <- 'Any'
   result <- unique(result)
   
+  # add friendly tar
+  result$tar <- paste0('( ',result$tarStartWith, ' + ', result$tarStartOffset, ' ) - ( ',
+                       result$tarEndWith, ' + ', result$tarEndOffset, ' )')
+  result <- result %>% dplyr::relocate("tar", .after = "outcomeId")
+  
   return(result)
 }
 
@@ -650,6 +728,7 @@ getIncidenceRates <- function(
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
+#'  \item{databaseId the unique identifier of the database}
 #'  \item{targetName the target cohort name}
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{outcomeName the outcome name}
@@ -686,6 +765,7 @@ getTimeToEvent <- function(
   # add code here
   sql <- "SELECT 
           d.CDM_SOURCE_ABBREVIATION as database_name,
+          d.database_id,
           target_cohorts.cohort_name as target_name,
           tte.target_cohort_definition_id as target_id,
           outcome_cohorts.cohort_name as outcome_name,
@@ -747,6 +827,7 @@ getTimeToEvent <- function(
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
+#'  \item{databaseId the unique identifier of the database}
 #'  \item{targetName the target cohort name}
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{outcomeName the outcome name}
@@ -795,6 +876,7 @@ getDechallengeRechallenge <- function(
   # add code here
   sql <- "SELECT 
           d.CDM_SOURCE_ABBREVIATION as database_name,
+          d.database_id,
           target_cohorts.cohort_name as target_name,
           dr.target_cohort_definition_id as target_id,
           outcome_cohorts.cohort_name as outcome_name,
@@ -868,6 +950,7 @@ getDechallengeRechallenge <- function(
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
+#'  \item{databaseId the unique identifier of the database}
 #'  \item{targetName the target cohort name}
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{outcomeName the outcome name}
@@ -885,12 +968,12 @@ getDechallengeRechallenge <- function(
 #' 
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #' 
-#' tc <- getTargetCounts(
+#' tc <- getCaseTargetCounts(
 #' connectionHandler = connectionHandler, 
 #' schema = 'main'
 #' )
 #' 
-getTargetCounts <- function(
+getCaseTargetCounts <- function(
     connectionHandler,
     schema,
     cTablePrefix = 'c_',
@@ -903,6 +986,7 @@ getTargetCounts <- function(
   sql <- "
   select distinct
   targets.database_name,
+  targets.database_id,
   target_cohorts.cohort_name as target_name,
   targets.target_id,
   outcome_cohorts.cohort_name as outcome_name,
@@ -910,6 +994,8 @@ getTargetCounts <- function(
   case when excludes.row_count is NULL then targets.row_count else
   targets.row_count - excludes.row_count end as row_count,
   case when excludes.person_count is NULL then targets.person_count
+  when (excludes.person_count < 0 AND targets.person_count > 0) then targets.person_count - FLOOR(ABS(excludes.person_count)/2)
+  when targets.person_count < 0 then targets.person_count
   else targets.person_count - excludes.person_count end as person_count,
   targets.min_prior_observation,
   targets.outcome_washout_days
@@ -918,6 +1004,7 @@ getTargetCounts <- function(
   
   (select 
   d.CDM_SOURCE_ABBREVIATION as database_name,
+  d.database_id,
   cc.target_cohort_ID as target_id,
   s2.outcome_cohort_id as outcome_id,
   cc.row_count,
@@ -1030,6 +1117,7 @@ cc.target_cohort_id = s2.target_cohort_id
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
+#'  \item{databaseId the unique identifier of the database}
 #'  \item{targetName the target cohort name}
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{outcomeName the outcome name}
@@ -1069,6 +1157,7 @@ getCaseCounts <- function(
   sql <- "
   select 
   d.CDM_SOURCE_ABBREVIATION as database_name,
+  d.database_id,
   target_cohorts.cohort_name as target_name,
   cc.target_cohort_ID as target_id,
   outcome_cohorts.cohort_name as outcome_name,
@@ -1140,6 +1229,7 @@ getCaseCounts <- function(
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
+#'  \item{databaseId the unique identifier of the database}
 #'  \item{targetName the target cohort name}
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{outcomeName the outcome name}
@@ -1183,6 +1273,7 @@ getCaseBinaryFeatures <- function(
   sql <-  
     "select 
 d.CDM_SOURCE_ABBREVIATION as database_name,
+c.database_id,
 target.cohort_name as target_name,
 cd.TARGET_COHORT_ID,
 outcome.cohort_name as outcome_name,
@@ -1280,6 +1371,7 @@ result <- connectionHandler$queryDb(
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
+#'  \item{databaseId the unique identifier of the database}
 #'  \item{targetName the target cohort name}
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{outcomeName the outcome name}
@@ -1336,7 +1428,7 @@ getCharacterizationDemographics <- function(
     outcomeIds = outcomeId, 
     analysisIds = analysisIds
   )
-  ageDataT <- getTargetBinaryFeatures(
+  ageDataT <- getCaseTargetBinaryFeatures(
     connectionHandler = connectionHandler, 
     schema = schema, 
     cTablePrefix = cTablePrefix,
@@ -1346,7 +1438,7 @@ getCharacterizationDemographics <- function(
     analysisIds = analysisIds
   )
   
-  countT <- getTargetCounts(
+  countT <- getCaseTargetCounts(
     connectionHandler = connectionHandler, 
     schema = schema, 
     cTablePrefix = cTablePrefix,
@@ -1359,11 +1451,12 @@ getCharacterizationDemographics <- function(
     dplyr::inner_join(
       y = countT %>% dplyr::select(
         "databaseName",
+        "databaseId",
         "minPriorObservation",
         "outcomeWashoutDays",
         "personCount"
       ), 
-      by = c("databaseName", 'minPriorObservation', 'outcomeWashoutDays'),
+      by = c("databaseName","databaseId", 'minPriorObservation', 'outcomeWashoutDays'),
       relationship = "many-to-many" #fix warning
       )
   
@@ -1411,6 +1504,7 @@ return(allData)
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
+#'  \item{databaseId the unique identifier of the database}
 #'  \item{targetName the target cohort name}
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{outcomeName the outcome name}
@@ -1431,12 +1525,12 @@ return(allData)
 #' 
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #' 
-#' tbf <- getTargetBinaryFeatures (
+#' tbf <- getCaseTargetBinaryFeatures (
 #' connectionHandler = connectionHandler, 
 #' schema = 'main'
 #' )
 #' 
-getTargetBinaryFeatures <- function(
+getCaseTargetBinaryFeatures <- function(
     connectionHandler,
     schema,
     cTablePrefix = 'c_',
@@ -1451,6 +1545,7 @@ getTargetBinaryFeatures <- function(
     "
 select 
 d.CDM_SOURCE_ABBREVIATION as database_name,
+t.database_id,
 target.cohort_name as target_name,
 t.TARGET_COHORT_ID,
 outcome.cohort_name as outcome_name,
@@ -1460,6 +1555,8 @@ t.outcome_washout_days,
 t.covariate_id,
 t.covariate_name,
 case when e.sum_value is NULL then t.sum_value
+when (e.sum_value < 0 AND t.sum_value > 0) then t.sum_value - ABS(e.sum_value)/2 
+when t.sum_value < 0 then t.sum_value
 else t.sum_value - e.sum_value end as sum_value,
 t.sum_value as raw_sum,
 t.average_value as raw_average
@@ -1682,7 +1779,7 @@ getBinaryRiskFactors <- function(
     outcomeIds = outcomeId
   )
   
-  targetCounts <- getTargetCounts(
+  targetCounts <- getCaseTargetCounts(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix,
@@ -1703,7 +1800,7 @@ getBinaryRiskFactors <- function(
     analysisIds = analysisIds
   )
   
-  targetFeatures <- getTargetBinaryFeatures(
+  targetFeatures <- getCaseTargetBinaryFeatures(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix,
@@ -1739,6 +1836,7 @@ processBinaryRiskFactorFeatures <- function(
   params <- unique(
     caseCounts %>% dplyr::select(
       "databaseName",
+      "databaseId",
       "minPriorObservation",
       "outcomeWashoutDays",
       "riskWindowStart",
@@ -1751,6 +1849,7 @@ processBinaryRiskFactorFeatures <- function(
   # for each database/TAR/minPriorObservation/outcomeWashoutDays
   for(i in 1:nrow(params)){
     databaseName <- params$databaseName[i]
+    databaseId <- params$databaseId[i]
     minPriorObservation <- params$minPriorObservation[i]
     outcomeWashoutDays <- params$outcomeWashoutDays[i]
     riskWindowStart <- params$riskWindowStart[i]
@@ -1761,6 +1860,7 @@ processBinaryRiskFactorFeatures <- function(
   caseCount <- caseCounts %>% 
     dplyr::filter(
       .data$databaseName == !!databaseName &
+      .data$databaseId == !!databaseId &
       .data$minPriorObservation == !!minPriorObservation &
         .data$outcomeWashoutDays == !!outcomeWashoutDays &
         .data$riskWindowStart == !!riskWindowStart &
@@ -1772,15 +1872,19 @@ processBinaryRiskFactorFeatures <- function(
   targetCount <- targetCounts %>% 
     dplyr::filter(
       .data$databaseName == !!databaseName &
+      .data$databaseId == !!databaseId &
       .data$minPriorObservation == !!minPriorObservation &
         .data$outcomeWashoutDays == !!outcomeWashoutDays
     )
   
-  nonCaseCount <- targetCount$personCount - caseCount$personCount
-  
+  if(caseCount$personCount > 0 & targetCount$personCount > 0){
+    # only run this if the cases is >= min cell count
+    nonCaseCount <- targetCount$personCount - caseCount$personCount
+
   ## now extract the features
   tempCases <- caseFeatures %>% 
     dplyr::filter(.data$databaseName == !!databaseName &
+                    .data$databaseId == !!databaseId &
                     .data$minPriorObservation == !!minPriorObservation &
                     .data$outcomeWashoutDays == !!outcomeWashoutDays &
                     .data$riskWindowStart == !!riskWindowStart &
@@ -1791,11 +1895,20 @@ processBinaryRiskFactorFeatures <- function(
     dplyr::rename(
       caseCount = "sumValue", 
       caseAverage = "averageValue"
-      )
+      ) %>%
+    dplyr::filter( # remove the censored counts
+      .data$caseCount >= 0
+    )
+  
+  
   tempTarget <- targetFeatures %>% 
     dplyr::filter(.data$databaseName == !!databaseName &
+                    .data$databaseId == !!databaseId &
                     .data$minPriorObservation == !!minPriorObservation &
                     .data$outcomeWashoutDays == !!outcomeWashoutDays 
+    ) %>%
+    dplyr::filter( # remove the censored counts
+      .data$sumValue >= 0
     )
   
   tempData <- tempTarget %>% 
@@ -1803,6 +1916,7 @@ processBinaryRiskFactorFeatures <- function(
       y = tempCases, 
       by = c(
         "databaseName",
+        "databaseId",
         "targetName",
         "targetCohortId",
         "outcomeName",
@@ -1834,11 +1948,10 @@ processBinaryRiskFactorFeatures <- function(
       absSMD = abs(.data$meanDiff/sqrt((.data$std1^2 + .data$std2^2)/2))
     ) 
   
-  # TODO: add smd
-  
   tempData <- tempData %>% 
     dplyr::select(
     "databaseName",
+    "databaseId",
     "targetName",
     "targetCohortId",
     "outcomeName",
@@ -1860,6 +1973,7 @@ processBinaryRiskFactorFeatures <- function(
   )
   
   allData <- rbind(allData, tempData)
+  } # check for cases >= minCellCount
 }
   
 return(allData) 
@@ -1887,6 +2001,7 @@ return(allData)
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
+#'  \item{databaseId the unique identifier of the database}
 #'  \item{targetName the target cohort name}
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{minPriorObservation the minimum required observation days prior to index for an entry}
@@ -1931,6 +2046,7 @@ getTargetContinuousFeatures <- function(
     "
 select 
 d.CDM_SOURCE_ABBREVIATION as database_name,
+t.database_id,
 target.cohort_name as target_name,
 t.TARGET_COHORT_ID,
 t.min_prior_observation,
@@ -2043,6 +2159,7 @@ return(result)
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
+#'  \item{databaseId the unique identifier of the database}
 #'  \item{targetName the target cohort name}
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{outcomeName the outcome name}
@@ -2094,6 +2211,7 @@ getCaseContinuousFeatures <- function(
     "
 select 
 d.CDM_SOURCE_ABBREVIATION as database_name,
+t.database_id,
 target.cohort_name as target_name,
 t.TARGET_COHORT_ID,
 outcome.cohort_name as outcome_name,
@@ -2303,7 +2421,8 @@ processContinuousRiskFactorFeatures <- function(
 ){
   
   # get outcomes and outcomewashout
-  outcomes <- unique(caseFeatures[,c('outcomeCohortId','outcomeWashoutDays')])
+  outcomes <- unique(caseFeatures[,c('outcomeName','outcomeCohortId','outcomeWashoutDays',
+                                     'riskWindowStart', 'riskWindowEnd', 'startAnchor', 'endAnchor')])
   
   targetFeatures <- targetFeatures %>% dplyr::rename(
     "targetCountValue" = "countValue",
@@ -2342,13 +2461,29 @@ processContinuousRiskFactorFeatures <- function(
       y = caseFeatures %>% 
         dplyr::filter(
           .data$outcomeCohortId == outcomes[i,]$outcomeCohortId &
-            .data$outcomeWashoutDays == outcomes[i,]$outcomeWashoutDays
+            .data$outcomeWashoutDays == outcomes[i,]$outcomeWashoutDays &
+            .data$riskWindowStart == outcomes[i,]$riskWindowStart &
+            .data$riskWindowEnd == outcomes[i,]$riskWindowEnd &
+            .data$startAnchor == outcomes[i,]$startAnchor &
+            .data$endAnchor == outcomes[i,]$endAnchor
         ),
       
-      by = c('databaseName','targetName','targetCohortId','minPriorObservation',
+      by = c('databaseName','databaseId','targetName','targetCohortId','minPriorObservation',
              'covariateName', 'covariateId'),
       all.x = TRUE
-        )
+        ) %>%
+      tidyr::replace_na(
+        list(
+          outcomeCohortId = outcomes[i,]$outcomeCohortId, 
+          outcomeName = outcomes[i,]$outcomeName,
+          outcomeWashoutDays = outcomes[i,]$outcomeWashoutDays,
+          riskWindowStart = outcomes[i,]$riskWindowStart,
+          riskWindowEnd = outcomes[i,]$riskWindowEnd,
+          startAnchor = outcomes[i,]$startAnchor,
+          endAnchor = outcomes[i,]$endAnchor
+          )
+        ) %>% 
+      dplyr::mutate_all(~replace(., is.na(.), 0))
     
     allData <- rbind(allData, res)
   }
@@ -2375,6 +2510,11 @@ processContinuousRiskFactorFeatures <- function(
 #' @template databaseTable
 #' @template targetId
 #' @template outcomeId
+#' @param databaseIds (optional) One or more unique identifiers for the databases
+#' @param riskWindowStart (optional) A riskWindowStart to restrict to
+#' @param riskWindowEnd (optional) A riskWindowEnd to restrict to
+#' @param startAnchor (optional) A startAnchor to restrict to
+#' @param endAnchor (optional) An endAnchor to restrict to
 #' @family Characterization
 #' 
 #' @return
@@ -2401,13 +2541,18 @@ getBinaryCaseSeries <- function(
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
     targetId = NULL,
-    outcomeId = NULL
+    outcomeId = NULL,
+    databaseIds = NULL,
+    riskWindowStart = NULL,
+    riskWindowEnd = NULL,
+    startAnchor = NULL,
+    endAnchor = NULL
 ){
   if(is.null(targetId)){
     stop('targetId must be entered')
   }
   if(is.null(outcomeId)){
-    stop('targetId must be entered')
+    stop('outcomeId must be entered')
   }
   if(length(targetId) > 1){
     stop('Must be single targetId')
@@ -2419,8 +2564,8 @@ getBinaryCaseSeries <- function(
   sql <-  
     "
 SELECT 
-cov.database_id,
  d.CDM_SOURCE_ABBREVIATION as database_name,
+ d.database_id,
  target.cohort_name as target_name,
 cov.TARGET_COHORT_ID,
 outcome.cohort_name as outcome_name,
@@ -2470,6 +2615,11 @@ cov.Outcome_COHORT_ID,
 
           where cov.target_cohort_id = @target_id
           and cov.outcome_cohort_id = @outcome_id
+  {@use_database}?{and cov.database_id in (@database_ids)}
+  {@use_risk_window_start}?{and s.risk_window_start = @risk_window_start}
+  {@use_risk_window_end}?{and s.risk_window_end = @risk_window_end}
+  {@use_start_anchor}?{and s.start_anchor = '@start_anchor'}
+  {@use_end_anchor}?{and s.end_anchor = '@end_anchor'}
           and cov.cohort_type in ('CasesBetween','CasesAfter','CasesBefore')
           and cr.analysis_id in (109, 110, 217, 218, 305, 417, 418, 505, 605, 713, 805, 926, 927)
 ;
@@ -2482,7 +2632,17 @@ result <- connectionHandler$queryDb(
   outcome_id = paste0(outcomeId, collapse = ','),
   c_table_prefix = cTablePrefix,
   cg_table_prefix = cgTablePrefix,
-  database_table = databaseTable
+  database_table = databaseTable,
+  use_database = !is.null(databaseIds),
+  database_ids = paste0("'",databaseIds,"'", collapse = ','),
+  use_risk_window_start = !is.null(riskWindowStart),
+  risk_window_start = riskWindowStart,
+  use_risk_window_end = !is.null(riskWindowEnd),
+  risk_window_end = riskWindowEnd,
+  use_start_anchor = !is.null(startAnchor),
+  start_anchor = startAnchor,
+  use_end_anchor = !is.null(endAnchor),
+  end_anchor = endAnchor
 )
   
   return(result)
@@ -2501,6 +2661,11 @@ result <- connectionHandler$queryDb(
 #' @template databaseTable
 #' @template targetId
 #' @template outcomeId
+#' @param databaseIds (optional) One or more unique identifiers for the databases
+#' @param riskWindowStart (optional) A riskWindowStart to restrict to
+#' @param riskWindowEnd (optional) A riskWindowEnd to restrict to
+#' @param startAnchor (optional) A startAnchor to restrict to
+#' @param endAnchor (optional) An endAnchor to restrict to
 #' @family Characterization
 #' 
 #' @return
@@ -2527,7 +2692,12 @@ getContinuousCaseSeries <- function(
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
     targetId = NULL,
-    outcomeId = NULL
+    outcomeId = NULL,
+    databaseIds = NULL,
+    riskWindowStart = NULL,
+    riskWindowEnd = NULL,
+    startAnchor = NULL,
+    endAnchor = NULL
 ){
   if(is.null(targetId)){
     stop('targetId must be entered')
@@ -2545,8 +2715,8 @@ getContinuousCaseSeries <- function(
   sql <-  
     "
 SELECT 
-cov.database_id,
  d.CDM_SOURCE_ABBREVIATION as database_name,
+ cov.database_id,
  target.cohort_name as target_name,
 cov.TARGET_COHORT_ID,
 outcome.cohort_name as outcome_name,
@@ -2605,6 +2775,11 @@ cov.p_90_value
 
           where cov.target_cohort_id = @target_id
           and cov.outcome_cohort_id = @outcome_id
+  {@use_database}?{and cov.database_id in (@database_ids)}
+  {@use_risk_window_start}?{and s.risk_window_start = @risk_window_start}
+  {@use_risk_window_end}?{and s.risk_window_end = @risk_window_end}
+  {@use_start_anchor}?{and s.start_anchor = '@start_anchor'}
+  {@use_end_anchor}?{and s.end_anchor = '@end_anchor'}
           and cov.cohort_type in ('CasesBetween','CasesAfter','CasesBefore')
 ;
 "
@@ -2616,8 +2791,376 @@ cov.p_90_value
     outcome_id = paste0(outcomeId, collapse = ','),
     c_table_prefix = cTablePrefix,
     cg_table_prefix = cgTablePrefix,
-    database_table = databaseTable
+    database_table = databaseTable,
+    use_database = !is.null(databaseIds),
+    database_ids = paste0("'",databaseIds,"'", collapse = ','),
+    use_risk_window_start = !is.null(riskWindowStart),
+    risk_window_start = riskWindowStart,
+    use_risk_window_end = !is.null(riskWindowEnd),
+    risk_window_end = riskWindowEnd,
+    use_start_anchor = !is.null(startAnchor),
+    start_anchor = startAnchor,
+    use_end_anchor = !is.null(endAnchor),
+    end_anchor = endAnchor
   )
   
   return(result)
+}
+
+#' A function to extract cohort aggregate binary feature characterization results
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target cohort ID and database id
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetIds
+#' @param databaseIds (optional) One or more unique identifiers for the databases
+#' @param minThreshold The minimum fraction of the cohort that must have the feature for it to be reported
+#' 
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the characterization aggregate binary features for a specific cohort and database
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' binCohort <- getCharacterizationCohortBinary(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetIds = 1, 
+#'   databaseIds = 'eunomia'
+#' )
+#' 
+getCharacterizationCohortBinary <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_', # not used 
+    databaseTable = 'database_meta_data',
+    targetIds = NULL,
+    databaseIds = NULL,
+    minThreshold = 0
+){
+  
+  # first get counts
+  # getting counts
+  sql <- " select
+  database_id,
+  target_cohort_id as cohort_id,
+  min_prior_observation,
+  max(person_count) as N
+  
+  from @schema.@c_table_prefixcohort_counts cc
+  where 
+  cc.cohort_type = 'Target'
+  {@use_targets}?{AND cc.target_cohort_id in (@target_ids)}
+  {@use_databases}?{AND cc.database_id in (@database_ids)}
+  
+  GROUP BY
+  database_id,target_cohort_id,min_prior_observation
+  ;
+  "
+  counts <- connectionHandler$queryDb(
+    sql = sql,
+    use_targets = !is.null(targetIds),
+    target_ids = paste0(targetIds, collapse = ','),
+    use_databases = !is.null(databaseIds),
+    database_ids = paste0("'",databaseIds,"'", collapse = ','),
+    schema = schema,
+    c_table_prefix = cTablePrefix
+  )
+  
+  colRef <- counts %>%
+    dplyr::mutate(id = dplyr::row_number())
+  
+  if(nrow(colRef) == 0){
+    return(NULL)
+  }
+  
+  
+  # now extract features 
+  sql <- "select  
+          ref.covariate_name,
+          ref.covariate_id,
+          s.min_prior_observation,
+          cov.target_cohort_id as cohort_id,
+          cov.database_id,
+          cov.sum_value,
+          cov.average_value
+          from   
+    @schema.@c_table_prefixCOVARIATES cov 
+    inner join 
+    @schema.@c_table_prefixcovariate_ref ref
+    on cov.covariate_id = ref.covariate_id
+    and cov.setting_id = ref.setting_id
+    and cov.database_id = ref.database_id
+    inner join 
+    @schema.@c_table_prefixsettings s
+    on s.database_id = cov.database_id
+    and s.setting_id = cov.setting_id
+    
+    where 
+    cov.cohort_type = 'Target'
+    {@use_targets}?{AND cov.target_cohort_id in (@target_ids) }
+    {@use_databases}?{AND cov.database_id in (@database_ids)}
+    AND abs(cov.average_value) >= @min_threshold;"
+  
+  start <- Sys.time()
+  # settings.min_characterization_mean needed?
+  res <- connectionHandler$queryDb(
+    sql = sql,
+    use_targets = !is.null(targetIds),
+    target_ids = paste0(targetIds, collapse = ','),
+    use_databases = !is.null(databaseIds),
+    database_ids = paste0("'",databaseIds,"'", collapse = ','),
+    schema = schema,
+    c_table_prefix = cTablePrefix,
+    min_threshold = minThreshold
+  )
+  end <- Sys.time() - start 
+  
+  message(paste0('Extracting ', nrow(res) ,' characterization cohort rows took: ', round(end, digits = 2), ' ', units(end)))
+  
+  # pivot 
+  res <- merge(res, colRef, by = c('cohortId','databaseId', 'minPriorObservation'))
+  
+  replaceVals <- rep(list(-1*minThreshold), nrow(colRef))
+  names(replaceVals) <- paste0('averageValue_', 1:nrow(colRef))
+  
+  # figure out the min sumVal per target/database/minobs
+  replaceSumVals <- c()
+  for(i in 1:nrow(colRef)){
+    replaceSumVals <- c(replaceSumVals, -1*floor(minThreshold*colRef$n[i]))
+  }
+  replaceSumVals <- as.list(replaceSumVals)
+  names(replaceSumVals) <- paste0('sumValue_', 1:nrow(colRef))
+  
+  res <- tidyr::pivot_wider(
+    data = res, 
+    id_cols = c('covariateName', 'covariateId'), 
+    names_from = 'id', 
+    values_from = c('sumValue', 'averageValue', 'n'), 
+    values_fn = mean, 
+    values_fill = NA
+  ) %>%
+    tidyr::replace_na(replaceVals) %>%
+    tidyr::replace_na(replaceSumVals)
+  
+  
+  # add SMD if two unique types
+  if(nrow(colRef) == 2){
+    res <- res %>% 
+      dplyr::mutate(
+        standardDeviation_1 = ((abs(.data$averageValue_1)-1)^2*abs(.data$sumValue_1) + (abs(.data$averageValue_1)-0)^2*(.data$n_1-abs(.data$sumValue_1)))/.data$n_1,
+        standardDeviation_2 = ((abs(.data$averageValue_2)-1)^2*abs(.data$sumValue_2) + (abs(.data$averageValue_2)-0)^2*(.data$n_2-abs(.data$sumValue_2)))/.data$n_2
+      ) %>%
+      dplyr::mutate(
+        SMD = (.data$averageValue_1-.data$averageValue_2)/(sqrt((.data$standardDeviation_1^2 + .data$standardDeviation_2^2)/2))
+    ) %>%
+      dplyr::mutate(
+        absSMD = abs(.data$SMD)
+      ) %>%
+      dplyr::select(-"standardDeviation_1", -"standardDeviation_2")
+  }
+  
+  # remove the ns
+  res <- res %>% 
+    dplyr::select(
+      - colnames(res)[grep('n_', colnames(res))]
+    )
+  
+  return(list(
+    covariates = res,
+    covRef = colRef
+    ))
+}
+
+# function to extract continuous cohort aggregate FE
+#' A function to extract cohort aggregate continuous feature characterization results
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target cohort ID and database id
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetIds
+#' @param databaseIds (optional) One or more unique identifiers for the databases
+#' @param minThreshold The minimum fraction of the cohort that must have the feature for it to be reported
+#' 
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the characterization aggregate continuous features for a specific cohort and database
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' conCohort <- getCharacterizationCohortContinuous(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   targetIds = 1, 
+#'   databaseIds = 'eunomia'
+#' )
+#' 
+getCharacterizationCohortContinuous <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    targetIds = NULL,
+    databaseIds = NULL,
+    minThreshold = 0
+){
+  
+  # first get counts
+  # getting counts
+  sql <- " select
+  database_id,
+  target_cohort_id as cohort_id,
+  min_prior_observation,
+  max(person_count) as N
+  
+  from @schema.@c_table_prefixcohort_counts cc
+  where 
+  cc.cohort_type = 'Target'
+  {@use_targets}?{AND cc.target_cohort_id in (@target_ids)}
+  {@use_databases}?{AND cc.database_id in (@database_ids)}
+  
+  GROUP BY
+  database_id,target_cohort_id,min_prior_observation
+  ;
+  "
+  counts <- connectionHandler$queryDb(
+    sql = sql,
+    use_targets = !is.null(targetIds),
+    target_ids = paste0(targetIds, collapse = ','),
+    use_databases = !is.null(databaseIds),
+    database_ids = paste0("'",databaseIds,"'", collapse = ','),
+    schema = schema,
+    c_table_prefix = cTablePrefix
+  )
+  
+  colRef <- counts %>%
+    dplyr::mutate(id = dplyr::row_number())
+  
+  if(nrow(colRef) == 0){
+    return(NULL)
+  }
+  
+  # calculate minCounts from minThreshold and N
+  colRef$minCount <- colRef$n*minThreshold
+  
+  # now fetch data
+sql <- "select  
+          cov.target_cohort_id as cohort_id,
+          --cd.cohort_name,
+          d.CDM_SOURCE_ABBREVIATION as database_name,
+          ref.covariate_name, 
+          s.min_prior_observation,
+          cov.*
+          
+          from   
+    @schema.@c_table_prefixCOVARIATES_continuous cov 
+    
+    inner join 
+    @schema.@c_table_prefixcovariate_ref ref
+    on cov.covariate_id = ref.covariate_id
+    and cov.setting_id = ref.setting_id
+    and cov.database_id = ref.database_id
+    
+    inner join
+    @schema.@c_table_prefixsettings s 
+    on cov.setting_id = s.setting_id
+    and cov.database_id = s.database_id
+    
+    inner join 
+    @schema.@database_meta_table d 
+    on s.database_id = d.database_id
+    
+    where cov.cohort_type = 'Target' 
+    {@use_targets}?{AND cov.target_cohort_id in (@target_ids)}
+    {@use_databases}?{AND cov.database_id in (@database_ids)};"
+
+start <- Sys.time()
+
+res <- connectionHandler$queryDb(
+  sql = sql,
+  use_targets = !is.null(targetIds),
+  target_ids = paste0(targetIds, collapse = ','),
+  use_databases = !is.null(databaseIds),
+  database_ids = paste0("'",databaseIds,"'", collapse = ','),
+  schema = schema,
+  c_table_prefix = cTablePrefix,
+  database_meta_table = databaseTable
+)
+end <- Sys.time() - start 
+message(paste0('Extracting ', nrow(res) ,' continuous characterization cohort rows took: ', round(end, digits = 2), ' ', units(end)))
+
+
+# pivot 
+res <- res %>%
+  dplyr::inner_join(
+    y = colRef,
+    by = c('cohortId','databaseId', 'minPriorObservation')
+      )
+
+# remove rows where countVal < minCount
+ res <- res %>%
+   dplyr::filter(
+     .data$countValue >= .data$minCount
+   ) %>%
+   dplyr::select(
+     -"minCount"
+   )
+
+
+  res <- tidyr::pivot_wider(
+    data = res, 
+    id_cols = c('covariateName', 'covariateId','minPriorObservation'), 
+    names_from = 'id', 
+    values_from = c('countValue', 'averageValue', 'standardDeviation', 'medianValue','minValue', 'maxValue', 'p10Value','p25Value','p75Value','p90Value'), 
+    values_fn = mean, 
+    values_fill = 0
+  ) 
+
+  
+
+# add SMD if two unique types
+if(nrow(colRef) == 2){
+  res <- res %>% dplyr::mutate(
+    SMD = (abs(.data$averageValue_1)-abs(.data$averageValue_2))/(sqrt((abs(.data$standardDeviation_1)^2 + abs(.data$standardDeviation_2)^2)/2))
+  ) %>%
+    dplyr::mutate(
+      absSMD = abs(.data$SMD)
+    )
+}
+  
+  # clean up by removing Ns
+  # remove the ns
+  res <- res %>% 
+    dplyr::select(
+      - colnames(res)[grep('n_', colnames(res))]
+    ) 
+
+  return(list(
+    covariates = res,
+    covRef = colRef
+  ))
 }

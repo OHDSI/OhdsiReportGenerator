@@ -358,7 +358,7 @@ if(includeCharacterization){
     }
   }
   
-  targetBinaryOfInterest <- OhdsiReportGenerator::getTargetBinaryFeatures(
+  targetBinaryOfInterest <- OhdsiReportGenerator::getCaseTargetBinaryFeatures(
     connectionHandler = connectionHandler, 
     schema = params$schema, 
     analysisIds = binaryAnalyses

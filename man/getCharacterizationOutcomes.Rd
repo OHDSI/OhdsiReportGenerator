@@ -9,7 +9,8 @@ getCharacterizationOutcomes(
   schema,
   cTablePrefix = "c_",
   cgTablePrefix = "cg_",
-  targetId = NULL
+  targetId = NULL,
+  printTimes = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ getCharacterizationOutcomes(
 \item{cgTablePrefix}{The prefix used for the cohort generator results tables}
 
 \item{targetId}{An integer corresponding to the target cohort ID}
+
+\item{printTimes}{Print the time it takes to run each query}
 }
 \value{
 A data.frame with the characterization outcome cohort ids, names and which characterization analyses the cohorts are used in.
@@ -50,6 +53,10 @@ Other Characterization:
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseContinuousFeatures}()},
 \code{\link{getCaseCounts}()},
+\code{\link{getCaseTargetBinaryFeatures}()},
+\code{\link{getCaseTargetCounts}()},
+\code{\link{getCharacterizationCohortBinary}()},
+\code{\link{getCharacterizationCohortContinuous}()},
 \code{\link{getCharacterizationDemographics}()},
 \code{\link{getCharacterizationTargets}()},
 \code{\link{getContinuousCaseSeries}()},
@@ -58,9 +65,7 @@ Other Characterization:
 \code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getIncidenceTargets}()},
-\code{\link{getTargetBinaryFeatures}()},
 \code{\link{getTargetContinuousFeatures}()},
-\code{\link{getTargetCounts}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()}

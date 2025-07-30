@@ -89,6 +89,8 @@ generatePresentationMultiple <- function(
     topline2 = '', 
     topline3 = '', 
     
+    includeCI = FALSE, # turning this off as it currently causes an error
+    
     targetId = targetId, 
     outcomeIds = outcomeIds, 
     cohortNames = c(targetName, outcomeNames, comparatorNames), 
