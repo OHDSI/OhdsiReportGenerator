@@ -12,7 +12,12 @@ getCaseBinaryFeatures(
   databaseTable = "database_meta_data",
   targetIds = NULL,
   outcomeIds = NULL,
-  analysisIds = c(3)
+  databaseIds = NULL,
+  analysisIds = c(3),
+  riskWindowStart = NULL,
+  riskWindowEnd = NULL,
+  startAnchor = NULL,
+  endAnchor = NULL
 )
 }
 \arguments{
@@ -30,7 +35,17 @@ getCaseBinaryFeatures(
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
 
-\item{analysisIds}{The feature extraction analysis ID of interest (e.g., 201 is condition)}
+\item{databaseIds}{(optional) A vector of database ids to restrict to}
+
+\item{analysisIds}{(optional) The feature extraction analysis ID of interest (e.g., 201 is condition)}
+
+\item{riskWindowStart}{(optional) A vector of time-at-risk risk window starts to restrict to}
+
+\item{riskWindowEnd}{(optional) A vector of time-at-risk risk window ends to restrict to}
+
+\item{startAnchor}{(optional) A vector of time-at-risk start anchors to restrict to}
+
+\item{endAnchor}{(optional) A vector of time-at-risk end anchors to restrict to}
 }
 \value{
 Returns a data.frame with the columns:
@@ -86,6 +101,7 @@ Other Characterization:
 \code{\link{getContinuousCaseSeries}()},
 \code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
+\code{\link{getDechallengeRechallengeFails}()},
 \code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getIncidenceTargets}()},

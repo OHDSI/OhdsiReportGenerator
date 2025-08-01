@@ -82,6 +82,7 @@ Other Characterization:
 \code{\link{getCharacterizationTargets}()},
 \code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
+\code{\link{getDechallengeRechallengeFails}()},
 \code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getIncidenceTargets}()},

@@ -60,6 +60,7 @@ Other Characterization:
 \code{\link{getContinuousCaseSeries}()},
 \code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
+\code{\link{getDechallengeRechallengeFails}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getIncidenceTargets}()},
 \code{\link{getTargetContinuousFeatures}()},

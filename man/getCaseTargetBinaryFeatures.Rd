@@ -12,6 +12,7 @@ getCaseTargetBinaryFeatures(
   databaseTable = "database_meta_data",
   targetIds = NULL,
   outcomeIds = NULL,
+  databaseIds = NULL,
   analysisIds = c(3)
 )
 }
@@ -30,7 +31,9 @@ getCaseTargetBinaryFeatures(
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
 
-\item{analysisIds}{The feature extraction analysis ID of interest (e.g., 201 is condition)}
+\item{databaseIds}{(optional) A vector of database ids to restrict to}
+
+\item{analysisIds}{(optional) The feature extraction analysis ID of interest (e.g., 201 is condition)}
 }
 \value{
 Returns a data.frame with the columns:
@@ -83,6 +86,7 @@ Other Characterization:
 \code{\link{getContinuousCaseSeries}()},
 \code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
+\code{\link{getDechallengeRechallengeFails}()},
 \code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getIncidenceTargets}()},

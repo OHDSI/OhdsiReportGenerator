@@ -11,7 +11,8 @@ getCaseTargetCounts(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   targetIds = NULL,
-  outcomeIds = NULL
+  outcomeIds = NULL,
+  databaseIds = NULL
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ getCaseTargetCounts(
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
+
+\item{databaseIds}{A vector of database IDs to restrict to}
 }
 \value{
 Returns a data.frame with the columns:
@@ -40,6 +43,7 @@ Returns a data.frame with the columns:
  \item{outcomeId the outcome unique identifier}
  \item{rowCount the number of entries in the cohort}
  \item{personCount the number of people in the cohort}
+ \item{withoutExcludedPersonCount the number of people in the target ignoring exclusions}
  \item{minPriorObservation the minimum required observation days prior to index for an entry}
  \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
  }
@@ -77,6 +81,7 @@ Other Characterization:
 \code{\link{getContinuousCaseSeries}()},
 \code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
+\code{\link{getDechallengeRechallengeFails}()},
 \code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getIncidenceTargets}()},

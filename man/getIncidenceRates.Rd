@@ -94,6 +94,7 @@ Other Characterization:
 \code{\link{getContinuousCaseSeries}()},
 \code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
+\code{\link{getDechallengeRechallengeFails}()},
 \code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceTargets}()},
 \code{\link{getTargetContinuousFeatures}()},

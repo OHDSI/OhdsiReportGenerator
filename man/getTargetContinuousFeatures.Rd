@@ -11,7 +11,8 @@ getTargetContinuousFeatures(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   targetIds = NULL,
-  analysisIds = NULL
+  analysisIds = NULL,
+  databaseIds = NULL
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ getTargetContinuousFeatures(
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 
 \item{analysisIds}{The feature extraction analysis ID of interest (e.g., 201 is condition)}
+
+\item{databaseIds}{(Optional) A vector of database IDs to restrict to}
 }
 \value{
 Returns a data.frame with the columns:
@@ -86,6 +89,7 @@ Other Characterization:
 \code{\link{getContinuousCaseSeries}()},
 \code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
+\code{\link{getDechallengeRechallengeFails}()},
 \code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getIncidenceTargets}()},
