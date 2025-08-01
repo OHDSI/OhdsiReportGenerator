@@ -2610,50 +2610,56 @@ processContinuousRiskFactorFeatures <- function(
     "caseP90Value" = "p90Value"
   )
   
-  allData <- c()
-  for(i in 1:nrow(outcomes)){
-    
-    res <- merge(
-      x = targetFeatures %>% 
-        dplyr::filter(
-          .data$targetCohortId != outcomes[i,]$outcomeCohortId 
-          ), 
-      y = caseFeatures %>% 
-        dplyr::filter(
-          .data$outcomeCohortId == outcomes[i,]$outcomeCohortId &
-            .data$outcomeWashoutDays == outcomes[i,]$outcomeWashoutDays &
-            .data$riskWindowStart == outcomes[i,]$riskWindowStart &
-            .data$riskWindowEnd == outcomes[i,]$riskWindowEnd &
-            .data$startAnchor == outcomes[i,]$startAnchor &
-            .data$endAnchor == outcomes[i,]$endAnchor
-        ),
+  if(nrow(outcomes) > 0){
+    allData <- c()
+    for(i in 1:nrow(outcomes)){
       
-      by = c('databaseName','databaseId','targetName','targetCohortId','minPriorObservation',
-             'covariateName', 'covariateId'),
-      all.x = TRUE
-        ) %>%
-      tidyr::replace_na(
-        list(
-          outcomeCohortId = outcomes[i,]$outcomeCohortId, 
-          outcomeName = outcomes[i,]$outcomeName,
-          outcomeWashoutDays = outcomes[i,]$outcomeWashoutDays,
-          riskWindowStart = outcomes[i,]$riskWindowStart,
-          riskWindowEnd = outcomes[i,]$riskWindowEnd,
-          startAnchor = outcomes[i,]$startAnchor,
-          endAnchor = outcomes[i,]$endAnchor
+      res <- merge(
+        x = targetFeatures %>% 
+          dplyr::filter(
+            .data$targetCohortId != outcomes[i,]$outcomeCohortId 
+          ), 
+        y = caseFeatures %>% 
+          dplyr::filter(
+            .data$outcomeCohortId == outcomes[i,]$outcomeCohortId &
+              .data$outcomeWashoutDays == outcomes[i,]$outcomeWashoutDays &
+              .data$riskWindowStart == outcomes[i,]$riskWindowStart &
+              .data$riskWindowEnd == outcomes[i,]$riskWindowEnd &
+              .data$startAnchor == outcomes[i,]$startAnchor &
+              .data$endAnchor == outcomes[i,]$endAnchor
+          ),
+        
+        by = c('databaseName','databaseId','targetName','targetCohortId','minPriorObservation',
+               'covariateName', 'covariateId'),
+        all.x = TRUE
+      ) %>%
+        tidyr::replace_na(
+          list(
+            outcomeCohortId = outcomes[i,]$outcomeCohortId, 
+            outcomeName = outcomes[i,]$outcomeName,
+            outcomeWashoutDays = outcomes[i,]$outcomeWashoutDays,
+            riskWindowStart = outcomes[i,]$riskWindowStart,
+            riskWindowEnd = outcomes[i,]$riskWindowEnd,
+            startAnchor = outcomes[i,]$startAnchor,
+            endAnchor = outcomes[i,]$endAnchor
           )
         ) %>% 
-      dplyr::mutate_all(~replace(., is.na(.), 0))
-    
-    allData <- rbind(allData, res)
-  }
+        dplyr::mutate_all(~replace(., is.na(.), 0))
+      
+      allData <- rbind(allData, res)
+    }
   
   allData <- allData %>% dplyr::mutate(
         SMD = (.data$caseAverageValue - .data$targetAverageValue)/sqrt((.data$caseStandardDeviation^2 + .data$targetStandardDeviation^2)/2),
         absSMD = abs((.data$caseAverageValue - .data$targetAverageValue)/sqrt((.data$caseStandardDeviation^2 + .data$targetStandardDeviation^2)/2))
       ) 
-
+  
   return(allData) 
+  
+  } else{
+    return(NULL)
+  }
+
 }
 
 
