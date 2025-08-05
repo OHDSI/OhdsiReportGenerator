@@ -383,7 +383,7 @@ getCharacterizationOutcomes <- function(
         from @schema.@c_table_prefixcohort_counts
       where outcome_cohort_id is not NULL 
       and outcome_cohort_id != 0
-      {@use_target}?{and target_id in (@target_ids)}
+      {@use_target}?{and target_cohort_id in (@target_ids)}
       
       ;",
       schema = schema,
