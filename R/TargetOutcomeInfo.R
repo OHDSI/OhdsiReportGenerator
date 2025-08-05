@@ -321,6 +321,11 @@ return(cohortCounts)
 #' @template plpTablePrefix
 #' @template databaseTable
 #' @template targetId
+#' @param getIncidenceInclusion Whether to check usage of the cohort in incidence
+#' @param getCharacterizationInclusion Whether to check usage of the cohort in characterization
+#' @param getPredictionInclusion Whether to check usage of the cohort in prediction
+#' @param getCohortMethodInclusion Whether to check usage of the cohort in cohort method
+#' @param getSccsInclusion Whether to check usage of the cohort in SCCS
 #' @param printTimes whether to print the time it takes to run each SQL query
 #' @family Helpers
 #' @return
@@ -371,6 +376,11 @@ getOutcomeTable <- function(
     plpTablePrefix = 'plp_',
     databaseTable = 'database_meta_data',
     targetId = NULL,
+    getIncidenceInclusion = TRUE,
+    getCharacterizationInclusion = TRUE,
+    getPredictionInclusion = TRUE,
+    getCohortMethodInclusion = TRUE,
+    getSccsInclusion = TRUE,
     printTimes = FALSE
 ){
   
@@ -436,119 +446,130 @@ getOutcomeTable <- function(
   if(printTimes){
     print(paste0('adding outcome cohort counts: ', (end-start), ' ', units((end-start))))
   }
-  start <- Sys.time()
   
   # now find whether it is a target for each analysis
   
-  inc <- tryCatch(getIncidenceOutcomes(
-    connectionHandler = connectionHandler,
-    schema = schema,
-    cgTablePrefix = cgTablePrefix,
-    ciTablePrefix = ciTablePrefix, 
-    targetId = targetId
-  ), error = function(e){return(NULL)})
-  if(!is.null(inc)){
-    cohortCounts <- merge(
-      x = cohortCounts, 
-      y = inc, 
-      by.x = c('cohortId','cohortName'),
-      by.y = c('cohortDefinitionId','cohortName'),
-      all.x = T
-    )
+  if(getIncidenceInclusion){
+    start <- Sys.time()
+    inc <- tryCatch(getIncidenceOutcomes(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cgTablePrefix = cgTablePrefix,
+      ciTablePrefix = ciTablePrefix, 
+      targetId = targetId
+    ), error = function(e){return(NULL)})
+    if(!is.null(inc)){
+      cohortCounts <- merge(
+        x = cohortCounts, 
+        y = inc, 
+        by.x = c('cohortId','cohortName'),
+        by.y = c('cohortDefinitionId','cohortName'),
+        all.x = T
+      )
+    }
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('finding incidence outcomes: ', (end-start), ' ', units((end-start))))
+    }
   }
   
-  end <- Sys.time()
-  if(printTimes){
-    print(paste0('finding incidence outcomes: ', (end-start), ' ', units((end-start))))
+  if(getCharacterizationInclusion){
+    char <- tryCatch(getCharacterizationOutcomes(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cgTablePrefix = cgTablePrefix,
+      cTablePrefix = cTablePrefix, 
+      targetId = targetId, 
+      printTimes = printTimes
+    ), error = function(e){return(NULL)})
+    if(!is.null(char)){
+      cohortCounts <- merge(
+        x = cohortCounts, 
+        y = char, 
+        by.x = c('cohortId','cohortName'),
+        by.y = c('cohortDefinitionId','cohortName'),
+        all.x = T
+      )
+    }
+  }
+
+  
+  if(getPredictionInclusion){
+    start <- Sys.time()
+    pred <- tryCatch(getPredictionOutcomes(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cgTablePrefix = cgTablePrefix,
+      plpTablePrefix = plpTablePrefix, 
+      targetId = targetId
+    ), error = function(e){return(NULL)})
+    if(!is.null(pred)){
+      cohortCounts <- merge(
+        x = cohortCounts, 
+        y = pred, 
+        by.x = c('cohortId','cohortName'),
+        by.y = c('cohortDefinitionId','cohortName'),
+        all.x = T
+      )
+    }
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('extracting prediction cohorts: ', (end-start), ' ', units((end-start))))
+    }
   }
   
-  char <- tryCatch(getCharacterizationOutcomes(
-    connectionHandler = connectionHandler,
-    schema = schema,
-    cgTablePrefix = cgTablePrefix,
-    cTablePrefix = cTablePrefix, 
-    targetId = targetId, 
-    printTimes = printTimes
-  ), error = function(e){return(NULL)})
-  if(!is.null(char)){
-    cohortCounts <- merge(
-      x = cohortCounts, 
-      y = char, 
-      by.x = c('cohortId','cohortName'),
-      by.y = c('cohortDefinitionId','cohortName'),
-      all.x = T
-    )
+  if(getCohortMethodInclusion){
+    start <- Sys.time()
+    cm <- tryCatch(getCmOutcomes(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cgTablePrefix = cgTablePrefix,
+      cmTablePrefix = cmTablePrefix, 
+      targetId = targetId
+    ), error = function(e){return(NULL)})
+    if(!is.null(cm)){
+      cohortCounts <- merge(
+        x = cohortCounts, 
+        y = cm, 
+        by.x = c('cohortId','cohortName'),
+        by.y = c('cohortDefinitionId','cohortName'),
+        all.x = T
+      )
+    }
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('extracting cohort method cohorts: ', (end-start), ' ', units((end-start))))
+    }
   }
   
-  start <- Sys.time()
-  
-  pred <- tryCatch(getPredictionOutcomes(
-    connectionHandler = connectionHandler,
-    schema = schema,
-    cgTablePrefix = cgTablePrefix,
-    plpTablePrefix = plpTablePrefix, 
-    targetId = targetId
-  ), error = function(e){return(NULL)})
-  if(!is.null(pred)){
-    cohortCounts <- merge(
-      x = cohortCounts, 
-      y = pred, 
-      by.x = c('cohortId','cohortName'),
-      by.y = c('cohortDefinitionId','cohortName'),
-      all.x = T
-    )
+  if(getSccsInclusion){
+    start <- Sys.time()
+    sccs <- tryCatch(getSccsOutcomes(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cgTablePrefix = cgTablePrefix,
+      sccsTablePrefix = sccsTablePrefix, 
+      targetId = targetId
+    ), error = function(e){return(NULL)})
+    if(!is.null(sccs)){
+      cohortCounts <- merge(
+        x = cohortCounts, 
+        y = sccs, 
+        by.x = c('cohortId','cohortName'),
+        by.y = c('cohortDefinitionId','cohortName'),
+        all.x = T
+      )
+    }
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('extracting sccs cohorts: ', (end-start), ' ', units((end-start))))
+    }
   }
   
-  end <- Sys.time()
-  if(printTimes){
-    print(paste0('extracting prediction cohorts: ', (end-start), ' ', units((end-start))))
-  }
-  start <- Sys.time()
-  
-  cm <- tryCatch(getCmOutcomes(
-    connectionHandler = connectionHandler,
-    schema = schema,
-    cgTablePrefix = cgTablePrefix,
-    cmTablePrefix = cmTablePrefix, 
-    targetId = targetId
-  ), error = function(e){return(NULL)})
-  if(!is.null(cm)){
-    cohortCounts <- merge(
-      x = cohortCounts, 
-      y = cm, 
-      by.x = c('cohortId','cohortName'),
-      by.y = c('cohortDefinitionId','cohortName'),
-      all.x = T
-    )
-  }
-  
-  end <- Sys.time()
-  if(printTimes){
-    print(paste0('extracting cohort method cohorts: ', (end-start), ' ', units((end-start))))
-  }
-  start <- Sys.time()
-  
-  sccs <- tryCatch(getSccsOutcomes(
-    connectionHandler = connectionHandler,
-    schema = schema,
-    cgTablePrefix = cgTablePrefix,
-    sccsTablePrefix = sccsTablePrefix, 
-    targetId = targetId
-  ), error = function(e){return(NULL)})
-  if(!is.null(sccs)){
-    cohortCounts <- merge(
-      x = cohortCounts, 
-      y = sccs, 
-      by.x = c('cohortId','cohortName'),
-      by.y = c('cohortDefinitionId','cohortName'),
-      all.x = T
-    )
-  }
-  
-  end <- Sys.time()
-  if(printTimes){
-    print(paste0('extracting sccs cohorts: ', (end-start), ' ', units((end-start))))
-  }
   start <- Sys.time()
   
   if(sum(is.na(cohortCounts)) !=0){

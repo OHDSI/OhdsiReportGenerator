@@ -191,6 +191,9 @@ getCharacterizationTargets <- function(
 #' @template cgTablePrefix
 #' @template targetId
 #' @param printTimes Print the time it takes to run each query
+#' @param useDcrc look for outcome in dechal-rechal results
+#' @param useTte look for outcome in time-to-event results
+#' @param useRf look for outcome in risk-factor results
 #' 
 #' @family Characterization
 #' 
@@ -215,49 +218,63 @@ getCharacterizationOutcomes <- function(
   cTablePrefix = 'c_',
   cgTablePrefix = 'cg_',
   targetId = NULL,
-  printTimes = FALSE
+  printTimes = FALSE,
+  useDcrc = TRUE,
+  useTte = TRUE,
+  useRf = TRUE
 ){
   
-  start <- Sys.time()
+  firstStart <- Sys.time()
   
   # first check each table
-  useTte <- !is.null(tryCatch({connectionHandler$queryDb(
-    sql = "select top 1 * from @schema.@c_table_prefixtime_to_event;",
-    schema = schema,
-    c_table_prefix = cTablePrefix
-  )}, error = function(e){return(NULL)}))
   
-  end <- Sys.time()
-  if(printTimes){
-    print(paste0('checking time_to_event table exists: ', (end-start), ' ', units((end-start))))
+  if(useTte){ # if user wants time to event see whether there are results
+    start <- Sys.time()
+    
+    useTte <- !is.null(tryCatch({connectionHandler$queryDb(
+      sql = "select top 1 * from @schema.@c_table_prefixtime_to_event;",
+      schema = schema,
+      c_table_prefix = cTablePrefix
+    )}, error = function(e){return(NULL)}))
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('checking time_to_event table exists: ', (end-start), ' ', units((end-start))))
+    }
   }
-  start <- Sys.time()
   
-  useDcrc <- !is.null(tryCatch({connectionHandler$queryDb(
-    sql = "select top 1 * from @schema.@c_table_prefixdechallenge_rechallenge;",
-    schema = schema,
-    c_table_prefix = cTablePrefix
-  )}, error = function(e){return(NULL)}))
-  
-  end <- Sys.time()
-  if(printTimes){
-    print(paste0('checking dechallenge_rechallenge table exists: ', (end-start), ' ', units((end-start))))
+  if(useDcrc){ # if user wants dechal see whether there are results
+    start <- Sys.time()
+    
+    useDcrc <- !is.null(tryCatch({connectionHandler$queryDb(
+      sql = "select top 1 * from @schema.@c_table_prefixdechallenge_rechallenge;",
+      schema = schema,
+      c_table_prefix = cTablePrefix
+    )}, error = function(e){return(NULL)}))
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('checking dechallenge_rechallenge table exists: ', (end-start), ' ', units((end-start))))
+    }
   }
-  start <- Sys.time()
   
-  useRf <- !is.null(tryCatch({connectionHandler$queryDb(
-    sql = "select top 1 * from @schema.@c_table_prefixcohort_details;",
-    schema = schema,
-    c_table_prefix = cTablePrefix
-  )}, error = function(e){return(NULL)}))
-  
-  end <- Sys.time()
-  if(printTimes){
-    print(paste0('checking cohort_details table exists: ', (end-start), ' ', units((end-start))))
+  if(useRf){ # if user wants risk factors see whether there are results
+    start <- Sys.time()
+    
+    useRf <- !is.null(tryCatch({connectionHandler$queryDb(
+      sql = "select top 1 * from @schema.@c_table_prefixcohort_details;",
+      schema = schema,
+      c_table_prefix = cTablePrefix
+    )}, error = function(e){return(NULL)}))
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('checking cohort_details table exists: ', (end-start), ' ', units((end-start))))
+    }
   }
+  
+  
   start <- Sys.time()
-  
-  
   sql <- "
   
   select 
@@ -314,7 +331,6 @@ getCharacterizationOutcomes <- function(
   ;
   "
   
-
   outcomes <- connectionHandler$queryDb(
     sql = sql,
     schema = schema,
@@ -365,10 +381,15 @@ getCharacterizationOutcomes <- function(
         outcome_washout_days
   
         from @schema.@c_table_prefixcohort_counts
-      where outcome_cohort_id is not NULL and 
-      outcome_cohort_id != 0;",
+      where outcome_cohort_id is not NULL 
+      and outcome_cohort_id != 0
+      {@use_target}?{and target_id in (@target_ids)}
+      
+      ;",
       schema = schema,
-      c_table_prefix = cTablePrefix
+      c_table_prefix = cTablePrefix,
+      use_target = !is.null(targetId),
+      target_ids = paste0(targetId, collapse = ',')
     ) %>% 
       dplyr::rowwise() %>%
       dplyr::mutate(
@@ -399,6 +420,8 @@ getCharacterizationOutcomes <- function(
   if(printTimes){
     print(paste0('processing characterization outcomes and adding tars/washout: ', (end-start), ' ', units((end-start))))
   }
+  
+  print(paste0('Extracting characterization outcomes took: ', (end-firstStart), ' ', units((end-firstStart))))
   
   return(outcomes)
   

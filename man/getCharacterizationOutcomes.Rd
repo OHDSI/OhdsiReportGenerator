@@ -10,7 +10,10 @@ getCharacterizationOutcomes(
   cTablePrefix = "c_",
   cgTablePrefix = "cg_",
   targetId = NULL,
-  printTimes = FALSE
+  printTimes = FALSE,
+  useDcrc = TRUE,
+  useTte = TRUE,
+  useRf = TRUE
 )
 }
 \arguments{
@@ -25,6 +28,12 @@ getCharacterizationOutcomes(
 \item{targetId}{An integer corresponding to the target cohort ID}
 
 \item{printTimes}{Print the time it takes to run each query}
+
+\item{useDcrc}{look for outcome in dechal-rechal results}
+
+\item{useTte}{look for outcome in time-to-event results}
+
+\item{useRf}{look for outcome in risk-factor results}
 }
 \value{
 A data.frame with the characterization outcome cohort ids, names and which characterization analyses the cohorts are used in.

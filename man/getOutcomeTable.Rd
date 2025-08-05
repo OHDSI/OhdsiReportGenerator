@@ -15,6 +15,11 @@ getOutcomeTable(
   plpTablePrefix = "plp_",
   databaseTable = "database_meta_data",
   targetId = NULL,
+  getIncidenceInclusion = TRUE,
+  getCharacterizationInclusion = TRUE,
+  getPredictionInclusion = TRUE,
+  getCohortMethodInclusion = TRUE,
+  getSccsInclusion = TRUE,
   printTimes = FALSE
 )
 }
@@ -38,6 +43,16 @@ getOutcomeTable(
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
 \item{targetId}{An integer corresponding to the target cohort ID}
+
+\item{getIncidenceInclusion}{Whether to check usage of the cohort in incidence}
+
+\item{getCharacterizationInclusion}{Whether to check usage of the cohort in characterization}
+
+\item{getPredictionInclusion}{Whether to check usage of the cohort in prediction}
+
+\item{getCohortMethodInclusion}{Whether to check usage of the cohort in cohort method}
+
+\item{getSccsInclusion}{Whether to check usage of the cohort in SCCS}
 
 \item{printTimes}{whether to print the time it takes to run each SQL query}
 }
