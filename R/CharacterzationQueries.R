@@ -213,15 +213,15 @@ getCharacterizationTargets <- function(
 #' )
 #' 
 getCharacterizationOutcomes <- function(
-  connectionHandler,
-  schema,
-  cTablePrefix = 'c_',
-  cgTablePrefix = 'cg_',
-  targetId = NULL,
-  printTimes = FALSE,
-  useDcrc = TRUE,
-  useTte = TRUE,
-  useRf = TRUE
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    targetId = NULL,
+    printTimes = FALSE,
+    useDcrc = TRUE,
+    useTte = TRUE,
+    useRf = TRUE
 ){
   
   firstStart <- Sys.time()
@@ -231,129 +231,116 @@ getCharacterizationOutcomes <- function(
   if(useTte){ # if user wants time to event see whether there are results
     start <- Sys.time()
     
-    useTte <- !is.null(tryCatch({connectionHandler$queryDb(
-      sql = "select top 1 * from @schema.@c_table_prefixtime_to_event;",
+    tteData <- tryCatch({connectionHandler$queryDb(
+      sql = "
+             select cg.cohort_name, tte.outcome_cohort_definition_id as cohort_definition_id,
+             'timeToEvent' as type, 1 as value
+             from @schema.@c_table_prefixtime_to_event tte inner join
+                   @schema.@cg_table_prefixcohort_definition cg
+  
+              on tte.outcome_cohort_definition_id = cg.cohort_definition_id
+ 
+              {@use_target}?{where tte.target_cohort_definition_id in (@target_ids)}
+              group by cg.cohort_name, tte.outcome_cohort_definition_id
+      ;",
       schema = schema,
-      c_table_prefix = cTablePrefix
-    )}, error = function(e){return(NULL)}))
+      cg_table_prefix = cgTablePrefix,
+      c_table_prefix = cTablePrefix,
+      use_target = !is.null(targetId),
+      target_ids = paste0(targetId, collapse = ',')
+    )}, error = function(e){warning(e); return(NULL)})
     
     end <- Sys.time()
     if(printTimes){
-      print(paste0('checking time_to_event table exists: ', (end-start), ' ', units((end-start))))
+      print(paste0('extracting time_to_event data: ', (end-start), ' ', units((end-start))))
     }
   }
   
   if(useDcrc){ # if user wants dechal see whether there are results
     start <- Sys.time()
     
-    useDcrc <- !is.null(tryCatch({connectionHandler$queryDb(
-      sql = "select top 1 * from @schema.@c_table_prefixdechallenge_rechallenge;",
+    dcrcData <- tryCatch({connectionHandler$queryDb(
+      sql = "
+            select cg.cohort_name, dr.outcome_cohort_definition_id as cohort_definition_id,
+            'dechalRechal' as type, 1 as value
+             from @schema.@c_table_prefixdechallenge_rechallenge dr inner join
+                  @schema.@cg_table_prefixcohort_definition cg
+  
+              on dr.outcome_cohort_definition_id = cg.cohort_definition_id
+ 
+              {@use_target}?{where dr.target_cohort_definition_id in (@target_ids)}
+              group by cg.cohort_name, dr.outcome_cohort_definition_id
+      ;",
       schema = schema,
-      c_table_prefix = cTablePrefix
-    )}, error = function(e){return(NULL)}))
+      cg_table_prefix = cgTablePrefix,
+      c_table_prefix = cTablePrefix,
+      use_target = !is.null(targetId),
+      target_ids = paste0(targetId, collapse = ',')
+    )}, error = function(e){warning(e); return(NULL)})
     
     end <- Sys.time()
     if(printTimes){
-      print(paste0('checking dechallenge_rechallenge table exists: ', (end-start), ' ', units((end-start))))
+      print(paste0('extracting dechallenge_rechallenge data: ', (end-start), ' ', units((end-start))))
     }
   }
   
   if(useRf){ # if user wants risk factors see whether there are results
     start <- Sys.time()
     
-    useRf <- !is.null(tryCatch({connectionHandler$queryDb(
-      sql = "select top 1 * from @schema.@c_table_prefixcohort_details;",
+    rfData <- tryCatch({connectionHandler$queryDb(
+      sql = "
+            select cg.cohort_name, cd.outcome_cohort_id as cohort_definition_id,
+            'riskFactors' as type, 1 as value
+             from @schema.@c_table_prefixcohort_details cd inner join
+                  @schema.@cg_table_prefixcohort_definition cg
+  
+              on cd.outcome_cohort_id = cg.cohort_definition_id
+             
+              where cd.cohort_type = 'Cases'
+              {@use_target}?{and cd.target_cohort_id in (@target_ids)}
+              group by cg.cohort_name, cd.outcome_cohort_id
+      
+      ;",
       schema = schema,
-      c_table_prefix = cTablePrefix
-    )}, error = function(e){return(NULL)}))
+      cg_table_prefix = cgTablePrefix,
+      c_table_prefix = cTablePrefix,
+      use_target = !is.null(targetId),
+      target_ids = paste0(targetId, collapse = ',')
+    )}, error = function(e){warning(e); return(NULL)})
     
     end <- Sys.time()
     if(printTimes){
-      print(paste0('checking cohort_details table exists: ', (end-start), ' ', units((end-start))))
+      print(paste0('extracting cohort_details data: ', (end-start), ' ', units((end-start))))
     }
   }
   
   
   start <- Sys.time()
-  sql <- "
   
-  select 
-  cg.cohort_name, 
-  cohorts.*
+  outcomes <- rbind(tteData, dcrcData, rfData) 
   
-  from 
-  (
-  select 0 as cohort_definition_id, 'timeToEvent' as type, 1 as value
-
-  {@use_tte}?{
-    union
-    select distinct tte.outcome_cohort_definition_id as cohort_definition_id,
-    'timeToEvent' as type,
-    1 as value
-    from @schema.@c_table_prefixtime_to_event tte
-    
-    {@use_target}?{where tte.target_cohort_definition_id in (@target_ids)}
+  if(is.null(outcomes)){
+    end <- Sys.time()
+    message('No outcomes found')
+    print(paste0('Extracting characterization outcomes took: ', (end-firstStart), ' ', units((end-firstStart))))
+    return(NULL)
   }
   
-  {@use_dcrc}?{
-    union
-    select distinct
-    dr.outcome_cohort_definition_id as cohort_definition_id,
-    'dechalRechal' as type,
-    1 as value
-    from @schema.@c_table_prefixdechallenge_rechallenge dr
-    
-    {@use_target}?{where dr.target_cohort_definition_id in (@target_ids)}
-  
-  }
-  
-  {@use_rf}?{
-    union
-    select distinct
-    cd.outcome_cohort_id as cohort_definition_id,
-    'riskFactors' as type,
-    1 as value
-    from @schema.@c_table_prefixcohort_details cd
-    where cd.cohort_type = 'Cases'
-    
-    {@use_target}?{and cd.target_cohort_id in (@target_ids)}
-
-  }
-  
-  ) as cohorts
-  
-  inner join 
-  
-  @schema.@cg_table_prefixcohort_definition cg
-  
-  on cohorts.cohort_definition_id = cg.cohort_definition_id
-  
-  ;
-  "
-  
-  outcomes <- connectionHandler$queryDb(
-    sql = sql,
-    schema = schema,
-    cg_table_prefix = cgTablePrefix,
-    c_table_prefix = cTablePrefix,
-    use_tte = useTte,
-    use_dcrc = useDcrc,
-    use_rf = useRf,
-    use_target = !is.null(targetId),
-    target_ids = paste0(targetId, collapse = ',')
-  ) %>%
+  outcomes <- outcomes %>%
     tidyr::pivot_wider(
       id_cols = c("cohortName", "cohortDefinitionId"), 
       names_from = "type", 
-      values_from = c("value")
+      values_from = c("value"), 
+      values_fill = 0
     )
   
   end <- Sys.time()
   if(printTimes){
-    print(paste0('extracting characterization outcome cohort details: ', (end-start), ' ', units((end-start))))
+    print(paste0('pivoting characterization outcome cohort details: ', (end-start), ' ', units((end-start))))
   }
-  start <- Sys.time()
   
+  
+  start <- Sys.time()
   
   # add missing types with 0 values
   colnameTypes <- c('timeToEvent','dechalRechal','riskFactors') 
@@ -391,20 +378,20 @@ getCharacterizationOutcomes <- function(
       use_target = !is.null(targetId),
       target_ids = paste0(targetId, collapse = ',')
     ) %>% 
-      dplyr::rowwise() %>%
-      dplyr::mutate(
-        tarName = paste0('(',.data$startAnchor, ' + ',.data$riskWindowStart , ') - (',
-                         .data$endAnchor, ' + ',.data$riskWindowEnd , ')'),
-        tarString = paste0(.data$riskWindowStart, '/',.data$startAnchor , '/',
-                           .data$riskWindowEnd, '/',.data$endAnchor )
-      ) %>%
-      dplyr::select("cohortDefinitionId", "tarName", "tarString", "outcomeWashoutDays") %>%
-      dplyr::group_by(.data$cohortDefinitionId) %>%
-      dplyr::summarise(
-        tarNames = paste0(unique(.data$tarName), collapse = ':'),
-        tarStrings = paste0(unique(.data$tarString), collapse = ':'),
-        outcomeWashoutDays = paste0(unique(.data$outcomeWashoutDays), collapse = ':')
-      )}, error = function(e){NULL})
+        dplyr::rowwise() %>%
+        dplyr::mutate(
+          tarName = paste0('(',.data$startAnchor, ' + ',.data$riskWindowStart , ') - (',
+                           .data$endAnchor, ' + ',.data$riskWindowEnd , ')'),
+          tarString = paste0(.data$riskWindowStart, '/',.data$startAnchor , '/',
+                             .data$riskWindowEnd, '/',.data$endAnchor )
+        ) %>%
+        dplyr::select("cohortDefinitionId", "tarName", "tarString", "outcomeWashoutDays") %>%
+        dplyr::group_by(.data$cohortDefinitionId) %>%
+        dplyr::summarise(
+          tarNames = paste0(unique(.data$tarName), collapse = ':'),
+          tarStrings = paste0(unique(.data$tarString), collapse = ':'),
+          outcomeWashoutDays = paste0(unique(.data$outcomeWashoutDays), collapse = ':')
+        )}, error = function(e){NULL})
     
     if(!is.null(outcomeDetails)){
       outcomes <- merge(
