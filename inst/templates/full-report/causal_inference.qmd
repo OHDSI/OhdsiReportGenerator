@@ -214,7 +214,7 @@ for(description in descriptions){
                                          #"friendlyNameOutcome","friendlyNameTarget", 
                                          "targetSubjects", "comparatorSubjects",
                                          "targetOutcomes", "comparatorOutcomes",
-                                         "calibratedRr", "calibratedCi95Lb", "calibratedOneSidedP")%>%
+                                         "calibratedRr", "calibratedCi95Lb", "calibratedP","calibratedOneSidedP")%>%
                            dplyr::group_by(
                              .data$friendlyNameComp,
                              .data$subsetTextTarget
@@ -228,13 +228,15 @@ for(description in descriptions){
                              comparatorSubjects = "Comp N",
                              calibratedRr  = "Cal. RR", 
                              calibratedCi95Lb = "Cal. Ci95%Lb",
+                             calibratedP = "Cal. P",
                              calibratedOneSidedP = "Cal. OneSidedP"
                            ) %>%
                            gt::fmt_integer(
                              columns = c("targetSubjects", "comparatorSubjects")
                            ) %>%
                            gt::fmt_number(
-                             columns = c( "calibratedRr", "calibratedCi95Lb", "calibratedOneSidedP"), 
+                             columns = c( "calibratedRr", "calibratedCi95Lb",
+                                          "calibratedP","calibratedOneSidedP"), 
                              decimals = 4
                            ) %>%
                            gt::fmt(
@@ -395,7 +397,7 @@ for(sccsInd in 1:nrow(sccsIds)){
                                        "outcomeSubjects", "covariateSubjects",
                                        "outcomeEvents", "covariateOutcomes",
                                        "calibratedRr", "calibratedCi95Lb", 
-                                       "calibratedP","calibratedOneSidedP")%>%
+                                       "calibratedP","calibratedOneSidedP") %>%
                          dplyr::group_by(
                            .data$description,
                            .data$subsetTextTarget,
@@ -409,13 +411,14 @@ for(sccsInd in 1:nrow(sccsIds)){
                            outcomeSubjects = "Outcome N",
                            calibratedRr  = "Cal. RR", 
                            calibratedCi95Lb = "Cal. Ci95%Lb",
+                           calibratedP = "Cal. P",
                            calibratedOneSidedP = "Cal. OneSidedP"
                          ) %>%
                          gt::fmt_integer(
                            columns = c("outcomeSubjects")
                          ) %>%
                          gt::fmt_number(
-                           columns = c( "calibratedRr", "calibratedCi95Lb", "calibratedP"), 
+                           columns = c( "calibratedRr", "calibratedCi95Lb", "calibratedP","calibratedOneSidedP"), 
                            decimals = 4
                          ) %>%
                          gt::fmt(
