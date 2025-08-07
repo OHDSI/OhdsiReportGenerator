@@ -9,7 +9,10 @@ getCharacterizationTargets(
   schema,
   cTablePrefix = "c_",
   cgTablePrefix = "cg_",
-  printTimes = FALSE
+  printTimes = FALSE,
+  useTte = TRUE,
+  useDcrc = TRUE,
+  useRf = TRUE
 )
 }
 \arguments{
@@ -22,6 +25,12 @@ getCharacterizationTargets(
 \item{cgTablePrefix}{The prefix used for the cohort generator results tables}
 
 \item{printTimes}{Print the time it takes to run each query}
+
+\item{useTte}{whether to determine what cohorts are used in time to event}
+
+\item{useDcrc}{whether to determine what cohorts are used in dechal-rechal}
+
+\item{useRf}{whether to determine what cohorts are used in risk factor}
 }
 \value{
 A data.frame with the characterization target cohort ids, names and which characterization analyses the cohorts are used in.

@@ -8,6 +8,10 @@
 #' @template cTablePrefix
 #' @template cgTablePrefix
 #' @param printTimes Print the time it takes to run each query
+#' @param useTte whether to determine what cohorts are used in time to event
+#' @param useDcrc whether to determine what cohorts are used in dechal-rechal
+#' @param useRf whether to determine what cohorts are used in risk factor
+#' 
 #' @family Characterization
 #' 
 #' @return
@@ -30,133 +34,169 @@ getCharacterizationTargets <- function(
     schema,
     cTablePrefix = 'c_',
     cgTablePrefix = 'cg_',
-    printTimes = FALSE
-    ){
+    printTimes = FALSE,
+    useTte = TRUE,
+    useDcrc = TRUE,
+    useRf = TRUE
+){
   
-  start <- Sys.time()
   
-  # first check each table
-  useTte <- !is.null(tryCatch({connectionHandler$queryDb(
-    sql = "select top 1 * from @schema.@c_table_prefixtime_to_event;",
-    schema = schema,
-    c_table_prefix = cTablePrefix
-  )}, error = function(e){return(NULL)}))
+  first <- Sys.time()
   
-  end <- Sys.time()
-  if(printTimes){
-    print(paste0('checking time_to_event table exists: ', (end-start), ' ', units((end-start))))
-  }
-  start <- Sys.time()
-  
-  useDcrc <- !is.null(tryCatch({connectionHandler$queryDb(
-    sql = "select top 1 * from @schema.@c_table_prefixdechallenge_rechallenge;",
-    schema = schema,
-    c_table_prefix = cTablePrefix
-  )}, error = function(e){return(NULL)}))
-  
-  end <- Sys.time()
-  if(printTimes){
-    print(paste0('checking dechallenge_rechallenge table exists: ',  (end-start), ' ', units((end-start))))
-  }
-  start <- Sys.time()
-  
-  useRf <- !is.null(tryCatch({connectionHandler$queryDb(
-    sql = "select top 1 * from @schema.@c_table_prefixcohort_details;",
-    schema = schema,
-    c_table_prefix = cTablePrefix
-  )}, error = function(e){return(NULL)}))
-  
-  end <- Sys.time()
-  
-  if(printTimes){
-    print(paste0('checking cohort_details table exists: ',  (end-start), ' ', units((end-start))))
-  }
-  
-  start <- Sys.time()
-
-  sql <- "
-  
-  select 
-  cg.cohort_name, 
-  cohorts.*
-  
-  from 
-  (
-  select 0 as cohort_definition_id, 'timeToEvent' as type, 1 as value
-
-  {@use_tte}?{
-    union
-    select tte.target_cohort_definition_id as cohort_definition_id,
-    'timeToEvent' as type,
-    1 as value
-    from @schema.@c_table_prefixtime_to_event tte
-    group by tte.target_cohort_definition_id
+  if(useTte){ 
+    start <- Sys.time()
+    
+    # check tte normalized table with target_cohort_definition_id exists or return NULL if it does not
+    normExists <- tryCatch({
+      connectionHandler$queryDb(
+        sql = "select * from @schema.@c_table_prefixtime_to_event_targets limit 1;",
+        schema = schema,
+        c_table_prefix = cTablePrefix
+      )
+    }, error = function(e){return(NULL)})
+    
+    tableOrView <- ifelse(
+      is.null(normExists),
+      "(select distinct target_cohort_definition_id from @schema.@c_table_prefixtime_to_event)",
+      "@schema.@c_table_prefixtime_to_event_targets"
+    )
+    
+    tteData <- tryCatch({connectionHandler$queryDb(
+      sql = paste0("
+      select 
+           cg.cohort_name,
+           tte.target_cohort_definition_id as cohort_definition_id,
+           'timeToEvent' as type,
+           1 as value
+        from ",tableOrView," tte
+        inner join 
+        @schema.@cg_table_prefixcohort_definition cg
+        on tte.target_cohort_definition_id = cg.cohort_definition_id
+    ;"),
+      schema = schema,
+      cg_table_prefix = cgTablePrefix,
+      c_table_prefix = cTablePrefix
+    )}, error = function(e){warning(e); return(NULL)})
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('extracting time_to_event data: ', (end-start), ' ', units((end-start))))
+    }
   }
   
-  {@use_dcrc}?{
-    union
-    select distinct
-    dr.target_cohort_definition_id as cohort_definition_id,
-    'dechalRechal' as type,
-    1 as value
-    from @schema.@c_table_prefixdechallenge_rechallenge dr
+  
+  
+  if(useDcrc){
+    start <- Sys.time()
+    
+    dcrcData <- tryCatch({connectionHandler$queryDb(
+      sql = "
+      select 
+      cg.cohort_name,
+      dr.target_cohort_definition_id as cohort_definition_id,
+      'dechalRechal' as type,
+      1 as value
+      
+      from (select distinct target_cohort_definition_id from @schema.@c_table_prefixdechallenge_rechallenge) dr
+      inner join 
+      @schema.@cg_table_prefixcohort_definition cg
+      on dr.target_cohort_definition_id = cg.cohort_definition_id
+    ;",
+      schema = schema,
+      cg_table_prefix = cgTablePrefix,
+      c_table_prefix = cTablePrefix
+    )}, error = function(e){warning(e); return(NULL)})
+    
+    end <- Sys.time()
+    if(printTimes){
+      print(paste0('extracting dechallenge_rechallenge data: ',  (end-start), ' ', units((end-start))))
+    }
   }
   
-  {@use_rf}?{
-    union
-    select distinct
+  
+  if(useRf){
+    start <- Sys.time()
+    rfData1 <- tryCatch({connectionHandler$queryDb(
+      sql = "select
+    cg.cohort_name, 
     cd.target_cohort_id as cohort_definition_id,
     'riskFactors' as type,
     1 as value
-    from @schema.@c_table_prefixcohort_details cd
-    where cd.cohort_type = 'Cases'
-  
-    union
-    select distinct
+    
+    from (select distinct target_cohort_id from @schema.@c_table_prefixcohort_details
+    where cohort_type in ('Cases')) cd
+    inner join 
+     @schema.@cg_table_prefixcohort_definition cg
+     on cd.target_cohort_id = cg.cohort_definition_id
+    ;",
+      schema = schema,
+      cg_table_prefix = cgTablePrefix,
+      c_table_prefix = cTablePrefix
+    )}, error = function(e){warning(e); return(NULL)})
+    
+    end <- Sys.time()
+    
+    if(printTimes){
+      print(paste0('extracting risk factor data: ',  (end-start), ' ', units((end-start))))
+    }
+    
+    start <- Sys.time()
+    rfData2 <- tryCatch({connectionHandler$queryDb(
+      sql = "select
+    cg.cohort_name, 
     cd.target_cohort_id as cohort_definition_id,
     'databaseComparator' as type,
     1 as value
-    from @schema.@c_table_prefixcohort_details cd
-    where cd.cohort_type = 'Target'
+    
+    from (select distinct target_cohort_id from @schema.@c_table_prefixcohort_details
+    where cohort_type in ('Target')) cd
+    inner join 
+     @schema.@cg_table_prefixcohort_definition cg
+     on cd.target_cohort_id = cg.cohort_definition_id
+    ;",
+      schema = schema,
+      cg_table_prefix = cgTablePrefix,
+      c_table_prefix = cTablePrefix
+    )}, error = function(e){warning(e); return(NULL)})
+    
+    end <- Sys.time()
+    
+    if(printTimes){
+      print(paste0('extracting database comparator data: ',  (end-start), ' ', units((end-start))))
+    }
+    
+    rfData <- rbind(rfData1,rfData2)
+    
   }
   
-  ) as cohorts
+  start <- Sys.time()
   
-  inner join 
+  targets <- rbind(tteData, dcrcData, rfData)
+  if(is.null(targets)){
+    message('No target data')
+    end <- Sys.time()
+    print(paste0('-- all extracting characterization targets took: ',  (end-first), ' ', units((end-first))))
+    return(NULL)
+  }
   
-  @schema.@cg_table_prefixcohort_definition cg
-  
-  on cohorts.cohort_definition_id = cg.cohort_definition_id
-  
-  ;
-  "
-  
-  targets <- connectionHandler$queryDb(
-    sql = sql,
-    schema = schema,
-    cg_table_prefix = cgTablePrefix,
-    c_table_prefix = cTablePrefix,
-    use_tte = useTte,
-    use_dcrc = useDcrc,
-    use_rf = useRf
-  ) %>%
+  targets <- targets %>%
     tidyr::pivot_wider(
       id_cols = c("cohortName", "cohortDefinitionId"), 
       names_from = "type", 
-      values_from = c("value")
+      values_from = c("value"), 
+      values_fill = 0
     )
   
   end <- Sys.time()
   
   if(printTimes){
-    print(paste0('extracting characterization target details: ',  (end-start), ' ', units((end-start))))
+    print(paste0('pivoting data took: ',  (end-start), ' ', units((end-start))))
   }
   
   start <- Sys.time()
-  
   # add missing types with 0 values
   colnameTypes <- c('timeToEvent','dechalRechal','riskFactors','databaseComparator') 
-
+  
   if(sum(colnameTypes %in% colnames(targets)) != 4){
     missingCols <- colnameTypes[!colnameTypes %in% colnames(targets)]
     for(missingCol in missingCols){
@@ -175,8 +215,9 @@ getCharacterizationTargets <- function(
     print(paste0('processing characterization target details: ', (end-start), ' ', units((end-start))))
   }
   
-  return(targets)
+  print(paste0('-- all extracting characterization targets took: ',  (end-first), ' ', units((end-first))))
   
+  return(targets)
 }
 
 
