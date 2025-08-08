@@ -1084,7 +1084,7 @@ getSccsDiagnosticsData <- function(
   columnsToInclude <- c(
     "databaseName","databaseId","analysisId","description", 
     "targetName","targetId","outcomeName","outcomeId","indicationName", 
-    "indicatonId","covariateName","mdrr","ease","timeTrendP","preExposureP", 
+    "indicationId","covariateName","mdrr","ease","timeTrendP","preExposureP", 
     "timeStabilityP","eventExposureLb","eventExposureUb","eventObservationLb", 
     "eventObservationUb","rareOutcomePrevalence","mdrrDiagnostic","easeDiagnostic", 
     "timeTrendDiagnostic","preExposureDiagnostic","timeStabilityDiagnostic", 

@@ -510,7 +510,7 @@ getPredictionModelDesigns <- function(
         LEFT JOIN @schema.@plp_table_prefixdiagnostics AS diag
         ON results.development_database_id = diag.database_id
 
-        where 1 == 1
+        where 1 = 1
         {@target_restrict} ? { and  targets.cohort_definition_id in (@target_ids) }
         {@outcome_restrict} ? { and  outcomes.cohort_definition_id in (@outcome_ids) }
 
