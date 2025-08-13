@@ -80,10 +80,10 @@ for(i in 1:length(indicationIds)){
 #| echo: false
 #| results: 'asis'
 
-if(length(comparatorIds) > 0 ){
-  for(i in 1:length(comparatorIds)){
-    if(!is.na(comparatorIds[i])){  
-      name <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == comparatorIds[i]]
+if(length(comparatorIdsOfInterest) > 0 ){
+  for(i in 1:length(comparatorIdsOfInterest)){
+    if(!is.na(comparatorIdsOfInterest[i])){  
+      name <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == comparatorIdsOfInterest[i]]
       
       cat(paste0("\n\n## Comparator: ",name," \n"))
       
@@ -93,7 +93,7 @@ if(length(comparatorIds) > 0 ){
       cat(paste0('\n### ', name, ' definition\n'))
       
       cat(
-        CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == comparatorIds[i]])
+        CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == comparatorIdsOfInterest[i]])
       )
       
       cat('\n:::\n')

@@ -16,11 +16,7 @@ for(i in 1:length(indicationIds)){
     indication <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == indicationIds[i]]
   }
   
-  cohortMethodDiagnostics %>%
-    dplyr::filter(.data$targetId == !!params$targetId) %>%
-    dplyr::filter(.data$outcomeId %in% !!params$outcomeIds)
-  
-  exposures <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId %in% comparatorIds]
+  exposures <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId %in% comparatorIdsOfInterest]
   
   cat(paste0("\n\n##### ", indication))
   

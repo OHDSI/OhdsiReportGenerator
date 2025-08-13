@@ -94,6 +94,7 @@ Other Characterization:
 \code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getIncidenceTargets}()},
+\code{\link{getTargetBinaryFeatures}()},
 \code{\link{getTargetContinuousFeatures}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},

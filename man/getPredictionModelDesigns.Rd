@@ -45,6 +45,7 @@ Returns a data.frame with the columns:
  \item{featureEngineeringSettingsJson the feature engineering settings json}
  \item{splitSettingsJson the split settings json}
  \item{sampleSettingsJson the sample settings json}
+ \item{modelSettingsJson the model settings json}
  \item{minAuroc the min AUROC value of models developed using the model design across databases}
  \item{meanAuroc the mean AUROC value of models developed using the model design across databases}
  \item{maxAuroc the max AUROC value of models developed using the model design across databases}

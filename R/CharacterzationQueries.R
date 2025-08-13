@@ -1839,6 +1839,131 @@ return(result)
 }
 
 
+#' Extract aggregate statistics of binary feature analysis IDs of interest for targets (ignoring excluding people with prior outcome)
+#' @description
+#' This function extracts the feature extraction results for targets corresponding to specified target
+#'  but does not exclude any patients with the outcome during the outcome washout (so it agnostic to the outcome of interest).
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetId
+#' @param databaseIds (optional) A vector of database ids to restrict to
+#' @param analysisIds (optional) The feature extraction analysis ID of interest (e.g., 201 is condition)
+#' @param conceptIds (optional) The feature extraction concept ID of interest to restrict to
+#' @family Characterization
+#' @return
+#' Returns a data.frame with the columns:
+#' \itemize{
+#'  \item{databaseName the name of the database}
+#'  \item{databaseId the unique identifier of the database}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{minPriorObservation the minimum required observation days prior to index for an entry}
+#'  \item{covariateId the id of the feature}
+#'  \item{covariateName the name of the feature}
+#'  \item{sumValue the number of target patients who have the feature value of 1 (target patients are restricted to first occurrence and require min prior obervation days)}
+#'  \item{averageAvalue the fraction of target patients who have the feature value of 1 (target patients are restricted to first occurrence and require min prior obervation days)}
+#' } 
+#' 
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' tbf <- getTargetBinaryFeatures (
+#' connectionHandler = connectionHandler, 
+#' schema = 'main',
+#' targetId = 1
+#' )
+#' 
+getTargetBinaryFeatures <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    targetId = NULL,
+    databaseIds = NULL,
+    analysisIds = NULL,
+    conceptIds = NULL
+){
+  
+  if(length(targetId) != 1){
+    stop('targetId must be a single value')
+  }
+  
+  sql <-  
+    "
+select 
+
+d.CDM_SOURCE_ABBREVIATION as database_name,
+c.database_id,
+target.cohort_name as target_name,
+c.TARGET_COHORT_ID,
+s.min_prior_observation,
+c.covariate_id,
+coi.covariate_name,
+c.sum_value,
+c.average_value
+
+from 
+@schema.@c_table_prefixCOVARIATES c
+ inner join 
+@schema.@c_table_prefixCOVARIATE_REF coi
+
+on 
+c.database_id = coi.database_id and
+c.setting_id = coi.setting_id and
+c.covariate_id = coi.covariate_id
+
+inner join @schema.@c_table_prefixsettings s
+on s.setting_id = c.setting_id
+and s.database_id = c.database_id
+
+  inner join
+  @schema.@database_table d
+  on 
+  c.database_id = d.database_id
+
+  inner join 
+  @schema.@cg_table_prefixcohort_definition target
+  on 
+  target.cohort_definition_id = c.target_cohort_ID
+  
+  WHERE
+  c.TARGET_COHORT_ID = @target_id AND 
+  c.COHORT_TYPE = 'Target'
+  {@use_database}?{AND c.database_id in (@database_id) }
+  {@use_analysis}?{and coi.analysis_id in (@analysis_ids)}
+  {@use_concepts}?{and coi.concept_id in (@concept_ids)}
+;
+"
+
+result <- connectionHandler$queryDb(
+  sql = sql,
+  schema = schema,
+  target_id = targetId,
+  c_table_prefix = cTablePrefix,
+  cg_table_prefix = cgTablePrefix,
+  database_table = databaseTable,
+  use_analysis = !is.null(analysisIds),
+  analysis_ids = paste0(analysisIds, collapse = ','),
+  database_id = paste0("'", databaseIds, "'", collapse = ","),
+  use_database = !is.null(databaseIds),
+  use_concepts = !is.null(conceptIds),
+  concept_ids = paste0(conceptIds, collapse = ',')
+)
+
+return(result)
+}
 
 #' A function to extract non-case and case binary characterization results
 #'
@@ -2732,6 +2857,8 @@ processContinuousRiskFactorFeatures <- function(
 #' @param riskWindowEnd (optional) A riskWindowEnd to restrict to
 #' @param startAnchor (optional) A startAnchor to restrict to
 #' @param endAnchor (optional) An endAnchor to restrict to
+#' @param conceptIds (optional) An conceptIds to restrict to
+#' @param minVal (optional) the minimum averageVal to extract
 #' @family Characterization
 #' 
 #' @return
@@ -2763,7 +2890,9 @@ getBinaryCaseSeries <- function(
     riskWindowStart = NULL,
     riskWindowEnd = NULL,
     startAnchor = NULL,
-    endAnchor = NULL
+    endAnchor = NULL,
+    conceptIds = NULL,
+    minVal = NULL
 ){
   if(is.null(targetId)){
     stop('targetId must be entered')
@@ -2839,6 +2968,8 @@ cov.Outcome_COHORT_ID,
   {@use_end_anchor}?{and s.end_anchor = '@end_anchor'}
           and cov.cohort_type in ('CasesBetween','CasesAfter','CasesBefore')
           and cr.analysis_id in (109, 110, 217, 218, 305, 417, 418, 505, 605, 713, 805, 926, 927)
+  {@use_min_val}?{and cov.average_value >= @min_val}   
+  {@use_concepts}?{and cr.concept_id in (@concept_ids)}   
 ;
 "
 
@@ -2859,7 +2990,11 @@ result <- connectionHandler$queryDb(
   use_start_anchor = !is.null(startAnchor),
   start_anchor = startAnchor,
   use_end_anchor = !is.null(endAnchor),
-  end_anchor = endAnchor
+  end_anchor = endAnchor,
+  use_min_val = !is.null(minVal),
+  min_val = minVal,
+  use_concepts = !is.null(conceptIds),
+  concept_ids = paste0(conceptIds, collapse = ',')
 )
   
   return(result)

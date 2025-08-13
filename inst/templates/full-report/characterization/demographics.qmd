@@ -42,11 +42,7 @@ if(nrow(cohortIdsDemo) > 0){
     dataB <- targetBinaryOfInterest %>% 
       dplyr::filter(.data$targetCohortId == !!cohortIdsDemo$targetCohortId[tId]) %>%
       dplyr::filter(.data$minPriorObservation == !!cohortIdsDemo$minPriorObservation[tId]) %>%
-      dplyr::select("databaseName","covariateName","rawAverage") %>%
-      dplyr::mutate(
-        averageValue = .data$rawAverage
-      ) %>%
-      dplyr::select(-"rawAverage")  
+      dplyr::select("databaseName","covariateName","averageValue")
     
     dataB$type <- rep('Age Group', nrow(dataB))
     genderId <- grep('gender = ', dataB$covariateName)

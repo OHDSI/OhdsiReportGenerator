@@ -18,6 +18,8 @@ A good model should have a high AUC (ideally >= 0.7) and be well calibrated.  Ho
 #| echo: false
 #| results: 'asis'
 
+
+# TODO - restrict to T/O of interest?
 performances <- OhdsiReportGenerator::getPredictionPerformances(
     connectionHandler = connectionHandler, 
     schema = params$schema
@@ -32,6 +34,8 @@ cat('\n\n### Performance Summary\n\n')
   
   print(htmltools::tagList(
     performances %>%  
+      dplyr::filter(.data$developmentTargetId %in% targetIdsOfInterest) %>%
+      dplyr::filter(.data$developmentOutcomeId %in% outcomeIdsOfInterest) %>%
       dplyr::filter(.data$developmentDatabase == !!databaseName) %>%
       dplyr::select(
         -"developmentDatabaseId", -"developmentTargetId", 
@@ -94,8 +98,8 @@ topPreds <-  OhdsiReportGenerator::getPredictionTopPredictors(
     schema = params$schema, 
     plpTablePrefix = 'plp_',
     cgTablePrefix = 'cg_',
-    targetIds = unique(cohortDefinitions$cohortDefinitionId[cohortDefinitions$subsetParent == params$targetId]),
-    outcomeIds = params$outcomeIds,
+    targetIds = targetIdsOfInterest,
+    outcomeIds = outcomeIdsOfInterest,
     numberPredictors = numberPredictors
 )
 

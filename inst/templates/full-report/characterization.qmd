@@ -32,13 +32,40 @@ cat(result, sep = '\n')
 #| echo: false
 #| results: 'asis'
 
+
+  # TODO add tte?
+  if(FALSE){
+    tte <- OhdsiReportGenerator::getTimeToEvent(
+      connectionHandler = connectionHandler, 
+      schema = params$schema, 
+      targetIds = unique(c(targetIdsOfInterest, comparatorIdsOfInterest, indicationIdsOfInterest)), 
+    outcomeIds = outcomeIdsOfInterest
+    )
+  }
+  
+  targetContinuousOfInterest <- OhdsiReportGenerator::getTargetContinuousFeatures(
+    connectionHandler = connectionHandler, 
+    schema = params$schema, 
+    targetIds = unique(c(targetIdsOfInterest, comparatorIdsOfInterest, indicationIdsOfInterest)), 
+    analysisIds = c(2,8,9,10)
+  )
+  
+  targetBinaryOfInterest <- do.call('rbind', lapply(unique(c(targetIdsOfInterest, comparatorIdsOfInterest, indicationIdsOfInterest)), function(x){
+  OhdsiReportGenerator::getTargetBinaryFeatures(
+    connectionHandler = connectionHandler, 
+    schema = params$schema, 
+    targetId = x, 
+    analysisIds = c(1,2,3,4,5)
+)}))
+  
 # run this per type - 
 demoList <- list(
-  `Exposure Target` = unique(cohortDefinitions$cohortDefinitionId[cohortDefinitions$subsetParent == params$targetId]),
-  `Outcome/s` = unique(cohortDefinitions$cohortDefinitionId[cohortDefinitions$subsetParent %in% params$outcomeIds]),
-  `Indication/s` = unique(cohortDefinitions$cohortDefinitionId[cohortDefinitions$subsetParent %in% indicationIds]), # what about null?
-  `Comparator/s` = unique(cohortDefinitions$cohortDefinitionId[cohortDefinitions$subsetParent %in% comparatorIds])
+  `Exposure Target` = targetIdsOfInterest,
+  `Outcome/s` = outcomeIdsOfInterest,
+  `Indication/s` = indicationIdsOfInterest, # what about null?
+  `Comparator/s` = comparatorIdsOfInterest
 )
+
 cat('\n\n### Index Demographics\n\n')
 for(demoListInd in 1:length(demoList)){
   result <- knitr::knit_child(

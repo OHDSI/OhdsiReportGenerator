@@ -16,7 +16,9 @@ getBinaryCaseSeries(
   riskWindowStart = NULL,
   riskWindowEnd = NULL,
   startAnchor = NULL,
-  endAnchor = NULL
+  endAnchor = NULL,
+  conceptIds = NULL,
+  minVal = NULL
 )
 }
 \arguments{
@@ -43,6 +45,10 @@ getBinaryCaseSeries(
 \item{startAnchor}{(optional) A startAnchor to restrict to}
 
 \item{endAnchor}{(optional) An endAnchor to restrict to}
+
+\item{conceptIds}{(optional) An conceptIds to restrict to}
+
+\item{minVal}{(optional) the minimum averageVal to extract}
 }
 \value{
 A data.frame with the characterization case series results
@@ -86,6 +92,7 @@ Other Characterization:
 \code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
 \code{\link{getIncidenceTargets}()},
+\code{\link{getTargetBinaryFeatures}()},
 \code{\link{getTargetContinuousFeatures}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},

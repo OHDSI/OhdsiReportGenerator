@@ -382,6 +382,7 @@ getPredictionCohorts <- function(
 #'  \item{featureEngineeringSettingsJson the feature engineering settings json}
 #'  \item{splitSettingsJson the split settings json}
 #'  \item{sampleSettingsJson the sample settings json}
+#'  \item{modelSettingsJson the model settings json}
 #'  \item{minAuroc the min AUROC value of models developed using the model design across databases}
 #'  \item{meanAuroc the mean AUROC value of models developed using the model design across databases}
 #'  \item{maxAuroc the max AUROC value of models developed using the model design across databases}
@@ -430,6 +431,7 @@ getPredictionModelDesigns <- function(
           feature_engineering_settings.feature_engineering_settings_json,
           split_settings.split_settings_json,
           sample_settings.sample_settings_json,
+          model_settings.model_settings_json,
           MIN(p.value) AS min_auroc,
           AVG(p.value) AS mean_auroc,
           MAX(p.value) AS max_auroc,
@@ -534,7 +536,8 @@ getPredictionModelDesigns <- function(
         feature_engineering_settings.feature_engineering_settings_json,
         split_settings.split_settings_json,
         plp_data_settings.plp_data_settings_json,
-        sample_settings.sample_settings_json;"
+        sample_settings.sample_settings_json,
+        model_settings.model_settings_json;"
   
   summaryTable <- connectionHandler$queryDb(
     sql = sql,
