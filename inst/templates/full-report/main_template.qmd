@@ -19,7 +19,7 @@ params:
   targetId: 1
   outcomeIds: 3
   indicationIds: ""
-  comparatorIds: !expr "c(2)"
+  comparatorIds: NULL
   cohortIds: !expr "c(1,3,2)"
   cohortNames: !expr "c('target', 'outcome', 'comp')"
   includeCI: true
@@ -48,7 +48,7 @@ library(dplyr)
 targetName <- params$cohortNames[params$cohortIds == params$targetId]
 outcomeName <- paste0(params$cohortNames[params$cohortIds %in% params$outcomeIds], collapse = '/')
 
-restrictToIndications <- params$indicationIds != 'All'
+restrictToIndications <- !('All' %in% params$indicationIds)
 indicationIds <- params$indicationIds
 
 #====================================
@@ -100,21 +100,6 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(
 # Get Cohorts
 # ===================================
 
-orderDf <- data.frame(
-  subsetParent = c(
-    params$targetId,
-    params$outcomeIds, 
-    params$indicationIds,
-    params$comparatorIds
-  ),
-  order = 1:length(c(
-    params$targetId,
-    params$outcomeIds, 
-    params$indicationIds,
-    params$comparatorIds
-  ))
-)
-
 cohortDefinitions <- OhdsiReportGenerator::getCohortDefinitions(
   connectionHandler = connectionHandler, 
   schema = params$schema 
@@ -134,15 +119,6 @@ cohortDefinitions <-
   )
 cohortDefinitions$friendlyName[is.na(cohortDefinitions$friendlyName)] <- cohortDefinitions$cohortName[is.na(cohortDefinitions$friendlyName)]
 
-# add order column
-cohortDefinitions <- 
-  merge(
-    cohortDefinitions,
-    orderDf, 
-    by.x = 'subsetParent', 
-    by.y = 'subsetParent', 
-    all.x = TRUE
-  )
 
 # function to get indication subset:
 getIndication <- function(json){ 
@@ -281,7 +257,8 @@ if(is.null(params$comparatorIds)){
       outcomeIds = params$outcomeIds
         )
     
-    comparatorIds <- unique(newComps$comparatorId)
+    comparatorIds <- unique(cohortDefinitions$subsetParent[cohortDefinitions$cohortDefinitionId %in% unique(newComps$comparatorId)])
+    
   }
 }
   
@@ -310,12 +287,36 @@ comparatorText <- paste0(unique(cohortDefinitions$friendlyName[cohortDefinitions
 
 # ===================================
 
+# add order column
+orderDf <- data.frame(
+  subsetParent = c(
+    params$targetId,
+    params$outcomeIds, 
+    params$indicationIds,
+    comparatorIds
+  ),
+  order = 1:length(c(
+    params$targetId,
+    params$outcomeIds, 
+    params$indicationIds,
+    comparatorIds
+  ))
+)
+
+cohortDefinitions <- 
+  merge(
+    cohortDefinitions,
+    orderDf, 
+    by.x = 'subsetParent', 
+    by.y = 'subsetParent', 
+    all.x = TRUE
+  )
+
 #nNegativeControls <- 100 # remove?
 
 
 
 ```
-
 
 ```{r}
 #| label: summary
