@@ -735,13 +735,29 @@ getSccsOutcomes <- function(
       
       @schema.@sccs_table_prefixexposures_outcome_set as eos
       on eos.exposures_outcome_set_id = sr.exposures_outcome_set_id
+      
+      inner join
+      @schema.@sccs_table_prefixcovariate sc ON (
+    sc.exposures_outcome_set_id = sr.exposures_outcome_set_id AND
+    sc.database_id = sr.database_id AND
+    sc.analysis_id = sr.analysis_id AND
+    sc.covariate_id = sr.covariate_id
+  )
+  
+  inner join
+  @schema.@sccs_table_prefixexposure e ON
+  (
+  e.exposures_outcome_set_id = sc.exposures_outcome_set_id AND
+  e.era_id = sc.era_id
+  )
+
 
       inner join @schema.@cg_table_prefixcohort_definition cd
       
       on eos.outcome_id = cd.cohort_definition_id
       
-      
-  {@use_target}?{ where sr.covariate_id in (@target_id)}
+      where e.true_effect_size is NULL
+  {@use_target}?{ AND sc.era_id in (@target_id)}
       
       ;"
   
