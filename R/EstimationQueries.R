@@ -109,12 +109,20 @@ getCmOutcomes <- function(
        FROM
       
       @schema.@cm_table_prefixresult as cr
+      
+      inner join 
+   @schema.@cm_table_prefixtarget_comparator_outcome as tco
+   on 
+   cr.target_id = tco.target_id and 
+   cr.comparator_id = tco.comparator_id and 
+   cr.outcome_id = tco.outcome_id
           
       inner join @schema.@cg_table_prefixcohort_definition cd
       
       on cr.outcome_id = cd.cohort_definition_id
       
-      {@use_target}?{ where cr.target_id in (@target_id)}
+      where tco.outcome_of_interest = 1
+      {@use_target}?{ and cr.target_id in (@target_id)}
       ;"
   
   outcomes <- connectionHandler$queryDb(
@@ -727,7 +735,7 @@ getSccsOutcomes <- function(
       
       @schema.@sccs_table_prefixexposures_outcome_set as eos
       on eos.exposures_outcome_set_id = sr.exposures_outcome_set_id
-          
+
       inner join @schema.@cg_table_prefixcohort_definition cd
       
       on eos.outcome_id = cd.cohort_definition_id
