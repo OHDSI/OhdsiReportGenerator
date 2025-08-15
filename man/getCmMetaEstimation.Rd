@@ -59,6 +59,7 @@ Returns a data.frame with the columns:
  \item{targetOutcomes the total number of outcomes occuring during the time at risk for the target cohort people across included database}
  \item{comparatorOutcomes the total number of outcomes occuring during the time at risk for the comparator cohort people across included database}
  
+ \item{unblind whether the results can be unblinded.}
  \item{nDatabases the number of databases included}
  }
 }

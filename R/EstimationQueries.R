@@ -155,6 +155,7 @@ getCmOutcomes <- function(
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
+#'  \item{databaseId the unqiue identifier of the database}
 #'  \item{analysisId the analysis design unique identifier}
 #'  \item{description the analysis design description}
 #'  \item{targetName the target cohort name}
@@ -176,6 +177,7 @@ getCmOutcomes <- function(
 #'  \item{comparatorDays the total number of days at risk across the comparator cohort people}
 #'  \item{targetOutcomes the total number of outcomes occuring during the time at risk for the target cohort people}
 #'  \item{comparatorOutcomes the total number of outcomes occuring during the time at risk for the comparator cohort people}
+#'  \item{Unblind Whether the results passed diagnostics and were unblinded}
 #'  \item{targetEstimator ...}
 #'  } 
 #' 
@@ -206,6 +208,7 @@ getCMEstimation <- function(
 
   sql <- "select 
   db.cdm_source_abbreviation as database_name, 
+  db.database_id,
   r.analysis_id, 
   a.description,
   
@@ -230,7 +233,7 @@ getCMEstimation <- function(
   r.comparator_days,
   r.target_outcomes,
   r.comparator_outcomes,
-  
+  unblind.unblind,
   r.target_estimator
   
   from 
@@ -317,6 +320,7 @@ getCMEstimation <- function(
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
+#'  \item{databaseId the unqiue identifier of the database}
 #'  \item{analysisId the analysis unique identifier}
 #'  \item{description a description of the analysis}
 #'  \item{targetName the target cohort name}
@@ -369,6 +373,7 @@ getCmDiagnosticsData <- function(
   sql <- "
     SELECT DISTINCT
       dmd.cdm_source_abbreviation database_name,
+      dmd.database_id,
       cma.analysis_id,
       cma.description,
       cgcd1.cohort_name target_name,
@@ -489,6 +494,7 @@ getCmDiagnosticsData <- function(
 #'  \item{targetOutcomes the total number of outcomes occuring during the time at risk for the target cohort people across included database}
 #'  \item{comparatorOutcomes the total number of outcomes occuring during the time at risk for the comparator cohort people across included database}
 #'  
+#'  \item{unblind whether the results can be unblinded.}
 #'  \item{nDatabases the number of databases included}
 #'  } 
 #' 
@@ -531,6 +537,7 @@ getCmMetaEstimation <- function(
   r.calibrated_log_rr, r.calibrated_se_log_rr,
   r. target_subjects, r.comparator_subjects, r.target_days,
   r.comparator_days, r.target_outcomes, r.comparator_outcomes,
+  unblind.unblind,
   r.n_databases
 
   from 

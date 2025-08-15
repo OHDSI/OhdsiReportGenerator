@@ -36,6 +36,7 @@ getCmDiagnosticsData(
 Returns a data.frame with the columns:
 \itemize{
  \item{databaseName the name of the database}
+ \item{databaseId the unqiue identifier of the database}
  \item{analysisId the analysis unique identifier}
  \item{description a description of the analysis}
  \item{targetName the target cohort name}
