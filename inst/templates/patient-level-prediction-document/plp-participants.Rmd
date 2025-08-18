@@ -7,13 +7,27 @@ output: html_document
 The target population ``r target$name`` is defined as:
 
 ```{r results='asis', echo=FALSE}
+
+targetDetails <- OhdsiReportGenerator::getCohortDefinitions(
+  connectionHandler = connectionHandler, 
+  schema = schema, 
+  targetIds = c(modelDesign$developmentTargetId, floor(modelDesign$developmentTargetId/1000))
+  )
+
+targetJsonMain <- targetDetails$json[targetDetails$cohortDefinitionId == targetDetails$subsetParent]
+targetJsonSubset <- targetDetails$subsetDefinitionJson[targetDetails$cohortDefinitionId == modelDesign$developmentTargetId]
+
+
 markdown <- tryCatch(
-  {CirceR::cohortPrintFriendly(target$expression)}, 
+  {CirceR::cohortPrintFriendly(targetJson)}, 
   error = function(e) return('')
 )
 
 markdown <- gsub('###', '####',markdown)
 cat(markdown)
+
+# TODO add summary text of subset 
+
 ```
 
 Additional inclusion criteria:
@@ -30,7 +44,7 @@ if(restrictPlpDataSettings$washoutPeriod > populationSettings$washoutPeriod){
 }
 
 if(!is.null(target$expression)){
-if(washout > ParallelLogger::convertJsonToSettings(target$expression)$PrimaryCriteria$ObservationWindow[1]){
+if(washout > ParallelLogger::convertJsonToSettings(targetJsonMain)$PrimaryCriteria$ObservationWindow[1]){
   cat('\n - Patients with less than ',
       washout,' days observation prior to index',
       ' are excluded \n')

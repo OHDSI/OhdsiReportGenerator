@@ -7,7 +7,7 @@ createPredictionReport <- function(
     modelDesignId,
     output,
     intermediatesDir = file.path(tempdir(), 'plp-prot'),
-    outputFormat = NULL # "html_document"
+    outputFormat = "html_document" # NULL
 ){
   
   protocolLoc <- system.file(

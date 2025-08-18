@@ -14,9 +14,10 @@ params:
   databaseTableAppend: ""
   cohortTableAppend: ""
   modelDesignIds: 1
-output: 
-  html_fragment:
-    toc: FALSE
+format: 
+  html:
+    toc: true
+    toc-location: left
     toc_depth: 5
     toc_float: true
 ---
