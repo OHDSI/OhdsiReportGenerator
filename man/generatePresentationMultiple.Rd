@@ -93,6 +93,7 @@ to generate a presentation.
 }
 \seealso{
 Other Reporting: 
+\code{\link{createPredictionReport}()},
 \code{\link{generateFullReport}()},
 \code{\link{generatePresentation}()}
 }
