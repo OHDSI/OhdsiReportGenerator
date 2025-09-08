@@ -95,6 +95,7 @@ to generate a presentation.
 Other Reporting: 
 \code{\link{createPredictionReport}()},
 \code{\link{generateFullReport}()},
-\code{\link{generatePresentation}()}
+\code{\link{generatePresentation}()},
+\code{\link{generateSummaryPredictionReport}()}
 }
 \concept{Reporting}

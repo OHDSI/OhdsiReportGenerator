@@ -1,0 +1,55 @@
+
+```{r}
+#| echo: false
+#| results: 'asis'
+#| fig-width: 12
+
+# extract from prediction threshold table
+
+lift <- list()
+for(sensitivity in c(0.1,0.2,0.3,0.4,0.5)){
+  i <- length(lift) +1
+lift[[i]] <- OhdsiReportGenerator::getPredictionLift(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    modelDesignIds = modelDesignOfIntCohorts$modelDesignId,
+    sensitivity = sensitivity, 
+    plpTablePrefix = params$plpTablePrefix
+)
+
+lift[[i]] <- lift[[i]] %>%
+  dplyr::filter(
+    .data$evaluation == 'Test      ',
+    abs((.data$sensitivity - sensitivity)) < 0.05
+  ) 
+lift[[i]]$type <- paste0('@ ', sensitivity, ' sensitivity')
+
+}
+
+lift <- do.call(what = 'rbind', args = lift)
+
+cat(paste0('\n\n### ', TA))
+cat('\n\n')
+
+if(nrow(lift) > 0){
+
+ggplot2::ggplot(
+  data = lift, ggplot2::aes(
+    x = .data$outcomeRate, 
+    y = .data$positivePredictiveValue
+    )
+  ) +
+  ggplot2::geom_abline(
+    intercept = 0, 
+    slope = 1, 
+    color="red",
+    show.legend = FALSE
+    ) +
+  ggplot2::geom_point(na.rm=TRUE) + 
+  ggplot2::facet_grid(. ~ .data$type, scales = 'free_x')
+
+}
+
+cat('\n\n')
+  
+```

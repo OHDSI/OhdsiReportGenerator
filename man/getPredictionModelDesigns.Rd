@@ -2,7 +2,7 @@
 % Please edit documentation in R/PredictionQueries.R
 \name{getPredictionModelDesigns}
 \alias{getPredictionModelDesigns}
-\title{Extract the model designs and aggregate performances for the prediction results}
+\title{Extract the model designs from the prediction results}
 \usage{
 getPredictionModelDesigns(
   connectionHandler,
@@ -10,7 +10,8 @@ getPredictionModelDesigns(
   plpTablePrefix = "plp_",
   cgTablePrefix = "cg_",
   targetIds = NULL,
-  outcomeIds = NULL
+  outcomeIds = NULL,
+  modelDesignIds = NULL
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ getPredictionModelDesigns(
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
+
+\item{modelDesignIds}{(Optional) A set of model design ids to restrict to}
 }
 \value{
 Returns a data.frame with the columns:
@@ -46,17 +49,10 @@ Returns a data.frame with the columns:
  \item{splitSettingsJson the split settings json}
  \item{sampleSettingsJson the sample settings json}
  \item{modelSettingsJson the model settings json}
- \item{minAuroc the min AUROC value of models developed using the model design across databases}
- \item{meanAuroc the mean AUROC value of models developed using the model design across databases}
- \item{maxAuroc the max AUROC value of models developed using the model design across databases}
- \item{noDiagnosticDatabases the number of databases where the model design diagnostics were generated}
- \item{noDevelopmentDatabases the number of databases where the model design was used to develop models}
- \item{noValidationDatabases the number of databases where the models developed using the model design was externally validated}
-}
+ }
 }
 \description{
-This function extracts the model design settings and min/max/mean AUROC values of the models developed
-using the model design across databases
+This function extracts the model design settings
 }
 \details{
 Specify the connectionHandler, the resultDatabaseSettings and (optionally) any targetIds or outcomeIds to restrict model designs to
@@ -74,11 +70,14 @@ modDesign <- getPredictionModelDesigns(
 }
 \seealso{
 Other Prediction: 
+\code{\link{getFullPredictionPerformances}()},
+\code{\link{getPredictionAggregateTopPredictors}()},
 \code{\link{getPredictionCohorts}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
 \code{\link{getPredictionHyperParamSearch}()},
 \code{\link{getPredictionIntercept}()},
+\code{\link{getPredictionLift}()},
 \code{\link{getPredictionOutcomes}()},
 \code{\link{getPredictionPerformanceTable}()},
 \code{\link{getPredictionPerformances}()},

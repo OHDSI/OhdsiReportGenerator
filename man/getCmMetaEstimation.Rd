@@ -87,6 +87,7 @@ Other Estimation:
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmOutcomes}()},
+\code{\link{getCmTable}()},
 \code{\link{getCmTargets}()},
 \code{\link{getSccsDiagnosticsData}()},
 \code{\link{getSccsEstimation}()},

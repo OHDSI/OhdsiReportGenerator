@@ -1,0 +1,50 @@
+
+```{r}
+#| echo: false
+#| results: 'asis'
+#| fig-width: 12
+
+modelPerf <- OhdsiReportGenerator::getPredictionPerformances(
+  connectionHandler = connectionHandler, 
+  schema = schema, 
+  plpTablePrefix = params$plpTablePrefix, 
+  cgTablePrefix = params$cgTablePrefix, 
+  databaseTable = 'database_meta_data', 
+  databaseTablePrefix = params$databaseTablePrefix, 
+  modelDesignId = modelDesignOfIntCohorts$modelDesignId, 
+  developmentDatabaseId = NULL
+    )
+
+cat(paste0('\n\n### ', TA))
+cat('\n\n')
+
+if(nrow(modelPerf) > 0){
+modelPerf  %>%
+  ggplot2::ggplot( ggplot2::aes(
+    x = developmentTargetName, 
+    y = developmentOutcomeName, 
+    fill = auroc
+    ) 
+    ) +
+      ggplot2::geom_tile() +
+  ggplot2::facet_grid(. ~ .data$developmentDatabase) +
+      #ggplot2::scale_fill_gradient(low="white", high="#006400") +
+  ggplot2::scale_fill_gradientn(
+    colors = c("black", "#494848", "#636363","#909090",
+                "#D4D4D4", "white", "white" 
+                 ),
+    values = c(1, 0.9, 0.8, 0.7, 0.6, 0.5, 0), 
+    limits = c(0, 1)
+    ) +
+  ggplot2::theme(axis.title.x=ggplot2::element_blank(),
+        axis.text.x=ggplot2::element_blank(),
+        axis.ticks.x=ggplot2::element_blank(),
+        axis.title.y=ggplot2::element_blank(),
+        axis.text.y=ggplot2::element_blank(),
+        axis.ticks.y=ggplot2::element_blank(),
+    strip.text.y.right = ggplot2::element_text(angle = 0)
+        )
+}
+cat('\n\n')
+  
+```

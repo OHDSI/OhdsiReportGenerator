@@ -50,6 +50,7 @@ performance of models developed across databases.
 Other Reporting: 
 \code{\link{generateFullReport}()},
 \code{\link{generatePresentation}()},
-\code{\link{generatePresentationMultiple}()}
+\code{\link{generatePresentationMultiple}()},
+\code{\link{generateSummaryPredictionReport}()}
 }
 \concept{Reporting}

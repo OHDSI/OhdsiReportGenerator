@@ -92,6 +92,7 @@ Other Estimation:
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
 \code{\link{getCmOutcomes}()},
+\code{\link{getCmTable}()},
 \code{\link{getCmTargets}()},
 \code{\link{getSccsEstimation}()},
 \code{\link{getSccsMetaEstimation}()},

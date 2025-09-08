@@ -119,6 +119,7 @@ to generate a presentation.
 Other Reporting: 
 \code{\link{createPredictionReport}()},
 \code{\link{generateFullReport}()},
-\code{\link{generatePresentationMultiple}()}
+\code{\link{generatePresentationMultiple}()},
+\code{\link{generateSummaryPredictionReport}()}
 }
 \concept{Reporting}

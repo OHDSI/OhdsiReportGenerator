@@ -9,7 +9,9 @@ getPredictionPerformanceTable(
   schema,
   plpTablePrefix = "plp_",
   table = "attrition",
-  performanceId = NULL
+  modelDesignIds = NULL,
+  performanceIds = NULL,
+  evaluations = NULL
 )
 }
 \arguments{
@@ -19,9 +21,13 @@ getPredictionPerformanceTable(
 
 \item{plpTablePrefix}{The prefix used for the patient level prediction results tables}
 
-\item{table}{The table to extract}
+\item{table}{The table to extract (covariate_summary, attrition, prediction_distribution, threshold_summary, calibration_summary, evaluation_statistics or demographic_summary )}
 
-\item{performanceId}{(optional) restrict to the input performanceId}
+\item{modelDesignIds}{(optional) restrict to the input modelDesignIds}
+
+\item{performanceIds}{(optional) restrict to the input performanceIds}
+
+\item{evaluations}{(optional) restrict to the type of evaluation (e.g., 'Test'/'Train'/'CV'/'Validation')}
 }
 \value{
 Returns a data.frame with the specified table
@@ -46,11 +52,14 @@ attrition <- getPredictionPerformanceTable(
 }
 \seealso{
 Other Prediction: 
+\code{\link{getFullPredictionPerformances}()},
+\code{\link{getPredictionAggregateTopPredictors}()},
 \code{\link{getPredictionCohorts}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
 \code{\link{getPredictionHyperParamSearch}()},
 \code{\link{getPredictionIntercept}()},
+\code{\link{getPredictionLift}()},
 \code{\link{getPredictionModelDesigns}()},
 \code{\link{getPredictionOutcomes}()},
 \code{\link{getPredictionPerformances}()},

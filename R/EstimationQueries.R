@@ -612,6 +612,136 @@ getCmMetaEstimation <- function(
   return(unique(result))
 }
 
+#' Extract the cohort method table specified
+#' @description
+#' This function extracts the specific cohort method table.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and optionally the target/comparator/outcome/analysis/database IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @param table The result table to extract
+#' @template cmTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetIds
+#' @template outcomeIds
+#' @template comparatorIds
+#' @param analysisIds the analysis IDs to restrict to 
+#' @param databaseIds the database IDs to restrict to 
+#' @family Estimation
+#' @return
+#' Returns a data.frame with the cohort method requested table
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cmMeta <- getCmTable(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   table = 'attrition'
+#' )
+#' 
+getCmTable <- function(
+    connectionHandler,
+    schema,
+    table = c('attrition', 'follow_up_dist', 'interaction_result',
+              'covariate_balance', 'kaplan_meier_dist', 'likelihood_profile',
+              'preference_score_dist', 'propensity_model',
+              'shared_covariate_balance')[1],
+    cmTablePrefix = 'cm_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    targetIds = NULL,
+    outcomeIds = NULL,
+    comparatorIds = NULL,
+    analysisIds = NULL,
+    databaseIds = NULL
+){
+  
+  # check table valid:
+  if(!table %in% c('attrition', 'follow_up_dist', 'interaction_result',
+                  'covariate_balance', 'kaplan_meier_dist', 'likelihood_profile',
+                  'preference_score_dist', 'propensity_model',
+                  'shared_covariate_balance')){
+    stop('Invalid table')
+  }
+  
+  useOutcome = !is.null(outcomeIds)
+  # some tables dont have outcomeIds
+  if(table %in% c('preference_score_dist', 'propensity_model',
+     'shared_covariate_balance')){
+    useOutcome = FALSE
+  }
+  
+  sql <- "select 
+  dmd.cdm_source_abbreviation database_name,
+  a.description as analysis_description,
+  c1.cohort_name as target_name,
+  c2.cohort_name as comparator_name,
+  {@include_outcome}?{c3.cohort_name as outcome_name,}
+  tab.*
+
+  from 
+   @schema.@cm_table_prefix@table as tab
+
+   inner join
+   @schema.@cg_table_prefixcohort_definition as c1
+   on c1.cohort_definition_id = tab.target_id
+   
+   inner join
+   @schema.@cg_table_prefixcohort_definition as c2
+   on c2.cohort_definition_id = tab.comparator_id
+   
+  {@include_outcome}?{
+   inner join
+   @schema.@cg_table_prefixcohort_definition as c3
+   on c3.cohort_definition_id = tab.outcome_id
+  }
+   
+   inner join
+   @schema.@cm_table_prefixanalysis as a
+   on a.analysis_id = tab.analysis_id
+   
+   inner join
+   @schema.@database_table as dmd
+   on dmd.database_id = tab.database_id
+   
+   where 
+   1 = 1 
+   {@include_target}?{and tab.target_id in (@target_id)}
+   {@include_outcome}?{and tab.outcome_id in (@outcome_id)}
+  {@include_comparator}?{and tab.comparator_id in (@comparator_id)}
+  {@include_database}?{and tab.database_id in (@database_id)}
+  {@include_analyses}?{and tab.analysis_id in (@analysis_id)}
+  ;"
+  
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cm_table_prefix = cmTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    table = table,
+    target_id = paste0(targetIds, collapse = ','),
+    include_target = !is.null(targetIds),
+    outcome_id = paste0(outcomeIds, collapse = ','),
+    include_outcome = useOutcome,
+    comparator_id = paste0(comparatorIds, collapse = ','),
+    include_comparator = !is.null(comparatorIds),
+    database_id = paste0("'",databaseIds,"'", collapse = ','),
+    include_database = !is.null(databaseIds),
+    analysis_id = paste0(analysisIds, collapse = ','),
+    include_analyses = !is.null(analysisIds),
+    database_table = databaseTable
+  )
+  
+  return(unique(result))
+}
+
 
 #' A function to extract the targets found in self controlled case series
 #'

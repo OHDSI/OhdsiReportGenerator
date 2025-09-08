@@ -1,0 +1,40 @@
+```{r}
+#| label: q1_get_data_{{TA}}
+#| echo: false
+#| results: 'asis'
+
+# How many models did we attempt?
+cat(paste0('\n\n### ', TA))
+
+# extract number of models per TA
+# number of models with AUROC > 0.7
+
+modelPerf  <- OhdsiReportGenerator::getPredictionPerformances(
+  connectionHandler = connectionHandler, 
+  schema = schema, 
+  plpTablePrefix = params$plpTablePrefix, 
+  cgTablePrefix = params$cgTablePrefix, 
+  databaseTable = 'database_meta_data', 
+  databaseTablePrefix = params$databaseTablePrefix, 
+  modelDesignId = modelDesignIdsOfInt$modelDesignId, 
+  developmentDatabaseId = NULL
+  )
+
+cat(
+paste("\n\n::: {.callout-important icon=false}
+\n\n## No. Models Developed \n\n",nrow(modelPerf),"\n\n:::"
+)
+)
+
+cat(
+paste("\n\n::: {.callout-important icon=false}
+\n\n## No. with Sufficient Outcomes (100+) \n\n",sum(modelPerf$outcomeCount >= 100, na.rm = TRUE),"\n\n:::"
+)
+)
+
+cat(
+paste("\n\n::: {.callout-important icon=false}
+\n\n## No. with Sufficient Performance (AUROC 0.7+) \n\n",sum(modelPerf$auroc >= 0.7, na.rm = TRUE),"\n\n:::"
+)
+)
+```
