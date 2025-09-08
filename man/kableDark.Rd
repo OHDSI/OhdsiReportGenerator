@@ -40,6 +40,8 @@ Other helper:
 \code{\link{addTarColumn}()},
 \code{\link{formatBinaryCovariateName}()},
 \code{\link{getExampleConnectionDetails}()},
+\code{\link{getOutcomeTable}()},
+\code{\link{getTargetTable}()},
 \code{\link{printReactable}()},
 \code{\link{removeSpaces}()}
 }

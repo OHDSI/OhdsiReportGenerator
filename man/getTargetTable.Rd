@@ -99,7 +99,13 @@ targetTable <- getTargetTable(
 
 }
 \seealso{
-Other Helpers: 
-\code{\link{getOutcomeTable}()}
+Other helper: 
+\code{\link{addTarColumn}()},
+\code{\link{formatBinaryCovariateName}()},
+\code{\link{getExampleConnectionDetails}()},
+\code{\link{getOutcomeTable}()},
+\code{\link{kableDark}()},
+\code{\link{printReactable}()},
+\code{\link{removeSpaces}()}
 }
-\concept{Helpers}
+\concept{helper}

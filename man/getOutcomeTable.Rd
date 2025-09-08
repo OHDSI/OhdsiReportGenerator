@@ -100,7 +100,13 @@ outcomeTable <- getOutcomeTable(
 
 }
 \seealso{
-Other Helpers: 
-\code{\link{getTargetTable}()}
+Other helper: 
+\code{\link{addTarColumn}()},
+\code{\link{formatBinaryCovariateName}()},
+\code{\link{getExampleConnectionDetails}()},
+\code{\link{getTargetTable}()},
+\code{\link{kableDark}()},
+\code{\link{printReactable}()},
+\code{\link{removeSpaces}()}
 }
-\concept{Helpers}
+\concept{helper}

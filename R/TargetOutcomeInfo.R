@@ -20,7 +20,7 @@
 #' @param getCohortMethodInclusion Whether to check useage of the cohort in cohort method
 #' @param getSccsInclusion Whether to check useage of the cohort in SCCS
 #' @param printTimes Whether to print how long each query took 
-#' @family Helpers
+#' @family helper
 #' @return
 #' Returns a data.frame with the columns: 
 #' \itemize{
@@ -327,7 +327,7 @@ return(cohortCounts)
 #' @param getCohortMethodInclusion Whether to check usage of the cohort in cohort method
 #' @param getSccsInclusion Whether to check usage of the cohort in SCCS
 #' @param printTimes whether to print the time it takes to run each SQL query
-#' @family Helpers
+#' @family helper
 #' @return
 #' Returns a data.frame with the columns: 
 #' \itemize{
