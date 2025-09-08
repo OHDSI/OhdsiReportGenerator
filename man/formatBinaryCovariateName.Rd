@@ -28,6 +28,8 @@ covariateName = c("fdfgfgf: dgdgff","made up test")
 Other helper: 
 \code{\link{addTarColumn}()},
 \code{\link{getExampleConnectionDetails}()},
+\code{\link{getOutcomeTable}()},
+\code{\link{getTargetTable}()},
 \code{\link{kableDark}()},
 \code{\link{printReactable}()},
 \code{\link{removeSpaces}()}
