@@ -1,0 +1,26 @@
+DBMS:
+sqlite
+
+Error:
+no such table: main.c_time_to_event_targets
+
+SQL:
+select * from main.c_time_to_event_targets limit 1;
+
+R version:
+R version 4.5.1 (2025-06-13)
+
+Platform:
+x86_64-pc-linux-gnu
+
+Attached base packages:
+- stats
+- graphics
+- grDevices
+- utils
+- datasets
+- methods
+- base
+
+Other attached packages:
+- OhdsiReportGenerator (1.1.1.9999)
