@@ -59,8 +59,12 @@
 <url><loc>/dev/reference/getSccsDiagnosticsData.html</loc></url>
 <url><loc>/dev/reference/getSccsEstimation.html</loc></url>
 <url><loc>/dev/reference/getSccsMetaEstimation.html</loc></url>
+<url><loc>/dev/reference/getSccsModel.html</loc></url>
+<url><loc>/dev/reference/getSccsNegativeControlEstimates.html</loc></url>
 <url><loc>/dev/reference/getSccsOutcomes.html</loc></url>
+<url><loc>/dev/reference/getSccsTable.html</loc></url>
 <url><loc>/dev/reference/getSccsTargets.html</loc></url>
+<url><loc>/dev/reference/getSccsTimeToEvent.html</loc></url>
 <url><loc>/dev/reference/getTargetBinaryFeatures.html</loc></url>
 <url><loc>/dev/reference/getTargetContinuousFeatures.html</loc></url>
 <url><loc>/dev/reference/getTargetTable.html</loc></url>
