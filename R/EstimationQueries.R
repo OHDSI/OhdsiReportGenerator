@@ -640,7 +640,7 @@ getCmMetaEstimation <- function(
 #' 
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #' 
-#' cmMeta <- getCmTable(
+#' cmTable <- getCmTable(
 #'   connectionHandler = connectionHandler, 
 #'   schema = 'main',
 #'   table = 'attrition'
@@ -1445,4 +1445,594 @@ getSccsMetaEstimation <- function(
   )
   
   return(result)
+}
+
+
+#' Extract the SCCS table specified
+#' @description
+#' This function extracts the specific cohort method table.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and optionally the target/outcome/analysis/database IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @param table The result table to extract
+#' @template sccsTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetIds
+#' @param indicationIds The indications that the target was nested to
+#' @template outcomeIds
+#' @param analysisIds the analysis IDs to restrict to 
+#' @param databaseIds the database IDs to restrict to 
+#' @param exposureOutcomeIds the exposureOutcomeIds to restrict to
+#' @param covariateIds the covariateIds to restrict to
+#' @family Estimation
+#' @return
+#' Returns a data.frame with the cohort method requested table
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' sccsTable <- getSccsTable(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   table = 'attrition'
+#' )
+#' 
+getSccsTable <- function(
+    connectionHandler,
+    schema,
+    table = c('attrition', 'time_trend', 'event_dep_observation',
+              'age_spanning', 'calendar_time_spanning', 'spline')[1],
+    sccsTablePrefix = 'sccs_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    indicationIds = NULL,
+    outcomeIds = NULL,
+    analysisIds = NULL,
+    databaseIds = NULL,
+    exposureOutcomeIds = NULL,
+    covariateIds = NULL
+){
+  
+  # check table valid:
+  if(!table %in% c('attrition', 'time_trend', 'event_dep_observation',
+                   'age_spanning', 'calendar_time_spanning', 'spline')){
+    stop('Invalid table')
+  }
+  
+  # only let users use covariated for valid tables
+  includeCovariates <- !is.null(covariateIds)
+  if(table %in% c('time_trend', 'event_dep_observation',
+                  'age_spanning', 'calendar_time_spanning',
+                  'spline')){
+    includeCovariates <- FALSE
+  }
+  
+  sql <- "select 
+  dmd.cdm_source_abbreviation database_name,
+  a.description as analysis_description,
+  c2.cohort_name as outcome_name,
+  eos.outcome_id,
+  c3.cohort_name as indication_name,
+  eos.nesting_cohort_id,
+  tab.*
+
+  from 
+   @schema.@sccs_table_prefix@table as tab
+
+  inner join
+  @schema.@sccs_table_prefixexposures_outcome_set eos
+  on eos.exposures_outcome_set_id = tab.exposures_outcome_set_id
+  
+   inner join
+   @schema.@cg_table_prefixcohort_definition as c2
+   on c2.cohort_definition_id = eos.outcome_id
+   
+   left join
+   @schema.@cg_table_prefixcohort_definition as c3
+   on c3.cohort_definition_id = eos.nesting_cohort_id
+   
+   inner join
+   @schema.@sccs_table_prefixanalysis as a
+   on a.analysis_id = tab.analysis_id
+   
+   inner join
+   @schema.@database_table as dmd
+   on dmd.database_id = tab.database_id
+   
+   where 
+   1 = 1 
+  {@include_outcome}?{and eos.outcome_id in (@outcome_ids)}
+  {@include_indication}?{and eos.nesting_cohort_id in (@indication_ids)}
+  {@include_database}?{and tab.database_id in (@database_ids)}
+  {@include_analyses}?{and tab.analysis_id in (@analysis_ids)}
+  {@include_eos}?{and tab.exposures_outcome_set_id in (@exposures_outcome_set_ids)}
+  {@include_covariates}?{AND tab.covariate_id in (@covariate_ids)}
+  ;"
+  
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    sccs_table_prefix = sccsTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    table = table,
+    
+    include_covariates = includeCovariates,
+    covariate_ids = paste0(covariateIds, collapse = ','),
+    
+    outcome_ids = paste0(outcomeIds, collapse = ','),
+    include_outcome = !is.null(outcomeIds),
+    
+    indication_ids = paste0(indicationIds, collapse = ','),
+    include_indication = !is.null(indicationIds),
+    
+    database_ids = paste0("'",databaseIds,"'", collapse = ','),
+    include_database = !is.null(databaseIds),
+    
+    analysis_ids = paste0(analysisIds, collapse = ','),
+    include_analyses = !is.null(analysisIds),
+    
+    include_eos = !is.null(exposureOutcomeIds),
+    exposures_outcome_set_ids = paste0(exposureOutcomeIds, collapse = ','),
+    
+    database_table = databaseTable
+  )
+  
+  return(unique(result))
+}
+
+#' Extract the SCCS model table
+#' @description
+#' This function extracts the sccs model table.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and optionally the target/outcome/analysis/database IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template sccsTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param exposureOutcomeSetIds the exposureOutcomeIds to restrict to
+#' @param indicationIds The indications that the target was nested to
+#' @template outcomeIds
+#' @param databaseIds the database IDs to restrict to 
+#' @param analysisIds the analysis IDs to restrict to 
+#' @template targetIds
+#' @family Estimation
+#' @return
+#' Returns a data.frame with the SCCS model table
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' sccsModels <- getSccsMode(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getSccsModel <- function(
+    connectionHandler,
+    schema,
+    sccsTablePrefix = 'sccs_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    exposureOutcomeSetIds = NULL,
+    indicationIds = NULL,
+    outcomeIds = NULL,
+    databaseIds = NULL,
+    analysisIds = NULL,
+    targetIds = NULL
+) {
+  
+  sql <- "
+  SELECT
+  dmd.cdm_source_abbreviation as database_name,
+  sc.database_id,
+  a.description as analysis_description,
+  sc.analysis_id,
+  cd.cohort_name as target_name,
+  sc.era_id as target_id,
+  c2.cohort_name as outcome_name,
+  eos.outcome_id,
+  c3.cohort_name as indication_name,
+  eos.nesting_cohort_id as indication_id,
+  scr.exposures_outcome_set_id,
+  
+    CASE
+       WHEN era.era_name IS NULL THEN sc.covariate_name
+       ELSE CONCAT(sc.covariate_name, ' : ', era.era_name)
+    END as covariate_name,
+    scr.covariate_id, scr.rr, scr.ci_95_lb, scr.ci_95_ub
+  FROM 
+  
+  @schema.@sccs_table_prefixcovariate_result scr
+  INNER JOIN @schema.@sccs_table_prefixcovariate sc ON (
+    sc.exposures_outcome_set_id = scr.exposures_outcome_set_id AND
+    sc.database_id = scr.database_id AND
+    sc.analysis_id = scr.analysis_id AND
+    sc.covariate_id = scr.covariate_id
+  )
+  
+  INNER JOIN
+  @schema.@sccs_table_prefixexposures_outcome_set eos
+  on eos.exposures_outcome_set_id = scr.exposures_outcome_set_id
+  
+  LEFT JOIN @schema.@cg_table_prefixcohort_definition cd 
+  ON cd.cohort_definition_id = sc.era_id
+  
+  LEFT JOIN @schema.@sccs_table_prefixera era ON (
+    era.exposures_outcome_set_id = scr.exposures_outcome_set_id AND
+    era.database_id = scr.database_id AND
+    era.analysis_id = scr.analysis_id AND
+    era.era_id = sc.era_id
+  )
+  
+   inner join
+   @schema.@cg_table_prefixcohort_definition as c2
+   on c2.cohort_definition_id = eos.outcome_id
+   
+   left join
+   @schema.@cg_table_prefixcohort_definition as c3
+   on c3.cohort_definition_id = eos.nesting_cohort_id
+   
+   inner join
+   @schema.@sccs_table_prefixanalysis as a
+   on a.analysis_id = scr.analysis_id
+   
+   inner join
+   @schema.@database_table as dmd
+   on dmd.database_id = scr.database_id
+
+  WHERE 
+  1 = 1
+  {@use_databases}?{AND  scr.database_id in (@database_ids)}
+  {@use_analyses}?{AND  scr.analysis_id in (@analysis_ids)}
+  {@use_targets}?{AND  sc.era_id in (@target_ids)}
+  {@use_eos}?{AND scr.exposures_outcome_set_id in (@exposures_outcome_set_ids)}
+  {@use_outcomes}?{AND eos.outcome_id in (@outcome_ids)}
+  {@use_indications}?{AND eos.nesting_id in (@indication_ids)}
+  ;
+  "
+  
+  connectionHandler$queryDb(
+    sql,
+    schema = schema,
+    sccs_table_prefix = sccsTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    
+    use_databases = !is.null(databaseIds),
+    database_ids = paste0("'",databaseIds,"'", collapse = ','),
+    
+    use_analyses = !is.null(analysisIds),
+    analysis_ids = paste0(analysisIds, collapse = ','),
+    
+    use_targets = !is.null(targetIds),
+    target_ids = paste0(targetIds, collapse = ','),
+    
+    use_outcomes = !is.null(outcomeIds),
+    outcome_ids = paste0(outcomeIds, collapse = ','),
+    
+    use_indications = !is.null(indicationIds),
+    indication_ids = paste0(indicationIds, collapse = ','),
+    
+    use_eos = !is.null(exposureOutcomeSetIds),
+    exposures_outcome_set_ids = paste0(exposureOutcomeSetIds, collapse = ','),
+    
+    database_table = databaseTable,
+    
+    snakeCaseToCamelCase = TRUE
+    )
+}
+
+
+
+#' Extract the SCCS negative controls
+#' @description
+#' This function extracts the sccs negative controls.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and optionally the target/outcome/analysis/database IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template sccsTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param databaseIds the database IDs to restrict to 
+#' @param exposureOutcomeSetIds the exposureOutcomeIds to restrict to
+#' @param indicationIds The indications that the target was nested to
+#' @template outcomeIds
+#' @template targetIds
+#' @param analysisIds the analysis IDs to restrict to 
+#' @param covariateIds the covariate IDs to restrict to 
+#' @param covariateAnalysisIds the covariate analysis IDs to restrict to 
+#' @family Estimation
+#' @return
+#' Returns a data.frame with the SCCS negative controls
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' sccsNcs <- getSccsNegativeControlEstimates(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getSccsNegativeControlEstimates <- function(
+    connectionHandler,
+    schema,
+    sccsTablePrefix = 'sccs_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    databaseIds = NULL,
+    exposuresOutcomeSetIds = NULL,
+    indicationIds = NULL,
+    outcomeIds  = NULL,
+    targetIds  = NULL, #  eraId,
+    analysisIds  = NULL,
+    covariateIds  = NULL, # needed?
+    covariateAnalysisIds  = NULL # needed?
+) {
+  
+  sql <- "
+  SELECT 
+  c.exposures_outcome_set_id,
+  eos.nesting_cohort_id as indication_id,
+  c1.cohort_name as indication_name,
+  c.era_id as target_id,
+  c2.cohort_name as target_name,
+  outcome_id as outcome_id,
+  c3.cohort_name as outcome_name,
+  db.database_id as database_id,
+  db.cdm_source_abbreviation as database_name,
+  a.description as analysis_description,
+  r.ci_95_lb, 
+  r.ci_95_ub, 
+  r.log_rr, 
+  r.se_log_rr, 
+  r.calibrated_ci_95_lb, 
+  r.calibrated_ci_95_ub, 
+  r.calibrated_log_rr,
+  r.calibrated_se_log_rr, 
+  e.true_effect_size,
+  ds.ease
+  
+  FROM 
+  @schema.@sccs_table_prefixresult r
+  INNER JOIN
+   @schema.@sccs_table_prefixexposure e
+   on r.exposures_outcome_set_id = e.exposures_outcome_set_id
+
+   INNER JOIN 
+   @schema.@sccs_table_prefixcovariate c
+   on e.era_id = c.era_id 
+   and e.exposures_outcome_set_id = c.exposures_outcome_set_id
+   and c.database_id = r.database_id
+   and c.analysis_id = r.analysis_id
+   and c.covariate_id = r.covariate_id
+   
+   INNER JOIN  
+   @schema.@sccs_table_prefixexposures_outcome_set eos
+   on eos.exposures_outcome_set_id = r.exposures_outcome_set_id
+   
+   left join
+   @schema.@cg_table_prefixcohort_definition as c2
+   on c2.cohort_definition_id = e.era_id
+   
+   left join
+   @schema.@cg_table_prefixcohort_definition as c3
+   on c3.cohort_definition_id = eos.outcome_id
+   
+   left join
+   @schema.@cg_table_prefixcohort_definition as c1
+   on c1.cohort_definition_id = eos.nesting_cohort_id
+   
+   inner join
+   @schema.@sccs_table_prefixanalysis as a
+   on a.analysis_id = r.analysis_id
+   
+   inner join
+   @schema.@database_table as db
+   on db.database_id = r.database_id
+   
+   left join
+   @schema.@sccs_table_prefixdiagnostics_summary ds
+   ON ds.database_id = r.database_id
+   AND ds.analysis_id = r.analysis_id
+   AND ds.covariate_id = r.covariate_id
+   AND ds.exposures_outcome_set_id = r.exposures_outcome_set_id
+  
+   WHERE 
+   e.true_effect_size is not NULL
+  {@use_eos_id}?{AND r.exposures_outcome_set_id in (@eos_ids)}
+  {@use_outcome_id}?{AND eos.outcome_id in (@outcome_ids)}
+  {@use_target_id}?{AND e.era_id in (@target_ids)}
+   {@use_database_id}?{AND r.database_id in (@database_ids)}
+   {@use_analysis_id}?{AND r.analysis_id in (@analysis_ids)}
+   {@use_covariate_id}?{AND r.covariate_id in (@covariate_ids)}
+  {@use_indication_id}?{AND eos.nesting_cohort_id in (@indication_ids)}
+   {@use_covariate_analysis_id}?{AND c.covariate_analysis_id in (@covariate_analysis_ids)}
+  ;
+  "
+  
+  result <- connectionHandler$queryDb(
+    sql,
+    schema = schema,
+    sccs_table_prefix = sccsTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
+    use_eos_id = !is.null(exposuresOutcomeSetIds),
+    eos_ids = paste0(exposuresOutcomeSetIds, collapse = ','),
+    use_outcome_id = !is.null(outcomeIds),
+    outcome_ids = paste0(outcomeIds, collapse = ','),
+    use_target_id = !is.null(targetIds),
+    target_ids = paste0(targetIds, collapse = ','),
+    use_database_id = !is.null(databaseIds),
+    database_ids = paste0("'",databaseIds,"'", collapse = ','),
+    use_analysis_id = !is.null(analysisIds),
+    analysis_ids = paste0(analysisIds, collapse = ','),
+    use_covariate_id = !is.null(covariateIds),
+    covariate_ids = paste0(covariateIds, collapse = ','),
+    use_indication_id = !is.null(indicationIds),
+    indication_ids = paste0(indicationIds, collapse = ','),
+    use_covariate_analysis_id = !is.null(covariateAnalysisIds),
+    covariate_analysis_ids = paste0(covariateAnalysisIds, collapse = ','),
+    snakeCaseToCamelCase = TRUE
+  )
+  
+
+  return(result)
+}
+
+#' Extract the SCCS time-to-event
+#' @description
+#' This function extracts the SCCS time-to-event.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and optionally the target/outcome/analysis/database IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template sccsTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param databaseIds the database IDs to restrict to 
+#' @param exposureOutcomeSetIds the exposureOutcomeIds to restrict to
+#' @param indicationIds The indications that the target was nested to
+#' @template outcomeIds
+#' @template targetIds
+#' @param analysisIds the analysis IDs to restrict to 
+#' @family Estimation
+#' @return
+#' Returns a data.frame with the SCCS time-to-event
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' getSccsTimeToEvent <- getSccsNegativeControlEstimates(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getSccsTimeToEvent <- function(
+    connectionHandler,
+    schema,
+    sccsTablePrefix = 'sccs_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    databaseIds = NULL,
+    exposuresOutcomeSetIds = NULL,
+    indicationIds = NULL,
+    outcomeIds = NULL,
+    targetIds = NULL,
+    analysisIds = NULL 
+    # add covariateIds?
+) {
+  
+  sql <- "
+  SELECT 
+  eos.nesting_cohort_id as indication_id,
+  c1.cohort_name as indication_name,
+  tte.era_id as target_id,
+  c2.cohort_name as target_name,
+  eos.outcome_id as outcome_id,
+  c3.cohort_name as outcome_name,
+  db.cdm_source_abbreviation as database_name,
+  a.description as analysis_description,
+  c.covariate_id,
+  c.covariate_name,
+  tte.* , 
+  ds.pre_exposure_p as p
+  
+  FROM 
+  @schema.@sccs_table_prefixtime_to_event tte
+  
+  inner join
+  @schema.@sccs_table_prefixcovariate c
+  ON c.analysis_id = tte.analysis_id
+  AND c.exposures_outcome_set_id = tte.exposures_outcome_set_id
+  AND c.era_id = tte.era_id
+  AND c.database_id = tte.database_id
+  
+  inner join
+  @schema.@sccs_table_prefixdiagnostics_summary ds
+  ON ds.database_id = tte.database_id
+  AND ds.covariate_id  = c.covariate_id 
+  AND ds.analysis_id = tte.analysis_id
+  AND ds.exposures_outcome_set_id = tte.exposures_outcome_set_id
+  
+  INNER JOIN  
+   @schema.@sccs_table_prefixexposures_outcome_set eos
+   on eos.exposures_outcome_set_id = tte.exposures_outcome_set_id
+   
+   left join
+   @schema.@cg_table_prefixcohort_definition as c2
+   on c2.cohort_definition_id = tte.era_id
+   
+   left join
+   @schema.@cg_table_prefixcohort_definition as c3
+   on c3.cohort_definition_id = eos.outcome_id
+   
+   left join
+   @schema.@cg_table_prefixcohort_definition as c1
+   on c1.cohort_definition_id = eos.nesting_cohort_id
+   
+   inner join
+   @schema.@sccs_table_prefixanalysis as a
+   on a.analysis_id = tte.analysis_id
+   
+   inner join
+   @schema.@database_table as db
+   on db.database_id = tte.database_id
+  
+
+  WHERE 
+  1 = 1
+  {@use_databases}?{ AND tte.database_id in (@database_ids) }
+  {@use_targets}?{ AND tte.era_id  in (@target_ids)}
+  {@use_analyses}?{ AND tte.analysis_id in (@analysis_ids)}
+  {@use_eos}?{ AND tte.exposures_outcome_set_id in (@exposures_outcome_set_ids)}
+  {@use_outcomes}?{ AND eos.outcome_id in (@outcome_ids)}
+  {@use_indications}?{ AND eos.nesting_id in (@indication_ids)}
+  ;
+  "
+  
+  timeToEvent <- connectionHandler$queryDb(
+    sql,
+    schema = schema,
+    sccs_table_prefix = sccsTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
+    use_eos = !is.null(exposuresOutcomeSetIds),
+    exposures_outcome_set_ids = paste0(exposuresOutcomeSetIds, collapse = ','),
+    use_outcomes = !is.null(outcomeIds),
+    outcome_ids = paste0(outcomeIds, collapse = ','),
+    use_targets = !is.null(targetIds),
+    target_ids = paste0(targetIds, collapse = ','),
+    use_databases = !is.null(databaseIds),
+    database_ids = paste0("'",databaseIds,"'", collapse = ','),
+    use_analyses = !is.null(analysisIds),
+    analysis_ids = paste0(analysisIds, collapse = ','),
+    use_indications = !is.null(indicationIds),
+    indication_ids = paste0(indicationIds, collapse = ','),
+    snakeCaseToCamelCase = TRUE
+  )
+  
+  return(timeToEvent)
 }

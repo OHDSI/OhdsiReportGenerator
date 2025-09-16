@@ -242,3 +242,283 @@ test_that("getSccsOutcomes", {
   
   
 })
+
+test_that("getSccsTable", {
+  
+dataA <- OhdsiReportGenerator:::getSccsTable(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    table = 'attrition',
+    sccsTablePrefix = 'sccs_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data'
+)
+
+testthat::expect_true(nrow(dataA) > 0)
+testthat::expect_true("databaseName" %in% colnames(dataA))
+testthat::expect_true("outcomeName" %in% colnames(dataA))
+testthat::expect_true("indicationName" %in% colnames(dataA))
+testthat::expect_true("outcomeSubjects" %in% colnames(dataA))
+
+dataAsub <- OhdsiReportGenerator:::getSccsTable(
+  connectionHandler = connectionHandler,
+  schema = schema,
+  table = 'attrition',
+  sccsTablePrefix = 'sccs_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  analysisIds =  1, 
+  databaseIds = 388020256, 
+  covariateIds = 1001,
+  exposureOutcomeIds = 2086096871
+)
+
+# check filtering works
+testthat::expect_true(nrow(dataAsub) > 0)
+testthat::expect_true(unique(dataAsub$exposuresOutcomeSetId) == 2086096871)
+testthat::expect_true(unique(dataAsub$covariateId) == 1001)
+testthat::expect_true(unique(dataAsub$databaseId) == 388020256)
+testthat::expect_true(unique(dataAsub$analysisId) == 1)
+
+dataAsub2 <- OhdsiReportGenerator:::getSccsTable(
+  connectionHandler = connectionHandler,
+  schema = schema,
+  table = 'attrition',
+  sccsTablePrefix = 'sccs_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  analysisIds =  1, 
+  databaseIds = 388020256, 
+  covariateIds = 1001,
+  outcomeIds = 3
+)
+# check filtering bt outcomeId works
+testthat::expect_true(nrow(dataAsub2) > 0)
+testthat::expect_true(unique(dataAsub2$outcomeId) == 3)
+testthat::expect_true(unique(dataAsub2$covariateId) == 1001)
+testthat::expect_true(unique(dataAsub2$databaseId) == 388020256)
+testthat::expect_true(unique(dataAsub2$analysisId) == 1)
+
+
+dataTt <- getSccsTable(
+  connectionHandler = connectionHandler,
+  schema = schema,
+  table = 'time_trend',
+  sccsTablePrefix = 'sccs_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data'
+)
+testthat::expect_true(nrow(dataTt) > 0)
+testthat::expect_true("databaseName" %in% colnames(dataTt))
+testthat::expect_true("outcomeName" %in% colnames(dataTt))
+testthat::expect_true("indicationName" %in% colnames(dataTt))
+testthat::expect_true("calendarYear" %in% colnames(dataTt))
+testthat::expect_true("calendarMonth" %in% colnames(dataTt))
+testthat::expect_true("observedSubjects" %in% colnames(dataTt))
+
+dataTtSub <- getSccsTable(
+  connectionHandler = connectionHandler,
+  schema = schema,
+  table = 'time_trend',
+  sccsTablePrefix = 'sccs_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  analysisIds =  1, 
+  databaseIds = 388020256, 
+  covariateIds = 1001,
+  exposureOutcomeIds = 2086096871
+)
+
+# check filtering works
+testthat::expect_true(nrow(dataTtSub) > 0)
+testthat::expect_true(unique(dataTtSub$exposuresOutcomeSetId) == 2086096871)
+testthat::expect_true(unique(dataTtSub$databaseId) == 388020256)
+testthat::expect_true(unique(dataTtSub$analysisId) == 1)
+
+
+dataSub <- getSccsTable(
+  connectionHandler = connectionHandler,
+  schema = schema,
+  table = 'event_dep_observation',
+  sccsTablePrefix = 'sccs_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  analysisIds =  1, 
+  databaseIds = 388020256, 
+  covariateIds = 1001,
+  exposureOutcomeIds = 2086096871
+)
+
+# check filtering works
+testthat::expect_true(nrow(dataSub) > 0)
+testthat::expect_true(unique(dataSub$exposuresOutcomeSetId) == 2086096871)
+testthat::expect_true(unique(dataSub$databaseId) == 388020256)
+testthat::expect_true(unique(dataSub$analysisId) == 1)
+
+dataSub <- getSccsTable(
+  connectionHandler = connectionHandler,
+  schema = schema,
+  table = 'age_spanning',
+  sccsTablePrefix = 'sccs_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  analysisIds =  1, 
+  databaseIds = 388020256, 
+  covariateIds = 1001,
+  exposureOutcomeIds = 2086096871
+)
+# check filtering works
+testthat::expect_true(nrow(dataSub) > 0)
+testthat::expect_true(unique(dataSub$exposuresOutcomeSetId) == 2086096871)
+testthat::expect_true(unique(dataSub$databaseId) == 388020256)
+testthat::expect_true(unique(dataSub$analysisId) == 1)
+
+dataSub <- getSccsTable(
+  connectionHandler = connectionHandler,
+  schema = schema,
+  table = 'calendar_time_spanning',
+  sccsTablePrefix = 'sccs_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  analysisIds =  1, 
+  databaseIds = 388020256, 
+  covariateIds = 1001,
+  exposureOutcomeIds = 2086096871
+)
+# check filtering works
+testthat::expect_true(nrow(dataSub) > 0)
+testthat::expect_true(unique(dataSub$exposuresOutcomeSetId) == 2086096871)
+testthat::expect_true(unique(dataSub$databaseId) == 388020256)
+testthat::expect_true(unique(dataSub$analysisId) == 1)
+
+
+dataSub <- getSccsTable(
+  connectionHandler = connectionHandler,
+  schema = schema,
+  table =  'spline',
+  sccsTablePrefix = 'sccs_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  analysisIds =  1, 
+  databaseIds = 388020256, 
+  covariateIds = 1001,
+  exposureOutcomeIds = 2086096871
+)
+# check filtering works
+testthat::expect_true(nrow(dataSub) > 0)
+testthat::expect_true(unique(dataSub$exposuresOutcomeSetId) == 2086096871)
+testthat::expect_true(unique(dataSub$databaseId) == 388020256)
+testthat::expect_true(unique(dataSub$analysisId) == 1)
+
+# invalid table
+testthat::expect_error(getSccsTable(
+  connectionHandler = connectionHandler,
+  schema = schema,
+  table =  'madeup',
+  sccsTablePrefix = 'sccs_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data'
+))
+
+})
+
+
+test_that("getSccsModel", {
+  
+allModels <- getSccsModel(
+    connectionHandler = connectionHandler,
+    schema = schema
+    )
+testthat::expect_true(nrow(allModels) > 0)
+testthat::expect_true("databaseName" %in% colnames(allModels))
+testthat::expect_true("analysisDescription" %in% colnames(allModels))
+testthat::expect_true("targetName" %in% colnames(allModels))
+testthat::expect_true("outcomeName" %in% colnames(allModels))
+testthat::expect_true("indicationName" %in% colnames(allModels))
+testthat::expect_true("covariateName" %in% colnames(allModels))
+testthat::expect_true("rr" %in% colnames(allModels))
+testthat::expect_true("exposuresOutcomeSetId" %in% colnames(allModels))
+
+noModels <- getSccsModel(
+  connectionHandler = connectionHandler,
+  schema = schema, 
+  databaseIds = 535454 # fake 
+)
+testthat::expect_true(nrow(noModels) == 0)
+
+noModels <- getSccsModel(
+  connectionHandler = connectionHandler,
+  schema = schema, 
+  exposureOutcomeSetIds = 4343 # fake
+)
+testthat::expect_true(nrow(noModels) == 0)
+
+
+})
+
+
+test_that("getSccsNegativeControlEstimates", {
+  
+  allNCs <- getSccsNegativeControlEstimates(
+    connectionHandler = connectionHandler,
+    schema = schema
+  )
+  testthat::expect_true(nrow(allNCs) > 0)
+  testthat::expect_true("databaseName" %in% colnames(allNCs))
+  testthat::expect_true("analysisDescription" %in% colnames(allNCs))
+  testthat::expect_true("targetName" %in% colnames(allNCs))
+  testthat::expect_true("outcomeName" %in% colnames(allNCs))
+  testthat::expect_true("indicationName" %in% colnames(allNCs))
+  testthat::expect_true("exposuresOutcomeSetId" %in% colnames(allNCs))
+  
+  dbNCs <- getSccsNegativeControlEstimates(
+    connectionHandler = connectionHandler,
+    schema = schema, 
+    databaseIds = 388020256, 
+    targetIds = 1
+  )
+  testthat::expect_true(unique(dbNCs$databaseId) == 388020256)
+  testthat::expect_true(unique(dbNCs$targetId) == 1)
+  
+  oneNCs <- getSccsNegativeControlEstimates(
+    connectionHandler = connectionHandler,
+    schema = schema, 
+    databaseIds = 388020256, 
+    exposuresOutcomeSetIds = 1513783871
+  )
+  testthat::expect_true(unique(oneNCs$exposuresOutcomeSetId) == 1513783871)
+  testthat::expect_true(unique(oneNCs$databaseId) == 388020256)
+  
+})
+
+
+
+test_that("getSccsTimeToEvent", {
+  
+  allTte <- getSccsTimeToEvent(
+    connectionHandler = connectionHandler,
+    schema = schema
+  )
+  testthat::expect_true(nrow( allTte) > 0)
+  testthat::expect_true("databaseName" %in% colnames( allTte))
+  testthat::expect_true("analysisDescription" %in% colnames( allTte))
+  testthat::expect_true("targetName" %in% colnames( allTte))
+  testthat::expect_true("outcomeName" %in% colnames( allTte))
+  testthat::expect_true("indicationName" %in% colnames( allTte))
+  testthat::expect_true("exposuresOutcomeSetId" %in% colnames( allTte))
+  
+  
+  # check filter
+  filterTte <- getSccsTimeToEvent(
+    connectionHandler = connectionHandler,
+    schema = schema, 
+    databaseIds = 388020256, 
+    exposuresOutcomeSetIds = 2086096871, 
+    analysisIds = 1
+  )
+  
+  testthat::expect_true(unique(filterTte$databaseId) == 388020256)
+  testthat::expect_true(unique(filterTte$exposuresOutcomeSetId) == 2086096871)
+  testthat::expect_true(unique(filterTte$analysisId) == 1)
+  
+})
