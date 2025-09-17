@@ -54,7 +54,9 @@ and checks for different types of bias.</p>
 <span>  databaseTable <span class="op">=</span> <span class="st">"database_meta_data"</span>,</span>
 <span>  targetIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  outcomeIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  comparatorIds <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  comparatorIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  analysisIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  databaseIds <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -92,6 +94,14 @@ and checks for different types of bias.</p>
 
 <dt id="arg-comparatorids">comparatorIds<a class="anchor" aria-label="anchor" href="#arg-comparatorids"></a></dt>
 <dd><p>A vector of integers corresponding to the comparator cohort IDs</p></dd>
+
+
+<dt id="arg-analysisids">analysisIds<a class="anchor" aria-label="anchor" href="#arg-analysisids"></a></dt>
+<dd><p>An optional vector of analysisIds to filter to</p></dd>
+
+
+<dt id="arg-databaseids">databaseIds<a class="anchor" aria-label="anchor" href="#arg-databaseids"></a></dt>
+<dd><p>An optional vector of databaseIds to filter to</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -131,7 +141,9 @@ and checks for different types of bias.</p>
     <div class="dont-index"><p>Other Estimation:
 <code><a href="getCMEstimation.html">getCMEstimation</a>()</code>,
 <code><a href="getCmMetaEstimation.html">getCmMetaEstimation</a>()</code>,
+<code><a href="getCmNegativeControlEstimates.html">getCmNegativeControlEstimates</a>()</code>,
 <code><a href="getCmOutcomes.html">getCmOutcomes</a>()</code>,
+<code>getCmPropensityModel()</code>,
 <code><a href="getCmTable.html">getCmTable</a>()</code>,
 <code><a href="getCmTargets.html">getCmTargets</a>()</code>,
 <code><a href="getSccsDiagnosticsData.html">getSccsDiagnosticsData</a>()</code>,

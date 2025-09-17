@@ -27,6 +27,7 @@
 <url><loc>/dev/reference/getCharacterizationTargets.html</loc></url>
 <url><loc>/dev/reference/getCmDiagnosticsData.html</loc></url>
 <url><loc>/dev/reference/getCmMetaEstimation.html</loc></url>
+<url><loc>/dev/reference/getCmNegativeControlEstimates.html</loc></url>
 <url><loc>/dev/reference/getCmOutcomes.html</loc></url>
 <url><loc>/dev/reference/getCmTable.html</loc></url>
 <url><loc>/dev/reference/getCmTargets.html</loc></url>
