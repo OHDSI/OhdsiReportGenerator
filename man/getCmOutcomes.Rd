@@ -48,6 +48,8 @@ Other Estimation:
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
+\code{\link{getCmNegativeControlEstimates}()},
+\code{\link{getCmPropensityModel}()},
 \code{\link{getCmTable}()},
 \code{\link{getCmTargets}()},
 \code{\link{getSccsDiagnosticsData}()},

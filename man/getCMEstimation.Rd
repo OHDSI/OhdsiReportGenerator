@@ -85,7 +85,9 @@ cmEst <- getCMEstimation(
 Other Estimation: 
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
+\code{\link{getCmNegativeControlEstimates}()},
 \code{\link{getCmOutcomes}()},
+\code{\link{getCmPropensityModel}()},
 \code{\link{getCmTable}()},
 \code{\link{getCmTargets}()},
 \code{\link{getSccsDiagnosticsData}()},

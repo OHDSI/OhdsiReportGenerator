@@ -12,7 +12,9 @@ getCmDiagnosticsData(
   databaseTable = "database_meta_data",
   targetIds = NULL,
   outcomeIds = NULL,
-  comparatorIds = NULL
+  comparatorIds = NULL,
+  analysisIds = NULL,
+  databaseIds = NULL
 )
 }
 \arguments{
@@ -31,6 +33,10 @@ getCmDiagnosticsData(
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
 
 \item{comparatorIds}{A vector of integers corresponding to the comparator cohort IDs}
+
+\item{analysisIds}{An optional vector of analysisIds to filter to}
+
+\item{databaseIds}{An optional vector of databaseIds to filter to}
 }
 \value{
 Returns a data.frame with the columns:
@@ -86,7 +92,9 @@ cmDiag <- getCmDiagnosticsData(
 Other Estimation: 
 \code{\link{getCMEstimation}()},
 \code{\link{getCmMetaEstimation}()},
+\code{\link{getCmNegativeControlEstimates}()},
 \code{\link{getCmOutcomes}()},
+\code{\link{getCmPropensityModel}()},
 \code{\link{getCmTable}()},
 \code{\link{getCmTargets}()},
 \code{\link{getSccsDiagnosticsData}()},

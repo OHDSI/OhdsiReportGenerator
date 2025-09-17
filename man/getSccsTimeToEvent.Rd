@@ -31,6 +31,8 @@ getSccsTimeToEvent(
 
 \item{databaseIds}{the database IDs to restrict to}
 
+\item{exposuresOutcomeSetIds}{the exposureOutcomeIds to restrict to}
+
 \item{indicationIds}{The indications that the target was nested to}
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
@@ -38,8 +40,6 @@ getSccsTimeToEvent(
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 
 \item{analysisIds}{the analysis IDs to restrict to}
-
-\item{exposureOutcomeSetIds}{the exposureOutcomeIds to restrict to}
 }
 \value{
 Returns a data.frame with the SCCS time-to-event
@@ -66,7 +66,9 @@ Other Estimation:
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
+\code{\link{getCmNegativeControlEstimates}()},
 \code{\link{getCmOutcomes}()},
+\code{\link{getCmPropensityModel}()},
 \code{\link{getCmTable}()},
 \code{\link{getCmTargets}()},
 \code{\link{getSccsDiagnosticsData}()},

@@ -89,10 +89,48 @@ test_that("getCmMetaEstimation", {
   testthat::expect_true('nDatabases' %in% colnames(data))
 })
 
-# TODO
-# getSccsEstimation
-# getSccsDiagnosticsData 
-# getSccsMetaEstimation
+
+test_that("getCmPropensityModel", {
+  
+  data <- getCmPropensityModel(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    targetId = 1, 
+    comparatorId = 2, 
+    analysisId = 1, 
+    databaseId = 388020256
+  )
+  
+  testthat::expect_true('covariateName' %in% colnames(data))
+  testthat::expect_true('coefficient' %in% colnames(data))
+  
+})
+
+test_that("getCmNegativeControlEstimates", {
+  
+  data <- getCmNegativeControlEstimates(
+    connectionHandler = connectionHandler,
+    schema = schema
+  )
+  
+  testthat::expect_true('effectSize' %in% colnames(data))
+  
+})
+
+test_that("getCmTable", {
+  
+  data <- getCmTable(
+    connectionHandler = connectionHandler,
+    schema = schema, 
+    table = 'attrition'
+  )
+  
+  testthat::expect_true(nrow(data) > 0)
+  
+})
+
+
+##=========== SCCS
 
 test_that("getSccsEstimation", {
   

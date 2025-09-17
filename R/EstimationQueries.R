@@ -323,6 +323,8 @@ getCMEstimation <- function(
 #' @template targetIds
 #' @template outcomeIds
 #' @template comparatorIds
+#' @param analysisIds An optional vector of analysisIds to filter to
+#' @param databaseIds An optional vector of databaseIds to filter to
 #' @family Estimation
 #' @return
 #' Returns a data.frame with the columns:
@@ -375,7 +377,9 @@ getCmDiagnosticsData <- function(
     databaseTable = 'database_meta_data',
     targetIds = NULL,
     outcomeIds = NULL,
-    comparatorIds = NULL
+    comparatorIds = NULL,
+    analysisIds = NULL,
+    databaseIds = NULL
 ){
   
   sql <- "
@@ -413,14 +417,14 @@ getCmDiagnosticsData <- function(
       INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd2 ON cmds.comparator_id = cgcd2.cohort_definition_id
       INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd3 ON cmds.outcome_id = cgcd3.cohort_definition_id
       
-      {@use_target | @use_outcome | @use_comparator }?{ where } 
-      {@use_target}?{cgcd1.cohort_definition_id in (@targets)}
+      WHERE 
+      cmds.database_id IS NOT NULL
+      {@use_target}?{AND cgcd1.cohort_definition_id in (@targets)}
+      {@use_comparator}?{AND cgcd2.cohort_definition_id in (@comparators)}
+      {@use_outcome}?{AND cgcd3.cohort_definition_id in (@outcomes)}
       
-      {@use_target & @use_comparator}?{ and } 
-      {@use_comparator}?{cgcd2.cohort_definition_id in (@comparators)}
-      
-      {(@use_target | @use_comparator) & @use_outcome}?{ and } 
-      {@use_outcome}?{cgcd3.cohort_definition_id in (@outcomes)}
+      {@use_database}?{AND  cmds.database_id in (@database_ids)} 
+      {@use_analysis}?{AND cmds.analysis_id in (@analysis_ids)}
       ;
       "
   
@@ -435,7 +439,12 @@ getCmDiagnosticsData <- function(
     comparators = paste0(comparatorIds, collapse = ','),
     use_comparator = !is.null(comparatorIds),
     outcomes = paste0(outcomeIds, collapse = ','),
-    use_outcome = !is.null(outcomeIds)
+    use_outcome = !is.null(outcomeIds),
+    
+    database_ids = paste0("'",databaseIds,"'", collapse = ','),
+    use_database = !is.null(databaseIds),
+    analysis_ids = paste0(analysisIds, collapse = ','),
+    use_analysis = !is.null(analysisIds)
   )
   
   # adding percent fail for summary
@@ -454,9 +463,10 @@ getCmDiagnosticsData <- function(
     }
   )
   
-  return(
-    result
-  )
+  result <- result %>% 
+    dplyr::relocate("summaryValue", .after = "outcomeName")
+  
+  return(result)
 }
 
 #' Extract the cohort method meta analysis results
@@ -678,16 +688,26 @@ getCmTable <- function(
     useOutcome = FALSE
   }
   
+  addCovariateName <- table %in% c('shared_covariate_balance','covariate_balance')
+  
   sql <- "select 
   dmd.cdm_source_abbreviation database_name,
   a.description as analysis_description,
   c1.cohort_name as target_name,
   c2.cohort_name as comparator_name,
   {@include_outcome}?{c3.cohort_name as outcome_name,}
+  {@include_covariate_name}?{c.covariate_name,}
   tab.*
 
   from 
    @schema.@cm_table_prefix@table as tab
+  
+   {@include_covariate_name}?{
+    JOIN @schema.@cm_table_prefixcovariate c 
+    ON tab.covariate_id = c.covariate_id 
+    AND tab.analysis_id = c.analysis_id 
+    AND tab.database_id = c.database_id
+   }
 
    inner join
    @schema.@cg_table_prefixcohort_definition as c1
@@ -736,12 +756,197 @@ getCmTable <- function(
     include_database = !is.null(databaseIds),
     analysis_id = paste0(analysisIds, collapse = ','),
     include_analyses = !is.null(analysisIds),
-    database_table = databaseTable
+    database_table = databaseTable,
+    
+    include_covariate_name = addCovariateName
   )
   
   return(unique(result))
 }
 
+# add cohort and database names:
+
+#' Extract the cohort method negative controls
+#' @description
+#' This function extracts the cohort method negative control table.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and optionally the target/comparator/outcome/analysis/database IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cmTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetIds
+#' @template comparatorIds
+#' @param analysisIds the analysis IDs to restrict to 
+#' @param databaseIds the database IDs to restrict to 
+#' @param restrictPositiveControls Whether to only extract the positive controls 
+#' @family Estimation
+#' @return
+#' Returns a data.frame with the cohort method negative controls
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cmNc <- getCmNegativeControlEstimates(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getCmNegativeControlEstimates <- function(
+  connectionHandler,
+  schema,
+  cmTablePrefix = 'cm_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  targetIds = NULL,
+  comparatorIds = NULL,
+  analysisIds = NULL,
+  databaseIds = NULL,
+  restrictPositiveControls = TRUE
+){
+  
+  
+  sql <- "
+    SELECT
+      cmr.*,
+      cmtco.true_effect_size effect_size,
+      ds.ease
+    FROM
+      @schema.@cm_table_prefixresult cmr
+      
+      INNER JOIN @schema.@cm_table_prefixtarget_comparator_outcome cmtco 
+      ON cmr.target_id = cmtco.target_id 
+      AND cmr.comparator_id = cmtco.comparator_id 
+      AND cmr.outcome_id = cmtco.outcome_id
+      
+     INNER JOIN @schema.@cm_table_prefixdiagnostics_summary ds
+     ON ds.target_id = cmr.target_id
+     AND ds.comparator_id = cmr.comparator_id
+     AND ds.analysis_id = cmr.analysis_id
+     AND ds.database_id = cmr.database_id
+      
+    WHERE
+      cmtco.outcome_of_interest != 1
+      {@include_positive_controls}?{AND cmtco.true_effect_size = 1}
+      {@use_target}?{AND cmr.target_id in (@target_ids)}
+      {@use_comparator}?{AND cmr.comparator_id in (@comparator_ids)}
+      {@use_analysis}?{AND cmr.analysis_id in (@analysis_ids)}
+      {@use_database}?{AND cmr.database_id in (@database_ids)}
+      ;"
+  
+  results <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cm_table_prefix = cmTablePrefix,
+    
+    use_target = !is.null(targetIds),
+    target_ids = paste0(targetIds, collapse = ','),
+    use_comparator = !is.null(comparatorIds),
+    comparator_ids = paste0(comparatorIds, collapse = ','),
+    use_analysis = !is.null(analysisIds),
+    analysis_ids = paste0(analysisIds, collapse = ','),
+    use_database = !is.null(databaseIds),
+    database_ids = paste0(databaseIds, collapse = ','),
+    include_positive_controls = restrictPositiveControls
+  )
+  
+  return(results)
+}
+
+
+#' Extract the cohort method model
+#' @description
+#' This function extracts the cohort method model.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and optionally the target/comparator/analysis/database IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cmTablePrefix
+#' @template targetId
+#' @param comparatorId the comparator ID of interest
+#' @param analysisId the analysis ID to restrict to 
+#' @param databaseId the database ID to restrict to 
+#' @family Estimation
+#' @return
+#' Returns a data.frame with the cohort method model
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cmModel <- getCmPropensityModel(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getCmPropensityModel <- function(
+    connectionHandler, 
+    schema,
+    cmTablePrefix = 'cm_',
+    targetId = NULL, 
+    comparatorId = NULL, 
+    analysisId = NULL, 
+    databaseId = NULL
+) {
+  
+  if(is.null(targetId)){
+    message('Please specify targetId')
+    return(NULL)
+  }
+  
+  sql <- "
+    SELECT
+    cmc.covariate_id,
+    cmc.covariate_name,
+    cmpm.coefficient
+  FROM
+    (
+      SELECT
+        covariate_id,
+        covariate_name
+      FROM
+        @schema.@cm_table_prefixcovariate
+      WHERE
+        analysis_id = @analysis_id
+        AND database_id = '@database_id'
+      UNION
+      SELECT
+      0 as covariate_id,
+      'intercept' as covariate_name) cmc
+    JOIN @schema.@cm_table_prefixpropensity_model cmpm 
+    ON cmc.covariate_id = cmpm.covariate_id
+  WHERE
+    cmpm.target_id = @target_id
+    AND cmpm.comparator_id = @comparator_id
+    AND cmpm.analysis_id = @analysis_id
+    AND cmpm.database_id = '@database_id'
+  "
+  
+  model <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cm_table_prefix = cmTablePrefix,
+    target_id = targetId,
+    comparator_id = comparatorId,
+    analysis_id = analysisId,
+    database_id = databaseId
+  )
+  
+  model <- model %>%
+    dplyr::arrange(dplyr::desc(abs(.data$coefficient)))
+  
+  return(model)
+}
 
 #' A function to extract the targets found in self controlled case series
 #'
@@ -1270,6 +1475,10 @@ getSccsDiagnosticsData <- function(
       }
     }
   )
+  
+  result <- result %>% 
+    dplyr::relocate("summaryValue", .after = "outcome")
+  
   return(result)  
   
 }
@@ -1461,7 +1670,6 @@ getSccsMetaEstimation <- function(
 #' @template sccsTablePrefix
 #' @template cgTablePrefix
 #' @template databaseTable
-#' @template targetIds
 #' @param indicationIds The indications that the target was nested to
 #' @template outcomeIds
 #' @param analysisIds the analysis IDs to restrict to 
@@ -1615,7 +1823,7 @@ getSccsTable <- function(
 #' 
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #' 
-#' sccsModels <- getSccsMode(
+#' sccsModels <- getSccsModel(
 #'   connectionHandler = connectionHandler, 
 #'   schema = 'main'
 #' )
@@ -1749,7 +1957,7 @@ getSccsModel <- function(
 #' @template cgTablePrefix
 #' @template databaseTable
 #' @param databaseIds the database IDs to restrict to 
-#' @param exposureOutcomeSetIds the exposureOutcomeIds to restrict to
+#' @param exposuresOutcomeSetIds the exposureOutcomeIds to restrict to
 #' @param indicationIds The indications that the target was nested to
 #' @template outcomeIds
 #' @template targetIds
@@ -1910,7 +2118,7 @@ getSccsNegativeControlEstimates <- function(
 #' @template cgTablePrefix
 #' @template databaseTable
 #' @param databaseIds the database IDs to restrict to 
-#' @param exposureOutcomeSetIds the exposureOutcomeIds to restrict to
+#' @param exposuresOutcomeSetIds the exposureOutcomeIds to restrict to
 #' @param indicationIds The indications that the target was nested to
 #' @template outcomeIds
 #' @template targetIds

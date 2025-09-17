@@ -10,8 +10,8 @@ getSccsNegativeControlEstimates(
   sccsTablePrefix = "sccs_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
-  databaseIds,
-  exposuresOutcomeSetIds,
+  databaseIds = NULL,
+  exposuresOutcomeSetIds = NULL,
   indicationIds = NULL,
   outcomeIds = NULL,
   targetIds = NULL,
@@ -33,6 +33,8 @@ getSccsNegativeControlEstimates(
 
 \item{databaseIds}{the database IDs to restrict to}
 
+\item{exposuresOutcomeSetIds}{the exposureOutcomeIds to restrict to}
+
 \item{indicationIds}{The indications that the target was nested to}
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
@@ -44,8 +46,6 @@ getSccsNegativeControlEstimates(
 \item{covariateIds}{the covariate IDs to restrict to}
 
 \item{covariateAnalysisIds}{the covariate analysis IDs to restrict to}
-
-\item{exposureOutcomeSetIds}{the exposureOutcomeIds to restrict to}
 }
 \value{
 Returns a data.frame with the SCCS negative controls
@@ -72,7 +72,9 @@ Other Estimation:
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
+\code{\link{getCmNegativeControlEstimates}()},
 \code{\link{getCmOutcomes}()},
+\code{\link{getCmPropensityModel}()},
 \code{\link{getCmTable}()},
 \code{\link{getCmTargets}()},
 \code{\link{getSccsDiagnosticsData}()},

@@ -44,8 +44,6 @@ getSccsTable(
 \item{exposureOutcomeIds}{the exposureOutcomeIds to restrict to}
 
 \item{covariateIds}{the covariateIds to restrict to}
-
-\item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 }
 \value{
 Returns a data.frame with the cohort method requested table
@@ -73,7 +71,9 @@ Other Estimation:
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
+\code{\link{getCmNegativeControlEstimates}()},
 \code{\link{getCmOutcomes}()},
+\code{\link{getCmPropensityModel}()},
 \code{\link{getCmTable}()},
 \code{\link{getCmTargets}()},
 \code{\link{getSccsDiagnosticsData}()},
