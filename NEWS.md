@@ -1,3 +1,10 @@
+OhdsiReportGenerator v2.0.0
+======================
+- added new functions to extract prediction results
+- added functions to extract cohort details
+- added more functions to extract cohort method and self controlled case series results
+- added summary report for prediction 
+
 OhdsiReportGenerator v1.1.1
 ======================
 - added skip quarto tests on CRAN if quarto:::find_quarto() errors as it means quarto not installed correctly 

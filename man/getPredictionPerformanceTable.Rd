@@ -8,6 +8,7 @@ getPredictionPerformanceTable(
   connectionHandler,
   schema,
   plpTablePrefix = "plp_",
+  databaseTable = "database_meta_data",
   table = "attrition",
   modelDesignIds = NULL,
   performanceIds = NULL,
@@ -20,6 +21,8 @@ getPredictionPerformanceTable(
 \item{schema}{The result database schema (e.g., 'main' for sqlite)}
 
 \item{plpTablePrefix}{The prefix used for the patient level prediction results tables}
+
+\item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
 \item{table}{The table to extract (covariate_summary, attrition, prediction_distribution, threshold_summary, calibration_summary, evaluation_statistics or demographic_summary )}
 

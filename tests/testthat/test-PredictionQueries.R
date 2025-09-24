@@ -196,15 +196,9 @@ test_that("getPredictionPerformances", {
   testthat::expect_true('developmentDatabaseName' %in% colnames(data))
   testthat::expect_true('developmentTargetName' %in% colnames(data))
   testthat::expect_true('developmentOutcomeName' %in% colnames(data))
-  testthat::expect_true('probast1_1' %in% colnames(data))
-  testthat::expect_true('probast1_2' %in% colnames(data))
-  testthat::expect_true('probast2_1' %in% colnames(data))
-  testthat::expect_true('probast2_2' %in% colnames(data))
-  testthat::expect_true('probast2_3' %in% colnames(data))
-  testthat::expect_true('probast3_4' %in% colnames(data))
-  testthat::expect_true('probast3_6' %in% colnames(data))
-  testthat::expect_true('probast4_1' %in% colnames(data))
-  
+  testthat::expect_true('probastId' %in% colnames(data))
+  testthat::expect_true('probastDescription' %in% colnames(data))
+
   data <- getPredictionDiagnostics(
     connectionHandler = connectionHandler, 
     schema = schema, 

@@ -10,8 +10,7 @@ getPredictionDiagnostics(
   plpTablePrefix = "plp_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
-  databaseTablePrefix = "",
-  modelDesignId = NULL,
+  modelDesignIds = NULL,
   threshold1_2 = 0.9
 )
 }
@@ -26,9 +25,7 @@ getPredictionDiagnostics(
 
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
-\item{databaseTablePrefix}{The prefix for the database table either '' or 'plp_'}
-
-\item{modelDesignId}{The identifier for a model design  to restrict results to}
+\item{modelDesignIds}{The identifier for a model design  to restrict results to}
 
 \item{threshold1_2}{A threshold for probast 1.2}
 }

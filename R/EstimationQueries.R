@@ -761,6 +761,13 @@ getCmTable <- function(
     include_covariate_name = addCovariateName
   )
   
+  
+  # edit covariateName 
+  ##if(addCovariateName){
+  ##  result$covariateName
+  ##}
+  
+  
   return(unique(result))
 }
 
@@ -782,7 +789,7 @@ getCmTable <- function(
 #' @template comparatorIds
 #' @param analysisIds the analysis IDs to restrict to 
 #' @param databaseIds the database IDs to restrict to 
-#' @param restrictPositiveControls Whether to only extract the positive controls 
+#' @param excludePositiveControls Whether to exclude the positive controls 
 #' @family Estimation
 #' @return
 #' Returns a data.frame with the cohort method negative controls
@@ -808,7 +815,7 @@ getCmNegativeControlEstimates <- function(
   comparatorIds = NULL,
   analysisIds = NULL,
   databaseIds = NULL,
-  restrictPositiveControls = TRUE
+  excludePositiveControls = TRUE
 ){
   
   
@@ -830,10 +837,11 @@ getCmNegativeControlEstimates <- function(
      AND ds.comparator_id = cmr.comparator_id
      AND ds.analysis_id = cmr.analysis_id
      AND ds.database_id = cmr.database_id
+     AND ds.outcome_id = cmr.outcome_id
       
     WHERE
       cmtco.outcome_of_interest != 1
-      {@include_positive_controls}?{AND cmtco.true_effect_size = 1}
+      {@exclude_positive_controls}?{AND cmtco.true_effect_size = 1}
       {@use_target}?{AND cmr.target_id in (@target_ids)}
       {@use_comparator}?{AND cmr.comparator_id in (@comparator_ids)}
       {@use_analysis}?{AND cmr.analysis_id in (@analysis_ids)}
@@ -852,8 +860,8 @@ getCmNegativeControlEstimates <- function(
     use_analysis = !is.null(analysisIds),
     analysis_ids = paste0(analysisIds, collapse = ','),
     use_database = !is.null(databaseIds),
-    database_ids = paste0(databaseIds, collapse = ','),
-    include_positive_controls = restrictPositiveControls
+    database_ids = paste0("'",databaseIds,"'", collapse = ','),
+    exclude_positive_controls = excludePositiveControls
   )
   
   return(results)
@@ -1133,6 +1141,8 @@ getSccsOutcomes <- function(
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the database name}
+#'  \item{databaseId the database id}
+#'  \item{exposuresOutcomeSetId the exposure outcome set identifier}
 #'  \item{analysisId the analysis unique identifier}
 #'  \item{description an analysis description}
 #'  \item{targetName the target name}
@@ -1142,6 +1152,7 @@ getSccsOutcomes <- function(
 #'  \item{indicationName the indication name}
 #'  \item{indicatonId the indication cohort id}
 #'  \item{covariateName whether main or secondary analysis}
+#'  \item{covariateId the analysis id}
 #'  \item{outcomeSubjects The number of subjects with at least one outcome.}
 #'  \item{outcomeEvents The number of outcome events.}
 #'  \item{outcomeObservationPeriods The number of observation periods containing at least one outcome.}
@@ -1195,6 +1206,8 @@ getSccsEstimation <- function(
   SELECT
   
     ds.cdm_source_abbreviation as database_name,
+    ds.database_id,
+    sr.exposures_outcome_set_id,
     sr.analysis_id,
     a.description,
     cg2.cohort_name as target_name,
@@ -1204,6 +1217,7 @@ getSccsEstimation <- function(
     cg3.cohort_name as indication_name,
     eos.nesting_cohort_id as indication_id,
     sc.covariate_name,
+    sc.covariate_id,
     
   sr.outcome_subjects,
   sr.outcome_events,
@@ -1477,7 +1491,7 @@ getSccsDiagnosticsData <- function(
   )
   
   result <- result %>% 
-    dplyr::relocate("summaryValue", .after = "outcome")
+    dplyr::relocate("summaryValue", .after = "covariateName")
   
   return(result)  
   

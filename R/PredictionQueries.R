@@ -1106,8 +1106,7 @@ getFullPredictionPerformances <- function(
 #' @template plpTablePrefix
 #' @template cgTablePrefix
 #' @template databaseTable
-#' @param databaseTablePrefix The prefix for the database table either '' or 'plp_'
-#' @param modelDesignId The identifier for a model design  to restrict results to
+#' @param modelDesignIds The identifier for a model design  to restrict results to
 #' @param threshold1_2 A threshold for probast 1.2
 #' @family Prediction
 #' @return
@@ -1145,8 +1144,7 @@ getPredictionDiagnostics <- function(
     plpTablePrefix = 'plp_',
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
-    databaseTablePrefix = '',
-    modelDesignId = NULL,
+    modelDesignIds = NULL,
     threshold1_2 = 0.9
 ){
   
@@ -1154,14 +1152,17 @@ getPredictionDiagnostics <- function(
           design.MODEL_DESIGN_ID,
           diagnostics.diagnostic_id,
           database.DATABASE_NAME as development_DATABASE_NAME,
+          database.database_id as development_database_id,
           cohortT.COHORT_NAME development_target_name,
+          design.target_id as development_target_id,
           cohortO.COHORT_NAME development_outcome_name,
+          design.outcome_id as development_outcome_id,
           summary.PROBAST_ID,
           summary.RESULT_VALUE
 
           from
           (select * from @schema.@plp_table_prefixDIAGNOSTICS
-          {@model_design_restrict} ? {where MODEL_DESIGN_ID = @model_design_id}
+          {@model_design_restrict} ? {where MODEL_DESIGN_ID in (@model_design_ids)}
           ) as diagnostics
           inner join
           @schema.@plp_table_prefixMODEL_DESIGNS design
@@ -1173,7 +1174,7 @@ getPredictionDiagnostics <- function(
 
           inner join
           (select dd.database_id, md.cdm_source_abbreviation as database_name
-                   from @schema.@database_table_prefix@database_table md inner join
+                   from @schema.@database_table md inner join
                    @schema.@plp_table_prefixdatabase_details dd
                    on md.database_id = dd.database_meta_data_id) as database
           on database.database_id = diagnostics.database_id
@@ -1191,9 +1192,8 @@ getPredictionDiagnostics <- function(
     sql = sql,
     schema = schema,
     plp_table_prefix = plpTablePrefix,
-    model_design_id = modelDesignId,
-    model_design_restrict = !is.null(modelDesignId),
-    database_table_prefix = databaseTablePrefix,
+    model_design_ids = paste0(modelDesignIds, collapse = ','),
+    model_design_restrict = !is.null(modelDesignIds),
     database_table = databaseTable
   )
   
@@ -1202,33 +1202,76 @@ getPredictionDiagnostics <- function(
     return(NULL)
   }
   
-  summary <- summaryTable %>%
+  # update 1.2 based on threshold
+  summaryTableNew <- summaryTable[grep('1.2.',summaryTable$probastId),] %>% 
+    dplyr::group_by(.data$developmentDatabaseId, .data$modelDesignId) %>%
     dplyr::mutate(
-      probastId = paste0('probast',gsub('\\.','_',.data$probastId))
+      probastId = '1.2',
+      resultValue = if(sum(.data$resultValue > !!threshold1_2) == length(.data$resultValue)){'Pass'}else{'False'}
     ) %>%
-    dplyr::arrange(.data$probastId) %>%
-    tidyr::pivot_wider(
-      id_cols = c(
-        'modelDesignId',
-        'diagnosticId',
-        'developmentDatabaseName',
-        'developmentTargetName',
-        'developmentOutcomeName'
-      ),
-      names_from = 'probastId',
-      values_from = 'resultValue'
-    )
+    dplyr::ungroup()
   
-  summary$probast1_2 <- ifelse(
-    apply(summary[,grep('probast1_2_', colnames(summary))] > threshold1_2, 1, sum) == length(grep('probast1_2_', colnames(summary))),
-    'Pass',
-    'Fail'
+  summaryTable <- rbind(
+    summaryTable[-grep('1.2.',summaryTable$probastId),],
+    unique(summaryTableNew)
   )
   
-  summary <- summary[, - grep('probast1_2_', colnames(summary))] %>%
-    dplyr::relocate("probast1_2", .after = "probast1_1")
   
-  return(summary)
+  # add probast text
+  description <- data.frame(
+    probastId = c(
+      '1.1', 
+      '1.2',
+      '2.1',
+      '2.2',
+      '2.3',
+      #"3.1",
+      #"3.2",
+      #"3.3",
+      '3.4',
+      '3.6',
+      '4.1'
+      #"4.2"
+      #"4.3"
+      #"4.4"
+      #"4.5"
+      #"4.6"
+      #"4.7"
+      #"4.8"
+      #"4.9"
+      ),
+    probastDescription = c(
+      'Participants: Were appropriate data sources used, e.g. cohort, RCT or nested case-control study data?',
+      'Participants: Were all inclusions and exclusions of participants appropriate?',
+      'Predictors: Were predictors defined and assessed in a similar way for all participants?',
+      "Predictors: Were predictor assessments made without knowledge of outcome data?",
+      "Predictors: Are all predictors available at the time the model is intended to be used?",
+      #"Outcome: Was the outcome determined appropriately?",
+      #"Outcome: Was a pre-specified or standard outcome definition used?",
+      #"Outcome: Were predictors excluded from the outcome definition?",
+      "Outcome: Was the outcome defined and determined in a similar way for all participants?",
+      "Outcome: Was the time interval between predictor assessment and outcome determination appropriate?",
+      "Design: Were there a reasonable number of participants with the outcome?"
+      #"Design:  Were continuous and categorical predictors handled appropriately?",
+      #4.3 Were all enrolled participants included in the analysis?
+      #4.4 Were participants with missing data handled appropriately?
+      #4.5 Was selection of predictors based on univariable analysis avoided? 
+      #4.6 Were complexities in the data (e.g. censoring, competing risks, sampling of controls) accounted for appropriately?
+      #4.7 Were relevant model performance measures evaluated appropriately? - Pass for all PLP
+      #4.8 Were model overfitting and optimism in model performance accounted for? - Pass for all PLP
+      #4.9 Do predictors and their assigned weights in the final model correspond to the results from multivariable analysis? - Pass for all PLP
+      )
+  )
+  
+  # add info about diagostic
+  summaryTable <- merge(
+    x = summaryTable, 
+    y = description, 
+    by = 'probastId', 
+    all.x = TRUE
+    )
+  
+  return(summaryTable)
 }
 
 
@@ -1243,6 +1286,7 @@ getPredictionDiagnostics <- function(
 #' @template connectionHandler
 #' @template schema
 #' @template plpTablePrefix
+#' @template databaseTable
 #' @param table The table to extract (covariate_summary, attrition, prediction_distribution, threshold_summary, calibration_summary, evaluation_statistics or demographic_summary )
 #' @param modelDesignIds (optional) restrict to the input modelDesignIds
 #' @param performanceIds (optional) restrict to the input performanceIds
@@ -1267,23 +1311,46 @@ getPredictionPerformanceTable <- function(
     connectionHandler,
     schema,
     plpTablePrefix = 'plp_',
+    databaseTable = 'database_meta_data',
     table = 'attrition',
     modelDesignIds = NULL,
     performanceIds = NULL,
     evaluations = NULL
 ){
   
-    sql <- "SELECT 
+    sql <- "SELECT distinct
     p.model_design_id,
     p.development_database_id,
+    db1.cdm_source_abbreviation as development_database_name,
     p.validation_database_id,
+    db2.cdm_source_abbreviation as validation_database_name,
     p.target_id,
     p.outcome_id,
     p.tar_id,
     toi.* 
-    FROM @schema.@plp_table_prefix@table toi inner join 
-    @schema.@plp_table_prefixperformances p on 
-    p.performance_id = toi.performance_id 
+    
+    FROM @schema.@plp_table_prefix@table toi 
+    
+    INNER JOIN @schema.@plp_table_prefixperformances p 
+    ON p.performance_id = toi.performance_id 
+    
+    INNER JOIN
+    (SELECT dd.database_id, md.cdm_source_abbreviation
+     FROM @schema.@database_table md 
+     INNER JOIN @schema.@plp_table_prefixdatabase_details dd
+     ON md.database_id = dd.database_meta_data_id
+     ) as db1
+     ON db1.database_id = p.development_database_id
+     
+    INNER JOIN
+    (SELECT dd.database_id, md.cdm_source_abbreviation
+     FROM @schema.@database_table md 
+     INNER JOIN @schema.@plp_table_prefixdatabase_details dd
+     ON md.database_id = dd.database_meta_data_id
+     ) as db2
+     ON db2.database_id = p.validation_database_id
+    
+    
     WHERE 1=1
     {@use_model_id}?{ and p.model_design_id in (@model_ids)}
     {@use_performance_id}?{ and p.performance_id in (@performance_ids)}
@@ -1293,6 +1360,7 @@ getPredictionPerformanceTable <- function(
     result  <- connectionHandler$queryDb(
       sql = sql,
       schema = schema,
+      database_table = databaseTable,
       table = table,
       use_model_id = !is.null(modelDesignIds),
       model_ids = paste0(modelDesignIds, collapse = ','),

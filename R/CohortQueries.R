@@ -172,3 +172,335 @@ getCohortSubsetDefinitions <- function(
   
   return(result)
 }
+
+
+
+#' Extract the cohort inclusion stats
+#' @description
+#' This function extracts all cohort inclusion stats for the cohorts of interest.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param cohortIds Optionally a list of cohortIds to restrict to
+#' @family Cohorts
+#' @return
+#' Returns a data.frame with the cohort inclusion stats
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohortInclsuionsStats <- getCohortInclusionStats(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getCohortInclusionStats <- function(
+    connectionHandler,
+    schema,
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    cohortIds = NULL
+) {
+  
+  sql <- "SELECT 
+  cir.database_id, 
+  dt.cdm_source_name as database_name,
+  cir.cohort_definition_id, 
+  cd.cohort_name,
+  cir.inclusion_rule_mask, 
+  cir.person_count, 
+  cir.mode_id
+  
+  FROM @schema.@cg_table_prefixCOHORT_INC_RESULT cir
+  
+  INNER JOIN @schema.@database_table dt
+  ON cir.database_id = dt.database_id
+  
+  INNER JOIN @schema.@cg_table_prefixcohort_definition cd
+  ON cir.cohort_definition_id = cd.cohort_definition_id
+  
+  {@use_cohort_id}?{ where cir.cohort_definition_id in (@cohort_definition_ids)}
+  ;"
+  
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
+    use_cohort_id = !is.null(cohortIds),
+    cohort_definition_ids = paste0(cohortIds, collapse = ',')
+  )
+  
+  return(result)
+}
+
+
+
+#' Extract the cohort inclusion rules
+#' @description
+#' This function extracts all cohort inclusion rules for the cohorts of interest.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cgTablePrefix
+#' @param cohortIds Optionally a list of cohortIds to restrict to
+#' @family Cohorts
+#' @return
+#' Returns a data.frame with the cohort inclusion rules
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohortInclsuionsRules <- getCohortInclusionRules(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getCohortInclusionRules <- function(
+    connectionHandler,
+    schema,
+    cgTablePrefix = 'cg_',
+    cohortIds = NULL
+) {
+  
+  sql <- "SELECT 
+  ci.cohort_definition_id, 
+  cd.cohort_name,
+  ci.rule_sequence, 
+  ci.name as rule_name
+  
+  FROM @schema.@cg_table_prefixCOHORT_INCLUSION ci
+  INNER JOIN @schema.@cg_table_prefixCOHORT_DEFINITION cd
+  ON cd.cohort_definition_id = ci.cohort_definition_id
+  
+  {@use_cohort_id}?{ WHERE cd.cohort_definition_id in (@cohort_definition_ids)}
+  ;"
+  
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cg_table_prefix = cgTablePrefix,
+    use_cohort_id = !is.null(cohortIds),
+    cohort_definition_ids = paste0(cohortIds, collapse = ',')
+  )
+  
+  return(result)
+}
+
+
+
+#' Extract the cohort inclusion summary
+#' @description
+#' This function extracts all cohort inclusion summary for the cohorts of interest.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param cohortIds Optionally a list of cohortIds to restrict to
+#' @family Cohorts
+#' @return
+#' Returns a data.frame with the cohort inclusion rules
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohortInclsuionsSummary <- getCohortInclusionSummary(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getCohortInclusionSummary <- function(
+    connectionHandler,
+    schema,
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    cohortIds = NULL
+) {
+  
+  sql <- "SELECT 
+  css.cohort_definition_id, 
+  cd.cohort_name,
+  css.base_count, 
+  css.final_count, 
+  css.mode_id,
+  dt.cdm_source_name as database_name,
+  dt.database_id
+  
+  FROM @schema.@cg_table_prefixCOHORT_SUMMARY_STATS css
+  
+  INNER JOIN @schema.@database_table dt
+  ON css.database_id = dt.database_id
+  
+  INNER JOIN @schema.@cg_table_prefixCOHORT_DEFINITION cd
+  ON cd.cohort_definition_id = css.cohort_definition_id
+  
+  {@use_cohort_id}?{ WHERE css.cohort_definition_id in (@cohort_definition_ids)}
+  ;"
+  
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
+    use_cohort_id = !is.null(cohortIds),
+    cohort_definition_ids = paste0(cohortIds, collapse = ',')
+  )
+  
+  return(result)
+}
+
+
+
+
+#' Extract the cohort meta
+#' @description
+#' This function extracts all cohort meta for the cohorts of interest.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param cohortIds Optionally a list of cohortIds to restrict to
+#' @family Cohorts
+#' @return
+#' Returns a data.frame with the cohort inclusion rules
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohortMeta <- getCohortMeta(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getCohortMeta <- function(
+    connectionHandler,
+    schema,
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    cohortIds = NULL
+) {
+  
+  sql <- "SELECT 
+  cg.cohort_id, 
+  cg.cohort_name,
+  cg.generation_status, 
+  cg.start_time, 
+  cg.end_time, 
+  dt.cdm_source_name as database_name,
+  dt.database_id
+  
+  FROM @schema.@cg_table_prefixCOHORT_GENERATION cg
+  INNER JOIN @schema.@database_table dt
+  ON cg.database_id = dt.database_id
+  
+  {@use_cohort_id}?{ WHERE cg.cohort_id in (@cohort_definition_ids)}
+  ;"
+  
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
+    use_cohort_id = !is.null(cohortIds),
+    cohort_definition_ids = paste0(cohortIds, collapse = ',')
+  )
+  
+  return(result)
+}
+
+
+
+
+#' Extract the cohort counds
+#' @description
+#' This function extracts all cohort counts for the cohorts of interest.
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param cohortIds Optionally a list of cohortIds to restrict to
+#' @family Cohorts
+#' @return
+#' Returns a data.frame with the cohort inclusion rules
+#' 
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohortMeta <- getCohortCounts(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getCohortCounts <- function(
+    connectionHandler,
+    schema,
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    cohortIds = NULL
+) {
+  
+  sql <- "SELECT 
+  cc.cohort_id, 
+  cd.cohort_name,
+  cc.cohort_entries, 
+  cc.cohort_subjects,
+  dt.cdm_source_name as database_name,
+  dt.database_id
+  
+  FROM @schema.@cg_table_prefixCOHORT_COUNT cc
+  
+  INNER JOIN @schema.@database_table dt
+  ON cc.database_id = dt.database_id
+  
+  INNER JOIN @schema.@cg_table_prefixCOHORT_DEFINITION cd
+  ON cd.cohort_definition_id = cc.cohort_id
+
+  {@use_cohort_id}?{ WHERE cc.cohort_id in (@cohort_definition_ids)}
+  ;"
+  
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
+    use_cohort_id = !is.null(cohortIds),
+    cohort_definition_ids = paste0(cohortIds, collapse = ',')
+  )
+  
+  return(result)
+}

@@ -3204,7 +3204,7 @@ getCharacterizationCohortBinary <- function(
 ){
   
   # first get counts
-  counts <- getCohortCounts(
+  counts <- getCharacterizationCohortCounts(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix,
@@ -3378,7 +3378,7 @@ getCharacterizationCohortContinuous <- function(
 ){
   
   # first get counts
-  counts <- getCohortCounts(
+  counts <- getCharacterizationCohortCounts(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix,
@@ -3505,7 +3505,7 @@ if(nrow(colRef) == 2){
 
 
 
-getCohortCounts <- function(
+getCharacterizationCohortCounts <- function(
     connectionHandler,
     schema,
     cTablePrefix = 'c_',
