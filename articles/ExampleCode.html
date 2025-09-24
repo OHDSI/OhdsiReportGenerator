@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,9 +59,9 @@
                         <h4 data-toc-skip class="author">Jenna Reps,
 Anthony Sena</h4>
             
-            <h4 data-toc-skip class="date">2025-05-23</h4>
+            <h4 data-toc-skip class="date">2025-09-24</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/main/vignettes/ExampleCode.Rmd" class="external-link"><code>vignettes/ExampleCode.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/develop/vignettes/ExampleCode.Rmd" class="external-link"><code>vignettes/ExampleCode.Rmd</code></a></small>
       <div class="d-none name"><code>ExampleCode.Rmd</code></div>
     </div>
 
@@ -92,7 +92,7 @@ package sample OMOP CDM data.</p>
 <pre><code><span><span class="co">## Loading required package: R6</span></span></code></pre>
 <pre><code><span><span class="co">## Loading required package: DatabaseConnector</span></span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ConnectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/ResultModelManager/man/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">connectionDetails</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">ConnectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://ohdsi.github.io/ResultModelManager/reference/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">connectionDetails</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Connecting using SQLite driver</span></span></code></pre>
 </div>
 <div class="section level3">
@@ -121,12 +121,13 @@ connection handler, schema, table prefix used by CohortGenerator
 <caption>The data.frame extracted containing the cohort details minus
 the json and sqlCommand columns.</caption>
 <colgroup>
-<col width="10%">
-<col width="59%">
-<col width="6%">
-<col width="7%">
-<col width="5%">
-<col width="10%">
+<col width="2%">
+<col width="13%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
+<col width="2%">
+<col width="77%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">cohortDefinitionId</th>
@@ -135,6 +136,7 @@ the json and sqlCommand columns.</caption>
 <th align="right">subsetParent</th>
 <th align="right">isSubset</th>
 <th align="right">subsetDefinitionId</th>
+<th align="left">subsetDefinitionJson</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -144,6 +146,7 @@ the json and sqlCommand columns.</caption>
 <td align="right">1</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
@@ -152,6 +155,7 @@ the json and sqlCommand columns.</caption>
 <td align="right">2</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
+<td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
@@ -160,6 +164,7 @@ the json and sqlCommand columns.</caption>
 <td align="right">3</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="right">1001</td>
@@ -168,53 +173,53 @@ the json and sqlCommand columns.</caption>
 <td align="right">1</td>
 <td align="right">NA</td>
 <td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="right">2001</td>
-<td align="left">Diclofenac - age 18 to 64 Age 18 to 64</td>
-<td align="left">NA</td>
-<td align="right">2</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="right">1002</td>
-<td align="left">Celecoxib - first event with 365 prior obs first event
-with 365 prior obs</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-<td align="right">NA</td>
-<td align="right">2</td>
-</tr>
-<tr class="odd">
-<td align="right">2002</td>
-<td align="left">Diclofenac - first event with 365 prior obs first event
-with 365 prior obs</td>
-<td align="left">NA</td>
-<td align="right">2</td>
-<td align="right">NA</td>
-<td align="right">2</td>
-</tr>
-<tr class="even">
-<td align="right">1003</td>
-<td align="left">Celecoxib - age 18 to 64 and first event with 365 prior
-obs Age 18 to 64, first event with 365 prior obs</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-<td align="right">NA</td>
-<td align="right">3</td>
-</tr>
-<tr class="odd">
-<td align="right">2003</td>
-<td align="left">Diclofenac - age 18 to 64 and first event with 365
-prior obs Age 18 to 64, first event with 365 prior obs</td>
-<td align="left">NA</td>
-<td align="right">2</td>
-<td align="right">NA</td>
-<td align="right">3</td>
+<td align="left">{</td>
 </tr>
 </tbody>
 </table>
+<p>“name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: [ {
+“name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
+“ageMin”: 18, “ageMax”: 64 } ], “packageVersion”: “0.11.2”,
+“identifierExpression”: “targetId * 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 2001|Diclofenac - age 18
+to 64 Age 18 to 64 |NA | 2| NA| 1|{ “name”: “age 18 to 64”,
+“definitionId”: 1, “subsetOperators”: [ { “name”: “Age 18 to 64”,
+“subsetType”: “DemographicSubsetOperator”, “ageMin”: 18, “ageMax”: 64 }
+], “packageVersion”: “0.11.2”, “identifierExpression”: “targetId * 1000
++ definitionId”, “operatorNameConcatString”: “,”,
+“subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 1002|Celecoxib - first
+event with 365 prior obs first event with 365 prior obs |NA | 1| NA| 2|{
+“name”: “first event with 365 prior obs”, “definitionId”: 2,
+“subsetOperators”: [ { “name”: “first event with 365 prior obs”,
+“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
+0, “limitTo”: “firstEver” } ], “packageVersion”: “0.11.2”,
+“identifierExpression”: “targetId * 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 2002|Diclofenac - first
+event with 365 prior obs first event with 365 prior obs |NA | 2| NA| 2|{
+“name”: “first event with 365 prior obs”, “definitionId”: 2,
+“subsetOperators”: [ { “name”: “first event with 365 prior obs”,
+“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
+0, “limitTo”: “firstEver” } ], “packageVersion”: “0.11.2”,
+“identifierExpression”: “targetId * 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 1003|Celecoxib - age 18 to
+64 and first event with 365 prior obs Age 18 to 64, first event with 365
+prior obs |NA | 1| NA| 3|{ “name”: “age 18 to 64 and first event with
+365 prior obs”, “definitionId”: 3, “subsetOperators”: [ { “name”: “Age
+18 to 64”, “subsetType”: “DemographicSubsetOperator”, “ageMin”: 18,
+“ageMax”: 64 }, { “name”: “first event with 365 prior obs”,
+“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
+0, “limitTo”: “firstEver” } ], “packageVersion”: “0.11.2”,
+“identifierExpression”: “targetId * 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 2003|Diclofenac - age 18
+to 64 and first event with 365 prior obs Age 18 to 64, first event with
+365 prior obs |NA | 2| NA| 3|{ “name”: “age 18 to 64 and first event
+with 365 prior obs”, “definitionId”: 3, “subsetOperators”: [ { “name”:
+“Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”, “ageMin”: 18,
+“ageMax”: 64 }, { “name”: “first event with 365 prior obs”,
+“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
+0, “limitTo”: “firstEver” } ], “packageVersion”: “0.11.2”,
+“identifierExpression”: “targetId * 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } |</p>
 <p>You can process the cohorts definitions to extract the parent cohorts
 and the children for each parent cohort.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -239,12 +244,13 @@ and the children for each parent cohort.</p>
 <caption>The children/subset cohorts for the first parent
 cohort.</caption>
 <colgroup>
-<col width="10%">
-<col width="59%">
-<col width="6%">
-<col width="7%">
-<col width="5%">
-<col width="10%">
+<col width="2%">
+<col width="13%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
+<col width="2%">
+<col width="77%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">cohortDefinitionId</th>
@@ -253,6 +259,7 @@ cohort.</caption>
 <th align="right">subsetParent</th>
 <th align="right">isSubset</th>
 <th align="right">subsetDefinitionId</th>
+<th align="left">subsetDefinitionJson</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -262,6 +269,7 @@ cohort.</caption>
 <td align="right">1</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="right">1001</td>
@@ -270,27 +278,31 @@ cohort.</caption>
 <td align="right">1</td>
 <td align="right">NA</td>
 <td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="right">1002</td>
-<td align="left">Celecoxib - first event with 365 prior obs first event
-with 365 prior obs</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-<td align="right">NA</td>
-<td align="right">2</td>
-</tr>
-<tr class="even">
-<td align="right">1003</td>
-<td align="left">Celecoxib - age 18 to 64 and first event with 365 prior
-obs Age 18 to 64, first event with 365 prior obs</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-<td align="right">NA</td>
-<td align="right">3</td>
+<td align="left">{</td>
 </tr>
 </tbody>
 </table>
+<p>“name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: [ {
+“name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
+“ageMin”: 18, “ageMax”: 64 } ], “packageVersion”: “0.11.2”,
+“identifierExpression”: “targetId * 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 1002|Celecoxib - first
+event with 365 prior obs first event with 365 prior obs |NA | 1| NA| 2|{
+“name”: “first event with 365 prior obs”, “definitionId”: 2,
+“subsetOperators”: [ { “name”: “first event with 365 prior obs”,
+“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
+0, “limitTo”: “firstEver” } ], “packageVersion”: “0.11.2”,
+“identifierExpression”: “targetId * 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 1003|Celecoxib - age 18 to
+64 and first event with 365 prior obs Age 18 to 64, first event with 365
+prior obs |NA | 1| NA| 3|{ “name”: “age 18 to 64 and first event with
+365 prior obs”, “definitionId”: 3, “subsetOperators”: [ { “name”: “Age
+18 to 64”, “subsetType”: “DemographicSubsetOperator”, “ageMin”: 18,
+“ageMax”: 64 }, { “name”: “first event with 365 prior obs”,
+“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
+0, “limitTo”: “firstEver” } ], “packageVersion”: “0.11.2”,
+“identifierExpression”: “targetId * 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } |</p>
 <p>For example, if you created a cohort corresponding to all patients
 exposed to drug A with an id of 1 and then created ‘children’ subset
 cohorts corresponding to patients exposed to drug A for indication X
@@ -364,22 +376,24 @@ scale.</p>
 <span>  x <span class="op">=</span> <span class="va">tte</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">timeScale</span> <span class="op">==</span> <span class="st">'per 365-day'</span><span class="op">)</span>, </span>
 <span>  caption <span class="op">=</span> <span class="st">'Example time-to-event results for the 365-day scale.'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
+<table class="table">
 <caption>Example time-to-event results for the 365-day scale.</caption>
 <colgroup>
-<col width="8%">
-<col width="25%">
+<col width="7%">
+<col width="6%">
+<col width="23%">
 <col width="5%">
 <col width="7%">
 <col width="6%">
 <col width="7%">
-<col width="16%">
+<col width="15%">
 <col width="7%">
 <col width="6%">
 <col width="7%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">databaseName</th>
+<th align="left">databaseId</th>
 <th align="left">targetName</th>
 <th align="right">targetId</th>
 <th align="left">outcomeName</th>
@@ -393,6 +407,7 @@ scale.</p>
 <tbody>
 <tr class="odd">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="left">GI bleed</td>
@@ -405,6 +420,7 @@ scale.</p>
 </tr>
 <tr class="even">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="left">GI bleed</td>
@@ -417,6 +433,7 @@ scale.</p>
 </tr>
 <tr class="odd">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Diclofenac</td>
 <td align="right">2</td>
 <td align="left">GI bleed</td>
@@ -429,6 +446,7 @@ scale.</p>
 </tr>
 <tr class="even">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Diclofenac</td>
 <td align="right">2</td>
 <td align="left">GI bleed</td>
@@ -441,6 +459,7 @@ scale.</p>
 </tr>
 <tr class="odd">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib - age 18 to 64 Age 18 to 64</td>
 <td align="right">1001</td>
 <td align="left">GI bleed</td>
@@ -453,6 +472,7 @@ scale.</p>
 </tr>
 <tr class="even">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib - age 18 to 64 Age 18 to 64</td>
 <td align="right">1001</td>
 <td align="left">GI bleed</td>
@@ -465,6 +485,7 @@ scale.</p>
 </tr>
 <tr class="odd">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Diclofenac - age 18 to 64 Age 18 to 64</td>
 <td align="right">2001</td>
 <td align="left">GI bleed</td>
@@ -477,6 +498,7 @@ scale.</p>
 </tr>
 <tr class="even">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Diclofenac - age 18 to 64 Age 18 to 64</td>
 <td align="right">2001</td>
 <td align="left">GI bleed</td>
@@ -503,10 +525,11 @@ re-occurs when the target exposure restarts:</p>
 <span>  x <span class="op">=</span> <span class="va">drc</span>, </span>
 <span>  caption <span class="op">=</span> <span class="st">'Example dechallenge-rechallenge results.'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
+<table class="table">
 <caption>Example dechallenge-rechallenge results.</caption>
 <colgroup>
 <col width="3%">
+<col width="2%">
 <col width="2%">
 <col width="2%">
 <col width="3%">
@@ -531,6 +554,7 @@ re-occurs when the target exposure restarts:</p>
 </colgroup>
 <thead><tr class="header">
 <th align="left">databaseName</th>
+<th align="left">databaseId</th>
 <th align="left">targetName</th>
 <th align="right">targetId</th>
 <th align="left">outcomeName</th>
@@ -555,6 +579,7 @@ re-occurs when the target exposure restarts:</p>
 </tr></thead>
 <tbody><tr class="odd">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="left">GI bleed</td>
@@ -599,37 +624,41 @@ all ages, genders and start years):</p>
 <table style="width:100%;" class="table">
 <caption>Example incidence rate results.</caption>
 <colgroup>
-<col width="4%">
+<col width="3%">
+<col width="3%">
 <col width="3%">
 <col width="2%">
 <col width="3%">
+<col width="2%">
+<col width="8%">
+<col width="3%">
+<col width="3%">
+<col width="3%">
+<col width="3%">
+<col width="2%">
+<col width="3%">
+<col width="4%">
 <col width="3%">
 <col width="3%">
 <col width="4%">
-<col width="4%">
 <col width="3%">
 <col width="3%">
-<col width="4%">
-<col width="4%">
 <col width="3%">
 <col width="4%">
-<col width="5%">
-<col width="4%">
-<col width="4%">
-<col width="3%">
-<col width="5%">
 <col width="4%">
 <col width="3%">
 <col width="2%">
-<col width="7%">
 <col width="6%">
+<col width="5%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">databaseName</th>
+<th align="left">databaseId</th>
 <th align="left">targetName</th>
 <th align="right">targetId</th>
 <th align="left">outcomeName</th>
 <th align="right">outcomeId</th>
+<th align="left">tar</th>
 <th align="right">cleanWindow</th>
 <th align="left">subgroupName</th>
 <th align="left">ageGroupName</th>
@@ -653,10 +682,12 @@ all ages, genders and start years):</p>
 <tbody>
 <tr class="odd">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="left">GI bleed</td>
 <td align="right">3</td>
+<td align="left">( start + 0 ) - ( end + 0 )</td>
 <td align="right">9999</td>
 <td align="left">All</td>
 <td align="left">Any</td>
@@ -679,10 +710,12 @@ all ages, genders and start years):</p>
 </tr>
 <tr class="even">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="left">GI bleed</td>
 <td align="right">3</td>
+<td align="left">( start + 0 ) - ( start + 365 )</td>
 <td align="right">9999</td>
 <td align="left">All</td>
 <td align="left">Any</td>
@@ -724,27 +757,29 @@ features and the occurrence of the outcome during a time-at-risk) using
 <caption>Example risk factors for binary features results.</caption>
 <colgroup>
 <col width="4%">
-<col width="4%">
+<col width="3%">
+<col width="3%">
 <col width="5%">
 <col width="4%">
-<col width="6%">
-<col width="7%">
+<col width="5%">
 <col width="7%">
 <col width="6%">
 <col width="5%">
+<col width="5%">
 <col width="4%">
-<col width="4%">
+<col width="3%">
 <col width="7%">
 <col width="4%">
 <col width="3%">
 <col width="4%">
 <col width="4%">
 <col width="5%">
-<col width="4%">
+<col width="3%">
 <col width="3%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">databaseName</th>
+<th align="left">databaseId</th>
 <th align="left">targetName</th>
 <th align="right">targetCohortId</th>
 <th align="left">outcomeName</th>
@@ -767,6 +802,7 @@ features and the occurrence of the outcome during a time-at-risk) using
 <tbody>
 <tr class="odd">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="left">GI bleed</td>
@@ -788,6 +824,7 @@ features and the occurrence of the outcome during a time-at-risk) using
 </tr>
 <tr class="even">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="left">GI bleed</td>
@@ -809,6 +846,7 @@ features and the occurrence of the outcome during a time-at-risk) using
 </tr>
 <tr class="odd">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="left">GI bleed</td>
@@ -830,6 +868,7 @@ features and the occurrence of the outcome during a time-at-risk) using
 </tr>
 <tr class="even">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="left">GI bleed</td>
@@ -865,14 +904,15 @@ features:</p>
 <span>  x <span class="op">=</span> <span class="va">rf</span>, </span>
 <span>  caption <span class="op">=</span> <span class="st">'Example risk factors for continuous features results.'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<table class="table">
+<table style="width:100%;" class="table">
 <caption>Example risk factors for continuous features results.</caption>
 <colgroup>
 <col width="2%">
 <col width="1%">
+<col width="1%">
 <col width="2%">
 <col width="3%">
-<col width="17%">
+<col width="16%">
 <col width="1%">
 <col width="2%">
 <col width="2%">
@@ -906,6 +946,7 @@ features:</p>
 </colgroup>
 <thead><tr class="header">
 <th align="left">databaseName</th>
+<th align="left">databaseId</th>
 <th align="left">targetName</th>
 <th align="right">targetCohortId</th>
 <th align="right">minPriorObservation</th>
@@ -944,6 +985,7 @@ features:</p>
 <tbody>
 <tr class="odd">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="right">365</td>
@@ -981,6 +1023,7 @@ features:</p>
 </tr>
 <tr class="even">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="right">365</td>
@@ -1018,6 +1061,7 @@ features:</p>
 </tr>
 <tr class="odd">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="right">365</td>
@@ -1055,6 +1099,7 @@ features:</p>
 </tr>
 <tr class="even">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="right">365</td>
@@ -1092,6 +1137,7 @@ features:</p>
 </tr>
 <tr class="odd">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="right">365</td>
@@ -1099,34 +1145,34 @@ features:</p>
 0 concept_count relative to index: Inpatient Visit</td>
 <td align="right">9201923</td>
 <td align="right">-5</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.000000</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">GI bleed</td>
+<td align="right">3</td>
+<td align="right">365</td>
+<td align="right">1</td>
+<td align="right">365</td>
+<td align="left">cohort start</td>
+<td align="left">cohort end</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.00000</td>
+<td align="right">0.000000</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">NaN</td>
+<td align="right">NaN</td>
 </tr>
 </tbody>
 </table>
@@ -1153,24 +1199,20 @@ can be extracted using <code>getPredictionModelDesigns</code>:</p>
 <span>      <span class="st">"developmentTargetName"</span>,</span>
 <span>      <span class="st">"developmentOutcomeId"</span>,   </span>
 <span>      <span class="st">"developmentOutcomeName"</span>, </span>
-<span>      <span class="st">"timeAtRisk"</span>,</span>
-<span>      <span class="st">"meanAuroc"</span>, </span>
-<span>      <span class="st">"noDevelopmentDatabases"</span></span>
+<span>      <span class="st">"timeAtRisk"</span></span>
 <span>    <span class="op">)</span>, </span>
 <span>  caption <span class="op">=</span> <span class="st">'Example model designs for the prediction results.'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
+<table class="table">
 <caption>Example model designs for the prediction results.</caption>
 <colgroup>
-<col width="5%">
-<col width="4%">
-<col width="8%">
-<col width="31%">
-<col width="8%">
-<col width="9%">
-<col width="17%">
+<col width="6%">
 <col width="4%">
 <col width="9%">
+<col width="36%">
+<col width="10%">
+<col width="11%">
+<col width="20%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">modelDesignId</th>
@@ -1180,8 +1222,6 @@ can be extracted using <code>getPredictionModelDesigns</code>:</p>
 <th align="right">developmentOutcomeId</th>
 <th align="left">developmentOutcomeName</th>
 <th align="left">timeAtRisk</th>
-<th align="right">meanAuroc</th>
-<th align="right">noDevelopmentDatabases</th>
 </tr></thead>
 <tbody><tr class="odd">
 <td align="right">1</td>
@@ -1192,14 +1232,12 @@ with 365 prior obs</td>
 <td align="right">3</td>
 <td align="left">GI bleed</td>
 <td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
-<td align="right">0.6885703</td>
-<td align="right">1</td>
 </tr></tbody>
 </table>
 <p>Once you know the modelDesignId of interest, you can then extract the
 model performance:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">perform</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getPredictionPerformances.html">getPredictionPerformances</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">perform</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getFullPredictionPerformances.html">getFullPredictionPerformances</a></span><span class="op">(</span></span>
 <span>    connectionHandler <span class="op">=</span> <span class="va">ConnectionHandler</span>,</span>
 <span>    schema <span class="op">=</span> <span class="st">'main'</span>, </span>
 <span>    modelDesignId <span class="op">=</span> <span class="fl">1</span></span>
@@ -1212,91 +1250,210 @@ model performance:</p>
 <table style="width:100%;" class="table">
 <caption>Example performance for the prediction results.</caption>
 <colgroup>
+<col width="1%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
 <col width="2%">
 <col width="2%">
-<col width="3%">
-<col width="3%">
-<col width="3%">
-<col width="13%">
-<col width="3%">
+<col width="2%">
+<col width="9%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="5%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
+<col width="2%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
+<col width="4%">
 <col width="4%">
 <col width="3%">
 <col width="3%">
-<col width="13%">
 <col width="3%">
-<col width="1%">
-<col width="1%">
-<col width="1%">
-<col width="1%">
-<col width="3%">
-<col width="1%">
-<col width="1%">
-<col width="1%">
+<col width="4%">
+<col width="4%">
 <col width="2%">
-<col width="2%">
-<col width="2%">
-<col width="2%">
-<col width="7%">
-<col width="3%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">performanceId</th>
+<th align="left">timeStamp</th>
 <th align="right">modelDesignId</th>
+<th align="left">modelType</th>
 <th align="right">developmentDatabaseId</th>
 <th align="right">validationDatabaseId</th>
 <th align="right">developmentTargetId</th>
 <th align="left">developmentTargetName</th>
+<th align="right">validationTargetId</th>
+<th align="left">validationTargetName</th>
 <th align="right">developmentOutcomeId</th>
 <th align="left">developmentOutcomeName</th>
+<th align="right">validationOutcomeId</th>
+<th align="left">validationOutcomeName</th>
 <th align="left">developmentDatabase</th>
 <th align="left">validationDatabase</th>
-<th align="left">validationTargetName</th>
-<th align="left">validationOutcomeName</th>
-<th align="left">timeStamp</th>
-<th align="right">auroc</th>
-<th align="right">auroc95lb</th>
-<th align="right">auroc95ub</th>
-<th align="right">calibrationInLarge</th>
-<th align="right">eStatistic</th>
-<th align="right">brierScore</th>
-<th align="right">auprc</th>
+<th align="left">validationTimeAtRisk</th>
+<th align="left">developTimeAtRisk</th>
+<th align="left">evaluation</th>
 <th align="right">populationSize</th>
 <th align="right">outcomeCount</th>
-<th align="right">evalPercent</th>
-<th align="right">outcomePercent</th>
-<th align="left">validationTimeAtRisk</th>
-<th align="left">predictionResultType</th>
+<th align="right">AUROC</th>
+<th align="right">95% lower AUROC</th>
+<th align="right">95% upper AUROC</th>
+<th align="right">AUPRC</th>
+<th align="right">brier score</th>
+<th align="right">brier score scaled</th>
+<th align="right">Eavg</th>
+<th align="right">E90</th>
+<th align="right">Emax</th>
+<th align="right">calibrationInLarge mean prediction</th>
+<th align="right">calibrationInLarge observed risk</th>
+<th align="right">calibrationInLarge intercept</th>
+<th align="right">weak calibration intercept</th>
+<th align="right">weak calibration gradient</th>
+<th align="right">Hosmer-Lemeshow calibration intercept</th>
+<th align="right">Hosmer-Lemeshow calibration gradient</th>
+<th align="right">Average Precision</th>
 </tr></thead>
-<tbody><tr class="odd">
+<tbody>
+<tr class="odd">
 <td align="right">1</td>
+<td align="left">2025-02-13</td>
 <td align="right">1</td>
+<td align="left">logistic</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">1002</td>
 <td align="left">Celecoxib - first event with 365 prior obs first event
 with 365 prior obs</td>
+<td align="right">1002</td>
+<td align="left">-</td>
 <td align="right">3</td>
 <td align="left">GI bleed</td>
+<td align="right">3</td>
+<td align="left">-</td>
 <td align="left">Synthea</td>
-<td align="left">Synthea</td>
-<td align="left">Celecoxib - first event with 365 prior obs first event
-with 365 prior obs</td>
-<td align="left">GI bleed</td>
-<td align="left">2025-02-13</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
+<td align="left">Test</td>
+<td align="right">449</td>
+<td align="right">88</td>
 <td align="right">0.6885703</td>
 <td align="right">0.6264985</td>
 <td align="right">0.7506421</td>
-<td align="right">0.0976443</td>
-<td align="right">0.0318938</td>
-<td align="right">0.0720927</td>
 <td align="right">0.3085693</td>
-<td align="right">1800</td>
-<td align="right">355</td>
-<td align="right">24.94444</td>
-<td align="right">19.72222</td>
+<td align="right">0.1469204</td>
+<td align="right">0.0720927</td>
+<td align="right">0.0318938</td>
+<td align="right">0.0650422</td>
+<td align="right">0.1390867</td>
+<td align="right">0.1972381</td>
+<td align="right">0.1959911</td>
+<td align="right">0.0976443</td>
+<td align="right">0.0976443</td>
+<td align="right">1.081961</td>
+<td align="right">0.0150102</td>
+<td align="right">0.9957815</td>
+<td align="right">0.3141461</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">2025-02-13</td>
+<td align="right">1</td>
+<td align="left">logistic</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1002</td>
+<td align="left">Celecoxib - first event with 365 prior obs first event
+with 365 prior obs</td>
+<td align="right">1002</td>
+<td align="left">-</td>
+<td align="right">3</td>
+<td align="left">GI bleed</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="left">Synthea</td>
+<td align="left">-</td>
+<td align="left">-</td>
 <td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
-<td align="left">Development</td>
-</tr></tbody>
+<td align="left">Train</td>
+<td align="right">1351</td>
+<td align="right">267</td>
+<td align="right">0.7091712</td>
+<td align="right">0.6750978</td>
+<td align="right">0.7432446</td>
+<td align="right">0.3665755</td>
+<td align="right">0.1451619</td>
+<td align="right">0.0845800</td>
+<td align="right">0.0211919</td>
+<td align="right">0.0365588</td>
+<td align="right">0.0525081</td>
+<td align="right">0.1976328</td>
+<td align="right">0.1976314</td>
+<td align="right">0.2335147</td>
+<td align="right">0.2335147</td>
+<td align="right">1.181563</td>
+<td align="right">-0.0358802</td>
+<td align="right">1.1620115</td>
+<td align="right">0.3702857</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">2025-02-13</td>
+<td align="right">1</td>
+<td align="left">logistic</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1002</td>
+<td align="left">Celecoxib - first event with 365 prior obs first event
+with 365 prior obs</td>
+<td align="right">1002</td>
+<td align="left">-</td>
+<td align="right">3</td>
+<td align="left">GI bleed</td>
+<td align="right">3</td>
+<td align="left">-</td>
+<td align="left">Synthea</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
+<td align="left">CV</td>
+<td align="right">1351</td>
+<td align="right">267</td>
+<td align="right">0.6818760</td>
+<td align="right">0.6457077</td>
+<td align="right">0.7180443</td>
+<td align="right">0.3151896</td>
+<td align="right">0.1490119</td>
+<td align="right">0.0586252</td>
+<td align="right">0.0265908</td>
+<td align="right">0.0447049</td>
+<td align="right">0.2297922</td>
+<td align="right">0.1971663</td>
+<td align="right">0.1976314</td>
+<td align="right">0.0905528</td>
+<td align="right">0.0905528</td>
+<td align="right">1.066780</td>
+<td align="right">-0.0116256</td>
+<td align="right">1.0545190</td>
+<td align="right">0.3196781</td>
+</tr>
+</tbody>
 </table>
 <p>As well as the top predictors, in this case we will return the top
 5:</p>
@@ -1494,17 +1651,33 @@ day -30 through 0 days relative to index: Polyp of colon</td>
 <span>  x <span class="op">=</span> <span class="va">attrition</span> , </span>
 <span>  caption <span class="op">=</span> <span class="st">'Example prediction attrition for performance 1.'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<table class="table">
+<table style="width:100%;" class="table">
 <caption>Example prediction attrition for performance 1.</caption>
 <colgroup>
-<col width="10%">
-<col width="7%">
-<col width="54%">
+<col width="5%">
+<col width="8%">
 <col width="9%">
-<col width="10%">
-<col width="7%">
+<col width="8%">
+<col width="8%">
+<col width="3%">
+<col width="3%">
+<col width="2%">
+<col width="5%">
+<col width="3%">
+<col width="27%">
+<col width="4%">
+<col width="5%">
+<col width="3%">
 </colgroup>
 <thead><tr class="header">
+<th align="right">modelDesignId</th>
+<th align="right">developmentDatabaseId</th>
+<th align="left">developmentDatabaseName</th>
+<th align="right">validationDatabaseId</th>
+<th align="left">validationDatabaseName</th>
+<th align="right">targetId</th>
+<th align="right">outcomeId</th>
+<th align="right">tarId</th>
 <th align="right">performanceId</th>
 <th align="right">outcomeId</th>
 <th align="left">description</th>
@@ -1515,6 +1688,14 @@ day -30 through 0 days relative to index: Polyp of colon</td>
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
+<td align="right">1</td>
+<td align="left">Synthea</td>
+<td align="right">1</td>
+<td align="left">Synthea</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">1</td>
 <td align="right">3</td>
 <td align="left">Original cohorts</td>
 <td align="right">1800</td>
@@ -1522,6 +1703,14 @@ day -30 through 0 days relative to index: Polyp of colon</td>
 <td align="right">355</td>
 </tr>
 <tr class="even">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">Synthea</td>
+<td align="right">1</td>
+<td align="left">Synthea</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">1</td>
 <td align="right">1</td>
 <td align="right">3</td>
 <td align="left">Initial plpData cohort or population</td>
@@ -1531,6 +1720,14 @@ day -30 through 0 days relative to index: Polyp of colon</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
+<td align="right">1</td>
+<td align="left">Synthea</td>
+<td align="right">1</td>
+<td align="left">Synthea</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">1</td>
 <td align="right">3</td>
 <td align="left">No prior outcome</td>
 <td align="right">1800</td>
@@ -1538,6 +1735,14 @@ day -30 through 0 days relative to index: Polyp of colon</td>
 <td align="right">355</td>
 </tr>
 <tr class="even">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">Synthea</td>
+<td align="right">1</td>
+<td align="left">Synthea</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">1</td>
 <td align="right">1</td>
 <td align="right">3</td>
 <td align="left">Removing non-outcome subjects with insufficient time at
@@ -1569,35 +1774,38 @@ outcome 3:</p>
 <span>  x <span class="op">=</span> <span class="va">cmEst</span> , </span>
 <span>  caption <span class="op">=</span> <span class="st">'Example cohort method estimation results.'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
+<table class="table">
 <caption>Example cohort method estimation results.</caption>
 <colgroup>
 <col width="2%">
 <col width="2%">
+<col width="2%">
 <col width="10%">
-<col width="15%">
+<col width="14%">
 <col width="1%">
-<col width="15%">
+<col width="14%">
 <col width="2%">
 <col width="2%">
+<col width="1%">
 <col width="2%">
-<col width="2%">
-<col width="3%">
-<col width="3%">
-<col width="2%">
-<col width="4%">
-<col width="3%">
-<col width="3%">
 <col width="3%">
 <col width="3%">
 <col width="2%">
 <col width="3%">
 <col width="3%">
 <col width="3%">
+<col width="2%">
+<col width="3%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="3%">
+<col width="1%">
 <col width="3%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">databaseName</th>
+<th align="left">databaseId</th>
 <th align="right">analysisId</th>
 <th align="left">description</th>
 <th align="left">targetName</th>
@@ -1619,11 +1827,13 @@ outcome 3:</p>
 <th align="right">comparatorDays</th>
 <th align="right">targetOutcomes</th>
 <th align="right">comparatorOutcomes</th>
+<th align="right">unblind</th>
 <th align="left">targetEstimator</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="right">1</td>
 <td align="left">No matching, simple outcome model</td>
 <td align="left">Celecoxib - first event with 365 prior obs first event
@@ -1647,10 +1857,12 @@ with 365 prior obs</td>
 <td align="right">261005</td>
 <td align="right">355</td>
 <td align="right">124</td>
+<td align="right">1</td>
 <td align="left">ate</td>
 </tr>
 <tr class="even">
 <td align="left">Synthea</td>
+<td align="left">388020256</td>
 <td align="right">2</td>
 <td align="left">Matching on ps and covariates, simple outcomeModel</td>
 <td align="left">Celecoxib - first event with 365 prior obs first event
@@ -1674,6 +1886,7 @@ with 365 prior obs</td>
 <td align="right">260639</td>
 <td align="right">117</td>
 <td align="right">124</td>
+<td align="right">0</td>
 <td align="left">att</td>
 </tr>
 </tbody>
@@ -1690,20 +1903,20 @@ method:</p>
 <span>  x <span class="op">=</span> <span class="va">cmMe</span> , </span>
 <span>  caption <span class="op">=</span> <span class="st">'Example cohort method meta analysis estimation results.'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
+<table class="table">
 <caption>Example cohort method meta analysis estimation
 results.</caption>
 <colgroup>
-<col width="4%">
+<col width="3%">
 <col width="3%">
 <col width="3%">
 <col width="3%">
 <col width="2%">
 <col width="4%">
-<col width="4%">
 <col width="3%">
 <col width="3%">
-<col width="4%">
+<col width="3%">
+<col width="3%">
 <col width="5%">
 <col width="5%">
 <col width="3%">
@@ -1716,6 +1929,7 @@ results.</caption>
 <col width="4%">
 <col width="4%">
 <col width="5%">
+<col width="2%">
 <col width="3%">
 </colgroup>
 <thead><tr class="header">
@@ -1741,6 +1955,7 @@ results.</caption>
 <th align="right">comparatorDays</th>
 <th align="right">targetOutcomes</th>
 <th align="right">comparatorOutcomes</th>
+<th align="right">unblind</th>
 <th align="right">nDatabases</th>
 </tr></thead>
 <tbody></tbody>
@@ -1768,7 +1983,7 @@ results.</caption>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

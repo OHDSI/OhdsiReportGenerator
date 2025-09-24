@@ -9,7 +9,7 @@ and checks for different types of bias."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +35,7 @@ and checks for different types of bias."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Extract the cohort method diagostic results</h1>
-      <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/main/R/EstimationQueries.R" class="external-link"><code>R/EstimationQueries.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/develop/R/EstimationQueries.R" class="external-link"><code>R/EstimationQueries.R</code></a></small>
       <div class="d-none name"><code>getCmDiagnosticsData.Rd</code></div>
     </div>
 
@@ -54,7 +54,9 @@ and checks for different types of bias.</p>
 <span>  databaseTable <span class="op">=</span> <span class="st">"database_meta_data"</span>,</span>
 <span>  targetIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  outcomeIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  comparatorIds <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  comparatorIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  analysisIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  databaseIds <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -93,10 +95,19 @@ and checks for different types of bias.</p>
 <dt id="arg-comparatorids">comparatorIds<a class="anchor" aria-label="anchor" href="#arg-comparatorids"></a></dt>
 <dd><p>A vector of integers corresponding to the comparator cohort IDs</p></dd>
 
+
+<dt id="arg-analysisids">analysisIds<a class="anchor" aria-label="anchor" href="#arg-analysisids"></a></dt>
+<dd><p>An optional vector of analysisIds to filter to</p></dd>
+
+
+<dt id="arg-databaseids">databaseIds<a class="anchor" aria-label="anchor" href="#arg-databaseids"></a></dt>
+<dd><p>An optional vector of databaseIds to filter to</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Returns a data.frame with the columns:</p><ul><li><p>databaseName the name of the database</p></li>
+<li><p>databaseId the unqiue identifier of the database</p></li>
 <li><p>analysisId the analysis unique identifier</p></li>
 <li><p>description a description of the analysis</p></li>
 <li><p>targetName the target cohort name</p></li>
@@ -130,9 +141,20 @@ and checks for different types of bias.</p>
     <div class="dont-index"><p>Other Estimation:
 <code><a href="getCMEstimation.html">getCMEstimation</a>()</code>,
 <code><a href="getCmMetaEstimation.html">getCmMetaEstimation</a>()</code>,
+<code><a href="getCmNegativeControlEstimates.html">getCmNegativeControlEstimates</a>()</code>,
+<code><a href="getCmOutcomes.html">getCmOutcomes</a>()</code>,
+<code><a href="getCmPropensityModel.html">getCmPropensityModel</a>()</code>,
+<code><a href="getCmTable.html">getCmTable</a>()</code>,
+<code><a href="getCmTargets.html">getCmTargets</a>()</code>,
 <code><a href="getSccsDiagnosticsData.html">getSccsDiagnosticsData</a>()</code>,
 <code><a href="getSccsEstimation.html">getSccsEstimation</a>()</code>,
 <code><a href="getSccsMetaEstimation.html">getSccsMetaEstimation</a>()</code>,
+<code><a href="getSccsModel.html">getSccsModel</a>()</code>,
+<code><a href="getSccsNegativeControlEstimates.html">getSccsNegativeControlEstimates</a>()</code>,
+<code><a href="getSccsOutcomes.html">getSccsOutcomes</a>()</code>,
+<code><a href="getSccsTable.html">getSccsTable</a>()</code>,
+<code><a href="getSccsTargets.html">getSccsTargets</a>()</code>,
+<code><a href="getSccsTimeToEvent.html">getSccsTimeToEvent</a>()</code>,
 <code><a href="plotCmEstimates.html">plotCmEstimates</a>()</code>,
 <code><a href="plotSccsEstimates.html">plotSccsEstimates</a>()</code></p></div>
     </div>
@@ -141,7 +163,7 @@ and checks for different types of bias.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">conDet</span> <span class="op">&lt;-</span> <span class="fu"><a href="getExampleConnectionDetails.html">getExampleConnectionDetails</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">connectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/ResultModelManager/man/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">conDet</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">connectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://ohdsi.github.io/ResultModelManager/reference/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">conDet</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Connecting using SQLite driver</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cmDiag</span> <span class="op">&lt;-</span> <span class="fu">getCmDiagnosticsData</span><span class="op">(</span></span></span>
@@ -162,7 +184,7 @@ and checks for different types of bias.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

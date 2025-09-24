@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,23 @@
     </div>
 
     <div class="section level2">
+      <h2 id="database-extraction">Database Extraction<a class="anchor" aria-label="anchor" href="#database-extraction"></a></h2>
+
+      <div class="section-desc"><p>These functions can be used to extract details about the databases.</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="getDatabaseDetails.html">getDatabaseDetails()</a></code>
+
+        </dt>
+        <dd>Extract the database used in the analyses</dd>
+      </dl></div><div class="section level2">
       <h2 id="cohort-extraction">Cohort Extraction<a class="anchor" aria-label="anchor" href="#cohort-extraction"></a></h2>
 
       <div class="section-desc"><p>These functions can be used to extract analyses cohort details.</p></div>
@@ -48,10 +65,40 @@
 
       <dl><dt>
 
+          <code><a href="getCohortCounts.html">getCohortCounts()</a></code>
+
+        </dt>
+        <dd>Extract the cohort counds</dd>
+      </dl><dl><dt>
+
           <code><a href="getCohortDefinitions.html">getCohortDefinitions()</a></code>
 
         </dt>
         <dd>Extract the cohort definition details</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCohortInclusionRules.html">getCohortInclusionRules()</a></code>
+
+        </dt>
+        <dd>Extract the cohort inclusion rules</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCohortInclusionStats.html">getCohortInclusionStats()</a></code>
+
+        </dt>
+        <dd>Extract the cohort inclusion stats</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCohortInclusionSummary.html">getCohortInclusionSummary()</a></code>
+
+        </dt>
+        <dd>Extract the cohort inclusion summary</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCohortMeta.html">getCohortMeta()</a></code>
+
+        </dt>
+        <dd>Extract the cohort meta</dd>
       </dl><dl><dt>
 
           <code><a href="getCohortSubsetDefinitions.html">getCohortSubsetDefinitions()</a></code>
@@ -107,10 +154,46 @@
         <dd>Extract the outcome cohort counts result</dd>
       </dl><dl><dt>
 
+          <code><a href="getCaseTargetBinaryFeatures.html">getCaseTargetBinaryFeatures()</a></code>
+
+        </dt>
+        <dd>Extract aggregate statistics of binary feature analysis IDs of interest for targets</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCaseTargetCounts.html">getCaseTargetCounts()</a></code>
+
+        </dt>
+        <dd>Extract the target cohort counts result</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCharacterizationCohortBinary.html">getCharacterizationCohortBinary()</a></code>
+
+        </dt>
+        <dd>A function to extract cohort aggregate binary feature characterization results</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCharacterizationCohortContinuous.html">getCharacterizationCohortContinuous()</a></code>
+
+        </dt>
+        <dd>A function to extract cohort aggregate continuous feature characterization results</dd>
+      </dl><dl><dt>
+
           <code><a href="getCharacterizationDemographics.html">getCharacterizationDemographics()</a></code>
 
         </dt>
         <dd>Extract the binary age groups for the cases and targets</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCharacterizationOutcomes.html">getCharacterizationOutcomes()</a></code>
+
+        </dt>
+        <dd>A function to extract the outcomes found in characterization</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCharacterizationTargets.html">getCharacterizationTargets()</a></code>
+
+        </dt>
+        <dd>A function to extarct the targets found in characterization</dd>
       </dl><dl><dt>
 
           <code><a href="getContinuousCaseSeries.html">getContinuousCaseSeries()</a></code>
@@ -131,28 +214,40 @@
         <dd>Extract the dechallenge rechallenge results</dd>
       </dl><dl><dt>
 
+          <code><a href="getDechallengeRechallengeFails.html">getDechallengeRechallengeFails()</a></code>
+
+        </dt>
+        <dd>A function to extract the failed dechallenge-rechallenge cases</dd>
+      </dl><dl><dt>
+
+          <code><a href="getIncidenceOutcomes.html">getIncidenceOutcomes()</a></code>
+
+        </dt>
+        <dd>A function to extract the outcomes found in incidence</dd>
+      </dl><dl><dt>
+
           <code><a href="getIncidenceRates.html">getIncidenceRates()</a></code>
 
         </dt>
         <dd>Extract the cohort incidence result</dd>
       </dl><dl><dt>
 
+          <code><a href="getIncidenceTargets.html">getIncidenceTargets()</a></code>
+
+        </dt>
+        <dd>A function to extract the targets found in incidence</dd>
+      </dl><dl><dt>
+
           <code><a href="getTargetBinaryFeatures.html">getTargetBinaryFeatures()</a></code>
 
         </dt>
-        <dd>Extract aggregate statistics of binary feature analysis IDs of interest for targets</dd>
+        <dd>Extract aggregate statistics of binary feature analysis IDs of interest for targets (ignoring excluding people with prior outcome)</dd>
       </dl><dl><dt>
 
           <code><a href="getTargetContinuousFeatures.html">getTargetContinuousFeatures()</a></code>
 
         </dt>
         <dd>Extract aggregate statistics of continuous feature analysis IDs of interest for targets</dd>
-      </dl><dl><dt>
-
-          <code><a href="getTargetCounts.html">getTargetCounts()</a></code>
-
-        </dt>
-        <dd>Extract the target cohort counts result</dd>
       </dl><dl><dt>
 
           <code><a href="getTimeToEvent.html">getTimeToEvent()</a></code>
@@ -202,6 +297,36 @@
         <dd>Extract the cohort method meta analysis results</dd>
       </dl><dl><dt>
 
+          <code><a href="getCmNegativeControlEstimates.html">getCmNegativeControlEstimates()</a></code>
+
+        </dt>
+        <dd>Extract the cohort method negative controls</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCmOutcomes.html">getCmOutcomes()</a></code>
+
+        </dt>
+        <dd>A function to extract the outcomes found in cohort method</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCmPropensityModel.html">getCmPropensityModel()</a></code>
+
+        </dt>
+        <dd>Extract the cohort method model</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCmTable.html">getCmTable()</a></code>
+
+        </dt>
+        <dd>Extract the cohort method table specified</dd>
+      </dl><dl><dt>
+
+          <code><a href="getCmTargets.html">getCmTargets()</a></code>
+
+        </dt>
+        <dd>A function to extract the targets found in cohort method</dd>
+      </dl><dl><dt>
+
           <code><a href="getSccsDiagnosticsData.html">getSccsDiagnosticsData()</a></code>
 
         </dt>
@@ -218,6 +343,42 @@
 
         </dt>
         <dd>Extract the self controlled case series (sccs) meta analysis results</dd>
+      </dl><dl><dt>
+
+          <code><a href="getSccsModel.html">getSccsModel()</a></code>
+
+        </dt>
+        <dd>Extract the SCCS model table</dd>
+      </dl><dl><dt>
+
+          <code><a href="getSccsNegativeControlEstimates.html">getSccsNegativeControlEstimates()</a></code>
+
+        </dt>
+        <dd>Extract the SCCS negative controls</dd>
+      </dl><dl><dt>
+
+          <code><a href="getSccsOutcomes.html">getSccsOutcomes()</a></code>
+
+        </dt>
+        <dd>A function to extract the outcomes found in self controlled case series</dd>
+      </dl><dl><dt>
+
+          <code><a href="getSccsTable.html">getSccsTable()</a></code>
+
+        </dt>
+        <dd>Extract the SCCS table specified</dd>
+      </dl><dl><dt>
+
+          <code><a href="getSccsTargets.html">getSccsTargets()</a></code>
+
+        </dt>
+        <dd>A function to extract the targets found in self controlled case series</dd>
+      </dl><dl><dt>
+
+          <code><a href="getSccsTimeToEvent.html">getSccsTimeToEvent()</a></code>
+
+        </dt>
+        <dd>Extract the SCCS time-to-event</dd>
       </dl><dl><dt>
 
           <code><a href="plotCmEstimates.html">plotCmEstimates()</a></code>
@@ -242,6 +403,18 @@
 
 
       <dl><dt>
+
+          <code><a href="getFullPredictionPerformances.html">getFullPredictionPerformances()</a></code>
+
+        </dt>
+        <dd>Extract the model performances per evaluation</dd>
+      </dl><dl><dt>
+
+          <code><a href="getPredictionAggregateTopPredictors.html">getPredictionAggregateTopPredictors()</a></code>
+
+        </dt>
+        <dd>Extract the top N predictors across a set of models</dd>
+      </dl><dl><dt>
 
           <code><a href="getPredictionCohorts.html">getPredictionCohorts()</a></code>
 
@@ -273,10 +446,22 @@
         <dd>Extract model interception (for logistic regression)</dd>
       </dl><dl><dt>
 
+          <code><a href="getPredictionLift.html">getPredictionLift()</a></code>
+
+        </dt>
+        <dd>Extract model lift at given model sensitivity</dd>
+      </dl><dl><dt>
+
           <code><a href="getPredictionModelDesigns.html">getPredictionModelDesigns()</a></code>
 
         </dt>
-        <dd>Extract the model designs and aggregate performances for the prediction results</dd>
+        <dd>Extract the model designs from the prediction results</dd>
+      </dl><dl><dt>
+
+          <code><a href="getPredictionOutcomes.html">getPredictionOutcomes()</a></code>
+
+        </dt>
+        <dd>A function to extract the outcomes found in prediction</dd>
       </dl><dl><dt>
 
           <code><a href="getPredictionPerformanceTable.html">getPredictionPerformanceTable()</a></code>
@@ -289,6 +474,12 @@
 
         </dt>
         <dd>Extract the model performances</dd>
+      </dl><dl><dt>
+
+          <code><a href="getPredictionTargets.html">getPredictionTargets()</a></code>
+
+        </dt>
+        <dd>A function to extarct the targets found in prediction</dd>
       </dl><dl><dt>
 
           <code><a href="getPredictionTopPredictors.html">getPredictionTopPredictors()</a></code>
@@ -308,6 +499,12 @@
 
       <dl><dt>
 
+          <code><a href="createPredictionReport.html">createPredictionReport()</a></code>
+
+        </dt>
+        <dd>createPredictionReport</dd>
+      </dl><dl><dt>
+
           <code><a href="generateFullReport.html">generateFullReport()</a></code>
 
         </dt>
@@ -324,6 +521,12 @@
 
         </dt>
         <dd>generatePresentationMultiple</dd>
+      </dl><dl><dt>
+
+          <code><a href="generateSummaryPredictionReport.html">generateSummaryPredictionReport()</a></code>
+
+        </dt>
+        <dd>generateSummaryPredictionReport</dd>
       </dl></div><div class="section level2">
       <h2 id="helpers">Helpers<a class="anchor" aria-label="anchor" href="#helpers"></a></h2>
 
@@ -353,6 +556,18 @@
 
         </dt>
         <dd>create a connection detail for an example OHDSI results database</dd>
+      </dl><dl><dt>
+
+          <code><a href="getOutcomeTable.html">getOutcomeTable()</a></code>
+
+        </dt>
+        <dd>Extract the outcome cohorts and where they are used in the analyses.</dd>
+      </dl><dl><dt>
+
+          <code><a href="getTargetTable.html">getTargetTable()</a></code>
+
+        </dt>
+        <dd>Extract the target cohorts and where they are used in the analyses.</dd>
       </dl><dl><dt>
 
           <code><a href="kableDark.html">kableDark()</a></code>
@@ -398,7 +613,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

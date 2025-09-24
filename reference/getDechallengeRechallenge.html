@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Extract the dechallenge rechallenge results</h1>
-      <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/main/R/CharacterzationQueries.R" class="external-link"><code>R/CharacterzationQueries.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/develop/R/CharacterzationQueries.R" class="external-link"><code>R/CharacterzationQueries.R</code></a></small>
       <div class="d-none name"><code>getDechallengeRechallenge.Rd</code></div>
     </div>
 
@@ -89,6 +89,7 @@
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Returns a data.frame with the columns:</p><ul><li><p>databaseName the name of the database</p></li>
+<li><p>databaseId the unique identifier of the database</p></li>
 <li><p>targetName the target cohort name</p></li>
 <li><p>targetId the target cohort unique identifier</p></li>
 <li><p>outcomeName the outcome name</p></li>
@@ -123,13 +124,21 @@
 <code><a href="getCaseBinaryFeatures.html">getCaseBinaryFeatures</a>()</code>,
 <code><a href="getCaseContinuousFeatures.html">getCaseContinuousFeatures</a>()</code>,
 <code><a href="getCaseCounts.html">getCaseCounts</a>()</code>,
+<code><a href="getCaseTargetBinaryFeatures.html">getCaseTargetBinaryFeatures</a>()</code>,
+<code><a href="getCaseTargetCounts.html">getCaseTargetCounts</a>()</code>,
+<code><a href="getCharacterizationCohortBinary.html">getCharacterizationCohortBinary</a>()</code>,
+<code><a href="getCharacterizationCohortContinuous.html">getCharacterizationCohortContinuous</a>()</code>,
 <code><a href="getCharacterizationDemographics.html">getCharacterizationDemographics</a>()</code>,
+<code><a href="getCharacterizationOutcomes.html">getCharacterizationOutcomes</a>()</code>,
+<code><a href="getCharacterizationTargets.html">getCharacterizationTargets</a>()</code>,
 <code><a href="getContinuousCaseSeries.html">getContinuousCaseSeries</a>()</code>,
 <code><a href="getContinuousRiskFactors.html">getContinuousRiskFactors</a>()</code>,
+<code><a href="getDechallengeRechallengeFails.html">getDechallengeRechallengeFails</a>()</code>,
+<code><a href="getIncidenceOutcomes.html">getIncidenceOutcomes</a>()</code>,
 <code><a href="getIncidenceRates.html">getIncidenceRates</a>()</code>,
+<code><a href="getIncidenceTargets.html">getIncidenceTargets</a>()</code>,
 <code><a href="getTargetBinaryFeatures.html">getTargetBinaryFeatures</a>()</code>,
 <code><a href="getTargetContinuousFeatures.html">getTargetContinuousFeatures</a>()</code>,
-<code><a href="getTargetCounts.html">getTargetCounts</a>()</code>,
 <code><a href="getTimeToEvent.html">getTimeToEvent</a>()</code>,
 <code><a href="plotAgeDistributions.html">plotAgeDistributions</a>()</code>,
 <code><a href="plotSexDistributions.html">plotSexDistributions</a>()</code></p></div>
@@ -139,7 +148,7 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">conDet</span> <span class="op">&lt;-</span> <span class="fu"><a href="getExampleConnectionDetails.html">getExampleConnectionDetails</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">connectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/ResultModelManager/man/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">conDet</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">connectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://ohdsi.github.io/ResultModelManager/reference/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">conDet</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Connecting using SQLite driver</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dcrc</span> <span class="op">&lt;-</span> <span class="fu">getDechallengeRechallenge</span><span class="op">(</span></span></span>
@@ -158,7 +167,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>
