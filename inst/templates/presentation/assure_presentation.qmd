@@ -5,7 +5,6 @@ format:
     self-contained: true
     scrollable: true
     theme: [default, presentation_style.scss]
-    logo: img/logo.png
     title-slide-attributes:
       data-background-color: "#EB1700"
     footer: "ASSURE Analysis"
