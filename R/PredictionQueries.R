@@ -933,11 +933,13 @@ getFullPredictionPerformances <- function(
        d.database_acronym AS development_database,
        v.database_acronym AS validation_database,
        
+       val_tars.tar_id as validation_tar_id,
        val_tars.tar_start_day,
        val_tars.tar_start_anchor,
        val_tars.tar_end_day,
        val_tars.tar_end_anchor,
        
+       dev_tars.tar_id as development_tar_id,
        dev_tars.tar_start_day as dev_tar_start_day,
        dev_tars.tar_start_anchor as dev_tar_start_anchor,
        dev_tars.tar_end_day as dev_tar_end_day,
