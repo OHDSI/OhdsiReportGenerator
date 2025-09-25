@@ -79,7 +79,7 @@ generatePresentation <- function(
     includePLP = TRUE,
     outputLocation,
     outputName = paste0('presentation_', gsub(':', '_',gsub(' ','_',as.character(date()))),'.html'),
-    intermediateDir = tempdir(),
+    intermediateDir = fs::path_real(tempdir()),
     pathToDriver = Sys.getenv("DATABASECONNECTOR_JAR_FOLDER")
 ){
   

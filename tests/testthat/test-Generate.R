@@ -12,10 +12,6 @@ test_that("generatePresentation", {
   if(!dir.exists(savLoc)){
     dir.create(savLoc)
   }
-  tempLoc <- file.path(tempdir(), 'temp_example')
-  if(!dir.exists(tempLoc)){
-    dir.create(tempLoc)
-  }
   
   generatePresentation(
     server = conDet$server(),
@@ -49,7 +45,7 @@ test_that("generatePresentation", {
     includePLP = FALSE,
     outputLocation = savLoc,
     outputName = paste0('presentation_', gsub(':', '_',gsub(' ','_',as.character(date()))),'.html'),
-    intermediateDir = tempLoc
+    intermediateDir = fs::path_real(tempdir())
   )
   
   # ensure report is generated
