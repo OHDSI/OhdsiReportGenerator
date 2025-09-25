@@ -3229,7 +3229,7 @@ getCharacterizationCohortBinary <- function(
   
   colRef <- counts %>%
     dplyr::mutate(id = dplyr::row_number())
-  
+
   if(nrow(colRef) == 0){
     return(NULL)
   }
@@ -3305,7 +3305,11 @@ getCharacterizationCohortBinary <- function(
   
   
   # add SMD if two unique types
-  if(nrow(colRef) == 2){
+  # adding below check in cases when there are patients in the cohort
+  # but no covariates
+  twoResultsWithValues <- length(grep('sumValue', colnames(res))) == 2
+    
+  if(nrow(colRef) == 2 & twoResultsWithValues){
     res <- res %>% 
       dplyr::mutate(
         standardDeviation_1 = ((abs(.data$averageValue_1)-1)^2*abs(.data$sumValue_1) + (abs(.data$averageValue_1)-0)^2*(.data$n_1-abs(.data$sumValue_1)))/.data$n_1,
@@ -3487,7 +3491,10 @@ res <- res %>%
   
 
 # add SMD if two unique types
-if(nrow(colRef) == 2){
+  # adding below to fix bug where there are a small number of people in the cohort but no covs
+  twoResultsWithValues <- length(grep('countValue', colnames(res))) == 2
+  
+if(nrow(colRef) == 2 & twoResultsWithValues){
   res <- res %>% dplyr::mutate(
     SMD = (abs(.data$averageValue_1)-abs(.data$averageValue_2))/(sqrt((abs(.data$standardDeviation_1)^2 + abs(.data$standardDeviation_2)^2)/2))
   ) %>%
