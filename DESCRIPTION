@@ -27,7 +27,7 @@ Imports:
   kableExtra,
   ParallelLogger,
   quarto,
-  reactable,
+  reactable (>= 0.4.4),
   rlang,
   rmarkdown,
   tibble,
