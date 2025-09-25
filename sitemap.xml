@@ -53,6 +53,7 @@
 <url><loc>/reference/getOutcomeTable.html</loc></url>
 <url><loc>/reference/getPredictionAggregateTopPredictors.html</loc></url>
 <url><loc>/reference/getPredictionCohorts.html</loc></url>
+<url><loc>/reference/getPredictionCovariates.html</loc></url>
 <url><loc>/reference/getPredictionDiagnosticTable.html</loc></url>
 <url><loc>/reference/getPredictionDiagnostics.html</loc></url>
 <url><loc>/reference/getPredictionHyperParamSearch.html</loc></url>

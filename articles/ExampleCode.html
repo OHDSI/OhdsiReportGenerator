@@ -1247,7 +1247,7 @@ model performance:</p>
 <span>  x <span class="op">=</span> <span class="va">perform</span>, </span>
 <span>  caption <span class="op">=</span> <span class="st">'Example performance for the prediction results.'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
+<table class="table">
 <caption>Example performance for the prediction results.</caption>
 <colgroup>
 <col width="1%">
@@ -1267,8 +1267,8 @@ model performance:</p>
 <col width="2%">
 <col width="2%">
 <col width="1%">
-<col width="2%">
-<col width="2%">
+<col width="1%">
+<col width="4%">
 <col width="4%">
 <col width="1%">
 <col width="1%">
@@ -1311,7 +1311,7 @@ model performance:</p>
 <th align="right">validationTarId</th>
 <th align="right">developmentTarId</th>
 <th align="left">validationTimeAtRisk</th>
-<th align="left">developTimeAtRisk</th>
+<th align="left">developmentTimeAtRisk</th>
 <th align="left">evaluation</th>
 <th align="right">populationSize</th>
 <th align="right">outcomeCount</th>
@@ -1354,7 +1354,7 @@ with 365 prior obs</td>
 <td align="left">-</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="left">-</td>
+<td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
 <td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
 <td align="left">Test</td>
 <td align="right">449</td>
@@ -1397,7 +1397,7 @@ with 365 prior obs</td>
 <td align="left">-</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="left">-</td>
+<td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
 <td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
 <td align="left">Train</td>
 <td align="right">1351</td>
@@ -1440,7 +1440,7 @@ with 365 prior obs</td>
 <td align="left">-</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="left">-</td>
+<td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
 <td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
 <td align="left">CV</td>
 <td align="right">1351</td>
