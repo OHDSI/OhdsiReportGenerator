@@ -69,6 +69,7 @@ Other Prediction:
 \code{\link{getFullPredictionPerformances}()},
 \code{\link{getPredictionAggregateTopPredictors}()},
 \code{\link{getPredictionCohorts}()},
+\code{\link{getPredictionCovariates}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionHyperParamSearch}()},
 \code{\link{getPredictionIntercept}()},

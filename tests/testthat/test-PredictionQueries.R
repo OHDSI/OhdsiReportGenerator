@@ -271,7 +271,7 @@ test_that("getPredictionHyperParamSearch", {
 })
 
 
-test_that("getPredictionHyperParamSearch", {
+test_that("getPredictionIntercept", {
   
   data <- getPredictionIntercept(
     connectionHandler = connectionHandler, 
@@ -286,3 +286,29 @@ test_that("getPredictionHyperParamSearch", {
 
 
 
+test_that("getPredictionCovariates ", {
+  
+  alldata <- getPredictionCovariates (
+    connectionHandler = connectionHandler, 
+    schema = schema
+  )
+  
+  testthat::expect_true(nrow(alldata) > 0)
+  
+  filterdata <- getPredictionCovariates (
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    modelDesignId = 1,
+    performanceIds = NULL
+  )
+  testthat::expect_true(unique(filterdata$modelDesignId) == 1)
+  
+  filterdata <- getPredictionCovariates (
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    modelDesignId = NULL,
+    performanceIds = 1
+  )
+  testthat::expect_true(unique(filterdata$performanceId) == 1)
+  
+})

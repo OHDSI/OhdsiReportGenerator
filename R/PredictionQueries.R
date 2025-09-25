@@ -863,8 +863,10 @@ getPredictionPerformances <- function(
 #'  \item{validationOutcomeName the name for the validation outcome if different from development}
 #'  \item{developmentDatabase the name for the database used to develop the model}
 #'  \item{validationDatabase the name for the database used to validate the model if different from development}
+#'  \item{validationTarId the validation time at risk id}
 #'  \item{validationTimeAtRisk the time at risk used when evaluating the model if different from development}
-#'  \item{developTimeAtRisk the time at risk used when developing the model}
+#'  \item{developmentTarId the development time at risk id}
+#'  \item{developmentTimeAtRisk the time at risk used when developing the model}
 #'  \item{evaluation The type of evaluation: Test/Train/CV/Validation}
 #'  \item{populationSize the test/validation population size used to develop the model}
 #'  \item{outcomeCount the test/validation outcome count used to develop the model}
@@ -1029,7 +1031,7 @@ getFullPredictionPerformances <- function(
         validationTimeAtRisk = paste0('( ',trimws(.data$tarStartAnchor), '+', trimws(.data$tarStartDay), ' ) - ',
                                       '( ',trimws(.data$tarEndAnchor), '+', trimws(.data$tarEndDay), ' )'
         ),
-        developTimeAtRisk = paste0('( ',trimws(.data$devTarStartAnchor), '+', trimws(.data$devTarStartDay), ' ) - ',
+        developmentTimeAtRisk = paste0('( ',trimws(.data$devTarStartAnchor), '+', trimws(.data$devTarStartDay), ' ) - ',
                                    '( ',trimws(.data$devTarEndAnchor), '+', trimws(.data$devTarEndDay), ' )'
         )
         
@@ -1353,7 +1355,7 @@ getPredictionPerformanceTable <- function(
      ON db2.database_id = p.validation_database_id
     
     
-    WHERE 1=1
+    WHERE (1=1)
     {@use_model_id}?{ and p.model_design_id in (@model_ids)}
     {@use_performance_id}?{ and p.performance_id in (@performance_ids)}
     {@use_evaluation}?{ and toi.evaluation in (@evaluations)}
@@ -1367,13 +1369,149 @@ getPredictionPerformanceTable <- function(
       use_model_id = !is.null(modelDesignIds),
       model_ids = paste0(modelDesignIds, collapse = ','),
       use_performance_id = !is.null(performanceIds),
-      performance_ids = performanceIds,
+      performance_ids = paste0(performanceIds, collapse = ','),
       use_evaluation = !is.null(evaluations),
       evaluations = paste0("'",evaluations, "'", sep = '', collapse = ','),
       plp_table_prefix = plpTablePrefix
     )
     
     return(result)
+}
+
+
+# get prediction covariates for model and validation settings
+#' Extract covariate summary details
+#' @description
+#' This function extracts the covariate summary details
+#'
+#' @details
+#' Specify the connectionHandler, the resultDatabaseSettings, the table of interest and (optionally) modelDesignIds/performanceIds to filter to 
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param modelDesignIds (optional) restrict to the input modelDesignIds
+#' @param performanceIds (optional) restrict to the input performanceIds
+#' @family Prediction
+#' @return
+#' Returns a data.frame with the specified table
+#' 
+#' @export
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' covs <- getPredictionCovariates(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getPredictionCovariates <- function(
+  connectionHandler, 
+  schema, 
+  plpTablePrefix = 'plp_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  performanceIds = NULL,
+  modelDesignIds = NULL
+){
+  
+  sql <- "SELECT distinct
+    p.model_design_id,
+    p.development_database_id,
+    db1.cdm_source_abbreviation as development_database_name,
+    p.validation_database_id,
+    db2.cdm_source_abbreviation as validation_database_name,
+    targets.cohort_definition_id as target_cohort_id,
+    targets.cohort_name as target_name,
+    outcomes.cohort_definition_id as outcome_cohort_id,
+    outcomes.cohort_name as outcome_name,
+    t.*,
+    p.plp_data_setting_id,
+    ds.plp_data_settings_json,
+    p.population_setting_id,
+    ps.population_settings_json,
+    toi.* 
+    
+    FROM @schema.@plp_table_prefixcovariate_summary toi 
+    
+    INNER JOIN @schema.@plp_table_prefixperformances p 
+    ON p.performance_id = toi.performance_id 
+    
+    INNER JOIN
+    (SELECT dd.database_id, md.cdm_source_abbreviation
+     FROM @schema.@database_table md 
+     INNER JOIN @schema.@plp_table_prefixdatabase_details dd
+     ON md.database_id = dd.database_meta_data_id
+     ) as db1
+     ON db1.database_id = p.development_database_id
+     
+    INNER JOIN
+    (SELECT dd.database_id, md.cdm_source_abbreviation
+     FROM @schema.@database_table md 
+     INNER JOIN @schema.@plp_table_prefixdatabase_details dd
+     ON md.database_id = dd.database_meta_data_id
+     ) as db2
+     ON db2.database_id = p.validation_database_id
+     
+     INNER JOIN
+    (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name
+     FROM @schema.@cg_table_prefixcohort_definition cd 
+     INNER JOIN @schema.@plp_table_prefixcohorts c
+     ON c.cohort_definition_id = cd.cohort_definition_id
+     ) as targets
+     ON targets.cohort_id = p.target_id
+     
+     INNER JOIN
+    (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name
+     FROM @schema.@cg_table_prefixcohort_definition cd 
+     INNER JOIN @schema.@plp_table_prefixcohorts c
+     ON c.cohort_definition_id = cd.cohort_definition_id
+     ) as outcomes
+     ON outcomes.cohort_id = p.outcome_id
+     
+    INNER JOIN @schema.@plp_table_prefixtars t
+    ON p.tar_id = t.tar_id
+    
+    INNER JOIN 
+    @schema.@plp_table_prefixplp_data_settings ds
+    ON p.plp_data_setting_id = ds.plp_data_setting_id
+    
+    INNER JOIN 
+    @schema.@plp_table_prefixpopulation_settings ps
+    ON p.population_setting_id = ps.population_setting_id
+    
+    WHERE (1=1)
+    {@use_model_id}?{ and p.model_design_id in (@model_ids)}
+    {@use_performance_id}?{ and p.performance_id in (@performance_ids)}
+    ;"
+  
+  result  <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
+    use_model_id = !is.null(modelDesignIds),
+    model_ids = paste0(modelDesignIds, collapse = ','),
+    use_performance_id = !is.null(performanceIds),
+    performance_ids = paste0(performanceIds, collapse = ','),
+  )
+  
+  if(nrow(result) >0){
+    result <- result %>%
+      dplyr::mutate(timeAtRisk = paste0('( ',.data$tarStartAnchor, '+', .data$tarStartDay, ' ) - ',
+                                        '( ',.data$tarEndAnchor, '+', .data$tarEndDay, ' )'
+      )) %>%
+      dplyr::select(-"tarStartAnchor", - "tarStartDay", -"tarEndAnchor", -"tarEndDay") %>%
+      dplyr::relocate("timeAtRisk", .after = "outcomeName")
+    
+  }
+  
+  return(result)
 }
 
 # get model lift (PPV/outcomeRate) for a given model sensitivity

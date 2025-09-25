@@ -49,6 +49,7 @@ predCohorts <- getPredictionCohorts(
 Other Prediction: 
 \code{\link{getFullPredictionPerformances}()},
 \code{\link{getPredictionAggregateTopPredictors}()},
+\code{\link{getPredictionCovariates}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
 \code{\link{getPredictionHyperParamSearch}()},
