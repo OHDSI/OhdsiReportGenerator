@@ -128,6 +128,250 @@ getPredictionTopPredictors <- function(
   return(result)
 }
 
+
+#' Extract the top N predictors across a set of models
+#' @description
+#' This function extracts the top N predictors across models by 
+#' finding the sum of the absolute coefficient value across models.
+#'
+#' @details
+#' Specify the connectionHandler, the resultDatabaseSettings and (optionally) any modelDesignIds to restrict to
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param modelDesignIds One or more model design IDs to restrict to
+#' @family Prediction
+#' @return
+#' Returns a data.frame with the columns: 
+#' \itemize{
+#'  \item{databaseName the name of the database the model was developed on}
+#'  \item{tarStartDay the time-at-risk start day}
+#'  \item{tarStartAnchor whether the time-at-risk start is relative to cohort start or end}
+#'  \item{tarEndDay the time-at-risk end day}
+#'  \item{tarEndAnchor whether the time-at-risk end is relative to cohort start or end}
+#'  \item{covariateId the FeatureExtraction covariate identifier}
+#'  \item{covariateName the name of the covariate}
+#'  \item{conceptId the covariates corresponding concept or 0}
+#'  \item{sumCovariateValue the total absolute feature importance or coefficient value}
+#'  \item{numberOfTimesPredictive number of models that contained the covariate}
+#' }
+#'
+#' @export
+#' @examples 
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' topPreds <- getPredictionAggregateTopPredictors(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   modelDesignIds = c(1,2,5)
+#' )
+#' 
+getPredictionAggregateTopPredictors <- function(
+    connectionHandler,
+    schema,
+    plpTablePrefix = 'plp_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    modelDesignIds = NULL
+){
+  
+  sql <- "
+  select 
+  
+  d.cdm_source_abbreviation as database_name,
+  cov.covariate_id,
+  cov.covariate_name,
+  cov.concept_id,
+  SUM(ABS(cov.covariate_value)) as sum_covariate_value,
+  count(*) as number_of_times_predictive
+  
+  from 
+
+  @schema.@plp_table_prefixperformances p
+  
+  inner join @schema.@plp_table_prefixcovariate_summary cov
+  on p.performance_id = cov.performance_id
+  
+  inner join @schema.@plp_table_prefixdatabase_details dd
+  on dd.database_id = p.development_database_id
+  
+  inner join @schema.@database_table d
+  on d.database_id = dd.database_meta_data_id 
+  
+  {@model_design_restrict}?{ where p.model_design_id in (@model_design_ids)}
+  
+  GROUP BY 
+  d.cdm_source_abbreviation,
+  cov.covariate_id,
+  cov.covariate_name,
+  cov.concept_id
+  ;"
+  
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
+    database_table = databaseTable,
+    model_design_restrict = !is.null(modelDesignIds),
+    model_design_ids = paste0(modelDesignIds, collapse = ',')
+  )
+  
+  return(result)
+}
+
+
+#' A function to extarct the targets found in prediction
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
+#' @family Prediction
+#' 
+#' @return
+#' A data.frame with the prediction target cohort ids and names.
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' cohorts <- getPredictionTargets(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getPredictionTargets <- function(
+    connectionHandler,
+    schema,
+    plpTablePrefix = 'plp_',
+    cgTablePrefix = 'cg_'
+){
+  
+  sql <- "SELECT distinct 
+    cohorts.cohort_name,
+    cohorts.cohort_definition_id, 
+    'prediction' as type,
+    1 as value
+
+       FROM
+          @schema.@plp_table_prefixmodel_designs as model_designs
+          inner join
+        (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
+        inner join @schema.@cg_table_prefixcohort_definition cd
+        on c.cohort_definition_id = cd.cohort_definition_id
+        ) AS cohorts
+        ON model_designs.target_id = cohorts.cohort_id
+        ;"
+  
+  targets <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
+    cg_table_prefix = cgTablePrefix
+  ) %>%
+    tidyr::pivot_wider(
+      id_cols = c("cohortName", "cohortDefinitionId"), 
+      names_from = "type", 
+      values_from = c("value")
+    )
+  
+  return(targets)
+  
+}
+
+
+#' A function to extract the outcomes found in prediction
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
+#' @template targetId
+#' @family Prediction
+#' 
+#' @return
+#' A data.frame with the prediction outcome cohort ids and names.
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' outcomes <- getPredictionOutcomes(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getPredictionOutcomes <- function(
+    connectionHandler,
+    schema,
+    plpTablePrefix = 'plp_',
+    cgTablePrefix = 'cg_',
+    targetId = NULL
+){
+  
+  sql <- "SELECT distinct 
+    cohorts.cohort_name,
+    cohorts.cohort_definition_id, 
+    'prediction' as type,
+    1 as value
+
+       FROM
+          @schema.@plp_table_prefixmodel_designs as model_designs
+          inner join
+        (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
+        inner join @schema.@cg_table_prefixcohort_definition cd
+        on c.cohort_definition_id = cd.cohort_definition_id
+        ) AS cohorts
+        ON model_designs.outcome_id = cohorts.cohort_id
+        
+      {@use_target}?{ 
+      
+        inner join
+        (SELECT distinct cohort_id
+        FROM @schema.@plp_table_prefixcohorts 
+        where cohort_definition_id in (@target_id)
+        ) AS targets
+        ON model_designs.target_id = targets.cohort_id
+        
+        }
+        
+        ;"
+  
+  outcomes <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    use_target = !is.null(targetId),
+    target_id = paste0(targetId, collapse = ',') 
+  ) %>%
+    tidyr::pivot_wider(
+      id_cols = c("cohortName", "cohortDefinitionId"), 
+      names_from = "type", 
+      values_from = c("value")
+    )
+  
+  return(outcomes)
+  
+}
+
 #' Extract a complete set of cohorts used in the prediction results
 #' @description
 #' This function extracts the target and outcome cohorts used to develop any model in the results
@@ -200,10 +444,9 @@ getPredictionCohorts <- function(
   return(allres)
 }
 
-#' Extract the model designs and aggregate performances for the prediction results
+#' Extract the model designs from the prediction results
 #' @description
-#' This function extracts the model design settings and min/max/mean AUROC values of the models developed
-#' using the model design across databases
+#' This function extracts the model design settings 
 #'
 #' @details
 #' Specify the connectionHandler, the resultDatabaseSettings and (optionally) any targetIds or outcomeIds to restrict model designs to
@@ -214,6 +457,7 @@ getPredictionCohorts <- function(
 #' @template cgTablePrefix
 #' @template targetIds
 #' @template outcomeIds
+#' @param modelDesignIds (Optional) A set of model design ids to restrict to
 #' @family Prediction
 #' @return
 #' Returns a data.frame with the columns:
@@ -234,13 +478,8 @@ getPredictionCohorts <- function(
 #'  \item{featureEngineeringSettingsJson the feature engineering settings json}
 #'  \item{splitSettingsJson the split settings json}
 #'  \item{sampleSettingsJson the sample settings json}
-#'  \item{minAuroc the min AUROC value of models developed using the model design across databases}
-#'  \item{meanAuroc the mean AUROC value of models developed using the model design across databases}
-#'  \item{maxAuroc the max AUROC value of models developed using the model design across databases}
-#'  \item{noDiagnosticDatabases the number of databases where the model design diagnostics were generated}
-#'  \item{noDevelopmentDatabases the number of databases where the model design was used to develop models}
-#'  \item{noValidationDatabases the number of databases where the models developed using the model design was externally validated}
-#' }
+#'  \item{modelSettingsJson the model settings json}
+#'  }
 #' 
 #' @export
 #' @examples
@@ -259,10 +498,11 @@ getPredictionModelDesigns <- function(
     plpTablePrefix = 'plp_',
     cgTablePrefix = 'cg_',
     targetIds = NULL,
-    outcomeIds = NULL
+    outcomeIds = NULL,
+    modelDesignIds = NULL
 ){
   
-  sql <- "SELECT
+  sql <- "SELECT distinct 
           model_designs.model_design_id,
           model_settings.model_type model_type,
           targets.cohort_definition_id AS development_target_id,
@@ -282,12 +522,7 @@ getPredictionModelDesigns <- function(
           feature_engineering_settings.feature_engineering_settings_json,
           split_settings.split_settings_json,
           sample_settings.sample_settings_json,
-          MIN(p.value) AS min_auroc,
-          AVG(p.value) AS mean_auroc,
-          MAX(p.value) AS max_auroc,
-          COUNT(distinct diag.database_id) AS no_diagnostic_databases,
-          COUNT(distinct d.database_id) AS no_development_databases,
-          COUNT(distinct v.database_id) AS no_validation_databases
+          model_settings.model_settings_json
 
        FROM
           @schema.@plp_table_prefixmodel_designs as model_designs
@@ -324,15 +559,6 @@ getPredictionModelDesigns <- function(
           @schema.@plp_table_prefixplp_data_settings as plp_data_settings
           on model_designs.plp_data_setting_id = plp_data_settings.plp_data_setting_id
 
-          LEFT JOIN
-          @schema.@plp_table_prefixperformances AS results
-
-           on model_designs.model_design_id = results.model_design_id
-
-        LEFT JOIN
-        (select * from @schema.@plp_table_prefixEVALUATION_STATISTICS
-        where EVALUATION = 'Test' and METRIC = 'AUROC') p
-           on p.performance_id = results.performance_id
 
         LEFT JOIN
         (SELECT c.cohort_id, cd.cohort_name, cd.json, cd.cohort_definition_id
@@ -353,40 +579,11 @@ getPredictionModelDesigns <- function(
         LEFT JOIN @schema.@plp_table_prefixtars AS tars
         ON model_designs.tar_id = tars.tar_id
 
-        LEFT JOIN @schema.@plp_table_prefixdatabase_details AS d
-        ON results.development_database_id = d.database_id
-
-        LEFT JOIN @schema.@plp_table_prefixdatabase_details AS v
-        ON results.validation_database_id = v.database_id
-
-        LEFT JOIN @schema.@plp_table_prefixdiagnostics AS diag
-        ON results.development_database_id = diag.database_id
-
-        where 1 == 1
+        where 1 = 1
         {@target_restrict} ? { and  targets.cohort_definition_id in (@target_ids) }
         {@outcome_restrict} ? { and  outcomes.cohort_definition_id in (@outcome_ids) }
-
-
-        GROUP BY
-        model_designs.model_design_id,
-        model_settings.model_type,
-        targets.cohort_definition_id,
-        targets.cohort_name,
-        targets.json,
-        outcomes.cohort_definition_id,
-        outcomes.cohort_name,
-        outcomes.json,
-        tars.tar_start_day,
-        tars.tar_start_anchor,
-        tars.tar_end_day,
-        tars.tar_end_anchor,
-        covariate_settings.covariate_settings_json,
-        population_settings.population_settings_json,
-        tidy_covariates_settings.tidy_covariates_settings_json,
-        feature_engineering_settings.feature_engineering_settings_json,
-        split_settings.split_settings_json,
-        plp_data_settings.plp_data_settings_json,
-        sample_settings.sample_settings_json;"
+        {@model_design_restrict} ? { and  model_designs.model_design_id in (@model_design_ids) }
+        ;"
   
   summaryTable <- connectionHandler$queryDb(
     sql = sql,
@@ -396,10 +593,13 @@ getPredictionModelDesigns <- function(
     target_restrict = !is.null(targetIds),
     target_ids = paste(targetIds, collapse = ','),
     outcome_restrict = !is.null(outcomeIds),
-    outcome_ids = paste(outcomeIds, collapse = ',')
+    outcome_ids = paste(outcomeIds, collapse = ','),
+    model_design_restrict = !is.null(modelDesignIds),
+    model_design_ids = paste(modelDesignIds, collapse = ','),
   )
   
   
+  #TODO trim ws
   summaryTable <- summaryTable %>%
     dplyr::mutate(timeAtRisk = paste0('( ',.data$tarStartAnchor, '+', .data$tarStartDay, ' ) - ',
                                       '( ',.data$tarEndAnchor, '+', .data$tarEndDay, ' )'
@@ -435,6 +635,7 @@ getPredictionModelDesigns <- function(
 #' \itemize{  
 #'  \item{performanceId the unique identifier for the performance}
 #'  \item{modelDesignId the unique identifier for the model design}
+#'  \item{modelType the type of classifier}
 #'  \item{developmentDatabaseId the unique identifier for the database used to develop the model}
 #'  \item{validationDatabaseId the unique identifier for the database used to validate the model}
 #'  \item{developmentTargetId the unique cohort id for the development target population}
@@ -487,6 +688,7 @@ getPredictionPerformances <- function(
   sql <- "SELECT distinct
        results.performance_id,
        results.model_design_id,
+       model_settings.model_type,
        results.development_database_id,
        results.validation_database_id,
        devtargets.cohort_definition_id AS development_target_id,
@@ -519,15 +721,19 @@ getPredictionPerformances <- function(
 
        (select * from @schema.@plp_table_prefixperformances
         {@model_design_restrict | @development_database_id_restrict} ?{ where }
-        {@model_design_restrict} ? {model_design_id = @model_design_id}
+        {@model_design_restrict} ? {model_design_id in (@model_design_id)}
         {@model_design_restrict & @development_database_id_restrict} ?{ and }
         {@development_database_id_restrict} ? {development_database_id = @development_database_id}
        )
 
        AS results
+       
 
     inner join @schema.@plp_table_prefixmodel_designs as model_designs
     on model_designs.model_design_id = results.model_design_id
+    
+    inner join @schema.@plp_table_prefixmodel_settings as model_settings
+    on model_designs.model_setting_id = model_settings.model_setting_id
 
     LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
@@ -593,7 +799,7 @@ getPredictionPerformances <- function(
     sql = sql,
     schema = schema,
     plp_table_prefix = plpTablePrefix,
-    model_design_id = modelDesignId,
+    model_design_id = paste0(modelDesignId, collapse = ','),
     model_design_restrict = !is.null(modelDesignId),
     development_database_id = developmentDatabaseId,
     development_database_id_restrict = !is.null(developmentDatabaseId),
@@ -621,6 +827,277 @@ getPredictionPerformances <- function(
   return(summaryTable)
 }
 
+
+#' Extract the model performances per evaluation
+#' @description
+#' This function extracts the model performances per evaluation
+#'
+#' @details
+#' Specify the connectionHandler, the resultDatabaseSettings and (optionally) a modelDesignId and/or developmentDatabaseId to restrict models to
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param databaseTablePrefix A prefix to the database table, either '' or 'plp_'
+#' @param modelDesignId The identifier for a model design  to restrict results to
+#' @param developmentDatabaseId The identifier for the development database to restrict results to
+#' @family Prediction
+#' @return
+#' Returns a data.frame with the columns:
+#' \itemize{  
+#'  \item{timeStamp the date/time when the analysis occurred}
+#'  \item{performanceId the unique identifier for the performance}
+#'  \item{modelDesignId the unique identifier for the model design}
+#'  \item{modelType the type of classifier}
+#'  \item{developmentDatabaseId the unique identifier for the database used to develop the model}
+#'  \item{validationDatabaseId the unique identifier for the database used to validate the model}
+#'  \item{developmentTargetId the unique cohort id for the development target population}
+#'  \item{developmentTargetName the name for the development target population}
+#'  \item{validationTargetId the id for the validation target population}
+#'  \item{validationTargetName the name for the validation target population if different from development}
+#'  \item{developmentOutcomeId the unique cohort id for the development outcome}
+#'  \item{developmentOutcomeName the name for the development outcome}
+#'  \item{validationOutcomeId the id for the validation outcome}
+#'  \item{validationOutcomeName the name for the validation outcome if different from development}
+#'  \item{developmentDatabase the name for the database used to develop the model}
+#'  \item{validationDatabase the name for the database used to validate the model if different from development}
+#'  \item{validationTarId the validation time at risk id}
+#'  \item{validationTimeAtRisk the time at risk used when evaluating the model if different from development}
+#'  \item{developmentTarId the development time at risk id}
+#'  \item{developmentTimeAtRisk the time at risk used when developing the model}
+#'  \item{evaluation The type of evaluation: Test/Train/CV/Validation}
+#'  \item{populationSize the test/validation population size used to develop the model}
+#'  \item{outcomeCount the test/validation outcome count used to develop the model}
+#'  \item{AUROC the AUROC value for the model}
+#'  \item{95 lower AUROC: the lower bound of the 95 percent CI AUROC value for the model}
+#'  \item{95 upper AUROC: the upper bound of the 95 percent CI AUROC value for the model}
+#'  \item{AUPRC the discrimination AUPRC value for the model}
+#'  \item{brier score: the brier value for the model}
+#'  \item{brier score scaled: the scaled brier value for the model}
+#'  \item{Average Precision: the average precision value for the model}
+#'  \item{Eavg the calibration average error e-statistic value for the model}
+#'  \item{E90 the calibration 90 percent upper bound e-statistic value for the model}
+#'  \item{Emax the calibration max error e-statistic value for the model}
+#'  \item{calibrationInLarge mean prediction: the  calibration in the large mean predicted risk value for the model}
+#'  \item{calibrationInLarge observed risk: the calibration in the large mean observed risk value for the model}
+#'  \item{calibrationInLarge intercept: the calibration in the large value intercept for the model}
+#'  \item{weak calibration intercept: the weak calibration intercept for the model}
+#'  \item{weak calibration gradient: the weak calibration gradient for the model}
+#'  \item{Hosmer Lemeshow calibration intercept: the Hosmer Lemeshow calibration intercept for the model}
+#'  \item{Hosmer Lemeshow calibration gradient: the Hosmer Lemeshow calibration gradient for the model}
+#'  \item{... Additional metrics that are added to PLP}
+#'}
+#' 
+#' @export
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' perf <- getFullPredictionPerformances(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getFullPredictionPerformances <- function(
+    connectionHandler,
+    schema,
+    plpTablePrefix = 'plp_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    databaseTablePrefix = '',
+    modelDesignId = NULL,
+    developmentDatabaseId = NULL
+){
+  
+  sql <- "SELECT distinct
+       results.execution_date_time AS time_stamp,
+       results.performance_id,
+       results.model_design_id,
+       
+       model_settings.model_type,
+       
+       results.development_database_id,
+       results.validation_database_id,
+       
+       devtargets.cohort_definition_id AS development_target_id,
+       devtargets.cohort_name AS development_target_name,
+       targets.cohort_definition_id AS validation_target_id,
+       targets.cohort_name AS validation_target_name,
+       
+       devoutcomes.cohort_definition_id AS development_outcome_id,
+       devoutcomes.cohort_name AS development_outcome_name,
+       outcomes.cohort_definition_id AS validation_outcome_id,
+       outcomes.cohort_name AS validation_outcome_name,
+       
+       d.database_acronym AS development_database,
+       v.database_acronym AS validation_database,
+       
+       val_tars.tar_id as validation_tar_id,
+       val_tars.tar_start_day,
+       val_tars.tar_start_anchor,
+       val_tars.tar_end_day,
+       val_tars.tar_end_anchor,
+       
+       dev_tars.tar_id as development_tar_id,
+       dev_tars.tar_start_day as dev_tar_start_day,
+       dev_tars.tar_start_anchor as dev_tar_start_anchor,
+       dev_tars.tar_end_day as dev_tar_end_day,
+       dev_tars.tar_end_anchor as dev_tar_end_anchor
+      
+       FROM
+
+       (select * from @schema.@plp_table_prefixperformances
+        {@model_design_restrict | @development_database_id_restrict} ?{ where }
+        {@model_design_restrict} ? {model_design_id in (@model_design_id)}
+        {@model_design_restrict & @development_database_id_restrict} ?{ and }
+        {@development_database_id_restrict} ? {development_database_id = @development_database_id}
+       )
+
+       AS results
+
+    inner join @schema.@plp_table_prefixmodel_designs as model_designs
+    on model_designs.model_design_id = results.model_design_id
+    
+    inner join @schema.@plp_table_prefixmodel_settings as model_settings
+    on model_designs.model_setting_id = model_settings.model_setting_id
+
+    LEFT JOIN
+        (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
+        inner join @schema.@cg_table_prefixcohort_definition cd
+        on c.cohort_definition_id = cd.cohort_definition_id
+        ) AS devtargets ON model_designs.target_id = devtargets.cohort_id
+
+        LEFT JOIN
+        (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
+        inner join @schema.@cg_table_prefixcohort_definition cd
+        on c.cohort_definition_id = cd.cohort_definition_id
+        ) AS targets ON results.target_id = targets.cohort_id
+
+        LEFT JOIN
+        (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
+        inner join @schema.@cg_table_prefixcohort_definition cd
+        on c.cohort_definition_id = cd.cohort_definition_id
+        ) AS outcomes ON results.outcome_id = outcomes.cohort_id
+
+        LEFT JOIN
+        (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
+        inner join @schema.@cg_table_prefixcohort_definition cd
+        on c.cohort_definition_id = cd.cohort_definition_id
+        ) AS devoutcomes ON model_designs.outcome_id = devoutcomes.cohort_id
+
+
+        LEFT JOIN
+        (select dd.database_id, md.cdm_source_abbreviation database_acronym
+         from @schema.@database_table_prefix@database_table md inner join
+         @schema.@plp_table_prefixdatabase_details dd
+         on md.database_id = dd.database_meta_data_id
+        ) AS d ON results.development_database_id = d.database_id
+
+        LEFT JOIN
+        (select dd.database_id, md.cdm_source_abbreviation database_acronym
+         from @schema.@database_table_prefix@database_table md inner join
+         @schema.@plp_table_prefixdatabase_details dd
+         on md.database_id = dd.database_meta_data_id
+         ) AS v ON results.validation_database_id = v.database_id
+
+        LEFT JOIN @schema.@plp_table_prefixtars AS val_tars ON results.tar_id = val_tars.tar_id
+        
+        LEFT JOIN @schema.@plp_table_prefixtars AS dev_tars ON model_designs.tar_id = dev_tars.tar_id
+        
+    ;"
+  
+  
+  summaryTable <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
+    model_design_id = paste0(modelDesignId, collapse = ','),
+    model_design_restrict = !is.null(modelDesignId),
+    development_database_id = developmentDatabaseId,
+    development_database_id_restrict = !is.null(developmentDatabaseId),
+    database_table_prefix = databaseTablePrefix,
+    database_table = databaseTable,
+    cg_table_prefix = cgTablePrefix
+  )
+  
+  # process table if it is not empty
+  if(nrow(summaryTable) > 0){
+    
+    summaryTable <- summaryTable %>%
+      dplyr::mutate(
+        validationTimeAtRisk = paste0('( ',trimws(.data$tarStartAnchor), '+', trimws(.data$tarStartDay), ' ) - ',
+                                      '( ',trimws(.data$tarEndAnchor), '+', trimws(.data$tarEndDay), ' )'
+        ),
+        developmentTimeAtRisk = paste0('( ',trimws(.data$devTarStartAnchor), '+', trimws(.data$devTarStartDay), ' ) - ',
+                                   '( ',trimws(.data$devTarEndAnchor), '+', trimws(.data$devTarEndDay), ' )'
+        )
+        
+      ) %>%
+      dplyr::select(
+        -"tarStartAnchor", - "tarStartDay", -"tarEndAnchor", -"tarEndDay",
+        -"devTarStartAnchor", - "devTarStartDay", -"devTarEndAnchor", -"devTarEndDay"
+      )
+    
+    #summaryTable$validationTargetName <- trimws(summaryTable$validationTargetName )
+    #summaryTable$validationOutcomeName <- trimws(summaryTable$validationOutcomeName)
+    #summaryTable$validationTargetName  <- as.factor(summaryTable$validationTargetName )
+    #summaryTable$validationOutcomeName <- as.factor(summaryTable$validationOutcomeName)
+    
+    # set valDb, T, O, TAR to '-' if it is the same as the dev
+    sameT <- summaryTable$developmentTargetId == summaryTable$validationTargetId
+    if(sum(sameT) > 0){
+      summaryTable$validationTargetName[sameT] <- '-'
+    }
+    sameO <- summaryTable$developmentOutcomeId == summaryTable$validationOutcomeId
+    if(sum(sameO) > 0){
+      summaryTable$validationOutcomeName[sameO] <- '-'
+    }
+    sameDb <- summaryTable$developmentDatabase == summaryTable$validationDatabase
+    if(sum(sameDb) > 0){
+      summaryTable$validationDatabase[sameDb] <- '-'
+    }
+    sameTar <- summaryTable$developTimeAtRisk == summaryTable$validationTimeAtRisk
+    if(sum(sameTar) > 0){
+      summaryTable$validationTimeAtRisk[sameTar] <- '-'
+    }
+    
+  }
+  
+  
+  if(length(unique(summaryTable$performanceId)) > 0){
+    # now select the performances for the performanceIds
+    sql <- "SELECT * FROM @schema.@plp_table_prefixevaluation_statistics
+          {@restrict_performance}?{WHERE performance_id in (@performance_ids)};"
+    
+    performanceTable <- connectionHandler$queryDb(
+      sql = sql,
+      schema = schema,
+      plp_table_prefix = plpTablePrefix,
+      restrict_performance = !is.null(modelDesignId), # only restrict if modelDesignId is restricted
+      performance_ids = paste0(unique(summaryTable$performanceId), collapse = ',')
+    )
+    
+    performanceTable <- performanceTable %>%
+      tidyr::pivot_wider(
+        id_cols = c('performanceId','evaluation'), 
+        names_from = "metric", 
+        values_from = "value", 
+        values_fill = 0
+      )
+    
+    summaryTable <- merge(
+      x = summaryTable, 
+      y = performanceTable, 
+      by = c('performanceId')
+    )
+  }
+
+  return(summaryTable)
+}
+
 #' Extract the model design diagnostics for a specific development database
 #' @description
 #' This function extracts the PROBAST diagnostics 
@@ -633,8 +1110,7 @@ getPredictionPerformances <- function(
 #' @template plpTablePrefix
 #' @template cgTablePrefix
 #' @template databaseTable
-#' @param databaseTablePrefix The prefix for the database table either '' or 'plp_'
-#' @param modelDesignId The identifier for a model design  to restrict results to
+#' @param modelDesignIds The identifier for a model design  to restrict results to
 #' @param threshold1_2 A threshold for probast 1.2
 #' @family Prediction
 #' @return
@@ -672,8 +1148,7 @@ getPredictionDiagnostics <- function(
     plpTablePrefix = 'plp_',
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
-    databaseTablePrefix = '',
-    modelDesignId = NULL,
+    modelDesignIds = NULL,
     threshold1_2 = 0.9
 ){
   
@@ -681,14 +1156,17 @@ getPredictionDiagnostics <- function(
           design.MODEL_DESIGN_ID,
           diagnostics.diagnostic_id,
           database.DATABASE_NAME as development_DATABASE_NAME,
+          database.database_id as development_database_id,
           cohortT.COHORT_NAME development_target_name,
+          design.target_id as development_target_id,
           cohortO.COHORT_NAME development_outcome_name,
+          design.outcome_id as development_outcome_id,
           summary.PROBAST_ID,
           summary.RESULT_VALUE
 
           from
           (select * from @schema.@plp_table_prefixDIAGNOSTICS
-          {@model_design_restrict} ? {where MODEL_DESIGN_ID = @model_design_id}
+          {@model_design_restrict} ? {where MODEL_DESIGN_ID in (@model_design_ids)}
           ) as diagnostics
           inner join
           @schema.@plp_table_prefixMODEL_DESIGNS design
@@ -700,7 +1178,7 @@ getPredictionDiagnostics <- function(
 
           inner join
           (select dd.database_id, md.cdm_source_abbreviation as database_name
-                   from @schema.@database_table_prefix@database_table md inner join
+                   from @schema.@database_table md inner join
                    @schema.@plp_table_prefixdatabase_details dd
                    on md.database_id = dd.database_meta_data_id) as database
           on database.database_id = diagnostics.database_id
@@ -718,9 +1196,8 @@ getPredictionDiagnostics <- function(
     sql = sql,
     schema = schema,
     plp_table_prefix = plpTablePrefix,
-    model_design_id = modelDesignId,
-    model_design_restrict = !is.null(modelDesignId),
-    database_table_prefix = databaseTablePrefix,
+    model_design_ids = paste0(modelDesignIds, collapse = ','),
+    model_design_restrict = !is.null(modelDesignIds),
     database_table = databaseTable
   )
   
@@ -729,33 +1206,76 @@ getPredictionDiagnostics <- function(
     return(NULL)
   }
   
-  summary <- summaryTable %>%
+  # update 1.2 based on threshold
+  summaryTableNew <- summaryTable[grep('1.2.',summaryTable$probastId),] %>% 
+    dplyr::group_by(.data$developmentDatabaseId, .data$modelDesignId) %>%
     dplyr::mutate(
-      probastId = paste0('probast',gsub('\\.','_',.data$probastId))
+      probastId = '1.2',
+      resultValue = if(sum(.data$resultValue > !!threshold1_2) == length(.data$resultValue)){'Pass'}else{'False'}
     ) %>%
-    dplyr::arrange(.data$probastId) %>%
-    tidyr::pivot_wider(
-      id_cols = c(
-        'modelDesignId',
-        'diagnosticId',
-        'developmentDatabaseName',
-        'developmentTargetName',
-        'developmentOutcomeName'
-      ),
-      names_from = 'probastId',
-      values_from = 'resultValue'
-    )
+    dplyr::ungroup()
   
-  summary$probast1_2 <- ifelse(
-    apply(summary[,grep('probast1_2_', colnames(summary))] > threshold1_2, 1, sum) == length(grep('probast1_2_', colnames(summary))),
-    'Pass',
-    'Fail'
+  summaryTable <- rbind(
+    summaryTable[-grep('1.2.',summaryTable$probastId),],
+    unique(summaryTableNew)
   )
   
-  summary <- summary[, - grep('probast1_2_', colnames(summary))] %>%
-    dplyr::relocate("probast1_2", .after = "probast1_1")
   
-  return(summary)
+  # add probast text
+  description <- data.frame(
+    probastId = c(
+      '1.1', 
+      '1.2',
+      '2.1',
+      '2.2',
+      '2.3',
+      #"3.1",
+      #"3.2",
+      #"3.3",
+      '3.4',
+      '3.6',
+      '4.1'
+      #"4.2"
+      #"4.3"
+      #"4.4"
+      #"4.5"
+      #"4.6"
+      #"4.7"
+      #"4.8"
+      #"4.9"
+      ),
+    probastDescription = c(
+      'Participants: Were appropriate data sources used, e.g. cohort, RCT or nested case-control study data?',
+      'Participants: Were all inclusions and exclusions of participants appropriate?',
+      'Predictors: Were predictors defined and assessed in a similar way for all participants?',
+      "Predictors: Were predictor assessments made without knowledge of outcome data?",
+      "Predictors: Are all predictors available at the time the model is intended to be used?",
+      #"Outcome: Was the outcome determined appropriately?",
+      #"Outcome: Was a pre-specified or standard outcome definition used?",
+      #"Outcome: Were predictors excluded from the outcome definition?",
+      "Outcome: Was the outcome defined and determined in a similar way for all participants?",
+      "Outcome: Was the time interval between predictor assessment and outcome determination appropriate?",
+      "Design: Were there a reasonable number of participants with the outcome?"
+      #"Design:  Were continuous and categorical predictors handled appropriately?",
+      #4.3 Were all enrolled participants included in the analysis?
+      #4.4 Were participants with missing data handled appropriately?
+      #4.5 Was selection of predictors based on univariable analysis avoided? 
+      #4.6 Were complexities in the data (e.g. censoring, competing risks, sampling of controls) accounted for appropriately?
+      #4.7 Were relevant model performance measures evaluated appropriately? - Pass for all PLP
+      #4.8 Were model overfitting and optimism in model performance accounted for? - Pass for all PLP
+      #4.9 Do predictors and their assigned weights in the final model correspond to the results from multivariable analysis? - Pass for all PLP
+      )
+  )
+  
+  # add info about diagostic
+  summaryTable <- merge(
+    x = summaryTable, 
+    y = description, 
+    by = 'probastId', 
+    all.x = TRUE
+    )
+  
+  return(summaryTable)
 }
 
 
@@ -770,8 +1290,11 @@ getPredictionDiagnostics <- function(
 #' @template connectionHandler
 #' @template schema
 #' @template plpTablePrefix
-#' @param table The table to extract
-#' @param performanceId (optional) restrict to the input performanceId
+#' @template databaseTable
+#' @param table The table to extract (covariate_summary, attrition, prediction_distribution, threshold_summary, calibration_summary, evaluation_statistics or demographic_summary )
+#' @param modelDesignIds (optional) restrict to the input modelDesignIds
+#' @param performanceIds (optional) restrict to the input performanceIds
+#' @param evaluations (optional) restrict to the type of evaluation (e.g., 'Test'/'Train'/'CV'/'Validation')
 #' @family Prediction
 #' @return
 #' Returns a data.frame with the specified table
@@ -792,26 +1315,280 @@ getPredictionPerformanceTable <- function(
     connectionHandler,
     schema,
     plpTablePrefix = 'plp_',
+    databaseTable = 'database_meta_data',
     table = 'attrition',
-    performanceId = NULL
+    modelDesignIds = NULL,
+    performanceIds = NULL,
+    evaluations = NULL
 ){
   
-  if(!is.null(performanceId)){
+    sql <- "SELECT distinct
+    p.model_design_id,
+    p.development_database_id,
+    db1.cdm_source_abbreviation as development_database_name,
+    p.validation_database_id,
+    db2.cdm_source_abbreviation as validation_database_name,
+    p.target_id,
+    p.outcome_id,
+    p.tar_id,
+    toi.* 
     
-    sql <- "SELECT * FROM @schema.@plp_table_prefix@table
-     WHERE performance_id = @performance_id;"
+    FROM @schema.@plp_table_prefix@table toi 
+    
+    INNER JOIN @schema.@plp_table_prefixperformances p 
+    ON p.performance_id = toi.performance_id 
+    
+    INNER JOIN
+    (SELECT dd.database_id, md.cdm_source_abbreviation
+     FROM @schema.@database_table md 
+     INNER JOIN @schema.@plp_table_prefixdatabase_details dd
+     ON md.database_id = dd.database_meta_data_id
+     ) as db1
+     ON db1.database_id = p.development_database_id
+     
+    INNER JOIN
+    (SELECT dd.database_id, md.cdm_source_abbreviation
+     FROM @schema.@database_table md 
+     INNER JOIN @schema.@plp_table_prefixdatabase_details dd
+     ON md.database_id = dd.database_meta_data_id
+     ) as db2
+     ON db2.database_id = p.validation_database_id
+    
+    
+    WHERE (1=1)
+    {@use_model_id}?{ and p.model_design_id in (@model_ids)}
+    {@use_performance_id}?{ and p.performance_id in (@performance_ids)}
+    {@use_evaluation}?{ and toi.evaluation in (@evaluations)}
+    ;"
     
     result  <- connectionHandler$queryDb(
       sql = sql,
       schema = schema,
+      database_table = databaseTable,
       table = table,
-      performance_id = performanceId,
+      use_model_id = !is.null(modelDesignIds),
+      model_ids = paste0(modelDesignIds, collapse = ','),
+      use_performance_id = !is.null(performanceIds),
+      performance_ids = paste0(performanceIds, collapse = ','),
+      use_evaluation = !is.null(evaluations),
+      evaluations = paste0("'",evaluations, "'", sep = '', collapse = ','),
       plp_table_prefix = plpTablePrefix
     )
     
     return(result)
+}
+
+
+# get prediction covariates for model and validation settings
+#' Extract covariate summary details
+#' @description
+#' This function extracts the covariate summary details
+#'
+#' @details
+#' Specify the connectionHandler, the resultDatabaseSettings, the table of interest and (optionally) modelDesignIds/performanceIds to filter to 
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param modelDesignIds (optional) restrict to the input modelDesignIds
+#' @param performanceIds (optional) restrict to the input performanceIds
+#' @family Prediction
+#' @return
+#' Returns a data.frame with the specified table
+#' 
+#' @export
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' covs <- getPredictionCovariates(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getPredictionCovariates <- function(
+  connectionHandler, 
+  schema, 
+  plpTablePrefix = 'plp_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  performanceIds = NULL,
+  modelDesignIds = NULL
+){
+  
+  sql <- "SELECT distinct
+    p.model_design_id,
+    p.development_database_id,
+    db1.cdm_source_abbreviation as development_database_name,
+    p.validation_database_id,
+    db2.cdm_source_abbreviation as validation_database_name,
+    targets.cohort_definition_id as target_cohort_id,
+    targets.cohort_name as target_name,
+    outcomes.cohort_definition_id as outcome_cohort_id,
+    outcomes.cohort_name as outcome_name,
+    t.*,
+    p.plp_data_setting_id,
+    ds.plp_data_settings_json,
+    p.population_setting_id,
+    ps.population_settings_json,
+    toi.* 
+    
+    FROM @schema.@plp_table_prefixcovariate_summary toi 
+    
+    INNER JOIN @schema.@plp_table_prefixperformances p 
+    ON p.performance_id = toi.performance_id 
+    
+    INNER JOIN
+    (SELECT dd.database_id, md.cdm_source_abbreviation
+     FROM @schema.@database_table md 
+     INNER JOIN @schema.@plp_table_prefixdatabase_details dd
+     ON md.database_id = dd.database_meta_data_id
+     ) as db1
+     ON db1.database_id = p.development_database_id
+     
+    INNER JOIN
+    (SELECT dd.database_id, md.cdm_source_abbreviation
+     FROM @schema.@database_table md 
+     INNER JOIN @schema.@plp_table_prefixdatabase_details dd
+     ON md.database_id = dd.database_meta_data_id
+     ) as db2
+     ON db2.database_id = p.validation_database_id
+     
+     INNER JOIN
+    (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name
+     FROM @schema.@cg_table_prefixcohort_definition cd 
+     INNER JOIN @schema.@plp_table_prefixcohorts c
+     ON c.cohort_definition_id = cd.cohort_definition_id
+     ) as targets
+     ON targets.cohort_id = p.target_id
+     
+     INNER JOIN
+    (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name
+     FROM @schema.@cg_table_prefixcohort_definition cd 
+     INNER JOIN @schema.@plp_table_prefixcohorts c
+     ON c.cohort_definition_id = cd.cohort_definition_id
+     ) as outcomes
+     ON outcomes.cohort_id = p.outcome_id
+     
+    INNER JOIN @schema.@plp_table_prefixtars t
+    ON p.tar_id = t.tar_id
+    
+    INNER JOIN 
+    @schema.@plp_table_prefixplp_data_settings ds
+    ON p.plp_data_setting_id = ds.plp_data_setting_id
+    
+    INNER JOIN 
+    @schema.@plp_table_prefixpopulation_settings ps
+    ON p.population_setting_id = ps.population_setting_id
+    
+    WHERE (1=1)
+    {@use_model_id}?{ and p.model_design_id in (@model_ids)}
+    {@use_performance_id}?{ and p.performance_id in (@performance_ids)}
+    ;"
+  
+  result  <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
+    use_model_id = !is.null(modelDesignIds),
+    model_ids = paste0(modelDesignIds, collapse = ','),
+    use_performance_id = !is.null(performanceIds),
+    performance_ids = paste0(performanceIds, collapse = ','),
+  )
+  
+  if(nrow(result) >0){
+    result <- result %>%
+      dplyr::mutate(timeAtRisk = paste0('( ',.data$tarStartAnchor, '+', .data$tarStartDay, ' ) - ',
+                                        '( ',.data$tarEndAnchor, '+', .data$tarEndDay, ' )'
+      )) %>%
+      dplyr::select(-"tarStartAnchor", - "tarStartDay", -"tarEndAnchor", -"tarEndDay") %>%
+      dplyr::relocate("timeAtRisk", .after = "outcomeName")
+    
   }
   
+  return(result)
+}
+
+# get model lift (PPV/outcomeRate) for a given model sensitivity
+#' Extract model lift at given model sensitivity
+#' @description
+#' This function extracts the model lift (PPV/outcomeRate)
+#'
+#' @details
+#' Specify the connectionHandler, the resultDatabaseSettings and (optionally) modelDesignIds or performanceIds to filter to 
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template plpTablePrefix
+#' @param modelDesignIds (optional) restrict to the input modelDesignIds
+#' @param performanceIds (optional) restrict to the input performanceIds
+#' @param sensitivity (default 0.1) the lift at the threshold with the sensitivity closest to this value is return 
+#' 
+#' @family Prediction
+#' @return
+#' Returns a data.frame with the columns: modelDesignId, performanceId, evaluation, sensitivity, outcomeCount, positivePredictiveValue, outcomeRate and lift.
+#' 
+#' @export
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' liftsAt0p15 <- getPredictionLift(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main', 
+#'   sensitivity = 0.15
+#' )
+#' 
+getPredictionLift <- function(
+    connectionHandler,
+    schema,
+    plpTablePrefix = 'plp_',
+    modelDesignIds = NULL,
+    performanceIds = NULL,
+    sensitivity = 0.1
+){
+  
+  sql <- "SELECT * from
+  
+  ( select 
+    p.model_design_id,
+    toi.performance_id,
+    toi.evaluation,
+    toi.sensitivity,
+    toi.true_count outcome_count,
+    toi.positive_predictive_value,
+    toi.true_count*1.0/(toi.true_count+toi.false_count) as outcome_rate,
+    toi.positive_predictive_value/(toi.true_count*1.0/(toi.true_count+toi.false_count)) as lift,
+    row_number() over (partition by toi.performance_id, toi.evaluation order by abs(toi.sensitivity - @sensitivity) asc) rn 
+    FROM @schema.@plp_table_prefixthreshold_summary toi 
+    inner join 
+    @schema.@plp_table_prefixperformances p on 
+    p.performance_id = toi.performance_id 
+    where 1=1
+    {@use_model_id}?{ and p.model_design_id in (@model_ids)}
+  {@use_performance_id}?{ and performance_id in (@performance_ids)}
+  ) temp
+      WHERE rn = 1
+    ;"
+  
+  result  <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    sensitivity = sensitivity,
+    use_model_id = !is.null(modelDesignIds),
+    model_ids = paste0(modelDesignIds, collapse = ','),
+    use_performance_id = !is.null(performanceIds),
+    performance_ids = performanceIds,
+    plp_table_prefix = plpTablePrefix
+  )
+  
+  return(result)
 }
 
 #' Extract specific diagnostic table

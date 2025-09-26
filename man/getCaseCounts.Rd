@@ -11,7 +11,12 @@ getCaseCounts(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   targetIds = NULL,
-  outcomeIds = NULL
+  outcomeIds = NULL,
+  databaseIds = NULL,
+  riskWindowStart = NULL,
+  riskWindowEnd = NULL,
+  startAnchor = NULL,
+  endAnchor = NULL
 )
 }
 \arguments{
@@ -28,11 +33,22 @@ getCaseCounts(
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
+
+\item{databaseIds}{(optional) A vector of database IDs to restrict to}
+
+\item{riskWindowStart}{(optional) A vector of time-at-risk risk window starts to restrict to}
+
+\item{riskWindowEnd}{(optional) A vector of time-at-risk risk window ends to restrict to}
+
+\item{startAnchor}{(optional) A vector of time-at-risk start anchors to restrict to}
+
+\item{endAnchor}{(optional) A vector of time-at-risk end anchors to restrict to}
 }
 \value{
 Returns a data.frame with the columns:
 \itemize{
  \item{databaseName the name of the database}
+ \item{databaseId the unique identifier of the database}
  \item{targetName the target cohort name}
  \item{targetId the target cohort unique identifier}
  \item{outcomeName the outcome name}
@@ -70,14 +86,22 @@ Other Characterization:
 \code{\link{getBinaryRiskFactors}()},
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseContinuousFeatures}()},
+\code{\link{getCaseTargetBinaryFeatures}()},
+\code{\link{getCaseTargetCounts}()},
+\code{\link{getCharacterizationCohortBinary}()},
+\code{\link{getCharacterizationCohortContinuous}()},
 \code{\link{getCharacterizationDemographics}()},
+\code{\link{getCharacterizationOutcomes}()},
+\code{\link{getCharacterizationTargets}()},
 \code{\link{getContinuousCaseSeries}()},
 \code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
+\code{\link{getDechallengeRechallengeFails}()},
+\code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
+\code{\link{getIncidenceTargets}()},
 \code{\link{getTargetBinaryFeatures}()},
 \code{\link{getTargetContinuousFeatures}()},
-\code{\link{getTargetCounts}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()}

@@ -11,7 +11,14 @@ getBinaryCaseSeries(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   targetId = NULL,
-  outcomeId = NULL
+  outcomeId = NULL,
+  databaseIds = NULL,
+  riskWindowStart = NULL,
+  riskWindowEnd = NULL,
+  startAnchor = NULL,
+  endAnchor = NULL,
+  conceptIds = NULL,
+  minVal = NULL
 )
 }
 \arguments{
@@ -28,6 +35,20 @@ getBinaryCaseSeries(
 \item{targetId}{An integer corresponding to the target cohort ID}
 
 \item{outcomeId}{Am integer corresponding to the outcome cohort ID}
+
+\item{databaseIds}{(optional) One or more unique identifiers for the databases}
+
+\item{riskWindowStart}{(optional) A riskWindowStart to restrict to}
+
+\item{riskWindowEnd}{(optional) A riskWindowEnd to restrict to}
+
+\item{startAnchor}{(optional) A startAnchor to restrict to}
+
+\item{endAnchor}{(optional) An endAnchor to restrict to}
+
+\item{conceptIds}{(optional) An conceptIds to restrict to}
+
+\item{minVal}{(optional) the minimum averageVal to extract}
 }
 \value{
 A data.frame with the characterization case series results
@@ -57,14 +78,22 @@ Other Characterization:
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseContinuousFeatures}()},
 \code{\link{getCaseCounts}()},
+\code{\link{getCaseTargetBinaryFeatures}()},
+\code{\link{getCaseTargetCounts}()},
+\code{\link{getCharacterizationCohortBinary}()},
+\code{\link{getCharacterizationCohortContinuous}()},
 \code{\link{getCharacterizationDemographics}()},
+\code{\link{getCharacterizationOutcomes}()},
+\code{\link{getCharacterizationTargets}()},
 \code{\link{getContinuousCaseSeries}()},
 \code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
+\code{\link{getDechallengeRechallengeFails}()},
+\code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
+\code{\link{getIncidenceTargets}()},
 \code{\link{getTargetBinaryFeatures}()},
 \code{\link{getTargetContinuousFeatures}()},
-\code{\link{getTargetCounts}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()}

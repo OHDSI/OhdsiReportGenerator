@@ -5,23 +5,17 @@
 
 # Should this only be for the target?
   
-  # Binary risk factors
-  # how to get this list if continuous not done?
-  tempToGetIds <- OhdsiReportGenerator::getCaseBinaryFeatures(
-    connectionHandler = connectionHandler, 
-    schema = params$schema, 
-    analysisIds = c(1,2,3,4,5) # one of these should be run - add char and drug?
-  )
-  
+
 # TODO restrict to T and O cohorts of interest
 targetIds <- cohortDefinitions %>%
-  dplyr::filter(.data$subsetParent == params$targetId) %>%
+  dplyr::filter(.data$cohortDefinitionId %in% targetIdsOfInterest) %>%
   dplyr::arrange(.data$order, .data$cohortDefinitionId) %>%
   dplyr::select("cohortDefinitionId") 
 
-charIdsOfInt <- unique(tempToGetIds[,c('targetCohortId','outcomeCohortId')]) %>%
-  dplyr::filter(outcomeCohortId %in% !!params$outcomeIds) %>%
-  dplyr::filter(targetCohortId %in% !!targetIds$cohortDefinitionId)
+charIdsOfInt <- unique(data.frame(
+  targetCohortId = rep(targetIds$cohortDefinitionId, length(outcomeIdsOfInterest)),
+  outcomeCohortId = unlist(lapply(1:length(outcomeIdsOfInterest), function(oi) rep(outcomeIdsOfInterest[oi], length(targetIds$cohortDefinitionId))))
+))
 
 # order by id 
 charIdsOfInt <- merge(
@@ -43,6 +37,7 @@ if( nrow(charIdsOfInt) >0 ){
       outcomeId = charIdsOfInt$outcomeCohortId[cind], #19970,
       analysisIds = c(1,4,5,210,410)
     )
+    if(!is.null(riskFactorsBinary)){
     riskFactorsBinary <- OhdsiReportGenerator::formatBinaryCovariateName(riskFactorsBinary)
     riskFactorsBinary <- OhdsiReportGenerator::addTarColumn(riskFactorsBinary)
     
@@ -76,9 +71,14 @@ if( nrow(charIdsOfInt) >0 ){
           dplyr::filter(
             .data$minPriorObservation == !!minPriorObservation,
             .data$outcomeWashoutDays ==  !!outcomeWashoutDays,
-            .data$tar == !!tar
+            .data$tar == !!tar,
+            .data$absSMD > 0.1,
+            .data$caseCount >= 0 # make this an input?
           ) %>%
-        dplyr::select(
+          head(
+            n = 200 # select top 200
+          ) %>%
+         dplyr::select(
           "covariateName",
           "databaseName",
           "caseCount", 
@@ -91,10 +91,6 @@ if( nrow(charIdsOfInt) >0 ){
 
          print(htmltools::tagList(
     temp %>%
-      dplyr::filter(
-        .data$absSMD > 0.1,
-        .data$caseCount >= 0
-        ) %>%
       dplyr::group_by(.data$covariateName) %>%
       gt::gt() %>%
       gt::fmt_percent(
@@ -132,7 +128,7 @@ if( nrow(charIdsOfInt) >0 ){
   
       cat("\n\n:::\n\n")
       
-    }}} else{
+    }}}} else{
       cat('\n\n::: {.callout-note collapse="true"}')
       cat(paste0("\n# No risk factors \n\n"))
       cat("\n\n No risk factors for the target of interest")

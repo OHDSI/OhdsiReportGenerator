@@ -28,6 +28,8 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 Other helper: 
 \code{\link{addTarColumn}()},
 \code{\link{formatBinaryCovariateName}()},
+\code{\link{getOutcomeTable}()},
+\code{\link{getTargetTable}()},
 \code{\link{kableDark}()},
 \code{\link{printReactable}()},
 \code{\link{removeSpaces}()}

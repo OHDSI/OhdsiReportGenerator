@@ -1,0 +1,8 @@
+question,description,fileName
+How many models did we attempt?,Number of models developed and then how many of these had the minimum required number of outcomes and discrimination performance.,question1.qmd
+How common are the outcomes?,Outcome count distribution.  It is generally recommended to have at least 100 outcomes but empirical studies have shown that you need 1000 outcomes or more to get a model close to optimal.,question2.qmd
+How well can we predict?,Heatmap showing performance for simple phenotype predictor models developed across new drug user target populations predicting each outcome during the time-at-risk.,question3.qmd
+How well does age alone do?,Heatmap showing performance for age/sex only models developed across new drug user target populations predicting each outcome during the time-at-risk.,question4.qmd
+What are the predictors?,The number of times each predictors was included in the final model (indicating it being associated with having the outcome) across models developed for all targets and outcomes.,question5.qmd
+How useful are the models?,The positive predictive value vs the outcome rate at various sensitivities.,question6.qmd
+Are models fair by age/gender?,"How miscalibrated models are for each age group and sex.  The more miscalibrated, the more unfair.",question7.qmd

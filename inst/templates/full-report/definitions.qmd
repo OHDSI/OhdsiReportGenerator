@@ -12,7 +12,12 @@ cat(paste0('Patients in the ', targetName,' cohort were identified using the fol
 
 cat('\n::: {.callout-important}\n')
 cat(paste0('\n### ', targetName, ' definition\n'))
-cat(CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == params$targetId])
+cat(
+  tryCatch({
+    CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == params$targetId])
+  }, error = function(e){
+   print(e); return('Error rendering friendly cohort...')
+  })
 )
 cat('\n:::\n')
 
@@ -40,8 +45,13 @@ for(ind in 1:length(outcomeNames)){
   cat(paste0('\n### ', outcomeNames[ind], ' definition\n'))
   
   cat(
+  tryCatch({
     CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == params$outcomeIds[ind]])
-  )
+  }, error = function(e){
+   print(e); return('Error rendering friendly cohort...')
+  })
+)
+  
   cat('\n:::\n')
   
 }
@@ -64,9 +74,14 @@ for(i in 1:length(indicationIds)){
     cat('\n::: {.callout-important}\n')
     cat(paste0('\n### ', indication, ' definition\n'))
     
-    cat(
-      CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == indicationIds[i]])
-    )
+      cat(
+  tryCatch({
+    CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == indicationIds[i]])
+  }, error = function(e){
+   print(e); return('Error rendering friendly cohort...')
+  })
+)
+   
     cat('\n:::\n')
     
   }
@@ -92,10 +107,14 @@ if(length(comparatorIds) > 0 ){
       cat('\n::: {.callout-important}\n')
       cat(paste0('\n### ', name, ' definition\n'))
       
-      cat(
-        CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == comparatorIds[i]])
-      )
-      
+ cat(
+  tryCatch({
+    CirceR::cohortPrintFriendly(cohortDefinitions$json[cohortDefinitions$cohortDefinitionId == comparatorIds[i]])
+  }, error = function(e){
+   print(e); return('Error rendering friendly cohort...')
+  })
+)
+            
       cat('\n:::\n')
     }
   }

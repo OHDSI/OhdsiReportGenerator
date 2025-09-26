@@ -8,7 +8,7 @@ The outcome ``r outcome$name`` occurring between target ``r populationSettings$s
 
 ```{r results='asis', echo=FALSE}
 markdown <- tryCatch(
-  {CirceR::cohortPrintFriendly(outcome$expression)}, 
+  {CirceR::cohortPrintFriendly(as.character(outcome$expression))}, 
   error = function(e) return('')
 )
 markdown <- gsub('###', '####',markdown)

@@ -36,6 +36,7 @@ getCMEstimation(
 Returns a data.frame with the columns:
 \itemize{
  \item{databaseName the name of the database}
+ \item{databaseId the unqiue identifier of the database}
  \item{analysisId the analysis design unique identifier}
  \item{description the analysis design description}
  \item{targetName the target cohort name}
@@ -57,6 +58,7 @@ Returns a data.frame with the columns:
  \item{comparatorDays the total number of days at risk across the comparator cohort people}
  \item{targetOutcomes the total number of outcomes occuring during the time at risk for the target cohort people}
  \item{comparatorOutcomes the total number of outcomes occuring during the time at risk for the comparator cohort people}
+ \item{Unblind Whether the results passed diagnostics and were unblinded}
  \item{targetEstimator ...}
  }
 }
@@ -83,9 +85,20 @@ cmEst <- getCMEstimation(
 Other Estimation: 
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
+\code{\link{getCmNegativeControlEstimates}()},
+\code{\link{getCmOutcomes}()},
+\code{\link{getCmPropensityModel}()},
+\code{\link{getCmTable}()},
+\code{\link{getCmTargets}()},
 \code{\link{getSccsDiagnosticsData}()},
 \code{\link{getSccsEstimation}()},
 \code{\link{getSccsMetaEstimation}()},
+\code{\link{getSccsModel}()},
+\code{\link{getSccsNegativeControlEstimates}()},
+\code{\link{getSccsOutcomes}()},
+\code{\link{getSccsTable}()},
+\code{\link{getSccsTargets}()},
+\code{\link{getSccsTimeToEvent}()},
 \code{\link{plotCmEstimates}()},
 \code{\link{plotSccsEstimates}()}
 }

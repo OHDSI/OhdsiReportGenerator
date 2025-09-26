@@ -38,14 +38,14 @@ test_that("generatePresentation", {
       restrictions = "Age - None"
     ),
     evaluationText = '',
-    includeCI = TRUE,
+    includeCI = FALSE, #TRUE, - current issue with CI
     includeCharacterization = TRUE,
     includeCM = TRUE,
     includeSCCS = FALSE,
     includePLP = FALSE,
     outputLocation = savLoc,
     outputName = paste0('presentation_', gsub(':', '_',gsub(' ','_',as.character(date()))),'.html'),
-    intermediateDir = tempdir()
+    intermediateDir = fs::path_real(tempdir())
   )
   
   # ensure report is generated

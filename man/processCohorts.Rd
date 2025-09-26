@@ -35,7 +35,12 @@ parents <- processCohorts(cohortDef)
 }
 \seealso{
 Other Cohorts: 
+\code{\link{getCohortCounts}()},
 \code{\link{getCohortDefinitions}()},
+\code{\link{getCohortInclusionRules}()},
+\code{\link{getCohortInclusionStats}()},
+\code{\link{getCohortInclusionSummary}()},
+\code{\link{getCohortMeta}()},
 \code{\link{getCohortSubsetDefinitions}()}
 }
 \concept{Cohorts}

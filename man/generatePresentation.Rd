@@ -38,7 +38,7 @@ generatePresentation(
   outputLocation,
   outputName = paste0("presentation_", gsub(":", "_", gsub(" ", "_",
     as.character(date()))), ".html"),
-  intermediateDir = tempdir(),
+  intermediateDir = fs::path_real(tempdir()),
   pathToDriver = Sys.getenv("DATABASECONNECTOR_JAR_FOLDER")
 )
 }
@@ -117,7 +117,9 @@ to generate a presentation.
 }
 \seealso{
 Other Reporting: 
+\code{\link{createPredictionReport}()},
 \code{\link{generateFullReport}()},
-\code{\link{generatePresentationMultiple}()}
+\code{\link{generatePresentationMultiple}()},
+\code{\link{generateSummaryPredictionReport}()}
 }
 \concept{Reporting}

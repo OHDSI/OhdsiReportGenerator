@@ -47,9 +47,9 @@ generateFullReport(
 
 \item{outcomeIds}{The cohort definition id for the outcome}
 
-\item{comparatorIds}{The cohort definition id for any comparator cohorts}
+\item{comparatorIds}{(optional) The cohort definition id for any comparator cohorts.  If NULL the report will find and include all possible comparators in the results if includeCohortMethod is TRUE.}
 
-\item{indicationIds}{The cohort definition id for any indication cohorts (if no indication use '')}
+\item{indicationIds}{The cohort definition id for any indication cohorts. If no indication use '' and if you want some indications plus no indication use c('', indicationId1, indicationId2).  Use 'Any' to include all children of targetId.}
 
 \item{cohortNames}{Friendly names for any cohort used in the study}
 
@@ -93,7 +93,9 @@ to generate the full report.
 }
 \seealso{
 Other Reporting: 
+\code{\link{createPredictionReport}()},
 \code{\link{generatePresentation}()},
-\code{\link{generatePresentationMultiple}()}
+\code{\link{generatePresentationMultiple}()},
+\code{\link{generateSummaryPredictionReport}()}
 }
 \concept{Reporting}

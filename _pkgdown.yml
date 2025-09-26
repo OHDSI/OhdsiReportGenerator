@@ -37,6 +37,10 @@ navbar:
       href: https://ohdsi.github.io/Hades
 
 reference:
+  - title: "Database Extraction"
+    desc: >
+      These functions can be used to extract details about the databases.
+    contents: has_concept("Database")
   - title: "Cohort Extraction"
     desc: >
       These functions can be used to extract analyses cohort details.

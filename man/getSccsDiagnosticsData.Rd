@@ -33,6 +33,7 @@ getSccsDiagnosticsData(
 Returns a data.frame with the columns:
 \itemize{
  \item{databaseName the database name}
+ \item{databaseId the unique identifier for the database}
  \item{analysisId the analysis unique identifier}
  \item{description an analysis description}
  \item{targetName the target name}
@@ -44,12 +45,22 @@ Returns a data.frame with the columns:
  \item{covariateName whether main or secondary analysis}
  \item{mdrr the maximum passable minimum detectable relative risk (mdrr) value.  If the mdrr is greater than this the diagnostics will fail.}
  \item{ease The expected absolute systematic error (ease) measures residual bias.}
- \item{timeTrendP The p for whether the mean monthly ratio between observed and expected is no greater than 1.25.}
- \item{preExposureP One-sided p-value for whether the rate before expore is higher than after, against the null of no difference.}
+ \item{timeTrendP (Depreciated to timeStabilityP) The p for whether the mean monthly ratio between observed and expected is no greater than 1.25.}
+ \item{preExposureP (Depreciated) One-sided p-value for whether the rate before expore is higher than after, against the null of no difference.}
  \item{mdrrDiagnostic whether the mdrr (power) diagnostic passed or failed.}
  \item{easeDiagnostic whether the ease diagnostic passed or failed.}
- \item{timeTrendDiagnostic Pass / warning / fail / not evaluated classification of the time trend (unstalbe months) diagnostic.}
- \item{preExposureDiagnostic Pass / warning / fail / not evaluated classification of the time trend (unstalbe months) diagnostic.}
+ \item{timeStabilityP (New) The p for whether the mean monthly ratio between observed and expected exceeds the specified threshold.}
+ \item{eventExposureLb (New) Lower bound of the 95\% CI for the pre-expososure estimate.}
+ \item{eventExposureUb (New) Upper bound of the 95\% CI for the pre-expososure estimate.}
+ \item{eventObservationLb (New) Lower bound of the 95\% CI for the end of observation probe estimate.}
+ \item{eventObservationUb (New) Upper bound of the 95\% CI for the end of observation probe estimate.}
+ \item{rareOutcomePrevalence (New) The proportion of people in the underlying population who have the outcome at least once.}
+ \item{timeTrendDiagnostic (Depreciated) Pass / warning / fail / not evaluated classification of the time trend (unstalbe months) diagnostic.}
+ \item{preExposureDiagnostic (Depreciated) Pass / warning / fail / not evaluated classification of the time trend (unstalbe months) diagnostic.}
+ \item{timeStabilityDiagnostic (New) Pass / fail / not evaluated classification of the time stability diagnostic.}
+ \item{eventExposureDiagnostic (New) Pass / fail / not evaluated classification of the event-exposure independence diagnostic.}
+ \item{eventObservationDiagnostic (New) Pass / fail / not evaluated classification of the event-observation period dependence diagnostic.}
+ \item{rareOutcomeDiagnostic (New) Pass / fail / not evaluated classification of the rare outcome diagnostic.}
  \item{unblind whether the results can be unblinded.}
  \item{unblindForEvidenceSynthesis whether the results can be unblinded for the meta analysis.}
  \item{summaryValue summary of diagnostics results. FAIL, PASS or number of warnings.}
@@ -80,8 +91,19 @@ Other Estimation:
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
+\code{\link{getCmNegativeControlEstimates}()},
+\code{\link{getCmOutcomes}()},
+\code{\link{getCmPropensityModel}()},
+\code{\link{getCmTable}()},
+\code{\link{getCmTargets}()},
 \code{\link{getSccsEstimation}()},
 \code{\link{getSccsMetaEstimation}()},
+\code{\link{getSccsModel}()},
+\code{\link{getSccsNegativeControlEstimates}()},
+\code{\link{getSccsOutcomes}()},
+\code{\link{getSccsTable}()},
+\code{\link{getSccsTargets}()},
+\code{\link{getSccsTimeToEvent}()},
 \code{\link{plotCmEstimates}()},
 \code{\link{plotSccsEstimates}()}
 }

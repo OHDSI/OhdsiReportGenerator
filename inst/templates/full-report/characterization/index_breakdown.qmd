@@ -37,18 +37,19 @@ for(i in 1:length(params$outcomeIds)){
       )))
     }
   }
-  
+
   for(j in 1:length(targetIds)){
+    
     res <- OhdsiReportGenerator::getBinaryCaseSeries(
       connectionHandler = connectionHandler, 
       schema = params$schema, 
-      targetId = targetIds[j], 
-      outcomeId = params$outcomeIds[i] 
-    ) %>%
-      dplyr::filter(.data$averageValue >= 1/100)
-    # add the TAR
-    
-    if(nrow(res)>0){
+      targetId = !!targetIds[j], 
+      outcomeId = params$outcomeIds[i],
+      conceptIds = unique(conceptsInOutcome),
+      minVal = 0.01
+    )
+
+        if(nrow(res)>0){
     
     res <- OhdsiReportGenerator::addTarColumn(res) 
     
@@ -64,9 +65,7 @@ for(i in 1:length(params$outcomeIds)){
     counts <- OhdsiReportGenerator::addTarColumn(counts) %>%
       dplyr::select("databaseName", "personCount", "tar")
     
-    index <- res %>% dplyr::filter(
-      floor(.data$covariateId/1000) %in%conceptsInOutcome
-    ) %>%
+    index <- res %>% 
       dplyr::filter(.data$type == 'During') %>%
       dplyr::select("databaseName", "targetCohortId", "outcomeCohortId",
                     "covariateName", 

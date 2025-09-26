@@ -33,6 +33,8 @@ tarEndOffset = 0
 Other helper: 
 \code{\link{formatBinaryCovariateName}()},
 \code{\link{getExampleConnectionDetails}()},
+\code{\link{getOutcomeTable}()},
+\code{\link{getTargetTable}()},
 \code{\link{kableDark}()},
 \code{\link{printReactable}()},
 \code{\link{removeSpaces}()}

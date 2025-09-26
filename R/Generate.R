@@ -79,7 +79,7 @@ generatePresentation <- function(
     includePLP = TRUE,
     outputLocation,
     outputName = paste0('presentation_', gsub(':', '_',gsub(' ','_',as.character(date()))),'.html'),
-    intermediateDir = tempdir(),
+    intermediateDir = fs::path_real(tempdir()),
     pathToDriver = Sys.getenv("DATABASECONNECTOR_JAR_FOLDER")
 ){
   
@@ -184,8 +184,8 @@ generatePresentation <- function(
 #' @param resultsSchema The result database schema
 #' @param targetId The cohort definition id for the target cohort
 #' @param outcomeIds The cohort definition id for the outcome
-#' @param comparatorIds The cohort definition id for any comparator cohorts
-#' @param indicationIds The cohort definition id for any indication cohorts (if no indication use '')
+#' @param comparatorIds (optional) The cohort definition id for any comparator cohorts.  If NULL the report will find and include all possible comparators in the results if includeCohortMethod is TRUE. 
+#' @param indicationIds The cohort definition id for any indication cohorts. If no indication use '' and if you want some indications plus no indication use c('', indicationId1, indicationId2).  Use 'Any' to include all children of targetId. 
 #' @param cohortNames Friendly names for any cohort used in the study
 #' @param cohortIds  The corresponding Ids for the cohortNames
 #' @param includeCI Whether to include the cohort incidence slides
@@ -238,6 +238,10 @@ generateFullReport <- function(
   
   if(missing(outputLocation)){
     stop('Must enter location for outputLocation')
+  }
+  
+  if(is.null(indicationIds)){
+    indicationIds <- ""
   }
   
   # add code for gt?

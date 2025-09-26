@@ -1,0 +1,122 @@
+
+```{r}
+#| label: q2_get_data_{{TA}}
+#| echo: false
+#| results: 'asis'
+
+
+modelPerf <- OhdsiReportGenerator::getPredictionPerformances(
+  connectionHandler = connectionHandler, 
+  schema = schema, 
+  plpTablePrefix = params$plpTablePrefix, 
+  cgTablePrefix = params$cgTablePrefix, 
+  databaseTable = 'database_meta_data', 
+  databaseTablePrefix = params$databaseTablePrefix, 
+  modelDesignId = modelDesignIdsOfInt$modelDesignId, 
+  developmentDatabaseId = NULL
+    )
+
+
+```
+
+```{r}
+#| label: question_2_plot_{{TA}}
+#| fig-cap: '{{TA}}'
+#| fig-width: 12
+#| echo: false
+#| lightbox:
+#|   group: outcome_dist
+#|   description: The distribution of outcome counts
+
+if(nrow(modelPerf) > 0){
+    dataPlot <- modelPerf %>%
+    ggplot2::ggplot(ggplot2::aes(x=.data$outcomeCount)) +
+      ggplot2::geom_histogram(binwidth = 25, fill="#0000FF") + 
+      ggplot2::geom_density(
+        fill="grey", 
+        color="#e9ecef", 
+        alpha=0.8, 
+        na.rm=TRUE
+        )
+    
+    data <- suppressWarnings(ggplot2::ggplot_build(dataPlot))
+    data <- data.frame(data$data[[1]],stringsAsFactors = F)
+    
+    # cut the x-axis at 10,000 as this will be small and 
+    # makes it easier to view
+    data <- data[data$x < 10000, ]
+    
+    ggplot2::ggplot(data = data, ggplot2::aes(.data$x,.data$y))+
+     ggplot2::geom_line(na.rm=TRUE) + 
+     ggplot2::geom_area(
+       data = subset(data,data$x<100),
+       ggplot2::aes(.data$x,.data$y),
+       fill = "darkred", 
+       alpha = 0.7, 
+       na.rm=TRUE
+       ) +
+     ggplot2::geom_area(
+       data = subset(data,data$x>100 & data$x<1000),
+       ggplot2::aes(.data$x,.data$y),
+       fill = "red", 
+       alpha = 0.3, 
+       na.rm=TRUE
+       ) +
+    suppressWarnings(
+      ggplot2::geom_area(
+        data = subset(data,data$x>1000),
+        ggplot2::aes(.data$x,.data$y),
+        fill = "grey", 
+        alpha = 0.7, 
+        na.rm=TRUE
+      )
+    ) +
+    ggplot2::geom_vline(
+      xintercept = 100, 
+      linetype="dotted", 
+      color = "black", 
+      na.rm=TRUE
+      ) +
+    ggplot2::geom_vline(
+      xintercept = 1000, 
+      linetype="dotted", 
+      color = "black", 
+      na.rm=TRUE) +
+      ggplot2::labs(
+        y ="Density", 
+        x = "Patients with outcome"
+        )
+    
+    }
+```
+
+
+::: {.callout-important icon=false}
+## <100 outcomes
+```{r}
+#| label: q2_box1_{{TA}}
+#| echo: false
+#| results: 'asis'
+if(nrow(modelPerf) > 0){
+cat(paste0(round(sum(modelPerf$outcomeCount < 100, na.rm = TRUE)/length(modelPerf$outcomeCount)*100, digits = 1), 
+'% of the time.')
+)} else{
+  cat('No models')
+}
+```
+:::
+
+::: {.callout-important icon=false}
+## 1000+ outcomes
+```{r}
+#| label: q2_box2_{{TA}}
+#| echo: false
+#| results: 'asis'
+if(nrow(modelPerf) > 0){
+cat(paste0(round(sum(modelPerf$outcomeCount >= 1000, na.rm = TRUE)/length(modelPerf$outcomeCount)*100, digits = 1), 
+'% of the time.')
+)} else{
+  cat('No models')
+}
+```
+:::

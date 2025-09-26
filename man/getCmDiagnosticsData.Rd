@@ -12,7 +12,9 @@ getCmDiagnosticsData(
   databaseTable = "database_meta_data",
   targetIds = NULL,
   outcomeIds = NULL,
-  comparatorIds = NULL
+  comparatorIds = NULL,
+  analysisIds = NULL,
+  databaseIds = NULL
 )
 }
 \arguments{
@@ -31,11 +33,16 @@ getCmDiagnosticsData(
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
 
 \item{comparatorIds}{A vector of integers corresponding to the comparator cohort IDs}
+
+\item{analysisIds}{An optional vector of analysisIds to filter to}
+
+\item{databaseIds}{An optional vector of databaseIds to filter to}
 }
 \value{
 Returns a data.frame with the columns:
 \itemize{
  \item{databaseName the name of the database}
+ \item{databaseId the unqiue identifier of the database}
  \item{analysisId the analysis unique identifier}
  \item{description a description of the analysis}
  \item{targetName the target cohort name}
@@ -85,9 +92,20 @@ cmDiag <- getCmDiagnosticsData(
 Other Estimation: 
 \code{\link{getCMEstimation}()},
 \code{\link{getCmMetaEstimation}()},
+\code{\link{getCmNegativeControlEstimates}()},
+\code{\link{getCmOutcomes}()},
+\code{\link{getCmPropensityModel}()},
+\code{\link{getCmTable}()},
+\code{\link{getCmTargets}()},
 \code{\link{getSccsDiagnosticsData}()},
 \code{\link{getSccsEstimation}()},
 \code{\link{getSccsMetaEstimation}()},
+\code{\link{getSccsModel}()},
+\code{\link{getSccsNegativeControlEstimates}()},
+\code{\link{getSccsOutcomes}()},
+\code{\link{getSccsTable}()},
+\code{\link{getSccsTargets}()},
+\code{\link{getSccsTimeToEvent}()},
 \code{\link{plotCmEstimates}()},
 \code{\link{plotSccsEstimates}()}
 }

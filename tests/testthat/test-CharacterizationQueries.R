@@ -81,7 +81,7 @@ test_that("getDechallengeRechallenge", {
 
 test_that("target counts", {
   # check results are returned
-  countsT <- getTargetCounts(
+  countsT <- getCaseTargetCounts(
     connectionHandler = connectionHandler, 
     schema = 'main'
   )
@@ -95,7 +95,7 @@ test_that("target counts", {
   testthat::expect_true( 'personCount' %in% colnames(countsT))
   
   # check restriction works
-  countsT2 <- getTargetCounts(
+  countsT2 <- getCaseTargetCounts(
     connectionHandler = connectionHandler, 
     schema = 'main', 
     targetIds = 1, 
@@ -159,9 +159,10 @@ test_that("getCaseBinaryFeatures", {
   testthat::expect_true(unique(data$outcomeCohortId) == 3)
 })
 
-test_that("getTargetBinaryFeatures", {
+
+test_that("getCaseTargetBinaryFeatures", {
   # check results are returned
-  data <- getTargetBinaryFeatures(
+  data <- getCaseTargetBinaryFeatures(
     connectionHandler = connectionHandler, 
     schema = 'main'
   )
@@ -175,7 +176,7 @@ test_that("getTargetBinaryFeatures", {
   testthat::expect_true( 'sumValue' %in% colnames(data))
   
   # check restriction works
-  data <- getTargetBinaryFeatures(
+  data <- getCaseTargetBinaryFeatures(
     connectionHandler = connectionHandler, 
     schema = 'main', 
     targetIds = 1, 
@@ -232,32 +233,6 @@ test_that("getCharacterizationDemographics", {
     )
   )
   
-})
-
-test_that("getTargetBinaryFeatures", {
-  # check results are returned
-  data <- getTargetBinaryFeatures(
-    connectionHandler = connectionHandler, 
-    schema = 'main'
-  )
-  
-  testthat::expect_true(nrow(data) > 0)
-  
-  testthat::expect_true( 'databaseName' %in% colnames(data))
-  testthat::expect_true( 'targetName' %in% colnames(data))
-  testthat::expect_true( 'outcomeName' %in% colnames(data))
-  testthat::expect_true( 'covariateName' %in% colnames(data))
-  testthat::expect_true( 'sumValue' %in% colnames(data))
-  
-  # check restriction works
-  data <- getTargetBinaryFeatures(
-    connectionHandler = connectionHandler, 
-    schema = 'main', 
-    targetIds = 1, 
-    outcomeIds = 3
-  )
-  testthat::expect_true(unique(data$targetCohortId) == 1)
-  testthat::expect_true(unique(data$outcomeCohortId) == 3)
 })
 
 test_that("getBinaryRiskFactors", {
@@ -384,6 +359,7 @@ test_that("processBinaryRiskFactorFeatures with values", {
   
   caseCounts <- data.frame(
     databaseName = 'madeup',
+    databaseId = 1,
     minPriorObservation = 365,
     outcomeWashoutDays = 9999,
     riskWindowStart = 1,
@@ -395,6 +371,7 @@ test_that("processBinaryRiskFactorFeatures with values", {
   
   caseFeatures <- data.frame(
     databaseName = rep('madeup',2),
+    databaseId = 1,
     minPriorObservation = rep(365,2),
     outcomeWashoutDays = rep(9999,2),
     riskWindowStart = rep(1,2),
@@ -413,6 +390,7 @@ test_that("processBinaryRiskFactorFeatures with values", {
   
   targetCounts <- data.frame(
     databaseName = 'madeup',
+    databaseId = 1,
     minPriorObservation = 365,
     outcomeWashoutDays = 9999,
     personCount = 10000
@@ -420,6 +398,7 @@ test_that("processBinaryRiskFactorFeatures with values", {
   
   targetFeatures <- data.frame(
     databaseName = rep('madeup',2),
+    databaseId = 1,
     minPriorObservation = rep(365,2),
     outcomeWashoutDays = rep(9999,2),
     covariateName = c('cov 1','cov 10'),
@@ -470,3 +449,124 @@ test_that("processBinaryRiskFactorFeatures with values", {
 # target count - make sqlite tables
 # requires: database table, cohort_counts, settings, 
 #.          cohort_details, cohort_definition
+
+
+test_that("getCharacterizationOutcomes", {
+  
+outcomes <- getCharacterizationOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetId = NULL
+)
+
+# check there is a result
+testthat::expect_true(nrow(outcomes) > 0)
+
+# check the columns are correct
+testthat::expect_true(sum(c("cohortName", "cohortDefinitionId", "dechalRechal",
+  "riskFactors", "timeToEvent", "caseSeries") %in% colnames(outcomes)) == 6)
+
+# check results when specifying targetId
+outcomes2 <- getCharacterizationOutcomes(
+  connectionHandler = connectionHandler, 
+  schema = 'main', 
+  targetId = 1
+)
+
+testthat::expect_true(nrow(outcomes) >= nrow(outcomes2))
+testthat::expect_true(nrow(outcomes2) >= 1)
+
+# check results when specifying targetId with no outcomes
+outcomes3 <- getCharacterizationOutcomes(
+  connectionHandler = connectionHandler, 
+  schema = 'main', 
+  targetId = 3
+)
+
+testthat::expect_true(nrow(outcomes3) == 0 )
+
+
+})
+
+test_that("getIncidenceOutcomes", {
+  
+  outcomes <- getIncidenceOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetId = NULL
+  )
+  # check there is a result
+  testthat::expect_true(nrow(outcomes) > 0)
+  
+  # check the columns are correct
+  testthat::expect_true(sum(c("cohortName", "cohortDefinitionId", "cohortIncidence") %in% colnames(outcomes)) == 3)
+  
+  # check results when specifying targetId
+  outcomes2 <- getIncidenceOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetId = 1
+  )
+  
+  testthat::expect_true(nrow(outcomes) >= nrow(outcomes2))
+  testthat::expect_true(nrow(outcomes2) >= 1)
+  
+  # check results when specifying targetId with no outcomes
+  outcomes3 <- getIncidenceOutcomes(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetId = 3
+  )
+  
+  testthat::expect_true(nrow(outcomes3) == 0 )
+  
+})
+
+
+
+
+
+
+
+test_that("getCharacterizationCohortBinary", {
+  # check results are returned
+  data <- getCharacterizationCohortBinary(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetIds = 1
+  )
+  
+  testthat::expect_true(nrow(data$covariates) > 0)
+  testthat::expect_true(nrow(data$covRef) > 0)
+  
+  testthat::expect_true( 'covariateId' %in% colnames(data$covariates))
+  testthat::expect_true( 'covariateName' %in% colnames(data$covariates))
+  testthat::expect_true( 'sumValue_1' %in% colnames(data$covariates))
+  testthat::expect_true( 'averageValue_1' %in% colnames(data$covariates))
+  
+  testthat::expect_true(unique(data$covRef$cohortId) == 1)
+  
+})
+
+
+test_that("getCharacterizationCohortContinuous", {
+  # check results are returned
+  data <- getCharacterizationCohortContinuous(
+    connectionHandler = connectionHandler, 
+    schema = 'main', 
+    targetIds = 1
+  )
+  
+  testthat::expect_true(nrow(data$covariates) > 0)
+  testthat::expect_true(nrow(data$covRef) > 0)
+  
+  testthat::expect_true( 'covariateName' %in% colnames(data$covariates))
+  testthat::expect_true( 'covariateId' %in% colnames(data$covariates))
+  testthat::expect_true( 'minPriorObservation' %in% colnames(data$covariates))
+  testthat::expect_true( 'covariateId' %in% colnames(data$covariates))
+  testthat::expect_true( 'countValue_1' %in% colnames(data$covariates))
+  testthat::expect_true( 'averageValue_1' %in% colnames(data$covariates))
+  
+  testthat::expect_true(unique(data$covRef$cohortId) == 1)
+  
+})

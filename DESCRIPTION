@@ -1,8 +1,8 @@
 Package: OhdsiReportGenerator
 Type: Package
 Title: Observational Health Data Sciences and Informatics Report Generator
-Version: 1.1.1
-Date: 2025-5-08
+Version: 2.0.0
+Date: 2025-9-24
 Authors@R: c(
   person("Jenna", "Reps", email = "jreps@its.jnj.com", role = c("aut", "cre")),
   person("Anthony", "Sena", email = "sena@ohdsi.org", role = c("aut"))
@@ -20,6 +20,7 @@ Imports:
   DatabaseConnector,
   forestplot,
   dplyr,
+  fs,
   ggplot2,
   ggpubr,
   gt,
@@ -27,7 +28,7 @@ Imports:
   kableExtra,
   ParallelLogger,
   quarto,
-  reactable,
+  reactable (>= 0.4.4),
   rlang,
   rmarkdown,
   tibble,

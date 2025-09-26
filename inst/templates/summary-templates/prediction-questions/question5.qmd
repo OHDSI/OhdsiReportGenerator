@@ -1,0 +1,62 @@
+
+```{r}
+#| echo: false
+#| results: 'asis'
+#| fig-width: 12
+#| fig-height: 10
+
+ predictors <- OhdsiReportGenerator::getPredictionAggregateTopPredictors(
+    connectionHandler = connectionHandler, 
+    schema = schema,
+    plpTablePrefix = params$plpTablePrefix,
+    databaseTable = 'database_meta_data',
+    cgTablePrefix = params$cgTablePrefix, 
+    #databaseTablePrefix = params$databaseTablePrefix,   
+    modelDesignIds = modelDesignOfIntCohorts$modelDesignId
+    )
+  
+cat(paste0('\n\n### ', TA))
+cat('\n\n')
+
+if(nrow(predictors) > 0 ){
+
+predictors$covariateName <- gsub(
+  'cohort during day -9999 through -1 days relative to index:', 
+  '',
+  predictors$covariateName
+  )
+predictors$covariateName <- gsub(
+  'cohort during day -365 through 0 days relative to index:', 
+  '',
+  predictors$covariateName
+  )
+
+# total across databases for order
+predictorsOrder <- predictors %>%
+  dplyr::group_by(.data$covariateName) %>%
+  dplyr::summarise(
+    N = sum(.data$numberOfTimesPredictive)
+  )
+
+predictors$covariateName <- factor(
+  predictors$covariateName, 
+  levels = predictorsOrder$covariateName[order(predictorsOrder$N)]
+    )
+
+ggplot2::ggplot(
+  data = predictors, 
+  mapping = ggplot2::aes(x=.data$covariateName, y=.data$numberOfTimesPredictive)
+  ) +
+  ggplot2::geom_bar(stat='identity', na.rm=TRUE) +
+  ggplot2::coord_flip() +
+  ggplot2::facet_grid(. ~ .data$databaseName, scales = 'free_x') +
+  ggplot2::theme(
+    axis.title.y = ggplot2::element_blank(),
+    axis.text = ggplot2::element_text(size=6)
+    #,strip.text.y.right = ggplot2::element_text(angle = 0)
+    )
+
+}
+cat('\n\n')
+  
+```

@@ -37,6 +37,7 @@ Returns a data.frame with the columns:
 \itemize{  
  \item{performanceId the unique identifier for the performance}
  \item{modelDesignId the unique identifier for the model design}
+ \item{modelType the type of classifier}
  \item{developmentDatabaseId the unique identifier for the database used to develop the model}
  \item{validationDatabaseId the unique identifier for the database used to validate the model}
  \item{developmentTargetId the unique cohort id for the development target population}
@@ -83,13 +84,19 @@ perf <- getPredictionPerformances(
 }
 \seealso{
 Other Prediction: 
+\code{\link{getFullPredictionPerformances}()},
+\code{\link{getPredictionAggregateTopPredictors}()},
 \code{\link{getPredictionCohorts}()},
+\code{\link{getPredictionCovariates}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
 \code{\link{getPredictionHyperParamSearch}()},
 \code{\link{getPredictionIntercept}()},
+\code{\link{getPredictionLift}()},
 \code{\link{getPredictionModelDesigns}()},
+\code{\link{getPredictionOutcomes}()},
 \code{\link{getPredictionPerformanceTable}()},
+\code{\link{getPredictionTargets}()},
 \code{\link{getPredictionTopPredictors}()}
 }
 \concept{Prediction}

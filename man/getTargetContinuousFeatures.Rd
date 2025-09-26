@@ -11,7 +11,8 @@ getTargetContinuousFeatures(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   targetIds = NULL,
-  analysisIds = NULL
+  analysisIds = NULL,
+  databaseIds = NULL
 )
 }
 \arguments{
@@ -28,11 +29,14 @@ getTargetContinuousFeatures(
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 
 \item{analysisIds}{The feature extraction analysis ID of interest (e.g., 201 is condition)}
+
+\item{databaseIds}{(Optional) A vector of database IDs to restrict to}
 }
 \value{
 Returns a data.frame with the columns:
 \itemize{
  \item{databaseName the name of the database}
+ \item{databaseId the unique identifier of the database}
  \item{targetName the target cohort name}
  \item{targetId the target cohort unique identifier}
  \item{minPriorObservation the minimum required observation days prior to index for an entry}
@@ -75,13 +79,21 @@ Other Characterization:
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseContinuousFeatures}()},
 \code{\link{getCaseCounts}()},
+\code{\link{getCaseTargetBinaryFeatures}()},
+\code{\link{getCaseTargetCounts}()},
+\code{\link{getCharacterizationCohortBinary}()},
+\code{\link{getCharacterizationCohortContinuous}()},
 \code{\link{getCharacterizationDemographics}()},
+\code{\link{getCharacterizationOutcomes}()},
+\code{\link{getCharacterizationTargets}()},
 \code{\link{getContinuousCaseSeries}()},
 \code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
+\code{\link{getDechallengeRechallengeFails}()},
+\code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
+\code{\link{getIncidenceTargets}()},
 \code{\link{getTargetBinaryFeatures}()},
-\code{\link{getTargetCounts}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()}

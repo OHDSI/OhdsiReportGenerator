@@ -5,7 +5,6 @@ format:
     self-contained: true
     scrollable: true
     theme: [default, presentation_style.scss]
-    logo: img/logo.png
     title-slide-attributes:
       data-background-color: "#EB1700"
     footer: "ASSURE Analysis"
@@ -260,7 +259,7 @@ if(params$includeCI){
 ciTargetIds <- connectionHandler$queryDb("select distinct target_cohort_definition_id from @schema.ci_target_def;", schema = resultsSchema)
 
 # targets
-targetsCi <- targets %>% filter(
+targetsCi <- targets %>% dplyr::filter(
 .data$cohortDefinitionId %in% !!ciTargetIds$targetCohortDefinitionId
 )
 

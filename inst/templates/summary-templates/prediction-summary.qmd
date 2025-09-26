@@ -1,0 +1,123 @@
+---
+title: "Prediction Summary Report"
+lightbox: true
+title-block-banner: red
+description: "Information about the prediction models for a specified set of target cohorts."
+date: today
+format: 
+  html:
+    code-fold: true
+    embed-resources: true
+    page-layout: full
+params:
+  targetIds: !expr c(7795, 16916, 7788, 13947,7813,18770,
+              7820, 10640, 7812, 15645, 7826, 3376,
+              7811, 10626, 7815, 10617, 7810, 10682,
+              7827, 10630, 7792, 16927, 16960)
+  outcomeIds: !expr NULL         
+  schema: 'main'
+  server: ''
+  username: !expr NULL
+  password: !expr NULL
+  dbms: 'sqlite'
+  cgTablePrefix: 'cg_'
+  plpTablePrefix: 'plp_'
+  databaseTablePrefix: ''
+engine: knitr
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| hide: true
+#| output: false
+
+library(dplyr)
+
+targetIds <- params$targetIds
+outcomeIds <- params$outcomeIds
+schema <- params$schema
+
+# add connection here to use for the children
+connectionDetails <- DatabaseConnector::createConnectionDetails(
+  dbms = params$dbms, 
+  user = params$username, 
+  password = params$password, 
+  server = params$server
+)
+
+connectionHandler <- ResultModelManager::ConnectionHandler$new(
+  connectionDetails = connectionDetails
+)
+
+
+# load questions
+
+predictionQuestLoc <- system.file('templates/summary-templates/prediction-questions.csv', package = 'OhdsiReportGenerator')
+predictionQuest <- read.csv(file = predictionQuestLoc)
+
+
+# get model designIdsOfInt
+modelDesignIdsOfInt <- OhdsiReportGenerator::getPredictionModelDesigns(
+  connectionHandler = connectionHandler, 
+  schema = schema, 
+  plpTablePrefix = params$plpTablePrefix, 
+  cgTablePrefix = params$cgTablePrefix,
+  targetIds = targetIds, 
+  outcomeIds = outcomeIds
+    )
+
+jsons <- modelDesignIdsOfInt$covariateSettingsJson
+
+jsons <- lapply(jsons, function(json) ParallelLogger::convertJsonToSettings(json))
+
+# restrict to age/sex only covariateSetting
+covSingle <- unlist(lapply(jsons, function(json){length(json) == 1 } ))
+onlyAgeSex <- unlist(lapply(jsons, function(json){
+  sum(names(json[[1]]) %in% c("temporal","temporalSequence","DemographicsGender", "DemographicsAgeGroup", "longTermStartDays", "mediumTermStartDays", "shortTermStartDays", "endDays", "includedCovariateConceptIds", "addDescendantsToInclude", "excludedCovariateConceptIds", "addDescendantsToExclude", "includedCovariateIds")) == length(json[[1]])
+} ))
+
+ageSexInd <- covSingle & onlyAgeSex
+modelDesignIdsOfIntAgeSexOnly <- modelDesignIdsOfInt[ageSexInd,]
+
+# restrict to cohort feature covariateSetting  
+  cohortCovInd <- unlist(lapply(jsons, function(json){"getDbCohortBasedCovariatesData" %in% unlist(lapply(json, function(cset) attr(cset,"fun")))} ))
+modelDesignOfIntCohorts <- modelDesignIdsOfInt[cohortCovInd,]
+
+```
+
+```{r}
+#| label: questions
+#| echo: false
+#| results: 'asis'
+
+for(i in 1:nrow(predictionQuest)){
+cat(paste0('\n\n## [',predictionQuest$question[i],']{style="color:grey;"}'))
+cat(paste0('\n\n[', predictionQuest$description[i] ,']{style="color:red;font-size: small;"}'))  
+cat('\n\n:::: {.columns}')
+# show table/plot per TA
+for(TA in 'Selected Targets'){
+cat(paste0('\n\n::: {.column width="',100,'%"}'))
+
+  if(file.exists(paste0("prediction-questions/", predictionQuest$fileName[i]))){
+output <- knitr::knit_child(
+  text = knitr::knit_expand(
+  paste0("prediction-questions/", predictionQuest$fileName[i]), 
+  quiet = TRUE
+  ),quiet = TRUE)
+cat(output, sep = '\n')
+  } else{
+    cat(paste0('\n\n### ', TA))
+    cat('\n No question code \n')
+    cat(paste0('\n ',getwd(),' \n'))
+    cat(paste0('\n ',paste0("prediction-questions/", predictionQuest$fileName[i]),' \n'))
+}
+  
+cat('\n\n:::')
+}
+
+cat('\n\n::::')
+}
+  
+
+```

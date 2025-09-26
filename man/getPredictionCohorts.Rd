@@ -47,13 +47,19 @@ predCohorts <- getPredictionCohorts(
 }
 \seealso{
 Other Prediction: 
+\code{\link{getFullPredictionPerformances}()},
+\code{\link{getPredictionAggregateTopPredictors}()},
+\code{\link{getPredictionCovariates}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
 \code{\link{getPredictionHyperParamSearch}()},
 \code{\link{getPredictionIntercept}()},
+\code{\link{getPredictionLift}()},
 \code{\link{getPredictionModelDesigns}()},
+\code{\link{getPredictionOutcomes}()},
 \code{\link{getPredictionPerformanceTable}()},
 \code{\link{getPredictionPerformances}()},
+\code{\link{getPredictionTargets}()},
 \code{\link{getPredictionTopPredictors}()}
 }
 \concept{Prediction}

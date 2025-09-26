@@ -2,7 +2,7 @@
 % Please edit documentation in R/CharacterzationQueries.R
 \name{getTargetBinaryFeatures}
 \alias{getTargetBinaryFeatures}
-\title{Extract aggregate statistics of binary feature analysis IDs of interest for targets}
+\title{Extract aggregate statistics of binary feature analysis IDs of interest for targets (ignoring excluding people with prior outcome)}
 \usage{
 getTargetBinaryFeatures(
   connectionHandler,
@@ -10,9 +10,10 @@ getTargetBinaryFeatures(
   cTablePrefix = "c_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
-  targetIds = NULL,
-  outcomeIds = NULL,
-  analysisIds = c(3)
+  targetId = NULL,
+  databaseIds = NULL,
+  analysisIds = NULL,
+  conceptIds = NULL
 )
 }
 \arguments{
@@ -26,34 +27,34 @@ getTargetBinaryFeatures(
 
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
-\item{targetIds}{A vector of integers corresponding to the target cohort IDs}
+\item{targetId}{An integer corresponding to the target cohort ID}
 
-\item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
+\item{databaseIds}{(optional) A vector of database ids to restrict to}
 
-\item{analysisIds}{The feature extraction analysis ID of interest (e.g., 201 is condition)}
+\item{analysisIds}{(optional) The feature extraction analysis ID of interest (e.g., 201 is condition)}
+
+\item{conceptIds}{(optional) The feature extraction concept ID of interest to restrict to}
 }
 \value{
 Returns a data.frame with the columns:
 \itemize{
  \item{databaseName the name of the database}
+ \item{databaseId the unique identifier of the database}
  \item{targetName the target cohort name}
  \item{targetId the target cohort unique identifier}
- \item{outcomeName the outcome name}
- \item{outcomeId the outcome unique identifier}
  \item{minPriorObservation the minimum required observation days prior to index for an entry}
- \item{outcomeWashoutDays patients with the outcome occurring within this number of days prior to index are excluded (NA means no exclusion)}
  \item{covariateId the id of the feature}
  \item{covariateName the name of the feature}
- \item{sumValue the number of target patients who have the feature value of 1 (minus those excluded due to having the outcome prior)}
- \item{rawSum the number of target patients who have the feature value of 1 (ignoring exclusions)}
- \item{rawAverage the fraction of target patients who have the feature value of 1 (ignoring exclusions)}
+ \item{sumValue the number of target patients who have the feature value of 1 (target patients are restricted to first occurrence and require min prior obervation days)}
+ \item{averageAvalue the fraction of target patients who have the feature value of 1 (target patients are restricted to first occurrence and require min prior obervation days)}
 }
 }
 \description{
-This function extracts the feature extraction results for targets corresponding to specified target and outcome cohorts.
+This function extracts the feature extraction results for targets corresponding to specified target
+ but does not exclude any patients with the outcome during the outcome washout (so it agnostic to the outcome of interest).
 }
 \details{
-Specify the connectionHandler, the schema and the target/outcome cohort IDs
+Specify the connectionHandler, the schema and the target cohort IDs
 }
 \examples{
 conDet <- getExampleConnectionDetails()
@@ -62,7 +63,8 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 
 tbf <- getTargetBinaryFeatures (
 connectionHandler = connectionHandler, 
-schema = 'main'
+schema = 'main',
+targetId = 1
 )
 
 }
@@ -73,13 +75,21 @@ Other Characterization:
 \code{\link{getCaseBinaryFeatures}()},
 \code{\link{getCaseContinuousFeatures}()},
 \code{\link{getCaseCounts}()},
+\code{\link{getCaseTargetBinaryFeatures}()},
+\code{\link{getCaseTargetCounts}()},
+\code{\link{getCharacterizationCohortBinary}()},
+\code{\link{getCharacterizationCohortContinuous}()},
 \code{\link{getCharacterizationDemographics}()},
+\code{\link{getCharacterizationOutcomes}()},
+\code{\link{getCharacterizationTargets}()},
 \code{\link{getContinuousCaseSeries}()},
 \code{\link{getContinuousRiskFactors}()},
 \code{\link{getDechallengeRechallenge}()},
+\code{\link{getDechallengeRechallengeFails}()},
+\code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
+\code{\link{getIncidenceTargets}()},
 \code{\link{getTargetContinuousFeatures}()},
-\code{\link{getTargetCounts}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()}

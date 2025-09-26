@@ -33,6 +33,8 @@ getSccsEstimation(
 Returns a data.frame with the columns:
 \itemize{
  \item{databaseName the database name}
+ \item{databaseId the database id}
+ \item{exposuresOutcomeSetId the exposure outcome set identifier}
  \item{analysisId the analysis unique identifier}
  \item{description an analysis description}
  \item{targetName the target name}
@@ -42,6 +44,7 @@ Returns a data.frame with the columns:
  \item{indicationName the indication name}
  \item{indicatonId the indication cohort id}
  \item{covariateName whether main or secondary analysis}
+ \item{covariateId the analysis id}
  \item{outcomeSubjects The number of subjects with at least one outcome.}
  \item{outcomeEvents The number of outcome events.}
  \item{outcomeObservationPeriods The number of observation periods containing at least one outcome.}
@@ -92,8 +95,19 @@ Other Estimation:
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
+\code{\link{getCmNegativeControlEstimates}()},
+\code{\link{getCmOutcomes}()},
+\code{\link{getCmPropensityModel}()},
+\code{\link{getCmTable}()},
+\code{\link{getCmTargets}()},
 \code{\link{getSccsDiagnosticsData}()},
 \code{\link{getSccsMetaEstimation}()},
+\code{\link{getSccsModel}()},
+\code{\link{getSccsNegativeControlEstimates}()},
+\code{\link{getSccsOutcomes}()},
+\code{\link{getSccsTable}()},
+\code{\link{getSccsTargets}()},
+\code{\link{getSccsTimeToEvent}()},
 \code{\link{plotCmEstimates}()},
 \code{\link{plotSccsEstimates}()}
 }

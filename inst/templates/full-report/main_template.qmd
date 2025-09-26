@@ -19,7 +19,7 @@ params:
   targetId: 1
   outcomeIds: 3
   indicationIds: ""
-  comparatorIds: !expr "c(2)"
+  comparatorIds: NULL
   cohortIds: !expr "c(1,3,2)"
   cohortNames: !expr "c('target', 'outcome', 'comp')"
   includeCI: true
@@ -47,6 +47,9 @@ library(dplyr)
 
 targetName <- params$cohortNames[params$cohortIds == params$targetId]
 outcomeName <- paste0(params$cohortNames[params$cohortIds %in% params$outcomeIds], collapse = '/')
+
+restrictToIndications <- !('All' %in% params$indicationIds)
+indicationIds <- params$indicationIds
 
 #====================================
 # first create connection details
@@ -92,28 +95,14 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(
 )
 #====================================
 
+
 # ===================================
 # Get Cohorts
 # ===================================
 
-orderDf <- data.frame(
-  subsetParent = c(
-    params$targetId,
-    params$outcomeIds, 
-    params$indicationIds,
-    params$comparatorIds
-  ),
-  order = 1:length(c(
-    params$targetId,
-    params$outcomeIds, 
-    params$indicationIds,
-    params$comparatorIds
-  ))
-)
-
 cohortDefinitions <- OhdsiReportGenerator::getCohortDefinitions(
   connectionHandler = connectionHandler, 
-  schema = params$schema
+  schema = params$schema 
 )
 
 # add the friendly names 
@@ -130,20 +119,55 @@ cohortDefinitions <-
   )
 cohortDefinitions$friendlyName[is.na(cohortDefinitions$friendlyName)] <- cohortDefinitions$cohortName[is.na(cohortDefinitions$friendlyName)]
 
-# add order column
-cohortDefinitions <- 
-  merge(
-    cohortDefinitions,
-    orderDf, 
-    by.x = 'subsetParent', 
-    by.y = 'subsetParent', 
-    all.x = TRUE
-  )
 
-subsetDef <- OhdsiReportGenerator::getCohortSubsetDefinitions(
-  connectionHandler = connectionHandler, 
-  schema = params$schema
-)
+# function to get indication subset:
+getIndication <- function(json){ 
+  if(is.na(json)){
+    return("")
+  }
+  if(is.null(json)){
+    return("")
+  }
+  sub <- ParallelLogger::convertJsonToSettings(as.character(json))
+  paste0(unlist(lapply(sub$subsetOperators, function(x){
+    
+if(x$subsetType == "CohortSubsetOperator"){
+    if(!x$negate){
+      return(paste0(x$cohortIds, collapse = ','))
+    }
+}
+
+  })), collapse = ',')}
+
+# function to get get TRUE for indication
+getIndication <- function(json){ 
+  if(is.na(json)){
+    return("" %in% params$indicationIds)
+  }
+  if(is.null(json)){
+    return("" %in% params$indicationIds)
+  }
+
+  sub <- ParallelLogger::convertJsonToSettings(as.character(json))
+  result <- any(unlist(lapply(sub$subsetOperators, function(x){
+    
+if(x$subsetType == "CohortSubsetOperator"){
+    if(!x$negate){
+      return(any(x$cohortIds %in% params$indicationIds))
+    }
+} 
+    return(FALSE)
+
+  })))
+  
+}
+
+if(restrictToIndications){
+cohortDefinitions$indicationOfInt <- unlist(lapply(cohortDefinitions$subsetDefinitionJson, getIndication))
+} else{
+  # if no restriction (indicationId == 'Any') set all to TRUE
+  cohortDefinitions$indicationOfInt <- TRUE
+}
 
 # function to convert subset to friendly text
 getSubsetString <- function(x){
@@ -201,44 +225,98 @@ getSubsetString <- function(x){
   
 }
 
-# add friendly subset text to cohorts
-subsetDefFriendly <- data.frame(
-  subsetDefinitionId = subsetDef$subsetDefinitionId,
-  subsetText = unlist(lapply(1:length(subsetDef$json), function(i) 
-    paste0(unlist(lapply(ParallelLogger::convertJsonToSettings(subsetDef$json[i])$subsetOperators, function(sub) getSubsetString(sub))), collapse = ' ')
-  ))
-)
-
-# add subset text or '' if no subset
-cohortDefinitions <- merge(cohortDefinitions, subsetDefFriendly, by = 'subsetDefinitionId', all.x = TRUE)
-if(sum(is.na(cohortDefinitions$subsetText))>0){
-  cohortDefinitions$subsetText[is.na(cohortDefinitions$subsetText)] <- ''
-}
+cohortDefinitions$subsetText <- unlist(lapply(1:length(cohortDefinitions$subsetDefinitionJson), function(i){ if(is.null(cohortDefinitions$subsetDefinitionJson[i])){return('')}; if(is.na(cohortDefinitions$subsetDefinitionJson[i])){return('')}
+    paste0(unlist(lapply(ParallelLogger::convertJsonToSettings(cohortDefinitions$subsetDefinitionJson[i])$subsetOperators, function(sub) getSubsetString(sub))), collapse = ' ')}
+))
 
 
-# for indications extract out the subsetDef cohorts and restrict to params$indicationIds
-# then get vector of indicationIds for the target
-indicationIds <- params$indicationIds
-if(is.null(indicationIds)){
-  indicationIds <- ''
-}
+# ===================================
 
-# for each indication get the comps in CM
+# Restrict cohortDefinitions to: 
+# 1) targetId with indicationOfInt == TRUE
+# 2) comparatorId with indicationOfInt == TRUE
+# 3) indicationId
+# 4) outcomeId
+
+targetsOfInterest <- cohortDefinitions %>%
+  dplyr::filter(
+    ((.data$subsetParent %in% params$targetId) & .data$indicationOfInt) |
+    ((.data$cohortDefinitionId %in% params$targetId) & ("" %in% indicationIds))
+  )
+targetIdsOfInterest <- targetsOfInterest$cohortDefinitionId
+
+
+# if comparators is NULL then include all in results
 comparatorIds <- params$comparatorIds
+if(is.null(params$comparatorIds)){
+  if(params$includeCohortMethod){
+    newComps <- OhdsiReportGenerator::getCmDiagnosticsData(
+      connectionHandler = connectionHandler,
+      schema = params$schema, 
+      targetIds = targetIdsOfInterest, 
+      outcomeIds = params$outcomeIds
+        )
+    
+    comparatorIds <- unique(cohortDefinitions$subsetParent[cohortDefinitions$cohortDefinitionId %in% unique(newComps$comparatorId)])
+    
+  }
+}
+  
+comparatorOfInterest <- cohortDefinitions %>%
+  dplyr::filter(
+    ((.data$subsetParent %in% comparatorIds) & .data$indicationOfInt) |
+    ((.data$cohortDefinitionId %in% comparatorIds) & ("" %in% indicationIds))  
+  )  
+ comparatorIdsOfInterest <-  comparatorOfInterest$cohortDefinitionId
+  
+ outcomeOfInterest <- cohortDefinitions %>%
+  dplyr::filter(
+    (.data$cohortDefinitionId %in% params$outcomeIds)
+  )
+  outcomeIdsOfInterest <- outcomeOfInterest$cohortDefinitionId
+  
+   indicationOfInterest <- cohortDefinitions %>%
+  dplyr::filter(
+    (.data$cohortDefinitionId %in% indicationIds)
+  )
+  indicationIdsOfInterest <- indicationOfInterest$cohortDefinitionId
+
+
+# for each  comps in CM get the name
 comparatorText <- paste0(unique(cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId %in% comparatorIds]), collapse = '/')
 
 # ===================================
 
+# add order column
+orderDf <- data.frame(
+  subsetParent = c(
+    params$targetId,
+    params$outcomeIds, 
+    params$indicationIds,
+    comparatorIds
+  ),
+  order = 1:length(c(
+    params$targetId,
+    params$outcomeIds, 
+    params$indicationIds,
+    comparatorIds
+  ))
+)
 
-
-# ===================================
+cohortDefinitions <- 
+  merge(
+    cohortDefinitions,
+    orderDf, 
+    by.x = 'subsetParent', 
+    by.y = 'subsetParent', 
+    all.x = TRUE
+  )
 
 #nNegativeControls <- 100 # remove?
 
 
 
 ```
-
 
 ```{r}
 #| label: summary
@@ -279,7 +357,9 @@ if(includeCI){
   # ===================================
   cohortIncidence <- OhdsiReportGenerator::getIncidenceRates(
     connectionHandler = connectionHandler, 
-    schema = params$schema
+    schema = params$schema, 
+    targetIds = unique(c(targetIdsOfInterest, comparatorIdsOfInterest, indicationIdsOfInterest)), 
+    outcomeIds = outcomeIdsOfInterest
   )
   
   cohortIncidenceUnstatified <- cohortIncidence %>%
@@ -318,54 +398,6 @@ cat(result, sep = '\n')
 
 if(includeCharacterization){
   # ===================================
-  # Get Characterization
-  # ===================================
-  
-  # TODO add tte?
-  if(FALSE){
-    tte <- OhdsiReportGenerator::getTimeToEvent(
-      connectionHandler = connectionHandler, 
-      schema = params$schema
-    )
-  }
-  
-  # Age and observation time extraction for all Ts and Os
-  caseContinuous <- OhdsiReportGenerator::getCaseContinuousFeatures(
-    connectionHandler = connectionHandler, 
-    schema = params$schema
-  )
-  if(nrow(caseContinuous)>0){
-  caseContinuousOfInterest <- caseContinuous %>% 
-    dplyr::filter(.data$covariateId %in% c(1002,1008,1009,1010))
-  caseContinuousOfInterest$tar <- paste0(
-    '(',caseContinuousOfInterest$startAnchor,' + ',caseContinuousOfInterest$riskWindowStart, ') - ',
-    '(',caseContinuousOfInterest$endAnchor,' + ', caseContinuousOfInterest$riskWindowEnd, ')'
-  )
-  } 
-  
-  targetContinuous <- OhdsiReportGenerator::getTargetContinuousFeatures(
-    connectionHandler = connectionHandler, 
-    schema = params$schema
-  )
-  targetContinuousOfInterest <- targetContinuous %>% 
-    dplyr::filter(.data$covariateId %in% c(1002,1008,1009,1010))
-  
-  # remove binary age group if age continuous is available  
-  binaryAnalyses <- c(1,2,3,4,5)
-  if(nrow(targetContinuousOfInterest) > 0){
-    if(1002 %in% unique(targetContinuousOfInterest$covariateId)){
-      binaryAnalyses <- c(1,2,4,5)
-    }
-  }
-  
-  targetBinaryOfInterest <- OhdsiReportGenerator::getTargetBinaryFeatures(
-    connectionHandler = connectionHandler, 
-    schema = params$schema, 
-    analysisIds = binaryAnalyses
-  )
-
-  
-  # ===================================
 result <- knitr::knit_child(text = knitr::knit_expand("characterization.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
 cat(result, sep = '\n')
 }
@@ -383,27 +415,64 @@ if(includeCohortMethod){
   # Get CohortMethod
   # ===================================
   
+  
+  # TODO: restrict to comparatorIdsOfInterest?
   cohortMethodDiagnostics <- OhdsiReportGenerator::getCmDiagnosticsData(
     connectionHandler = connectionHandler, 
-    schema = params$schema 
+    schema = params$schema, 
+    targetIds = unique(c(targetIdsOfInterest, indicationIdsOfInterest)),
+    outcomeIds = outcomeIdsOfInterest
   )
   
+  if(nrow(cohortMethodDiagnostics) > 0){
+    if(!is.null(params$comparatorIds)){
+    cohortMethodDiagnostics <- cohortMethodDiagnostics %>%
+      dplyr::filter(.data$comparatorId %in% comparatorOfInterest)
+    }
+  }
+  
+  if(nrow(cohortMethodDiagnostics) == 0){
+    includeCohortMethod <- FALSE
+  } else {
+  
+  # TODO: restrict to comparatorIdsOfInterest?
   cohortMethodResults <- OhdsiReportGenerator::getCMEstimation(
     connectionHandler = connectionHandler, 
-    schema = params$schema
+    schema = params$schema, 
+    targetIds = unique(c(targetIdsOfInterest, indicationIdsOfInterest)),
+    outcomeIds = outcomeIdsOfInterest
   )
   
+    if(nrow(cohortMethodResults) > 0){
+    if(!is.null(params$comparatorIds)){
+    cohortMethodResults <- cohortMethodResults %>%
+      dplyr::filter(.data$comparatorId %in% comparatorOfInterest)
+    }
+  }
+  
+  # TODO: restrict to comparatorIdsOfInterest?
   # return NULL if the evidence synth tables do not exist
   cohortMethodES <- tryCatch({OhdsiReportGenerator::getCmMetaEstimation(
     connectionHandler = connectionHandler, 
-    schema = params$schema
+    schema = params$schema, 
+    targetIds = unique(c(targetIdsOfInterest, indicationIdsOfInterest)),
+    outcomeIds = outcomeIdsOfInterest
   )}, error = function(e){return(invisible(NULL))})
+  
+  if(!is.null(cohortMethodES)){
+    if(nrow(cohortMethodES) > 0){
+      if(!is.null(params$comparatorIds)){
+      cohortMethodES <- cohortMethodES %>%
+       dplyr::filter(.data$comparatorId %in% comparatorOfInterest)
+      }
+    }
+  }
   
   cmTargets <- unique(cohortMethodDiagnostics$targetId)
   cmComparators <- unique(cohortMethodDiagnostics$comparatorId)
   cmOutcomes <- unique(cohortMethodDiagnostics$outcomeId)
   cmDesc <- unique(cohortMethodDiagnostics$description) # can we extract this?
-  
+  }
   # ===================================
 }
 
@@ -414,24 +483,53 @@ if(includeSccs){
   
   sccsDiagnostics <- OhdsiReportGenerator::getSccsDiagnosticsData(
     connectionHandler = connectionHandler, 
-    schema = params$schema 
-  )
+    schema = params$schema,
+    targetIds = unique(c(params$targetId, comparatorIds)), 
+    outcomeIds = outcomeIdsOfInterest
+  ) 
+  
+  # filter to the indications of interest
+  if(restrictToIndications){
+    sccsDiagnostics <- sccsDiagnostics %>%
+      dplyr::filter(ifelse(is.na(.data$indicationId), "", .data$indicationId)  %in% params$indicationId)
+  }
+  
+  if(nrow(sccsDiagnostics)  == 0){
+    includeSccs <- FALSE
+  } else {
   
   sccsResults <- OhdsiReportGenerator::getSccsEstimation(
     connectionHandler = connectionHandler, 
-    schema = params$schema
+    schema = params$schema,
+    targetIds = unique(c(params$targetId, comparatorIds)), 
+    outcomeIds = outcomeIdsOfInterest
   )
+  
+    # filter to the indications of interest
+  if(restrictToIndications){
+    sccsResults <- sccsResults %>%
+      dplyr::filter(ifelse(is.na(.data$indicationId), "", .data$indicationId)  %in% params$indicationId)
+  }
   
   # return NULL if the evidence synth tables do not exist
   sccsES <- tryCatch({OhdsiReportGenerator::getSccsMetaEstimation(
     connectionHandler = connectionHandler, 
-    schema = params$schema
+    schema = params$schema,
+    targetIds = unique(c(params$targetId, comparatorIds)), 
+    outcomeIds = outcomeIdsOfInterest
   )}, error = function(e){return(invisible(NULL))})
+  
+  if(restrictToIndications){
+    if(!is.null(sccsES)){
+    sccsES <- sccsES %>%
+      dplyr::filter(ifelse(is.na(.data$indicationId), "", .data$indicationId)  %in% params$indicationId)
+    }
+  }
   
   sccsTargets <- unique(sccsDiagnostics$targetId)
   sccsOutcomes <- unique(sccsDiagnostics$outcomeId)
   sccsDesc <- unique(sccsDiagnostics$description)
-
+}
   # ===================================
 }
   

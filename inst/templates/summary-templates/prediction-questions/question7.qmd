@@ -1,0 +1,57 @@
+
+```{r}
+#| echo: false
+#| results: 'asis'
+#| fig-width: 12
+
+demo <- OhdsiReportGenerator::getPredictionPerformanceTable(
+  connectionHandler = connectionHandler,
+  schema = schema,
+  table = 'demographic_summary',
+  modelDesignIds = modelDesignOfIntCohorts$modelDesignId, 
+  plpTablePrefix = params$plpTablePrefix
+)
+
+demo <- demo %>%
+  dplyr::filter(
+    .data$personCountAtRisk >= 100,
+    .data$evaluation == 'Test      '
+    ) %>%
+  dplyr::mutate(
+    error = abs(.data$averagePredictedProbability - .data$personCountWithOutcome/.data$personCountAtRisk)
+  )
+
+cat(paste0('\n\n### ', TA))
+cat('\n\n')
+
+if(nrow(demo) > 0 ){
+demo$ageGroup <- gsub('Age group: ','', demo$ageGroup)
+ageorder <- unlist(lapply(unique(demo$ageGroup), function(x) strsplit(x, '-')[[1]][1]))
+
+demo$ageGroup <- factor(
+  x = demo$ageGroup, 
+  levels = unique(demo$ageGroup)[order(-as.double(ageorder))]
+)
+
+# plot error by ageGroup, genGroup and databaseName
+suppressWarnings(
+ggplot2::ggplot(
+  data = demo, 
+  mapping = ggplot2::aes(
+    x = .data$ageGroup, 
+    y = .data$error
+    )
+  ) + 
+  ggplot2::geom_boxplot(na.rm=TRUE, outliers =  FALSE) +
+  ggplot2::coord_flip(
+    ylim = c(0, quantile(demo$error, probs = 0.99, na.rm = TRUE))
+    ) +
+  ggplot2::facet_grid(. ~ .data$genGroup) + 
+  ggplot2::theme(legend.position="bottom")
+)
+  
+}
+
+cat('\n\n')
+  
+```
