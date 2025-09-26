@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.1.1.9999</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.0.0.9999</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,6 +89,8 @@
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Returns a data.frame with the columns:</p><ul><li><p>databaseName the database name</p></li>
+<li><p>databaseId the database id</p></li>
+<li><p>exposuresOutcomeSetId the exposure outcome set identifier</p></li>
 <li><p>analysisId the analysis unique identifier</p></li>
 <li><p>description an analysis description</p></li>
 <li><p>targetName the target name</p></li>
@@ -98,6 +100,7 @@
 <li><p>indicationName the indication name</p></li>
 <li><p>indicatonId the indication cohort id</p></li>
 <li><p>covariateName whether main or secondary analysis</p></li>
+<li><p>covariateId the analysis id</p></li>
 <li><p>outcomeSubjects The number of subjects with at least one outcome.</p></li>
 <li><p>outcomeEvents The number of outcome events.</p></li>
 <li><p>outcomeObservationPeriods The number of observation periods containing at least one outcome.</p></li>
@@ -135,7 +138,7 @@
 <code><a href="getCmMetaEstimation.html">getCmMetaEstimation</a>()</code>,
 <code><a href="getCmNegativeControlEstimates.html">getCmNegativeControlEstimates</a>()</code>,
 <code><a href="getCmOutcomes.html">getCmOutcomes</a>()</code>,
-<code>getCmPropensityModel()</code>,
+<code><a href="getCmPropensityModel.html">getCmPropensityModel</a>()</code>,
 <code><a href="getCmTable.html">getCmTable</a>()</code>,
 <code><a href="getCmTargets.html">getCmTargets</a>()</code>,
 <code><a href="getSccsDiagnosticsData.html">getSccsDiagnosticsData</a>()</code>,
@@ -154,7 +157,7 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">conDet</span> <span class="op">&lt;-</span> <span class="fu"><a href="getExampleConnectionDetails.html">getExampleConnectionDetails</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">connectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/ResultModelManager/man/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">conDet</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">connectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://ohdsi.github.io/ResultModelManager/reference/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">conDet</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Connecting using SQLite driver</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">sccsEst</span> <span class="op">&lt;-</span> <span class="fu">getSccsEstimation</span><span class="op">(</span></span></span>

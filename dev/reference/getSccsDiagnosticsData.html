@@ -9,7 +9,7 @@ and checks for different types of bias."><meta name="robots" content="noindex"><
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.1.1.9999</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.0.0.9999</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -136,7 +136,7 @@ and checks for different types of bias.</p>
 <code><a href="getCmMetaEstimation.html">getCmMetaEstimation</a>()</code>,
 <code><a href="getCmNegativeControlEstimates.html">getCmNegativeControlEstimates</a>()</code>,
 <code><a href="getCmOutcomes.html">getCmOutcomes</a>()</code>,
-<code>getCmPropensityModel()</code>,
+<code><a href="getCmPropensityModel.html">getCmPropensityModel</a>()</code>,
 <code><a href="getCmTable.html">getCmTable</a>()</code>,
 <code><a href="getCmTargets.html">getCmTargets</a>()</code>,
 <code><a href="getSccsEstimation.html">getSccsEstimation</a>()</code>,
@@ -155,7 +155,7 @@ and checks for different types of bias.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">conDet</span> <span class="op">&lt;-</span> <span class="fu"><a href="getExampleConnectionDetails.html">getExampleConnectionDetails</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">connectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/ResultModelManager/man/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">conDet</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">connectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://ohdsi.github.io/ResultModelManager/reference/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">conDet</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Connecting using SQLite driver</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">sccsDiag</span> <span class="op">&lt;-</span> <span class="fu">getSccsDiagnosticsData</span><span class="op">(</span></span></span>
@@ -164,8 +164,6 @@ and checks for different types of bias.</p>
 <span class="r-in"><span>  targetIds <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  outcomeIds <span class="op">=</span> <span class="fl">3</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::relocate(., "summaryValue", .after = "outcome"):</span> Can't select columns that don't exist.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Column `outcome` doesn't exist.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

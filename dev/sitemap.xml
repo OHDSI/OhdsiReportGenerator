@@ -29,9 +29,15 @@
 <url><loc>/dev/reference/getCmMetaEstimation.html</loc></url>
 <url><loc>/dev/reference/getCmNegativeControlEstimates.html</loc></url>
 <url><loc>/dev/reference/getCmOutcomes.html</loc></url>
+<url><loc>/dev/reference/getCmPropensityModel.html</loc></url>
 <url><loc>/dev/reference/getCmTable.html</loc></url>
 <url><loc>/dev/reference/getCmTargets.html</loc></url>
+<url><loc>/dev/reference/getCohortCounts.html</loc></url>
 <url><loc>/dev/reference/getCohortDefinitions.html</loc></url>
+<url><loc>/dev/reference/getCohortInclusionRules.html</loc></url>
+<url><loc>/dev/reference/getCohortInclusionStats.html</loc></url>
+<url><loc>/dev/reference/getCohortInclusionSummary.html</loc></url>
+<url><loc>/dev/reference/getCohortMeta.html</loc></url>
 <url><loc>/dev/reference/getCohortSubsetDefinitions.html</loc></url>
 <url><loc>/dev/reference/getContinuousCaseSeries.html</loc></url>
 <url><loc>/dev/reference/getContinuousRiskFactors.html</loc></url>
@@ -46,6 +52,7 @@
 <url><loc>/dev/reference/getOutcomeTable.html</loc></url>
 <url><loc>/dev/reference/getPredictionAggregateTopPredictors.html</loc></url>
 <url><loc>/dev/reference/getPredictionCohorts.html</loc></url>
+<url><loc>/dev/reference/getPredictionCovariates.html</loc></url>
 <url><loc>/dev/reference/getPredictionDiagnosticTable.html</loc></url>
 <url><loc>/dev/reference/getPredictionDiagnostics.html</loc></url>
 <url><loc>/dev/reference/getPredictionHyperParamSearch.html</loc></url>
