@@ -5,7 +5,7 @@ test_that("generatePresentation", {
   
   #if skipQuarto skip this on CRAN
   if(skipQuarto){
-    testthat::skip_on_cran('Quarto not found so skipping generate presentation')
+    testthat::skip_on_cran()
   }
   
   savLoc <- file.path(tempdir(), 'example')
@@ -61,7 +61,7 @@ test_that("generateFullReport", {
   
   #if skipQuarto skip this on CRAN
   if(skipQuarto){
-    testthat::skip_on_cran('Quarto not found so skipping generate full report')
+    testthat::skip_on_cran()
   }
   
   savLoc <- file.path(tempdir(), 'example2')
