@@ -51,8 +51,7 @@ getCohortDefinitions <- function(
   result <- connectionHandler$queryDb(
     sql = sql,
     schema = resultDatabaseSettings$schema,
-    cg_table_prefix = resultDatabaseSettings$cgTablePrefix,
-    tpl_migration_present = tplMigrationPresent
+    cg_table_prefix = resultDatabaseSettings$cgTablePrefix
   )
   
   return(result)
