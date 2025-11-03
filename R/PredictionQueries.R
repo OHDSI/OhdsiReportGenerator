@@ -9,6 +9,7 @@
 #' @template schema
 #' @template plpTablePrefix
 #' @template cgTablePrefix
+#' @param databaseTable The database table name
 #' @template targetIds
 #' @template outcomeIds
 #' @param numberPredictors the number of predictors per model to return
@@ -57,6 +58,7 @@ getPredictionTopPredictors <- function(
     schema,
     plpTablePrefix = 'plp_',
     cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
     targetIds = NULL,
     outcomeIds = NULL,
     numberPredictors = 100
@@ -88,7 +90,7 @@ getPredictionTopPredictors <- function(
   inner join @schema.@plp_table_prefixdatabase_details dd
   on dd.database_id = p.development_database_id
   
-  inner join @schema.database_meta_data d
+  inner join @schema.@database_table d
   on d.database_id = dd.database_meta_data_id 
   
   inner join @schema.@plp_table_prefixtars tars
@@ -118,6 +120,7 @@ getPredictionTopPredictors <- function(
     schema = schema,
     plp_table_prefix = plpTablePrefix,
     #cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
     outcome_restrict = !is.null(outcomeIds),
     outcome_ids = paste0(outcomeIds, collapse = ','),
     target_restrict = !is.null(targetIds),
@@ -269,7 +272,8 @@ getPredictionTargets <- function(
           inner join
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
-        on c.cohort_definition_id = cd.cohort_definition_id
+        on c.cohort_definition_id = cd.cohort_definition_id 
+        and c.cohort_name = cd.cohort_name
         ) AS cohorts
         ON model_designs.target_id = cohorts.cohort_id
         ;"
@@ -338,6 +342,7 @@ getPredictionOutcomes <- function(
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS cohorts
         ON model_designs.outcome_id = cohorts.cohort_id
         
@@ -423,6 +428,7 @@ getPredictionCohorts <- function(
         (SELECT c.cohort_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS cohorts
         ON model_designs.@type_id = cohorts.cohort_id
         ;"
@@ -565,6 +571,7 @@ getPredictionModelDesigns <- function(
         FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS targets
         ON model_designs.target_id = targets.cohort_id
 
@@ -573,6 +580,7 @@ getPredictionModelDesigns <- function(
         FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS outcomes
         ON model_designs.outcome_id = outcomes.cohort_id
 
@@ -739,24 +747,28 @@ getPredictionPerformances <- function(
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS devtargets ON model_designs.target_id = devtargets.cohort_id
 
         LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS targets ON results.target_id = targets.cohort_id
 
         LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS outcomes ON results.outcome_id = outcomes.cohort_id
 
         LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS devoutcomes ON model_designs.outcome_id = devoutcomes.cohort_id
 
 
@@ -968,24 +980,28 @@ getFullPredictionPerformances <- function(
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS devtargets ON model_designs.target_id = devtargets.cohort_id
 
         LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS targets ON results.target_id = targets.cohort_id
 
         LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS outcomes ON results.outcome_id = outcomes.cohort_id
 
         LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS devoutcomes ON model_designs.outcome_id = devoutcomes.cohort_id
 
 
@@ -1461,7 +1477,8 @@ getPredictionCovariates <- function(
     (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name
      FROM @schema.@cg_table_prefixcohort_definition cd 
      INNER JOIN @schema.@plp_table_prefixcohorts c
-     ON c.cohort_definition_id = cd.cohort_definition_id
+     ON c.cohort_definition_id = cd.cohort_definition_id 
+     and c.cohort_name = cd.cohort_name
      ) as targets
      ON targets.cohort_id = p.target_id
      
@@ -1470,6 +1487,7 @@ getPredictionCovariates <- function(
      FROM @schema.@cg_table_prefixcohort_definition cd 
      INNER JOIN @schema.@plp_table_prefixcohorts c
      ON c.cohort_definition_id = cd.cohort_definition_id
+     and c.cohort_name = cd.cohort_name
      ) as outcomes
      ON outcomes.cohort_id = p.outcome_id
      
