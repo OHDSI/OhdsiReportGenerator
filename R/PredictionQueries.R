@@ -934,14 +934,14 @@ getFullPredictionPerformances <- function(
        results.development_database_id,
        results.validation_database_id,
        
-       devtargets.cohort_definition_id AS development_target_id,
+       devtargets.cohort_id AS development_target_id,
        devtargets.cohort_name AS development_target_name,
-       targets.cohort_definition_id AS validation_target_id,
+       targets.cohort_id AS validation_target_id,
        targets.cohort_name AS validation_target_name,
        
-       devoutcomes.cohort_definition_id AS development_outcome_id,
+       devoutcomes.cohort_id AS development_outcome_id,
        devoutcomes.cohort_name AS development_outcome_name,
-       outcomes.cohort_definition_id AS validation_outcome_id,
+       outcomes.cohort_id AS validation_outcome_id,
        outcomes.cohort_name AS validation_outcome_name,
        
        d.database_acronym AS development_database,
@@ -1441,11 +1441,19 @@ getPredictionCovariates <- function(
     db1.cdm_source_abbreviation as development_database_name,
     p.validation_database_id,
     db2.cdm_source_abbreviation as validation_database_name,
-    targets.cohort_definition_id as target_cohort_id,
-    targets.cohort_name as target_name,
-    outcomes.cohort_definition_id as outcome_cohort_id,
-    outcomes.cohort_name as outcome_name,
+    targets_dev.cohort_definition_id as development_target_cohort_id,
+    targets_dev.cohort_name as development_target_name,
+    targets.cohort_definition_id as validation_target_cohort_id,
+    targets.cohort_name as validation_target_name,
+    outcomes_dev.cohort_definition_id as development_outcome_cohort_id,
+    outcomes_dev.cohort_name as development_outcome_name,
+    outcomes.cohort_definition_id as validation_outcome_cohort_id,
+    outcomes.cohort_name as validation_outcome_name,
     t.*,
+    t_dev.tar_start_anchor as development_tar_start_anchor,
+    t_dev.tar_start_day as development_tar_start_day,
+    t_dev.tar_end_anchor as development_tar_end_anchor,
+    t_dev.tar_end_day as development_tar_end_day,
     p.plp_data_setting_id,
     ds.plp_data_settings_json,
     p.population_setting_id,
@@ -1456,6 +1464,9 @@ getPredictionCovariates <- function(
     
     INNER JOIN @schema.@plp_table_prefixperformances p 
     ON p.performance_id = toi.performance_id 
+    
+    INNER JOIN @schema.@plp_table_prefixmodel_designs md 
+    on md.model_design_id = p.model_design_id
     
     INNER JOIN
     (SELECT dd.database_id, md.cdm_source_abbreviation
@@ -1486,13 +1497,34 @@ getPredictionCovariates <- function(
     (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name
      FROM @schema.@cg_table_prefixcohort_definition cd 
      INNER JOIN @schema.@plp_table_prefixcohorts c
+     ON c.cohort_definition_id = cd.cohort_definition_id 
+     and c.cohort_name = cd.cohort_name
+     ) as targets_dev
+     ON targets_dev.cohort_id = md.target_id
+     
+     INNER JOIN
+    (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name
+     FROM @schema.@cg_table_prefixcohort_definition cd 
+     INNER JOIN @schema.@plp_table_prefixcohorts c
      ON c.cohort_definition_id = cd.cohort_definition_id
      and c.cohort_name = cd.cohort_name
      ) as outcomes
      ON outcomes.cohort_id = p.outcome_id
      
+    INNER JOIN
+    (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name
+     FROM @schema.@cg_table_prefixcohort_definition cd 
+     INNER JOIN @schema.@plp_table_prefixcohorts c
+     ON c.cohort_definition_id = cd.cohort_definition_id
+     and c.cohort_name = cd.cohort_name
+     ) as outcomes_dev
+     ON outcomes_dev.cohort_id = md.outcome_id
+     
     INNER JOIN @schema.@plp_table_prefixtars t
     ON p.tar_id = t.tar_id
+    
+    INNER JOIN @schema.@plp_table_prefixtars t_dev
+    ON md.tar_id = t_dev.tar_id
     
     INNER JOIN 
     @schema.@plp_table_prefixplp_data_settings ds
@@ -1520,12 +1552,22 @@ getPredictionCovariates <- function(
   )
   
   if(nrow(result) >0){
+    
     result <- result %>%
-      dplyr::mutate(timeAtRisk = paste0('( ',.data$tarStartAnchor, '+', .data$tarStartDay, ' ) - ',
+      dplyr::mutate(
+        validationTimeAtRisk = paste0('( ',.data$tarStartAnchor, '+', .data$tarStartDay, ' ) - ',
                                         '( ',.data$tarEndAnchor, '+', .data$tarEndDay, ' )'
-      )) %>%
-      dplyr::select(-"tarStartAnchor", - "tarStartDay", -"tarEndAnchor", -"tarEndDay") %>%
-      dplyr::relocate("timeAtRisk", .after = "outcomeName")
+      ),
+      developmentTimeAtRisk = paste0('( ',.data$developmentTarStartAnchor, '+', .data$developmentTarStartDay, ' ) - ',
+                                    '( ',.data$developmentTarEndAnchor, '+', .data$developmentTarEndDay, ' )'
+      )
+      ) %>%
+      dplyr::select(
+        -"tarStartAnchor", - "tarStartDay", -"tarEndAnchor", -"tarEndDay",
+        -"developmentTarStartAnchor", - "developmentTarStartDay", -"developmentTarEndAnchor", -"developmentTarEndDay"
+        ) %>%
+      dplyr::relocate("developmentTimeAtRisk", .after = "developmentOutcomeName") %>%
+      dplyr::relocate("validationTimeAtRisk", .after = "validationOutcomeName")
     
   }
   
@@ -1739,7 +1781,10 @@ getPredictionHyperParamSearch <- function(
       model_design_id = modelDesignId,
       plp_table_prefix = plpTablePrefix
     )
-    trainDetails <- ParallelLogger::convertJsonToSettings(models$trainDetails)
+    trainDetails <- tryCatch(
+      {ParallelLogger::convertJsonToSettings(models$trainDetails)}, 
+      error = function(e){print(e); return(list(hyperParamSearch = data.frame()))}
+    )
     
     return(trainDetails$hyperParamSearch)
   } else{
