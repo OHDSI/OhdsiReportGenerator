@@ -934,14 +934,14 @@ getFullPredictionPerformances <- function(
        results.development_database_id,
        results.validation_database_id,
        
-       devtargets.cohort_id AS development_target_id,
+       devtargets.cohort_definition_id AS development_target_id,
        devtargets.cohort_name AS development_target_name,
-       targets.cohort_id AS validation_target_id,
+       targets.cohort_definition_id AS validation_target_id,
        targets.cohort_name AS validation_target_name,
        
-       devoutcomes.cohort_id AS development_outcome_id,
+       devoutcomes.cohort_definition_id AS development_outcome_id,
        devoutcomes.cohort_name AS development_outcome_name,
-       outcomes.cohort_id AS validation_outcome_id,
+       outcomes.cohort_definition_id AS validation_outcome_id,
        outcomes.cohort_name AS validation_outcome_name,
        
        d.database_acronym AS development_database,
