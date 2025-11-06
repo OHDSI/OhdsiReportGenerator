@@ -8,7 +8,7 @@ SQL:
 select * from main.c_time_to_event_targets limit 1;
 
 R version:
-R version 4.5.1 (2025-06-13)
+R version 4.5.2 (2025-10-31)
 
 Platform:
 x86_64-pc-linux-gnu
@@ -23,4 +23,4 @@ Attached base packages:
 - base
 
 Other attached packages:
-- OhdsiReportGenerator (2.0.0)
+- OhdsiReportGenerator (2.0.1)
