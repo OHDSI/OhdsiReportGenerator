@@ -43,7 +43,7 @@ for(i in 1:length(params$outcomeIds)){
     res <- OhdsiReportGenerator::getBinaryCaseSeries(
       connectionHandler = connectionHandler, 
       schema = params$schema, 
-      targetId = !!targetIds[j], 
+      targetId = targetIds[j], 
       outcomeId = params$outcomeIds[i],
       conceptIds = unique(conceptsInOutcome),
       minVal = 0.01

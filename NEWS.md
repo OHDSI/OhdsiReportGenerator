@@ -1,3 +1,8 @@
+OhdsiReportGenerator v2.0.1
+======================
+- fixed odd bug when generating full report with !!targetId being in the code
+- updated prediction queries 
+
 OhdsiReportGenerator v2.0.0
 ======================
 - added new functions to extract prediction results
