@@ -41,6 +41,10 @@ generateSummaryPredictionReport <- function(
     overwrite = FALSE
 ){
   
+  # check ResultModelManager is installed as it is used
+  # in quarto code
+  rlang::check_installed("ResultModelManager")
+  
   templateLoc <- system.file(
     'templates',
     'summary-templates', 
