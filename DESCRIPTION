@@ -29,6 +29,7 @@ Imports:
   ParallelLogger,
   quarto,
   reactable (>= 0.4.4),
+  ResultModelManager,
   rlang,
   rmarkdown,
   tibble,
@@ -36,7 +37,6 @@ Imports:
 Suggests:
   knitr,
   markdown,
-  ResultModelManager,
   RSQLite,
   testthat
 RoxygenNote: 7.3.2
