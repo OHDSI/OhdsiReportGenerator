@@ -83,6 +83,10 @@ generatePresentation <- function(
     pathToDriver = Sys.getenv("DATABASECONNECTOR_JAR_FOLDER")
 ){
   
+  # check ResultModelManager is installed as it is used
+  # in quarto code
+  rlang::check_installed("ResultModelManager")
+  
   if(missing(outputLocation)){
     stop('Must enter location for outputLocation')
   }
@@ -235,6 +239,10 @@ generateFullReport <- function(
     intermediateDir = tempdir(),
     pathToDriver = Sys.getenv("DATABASECONNECTOR_JAR_FOLDER")
 ){
+  
+  # check ResultModelManager is installed as it is used
+  # in quarto code
+  rlang::check_installed("ResultModelManager")
   
   if(missing(outputLocation)){
     stop('Must enter location for outputLocation')
