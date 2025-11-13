@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Extract the cohort meta</h1>
-      <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/v2.0.1/R/CohortQueries.R" class="external-link"><code>R/CohortQueries.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/develop/R/CohortQueries.R" class="external-link"><code>R/CohortQueries.R</code></a></small>
       <div class="d-none name"><code>getCohortMeta.Rd</code></div>
     </div>
 
@@ -87,13 +87,13 @@
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other Cohorts:
-<code><a href="getCohortCounts.html">getCohortCounts</a>()</code>,
-<code><a href="getCohortDefinitions.html">getCohortDefinitions</a>()</code>,
-<code><a href="getCohortInclusionRules.html">getCohortInclusionRules</a>()</code>,
-<code><a href="getCohortInclusionStats.html">getCohortInclusionStats</a>()</code>,
-<code><a href="getCohortInclusionSummary.html">getCohortInclusionSummary</a>()</code>,
-<code><a href="getCohortSubsetDefinitions.html">getCohortSubsetDefinitions</a>()</code>,
-<code><a href="processCohorts.html">processCohorts</a>()</code></p></div>
+<code><a href="getCohortCounts.html">getCohortCounts()</a></code>,
+<code><a href="getCohortDefinitions.html">getCohortDefinitions()</a></code>,
+<code><a href="getCohortInclusionRules.html">getCohortInclusionRules()</a></code>,
+<code><a href="getCohortInclusionStats.html">getCohortInclusionStats()</a></code>,
+<code><a href="getCohortInclusionSummary.html">getCohortInclusionSummary()</a></code>,
+<code><a href="getCohortSubsetDefinitions.html">getCohortSubsetDefinitions()</a></code>,
+<code><a href="processCohorts.html">processCohorts()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -107,6 +107,27 @@
 <span class="r-in"><span>  connectionHandler <span class="op">=</span> <span class="va">connectionHandler</span>, </span></span>
 <span class="r-in"><span>  schema <span class="op">=</span> <span class="st">'main'</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;simpleError in value[[3L]](cond): SELECT </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cd.cohort_definition_id as cohort_id, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cd.cohort_name,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cg.generation_status, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cg.start_time, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cg.end_time, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dt.cdm_source_name as database_name,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   dt.database_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   FROM main.cg_COHORT_GENERATION cg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   INNER JOIN main.database_meta_data dt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ON cg.database_id = dt.database_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   INNER JOIN main.cg_COHORT_DEFINITION cd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ON cg.cohort_definition_id = cd.cohort_definition_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `.createErrorReport()`:</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Error executing SQL:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> no such column: cg.cohort_definition_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> An error report has been created at  /home/runner/work/OhdsiReportGenerator/OhdsiReportGenerator/docs/reference/errorReportSql.txt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "COHORT_GENERATION table has outdated column name for cohort_definition_id"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -119,7 +140,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
