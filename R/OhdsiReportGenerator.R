@@ -20,5 +20,6 @@
 #'
 #' @name OhdsiReportGenerator
 #' @importFrom dplyr %>%
+#' @importFrom rlang :=
 #' @importFrom rlang .data
 "_PACKAGE"

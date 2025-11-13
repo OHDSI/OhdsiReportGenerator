@@ -312,3 +312,53 @@ test_that("getPredictionCovariates ", {
   testthat::expect_true(unique(filterdata$performanceId) == 1)
   
 })
+
+
+test_that("addPredictionTimeAtRisk works ", {
+  
+dres <- data.frame(
+  test = 1:4,
+  tarStartAnchor = c('start', 'end', 'start', 'start'),
+  tarStartDay =  rep(0,4),
+  tarEndAnchor = c('start', 'end', 'end', 'end'),
+  tarEndDay = rep(30,4)
+)
+res <- addPredictionTimeAtRisk(
+  result = dres, 
+  tarColumnName = 'newtar'
+  )
+
+testthat::expect_true('newtar' %in% colnames(res))
+testthat::expect_true(!'tarStartAnchor' %in% colnames(res))
+testthat::expect_true(!'tarStartDay' %in% colnames(res))
+testthat::expect_true(!'tarEndAnchor' %in% colnames(res))
+testthat::expect_true(!'tarEndDay' %in% colnames(res))
+
+# check tar 1 is correct
+testthat::expect_true(res$newtar[1] == '(start + 0) - (start + 30)')
+
+
+dres <- data.frame(
+  test = 1:4,
+  rTarStartAnchor = c('start', 'end', 'start', 'start'),
+  rTarStartDay =  rep(0,4),
+  rTarEndAnchor = c('start', 'end', 'end', 'end'),
+  rTarEndDay = rep(30,4)
+)
+res <- addPredictionTimeAtRisk(
+  result = dres, 
+  tarColumnName = 'tar', 
+  tarStartAnchor = 'rTarStartAnchor', 
+  tarStartDay = 'rTarStartDay', 
+  tarEndAnchor = 'rTarEndAnchor', 
+  tarEndDay = 'rTarEndDay', 
+  removeIndividualTarColumns = FALSE
+  )
+
+testthat::expect_true('tar' %in% colnames(res))
+testthat::expect_true('rTarStartAnchor' %in% colnames(res))
+testthat::expect_true('rTarStartDay' %in% colnames(res))
+testthat::expect_true('rTarEndAnchor' %in% colnames(res))
+testthat::expect_true('rTarEndDay' %in% colnames(res))
+
+})

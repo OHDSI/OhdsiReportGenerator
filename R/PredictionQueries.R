@@ -606,13 +606,18 @@ getPredictionModelDesigns <- function(
     model_design_ids = paste(modelDesignIds, collapse = ','),
   )
   
+  # add TAR column and remove individual TARs
+  summaryTable <- addPredictionTimeAtRisk(
+    result = summaryTable,
+    tarColumnName = 'timeAtRisk',
+    tarStartAnchor = 'tarStartAnchor',
+    tarStartDay = 'tarStartDay',
+    tarEndAnchor = 'tarEndAnchor',
+    tarEndDay = 'tarEndDay',
+    removeIndividualTarColumns = TRUE
+  )
   
-  #TODO trim ws
   summaryTable <- summaryTable %>%
-    dplyr::mutate(timeAtRisk = paste0('( ',.data$tarStartAnchor, '+', .data$tarStartDay, ' ) - ',
-                                      '( ',.data$tarEndAnchor, '+', .data$tarEndDay, ' )'
-    )) %>%
-    dplyr::select(-"tarStartAnchor", - "tarStartDay", -"tarEndAnchor", -"tarEndDay") %>%
     dplyr::relocate("timeAtRisk", .after = "developmentOutcomeName")
   
   return(summaryTable)
@@ -820,11 +825,16 @@ getPredictionPerformances <- function(
     cg_table_prefix = cgTablePrefix
   )
   
-  summaryTable <- summaryTable %>%
-    dplyr::mutate(validationTimeAtRisk = paste0('( ',.data$tarStartAnchor, '+', .data$tarStartDay, ' ) - ',
-                                                '( ',.data$tarEndAnchor, '+', .data$tarEndDay, ' )'
-    )) %>%
-    dplyr::select(-"tarStartAnchor", - "tarStartDay", -"tarEndAnchor", -"tarEndDay")
+  
+  summaryTable <- addPredictionTimeAtRisk(
+    result = summaryTable,
+    tarColumnName = 'validationTimeAtRisk',
+    tarStartAnchor = 'tarStartAnchor',
+    tarStartDay = 'tarStartDay',
+    tarEndAnchor = 'tarEndAnchor',
+    tarEndDay = 'tarEndDay',
+    removeIndividualTarColumns = TRUE
+  )
   
   summaryTable$validationTargetName <- trimws(summaryTable$validationTargetName )
   summaryTable$validationOutcomeName <- trimws(summaryTable$validationOutcomeName)
@@ -1042,26 +1052,26 @@ getFullPredictionPerformances <- function(
   # process table if it is not empty
   if(nrow(summaryTable) > 0){
     
-    summaryTable <- summaryTable %>%
-      dplyr::mutate(
-        validationTimeAtRisk = paste0('( ',trimws(.data$tarStartAnchor), '+', trimws(.data$tarStartDay), ' ) - ',
-                                      '( ',trimws(.data$tarEndAnchor), '+', trimws(.data$tarEndDay), ' )'
-        ),
-        developmentTimeAtRisk = paste0('( ',trimws(.data$devTarStartAnchor), '+', trimws(.data$devTarStartDay), ' ) - ',
-                                   '( ',trimws(.data$devTarEndAnchor), '+', trimws(.data$devTarEndDay), ' )'
-        )
-        
-      ) %>%
-      dplyr::select(
-        -"tarStartAnchor", - "tarStartDay", -"tarEndAnchor", -"tarEndDay",
-        -"devTarStartAnchor", - "devTarStartDay", -"devTarEndAnchor", -"devTarEndDay"
-      )
+    summaryTable <- addPredictionTimeAtRisk(
+      result = summaryTable,
+      tarColumnName = 'validationTimeAtRisk',
+      tarStartAnchor = 'tarStartAnchor',
+      tarStartDay = 'tarStartDay',
+      tarEndAnchor = 'tarEndAnchor',
+      tarEndDay = 'tarEndDay',
+      removeIndividualTarColumns = TRUE
+    )
     
-    #summaryTable$validationTargetName <- trimws(summaryTable$validationTargetName )
-    #summaryTable$validationOutcomeName <- trimws(summaryTable$validationOutcomeName)
-    #summaryTable$validationTargetName  <- as.factor(summaryTable$validationTargetName )
-    #summaryTable$validationOutcomeName <- as.factor(summaryTable$validationOutcomeName)
-    
+    summaryTable <- addPredictionTimeAtRisk(
+      result = summaryTable,
+      tarColumnName = 'developmentTimeAtRisk',
+      tarStartAnchor = 'devTarStartAnchor',
+      tarStartDay = 'devTarStartDay',
+      tarEndAnchor = 'devTarEndAnchor',
+      tarEndDay = 'devTarEndDay',
+      removeIndividualTarColumns = TRUE
+    )
+
     # set valDb, T, O, TAR to '-' if it is the same as the dev
     sameT <- summaryTable$developmentTargetId == summaryTable$validationTargetId
     if(sum(sameT) > 0){
@@ -1553,19 +1563,28 @@ getPredictionCovariates <- function(
   
   if(nrow(result) >0){
     
+    result <- addPredictionTimeAtRisk(
+      result = result,
+      tarColumnName = 'validationTimeAtRisk',
+      tarStartAnchor = 'tarStartAnchor',
+      tarStartDay = 'tarStartDay',
+      tarEndAnchor = 'tarEndAnchor',
+      tarEndDay = 'tarEndDay',
+      removeIndividualTarColumns = TRUE
+    )
+    
+    result <- addPredictionTimeAtRisk(
+      result = result,
+      tarColumnName = 'developmentTimeAtRisk',
+      tarStartAnchor = 'developmentTarStartAnchor',
+      tarStartDay = 'developmentTarStartDay',
+      tarEndAnchor = 'developmentTarEndAnchor',
+      tarEndDay = 'developmentTarEndDay',
+      removeIndividualTarColumns = TRUE
+    )
+    
+    
     result <- result %>%
-      dplyr::mutate(
-        validationTimeAtRisk = paste0('( ',.data$tarStartAnchor, '+', .data$tarStartDay, ' ) - ',
-                                        '( ',.data$tarEndAnchor, '+', .data$tarEndDay, ' )'
-      ),
-      developmentTimeAtRisk = paste0('( ',.data$developmentTarStartAnchor, '+', .data$developmentTarStartDay, ' ) - ',
-                                    '( ',.data$developmentTarEndAnchor, '+', .data$developmentTarEndDay, ' )'
-      )
-      ) %>%
-      dplyr::select(
-        -"tarStartAnchor", - "tarStartDay", -"tarEndAnchor", -"tarEndDay",
-        -"developmentTarStartAnchor", - "developmentTarStartDay", -"developmentTarEndAnchor", -"developmentTarEndDay"
-        ) %>%
       dplyr::relocate("developmentTimeAtRisk", .after = "developmentOutcomeName") %>%
       dplyr::relocate("validationTimeAtRisk", .after = "validationOutcomeName")
     
@@ -1850,4 +1869,32 @@ getPredictionIntercept <- function(
   } else{
     warning('Please enter a modelDesignId and databaseId')
   }
+}
+
+
+# adding helpter for TAR consistency 
+addPredictionTimeAtRisk <- function(
+    result,
+    tarColumnName = 'timeAtRisk',
+    tarStartAnchor = 'tarStartAnchor',
+    tarStartDay = 'tarStartDay',
+    tarEndAnchor = 'tarEndAnchor',
+    tarEndDay = 'tarEndDay',
+    removeIndividualTarColumns = TRUE
+){
+  
+  result <- result %>%
+    dplyr::mutate(newCol = paste0('(',.data[[tarStartAnchor]], ' + ', .data[[tarStartDay]], ') - ',
+                                                '(',.data[[tarEndAnchor]], ' + ', .data[[tarEndDay]], ')'
+    )) %>%
+    dplyr::rename(
+      !!tarColumnName := "newCol"
+    )
+  
+  if(removeIndividualTarColumns){
+    result <- result %>%
+      dplyr::select(-tarStartAnchor, - tarStartDay, -tarEndAnchor, -tarEndDay)
+  }
+  
+  return(result)
 }
