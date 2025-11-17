@@ -408,9 +408,13 @@ getCohortMeta <- function(
     cohortIds = NULL
 ) {
   
+  # backwards compatible edits for
+  # cohort_id was rename to cohort_definition_id
+  # cohort_name was removed from COHORT_GENERATION get from other table
+  
   sql <- "SELECT 
-  cg.cohort_id, 
-  cg.cohort_name,
+  cd.cohort_definition_id as cohort_id, 
+  cd.cohort_name,
   cg.generation_status, 
   cg.start_time, 
   cg.end_time, 
@@ -420,18 +424,41 @@ getCohortMeta <- function(
   FROM @schema.@cg_table_prefixCOHORT_GENERATION cg
   INNER JOIN @schema.@database_table dt
   ON cg.database_id = dt.database_id
+  INNER JOIN @schema.@cg_table_prefixCOHORT_DEFINITION cd
+  ON cg.@cohort_id_name = cd.cohort_definition_id
   
-  {@use_cohort_id}?{ WHERE cg.cohort_id in (@cohort_definition_ids)}
+  {@use_cohort_id}?{ WHERE cd.cohort_definition_id in (@cohort_definition_ids)}
   ;"
   
-  result <- connectionHandler$queryDb(
+  result <- tryCatch({connectionHandler$queryDb(
     sql = sql,
     schema = schema,
     cg_table_prefix = cgTablePrefix,
     database_table = databaseTable,
     use_cohort_id = !is.null(cohortIds),
+    cohort_id_name = 'cohort_definition_id',
     cohort_definition_ids = paste0(cohortIds, collapse = ',')
-  )
+  )}, error = function(e){
+    print(e);
+    return(NULL)
+  })
+  
+  if(is.null(result)){
+    # try the old column - remove this after a while 
+    print('COHORT_GENERATION table has outdated column name for cohort_definition_id')
+    result <- tryCatch({connectionHandler$queryDb(
+      sql = sql,
+      schema = schema,
+      cg_table_prefix = cgTablePrefix,
+      database_table = databaseTable,
+      use_cohort_id = !is.null(cohortIds),
+      cohort_id_name = 'cohort_id',
+      cohort_definition_ids = paste0(cohortIds, collapse = ',')
+    )}, error = function(e){
+      print(e);
+      return(NULL)
+    })
+  }
   
   return(result)
 }
