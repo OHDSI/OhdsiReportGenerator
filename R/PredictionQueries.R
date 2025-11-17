@@ -873,6 +873,7 @@ getPredictionPerformances <- function(
 #'  \item{performanceId the unique identifier for the performance}
 #'  \item{modelDesignId the unique identifier for the model design}
 #'  \item{modelType the type of classifier}
+#'  \item{covariateName a summary name for the candidate covariates}
 #'  \item{developmentDatabaseId the unique identifier for the database used to develop the model}
 #'  \item{validationDatabaseId the unique identifier for the database used to validate the model}
 #'  \item{developmentTargetId the unique cohort id for the development target population}
@@ -1072,6 +1073,7 @@ getFullPredictionPerformances <- function(
       removeIndividualTarColumns = TRUE
     )
 
+    # ?TODO remove this and edit table in OhdsiShinyModules instead
     # set valDb, T, O, TAR to '-' if it is the same as the dev
     sameT <- summaryTable$developmentTargetId == summaryTable$validationTargetId
     if(sum(sameT) > 0){
@@ -1092,6 +1094,27 @@ getFullPredictionPerformances <- function(
     
   }
   
+  # add covariateName
+  if(nrow(summaryTable) > 0){
+    
+    covariateNames <- getCovariateSummaryName(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      plpTablePrefix = plpTablePrefix,
+      modelDesignIds = modelDesignId
+    )
+    
+    summaryTable <- merge(
+      x = summaryTable, 
+      y = covariateNames, 
+      by = 'modelDesignId'
+      ) %>%
+      dplyr::relocate(
+        "covariateName", 
+        .after = "modelType"
+        )
+    
+  }
   
   if(length(unique(summaryTable$performanceId)) > 0){
     # now select the performances for the performanceIds
@@ -1871,6 +1894,139 @@ getPredictionIntercept <- function(
   }
 }
 
+
+# covariateSummary
+getCovariateSummaryName <- function(
+    connectionHandler,
+    schema,
+    plpTablePrefix = 'plp_',
+    modelDesignIds = NULL
+    ){
+  
+  sql <- "select distinct 
+  cs.covariate_setting_id,
+  cs.covariate_settings_json
+  
+  from 
+  @schema.@plp_table_prefixcovariate_settings cs
+  inner join
+  @schema.@plp_table_prefixmodel_designs md
+  
+  on cs.covariate_setting_id = md.covariate_setting_id
+  
+  {@restrict_model_design_ids}?{where md.model_design_id in (@model_design_ids)}
+  ;
+  "
+  
+  covariateDetails <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    restrict_model_design_ids = !is.null(modelDesignIds),
+    model_design_ids = modelDesignIds,
+    plp_table_prefix = plpTablePrefix
+  )
+  
+  covariateFunctions <- lapply(covariateDetails$covariateSettingsJson, function(x){
+    ParallelLogger::convertJsonToSettings(x)
+  })
+  
+
+  covariateFunctionNames <- c()
+  for(i in 1:length(covariateFunctions)){
+    
+    isNotList <- inherits(covariateFunctions[[i]], 'covariateSettings')
+    if(isNotList){
+      covariateFunctions[[i]] <- list(covariateFunctions[[i]])
+    }
+    
+    covariateFunctionNames <- c(
+        covariateFunctionNames,
+        paste0(lapply(covariateFunctions[[i]], getCovariateFunName), collapse = ', ')
+      )
+    
+  }
+  
+  covariateDetails$covariateName <- covariateFunctionNames
+  covariateDetails <- covariateDetails %>%
+    dplyr::select("covariateSettingId","covariateName")
+  
+  # now get model design ids and the covariateFunctionNames
+  sql <- "select distinct 
+  md.model_design_id,
+  md.covariate_setting_id
+  
+  from 
+  @schema.@plp_table_prefixmodel_designs md
+  
+  {@restrict_model_design_ids}?{where md.model_design_id in (@model_design_ids)}
+  ;
+  "
+  
+  modelDesignCovariates <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    restrict_model_design_ids = !is.null(modelDesignIds),
+    model_design_ids = modelDesignIds,
+    plp_table_prefix = plpTablePrefix
+  )
+  
+  modelDesignCovariates <- merge(
+    x = modelDesignCovariates, 
+    y = covariateDetails, 
+    by = 'covariateSettingId'
+    ) %>% 
+    dplyr::select("modelDesignId","covariateName")
+    
+  return(modelDesignCovariates)
+}
+
+# helper for covariate summary name
+getCovariateFunName <- function(covariateSetting){
+  if(inherits(covariateSetting, 'covariateSettings')){
+    func <- attributes(covariateSetting)$fun
+    
+    if(func == 'getDbDefaultCovariateData'){
+      params <- names(covariateSetting)
+      
+      # check age
+      age <- FALSE
+      if('DemographicsAge' %in% params){
+        if(covariateSetting$DemographicsAge){
+          age <- TRUE
+        }}
+      if('DemographicsAgeGroup' %in% params){
+        if(covariateSetting$DemographicsAgeGroup){
+          age <- TRUE
+        }}
+      
+      # check sec
+      sex <- FALSE
+      if('DemographicsGender' %in% params){
+        if(covariateSetting$DemographicsGender){
+          sex <- TRUE
+        }}
+      
+      numberSettings <- length(params[!params %in% c(
+        'temporal', 'temporalSequence', 'longTermStartDays',
+        'mediumTermStartDays', 'shortTermStartDays', 'endDays',
+        'includedCovariateConceptIds', 'addDescendantsToInclude',
+        'excludedCovariateConceptIds', 'addDescendantsToExclude',
+        'includedCovariateIds'
+      )])
+      
+      func <- paste0(
+        func, ' (', numberSettings, ' types)',
+        ifelse(age|sex, ' inc ', ''),
+        ifelse(age, 'age', ''),
+        ifelse(age & sex, ' and ', ''),
+        ifelse(sex, 'sex', '')
+      )
+      
+    }
+    
+    return(func)
+  }
+}
 
 # adding helpter for TAR consistency 
 addPredictionTimeAtRisk <- function(
