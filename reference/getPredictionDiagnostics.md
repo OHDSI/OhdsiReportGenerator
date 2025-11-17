@@ -124,4 +124,14 @@ diag <- getPredictionDiagnostics(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
 ```
