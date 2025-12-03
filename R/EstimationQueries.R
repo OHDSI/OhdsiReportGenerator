@@ -35,17 +35,17 @@ getCmTargets <- function(
   
   sql <- "SELECT distinct 
     cd.cohort_name,
-    cr.target_id as cohort_definition_id, 
+    tc.target_id as cohort_definition_id, 
     'cohortMethod' as type,
     1 as value
 
        FROM
       
-      @schema.@cm_table_prefixresult as cr
+      @schema.@cm_table_prefixtarget_comparator as tc
           
       inner join @schema.@cg_table_prefixcohort_definition cd
       
-      on cr.target_id = cd.cohort_definition_id
+      on tc.target_id = cd.cohort_definition_id
       ;"
   
   targets <- connectionHandler$queryDb(
@@ -102,27 +102,25 @@ getCmOutcomes <- function(
   
   sql <- "SELECT distinct 
     cd.cohort_name,
-    cr.outcome_id as cohort_definition_id, 
+    tco.outcome_id as cohort_definition_id, 
     'cohortMethod' as type,
     1 as value
 
        FROM
       
-      @schema.@cm_table_prefixresult as cr
+      @schema.@cm_table_prefixtarget_comparator as tc
       
       inner join 
    @schema.@cm_table_prefixtarget_comparator_outcome as tco
    on 
-   cr.target_id = tco.target_id and 
-   cr.comparator_id = tco.comparator_id and 
-   cr.outcome_id = tco.outcome_id
+   tc.target_comparator_id = tco.target_comparator_id
           
       inner join @schema.@cg_table_prefixcohort_definition cd
       
-      on cr.outcome_id = cd.cohort_definition_id
+      on tco.outcome_id = cd.cohort_definition_id
       
       where tco.outcome_of_interest = 1
-      {@use_target}?{ and cr.target_id in (@target_id)}
+      {@use_target}?{ and tc.target_id in (@target_id)}
       ;"
   
   outcomes <- connectionHandler$queryDb(
@@ -221,9 +219,9 @@ getCMEstimation <- function(
   a.description,
   
   c1.cohort_name as target_name,
-  r.target_id,
+  tc.target_id,
   c2.cohort_name as comparator_name,
-  r.comparator_id, 
+  tc.comparator_id,
   c3.cohort_name as outcome_name,
   r.outcome_id, 
   
@@ -244,22 +242,19 @@ getCMEstimation <- function(
   unblind.unblind,
   r.target_estimator
   
-  from 
-   @schema.@cm_table_prefixresult as r
+  from @schema.@cm_table_prefixtarget_comparator tc
+   inner join @schema.@cm_table_prefixresult as r ON tc.target_comparator_id = r.target_comparator_id
    inner join 
    @schema.@cm_table_prefixtarget_comparator_outcome as tco
    on 
-   r.target_id = tco.target_id and 
-   r.comparator_id = tco.comparator_id and 
-   r.outcome_id = tco.outcome_id
+   tco.target_comparator_id = r.target_comparator_id
    
    inner join
    
    @schema.@cm_table_prefixdiagnostics_summary as unblind
    on
    r.analysis_id = unblind.analysis_id and 
-   r.target_id = unblind.target_id and 
-   r.comparator_id = unblind.comparator_id and 
+   r.target_comparator_id = unblind.target_comparator_id and 
    r.outcome_id = unblind.outcome_id and 
    r.database_id = unblind.database_id
    
@@ -269,11 +264,11 @@ getCMEstimation <- function(
    
    inner join
    @schema.@cg_table_prefixcohort_definition as c1
-   on c1.cohort_definition_id = r.target_id
+   on c1.cohort_definition_id = tc.target_id
    
    inner join
    @schema.@cg_table_prefixcohort_definition as c2
-   on c2.cohort_definition_id = r.comparator_id
+   on c2.cohort_definition_id = tc.comparator_id
    
    inner join
    @schema.@cg_table_prefixcohort_definition as c3
@@ -285,9 +280,9 @@ getCMEstimation <- function(
    
    where 
    tco.outcome_of_interest = 1
-   {@restrict_target} ? { and r.target_id in (@target_id)}
+   {@restrict_target} ? { and tc.target_id in (@target_id)}
    {@restrict_outcome} ? {and r.outcome_id in (@outcome_id)}
-   {@restrict_comparator} ? { and r.comparator_id in (@comparator_id)}
+   {@restrict_comparator} ? { and tc.comparator_id in (@comparator_id)}
   ;"
   
   result <- connectionHandler$queryDb(
@@ -389,14 +384,16 @@ getCmDiagnosticsData <- function(
       cma.analysis_id,
       cma.description,
       cgcd1.cohort_name target_name,
-      cmds.target_id,
+      tc.target_id,
       cgcd2.cohort_name comparator_name,
-      cmds.comparator_id,
+      tc.comparator_id,
       cgcd3.cohort_name outcome_name,
       cmds.outcome_id,
       
       cmds.max_sdm,
+      cmds.sdm_family_wise_min_p,
       cmds.shared_max_sdm,
+      cmds.shared_sdm_family_wise_min_p,
       cmds.equipoise,
       cmds.mdrr,
       cmds.attrition_fraction,
@@ -413,8 +410,9 @@ getCmDiagnosticsData <- function(
       @schema.@cm_table_prefixdiagnostics_summary cmds
       INNER JOIN @schema.@cm_table_prefixanalysis cma ON cmds.analysis_id = cma.analysis_id
       INNER JOIN @schema.@database_table dmd ON dmd.database_id = cmds.database_id
-      INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd1 ON cmds.target_id = cgcd1.cohort_definition_id
-      INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd2 ON cmds.comparator_id = cgcd2.cohort_definition_id
+      INNER JOIN @schema.@cm_table_prefixtarget_comparator tc ON tc.target_comparator_id = cmds.target_comparator_id
+      INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd1 ON tc.target_id = cgcd1.cohort_definition_id
+      INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd2 ON tc.comparator_id = cgcd2.cohort_definition_id
       INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd3 ON cmds.outcome_id = cgcd3.cohort_definition_id
       
       WHERE 
@@ -824,17 +822,14 @@ getCmNegativeControlEstimates <- function(
       cmr.*,
       cmtco.true_effect_size effect_size,
       ds.ease
-    FROM
-      @schema.@cm_table_prefixresult cmr
+    FROM @schema.@cm_table_prefixtarget_comparator tc
+      INNER JOIN @schema.@cm_table_prefixresult cmr ON cmr.target_comparator_id = tc.target_comparator_id
       
       INNER JOIN @schema.@cm_table_prefixtarget_comparator_outcome cmtco 
-      ON cmr.target_id = cmtco.target_id 
-      AND cmr.comparator_id = cmtco.comparator_id 
-      AND cmr.outcome_id = cmtco.outcome_id
+      ON cmr.target_comparator_id = cmtco.target_comparator_id
       
      INNER JOIN @schema.@cm_table_prefixdiagnostics_summary ds
-     ON ds.target_id = cmr.target_id
-     AND ds.comparator_id = cmr.comparator_id
+     ON ds.target_comparator_id = cmr.target_comparator_id
      AND ds.analysis_id = cmr.analysis_id
      AND ds.database_id = cmr.database_id
      AND ds.outcome_id = cmr.outcome_id
@@ -842,8 +837,8 @@ getCmNegativeControlEstimates <- function(
     WHERE
       cmtco.outcome_of_interest != 1
       {@exclude_positive_controls}?{AND cmtco.true_effect_size = 1}
-      {@use_target}?{AND cmr.target_id in (@target_ids)}
-      {@use_comparator}?{AND cmr.comparator_id in (@comparator_ids)}
+      {@use_target}?{AND tc.target_id in (@target_ids)}
+      {@use_comparator}?{AND tc.comparator_id in (@comparator_ids)}
       {@use_analysis}?{AND cmr.analysis_id in (@analysis_ids)}
       {@use_database}?{AND cmr.database_id in (@database_ids)}
       ;"
@@ -933,9 +928,11 @@ getCmPropensityModel <- function(
       'intercept' as covariate_name) cmc
     JOIN @schema.@cm_table_prefixpropensity_model cmpm 
     ON cmc.covariate_id = cmpm.covariate_id
+    JOIN @schema.@cm_table_prefixtarget_comparator tc
+    ON tc.target_comparator_id = cmpm.target_comparator_id
   WHERE
-    cmpm.target_id = @target_id
-    AND cmpm.comparator_id = @comparator_id
+    tc.target_id = @target_id
+    AND tc.comparator_id = @comparator_id
     AND cmpm.analysis_id = @analysis_id
     AND cmpm.database_id = '@database_id'
   "
