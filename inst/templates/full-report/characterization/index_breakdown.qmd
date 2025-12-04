@@ -96,8 +96,8 @@ ibOutcome <- unique(index$friendlyNameOutcome)
 
 # now we add the N to the databaseName we need to loop over TAR
 for(ibTar in unique(index$tar)){
-  
-index <- tidyr::pivot_wider(
+
+indexTar <- tidyr::pivot_wider(
   data = index %>%
     dplyr::filter(.data$tar == !!ibTar) %>% 
     dplyr::select(-"tar") %>%
@@ -122,16 +122,16 @@ index <- tidyr::pivot_wider(
 
 # display
 
-boxName <- paste0('Frequency of ',ibOutcome,' concept codes when the patient exposed to ', index$friendlyNameTarget[1], ' ', index$subsetTextTarget[1],' has the outcome during ', ibTar)
+boxName <- paste0('Frequency of ',ibOutcome,' concept codes when the patient exposed to ', indexTar$friendlyNameTarget[1], ' ', indexTar$subsetTextTarget[1],' has the outcome during ', ibTar)
 
   cat('\n\n::: {.callout-note collapse="true"}')
   cat(paste0("\n# ",boxName, '\n\n'))
       
 print(htmltools::tagList(
-  index  %>%  
+  indexTar  %>%  
     gt::gt() %>%
     gt::fmt_percent(
-      columns = colnames(index)[! colnames(index) %in% c("covariateName","friendlyNameTarget","subsetTextTarget", "friendlyNameOutcome", "tar")],
+      columns = colnames(indexTar)[! colnames(indexTar) %in% c("covariateName","friendlyNameTarget","subsetTextTarget", "friendlyNameOutcome", "tar")],
       decimals = 2
     ) %>%
     gt::cols_label(
