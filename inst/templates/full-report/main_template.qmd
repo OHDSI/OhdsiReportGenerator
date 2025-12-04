@@ -367,6 +367,9 @@ if(includeCI){
     dplyr::filter(.data$genderName == 'Any') %>%
     dplyr::filter(.data$startYear == 'Any')
   
+  # only show CI results if there are any
+  if(nrow(cohortIncidenceUnstatified) != 0){
+    
   ciTargets <- unique(cohortIncidenceUnstatified$targetId)
   ciCohorts <- cohortDefinitions[cohortDefinitions$cohortDefinitionId %in% ciTargets,]
   
@@ -375,17 +378,16 @@ if(includeCI){
   
   ciOutcomes <- unique(cohortIncidenceUnstatified$outcomeId)
   
-  ciTars <- unique(cohortIncidenceUnstatified[,c('tarStartWith','tarStartOffset',
-                                                 'tarEndWith','tarEndOffset')])
-  
-  ciTars$friendlyTarStart <- paste0(ciTars$tarStartWith, ' + ', ciTars$tarStartOffset)
-  ciTars$friendlyTarEnd <- paste0(ciTars$tarEndWith, ' + ', ciTars$tarEndOffset)
-  
-  tarStart <- ciTars$friendlyTarStart[1]
-  tarEnd <- ciTars$friendlyTarEnd[1]
+  ciTars <- unique(
+    cohortIncidenceUnstatified %>% 
+      dplyr::select('tar')
+  )
+
   # ===================================
 result <- knitr::knit_child(text = knitr::knit_expand("cohort_incidence.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
 cat(result, sep = '\n')
+  }
+ 
 }
 ```
 
