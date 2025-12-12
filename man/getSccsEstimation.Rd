@@ -69,6 +69,7 @@ Returns a data.frame with the columns:
  \item{llr The log of the likelihood ratio (of the MLE vs the null hypothesis of no effect).}
  \item{mdrr The minimum detectable relative risk.}
  \item{unblind Whether the results can be unblinded}
+ \item{unblindForEvidenceSynthesis whether the results can be unblinded for the meta analysis.}
  }
 }
 \description{
