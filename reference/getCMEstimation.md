@@ -114,6 +114,9 @@ Returns a data.frame with the columns:
 
 - Unblind Whether the results passed diagnostics and were unblinded
 
+- unblindForEvidenceSynthesis whether the results can be unblinded for
+  the meta analysis.
+
 - targetEstimator ...
 
 ## Details

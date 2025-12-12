@@ -12,7 +12,8 @@ getSccsMetaEstimation(
   cgTablePrefix = "cg_",
   esTablePrefix = "es_",
   targetIds = NULL,
-  outcomeIds = NULL
+  outcomeIds = NULL,
+  includeOneSidedP = TRUE
 )
 ```
 
@@ -47,6 +48,11 @@ getSccsMetaEstimation(
 - outcomeIds:
 
   A vector of integers corresponding to the outcome cohort IDs
+
+- includeOneSidedP:
+
+  This lets you extract from older results that do not have the one
+  sided p by setting this to FALSE
 
 ## Value
 

@@ -135,6 +135,9 @@ Returns a data.frame with the columns:
 
 - unblind Whether the results can be unblinded
 
+- unblindForEvidenceSynthesis whether the results can be unblinded for
+  the meta analysis.
+
 ## Details
 
 Specify the connectionHandler, the schema and the target/outcome cohort

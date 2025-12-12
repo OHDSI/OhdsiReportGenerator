@@ -171,25 +171,23 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">conDet</span> <span class="op">&lt;-</span> <span class="fu"><a href="getExampleConnectionDetails.html">getExampleConnectionDetails</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">connectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://ohdsi.github.io/ResultModelManager/reference/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">conDet</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Connecting using SQLite driver</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">targetTable</span> <span class="op">&lt;-</span> <span class="fu">getTargetTable</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  connectionHandler <span class="op">=</span> <span class="va">connectionHandler</span>, </span></span>
 <span class="r-in"><span>  schema <span class="op">=</span> <span class="st">'main'</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "-- all extracting characterization targets took: 0.0981619358062744 secs"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "-- Total time for extarcting target table: 0.237867832183838 secs"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "-- all extracting characterization targets took: 0.0976681709289551 secs"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "-- Total time for extarcting target table: 0.238475799560547 secs"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -160,23 +160,21 @@ Other helper: [`addTarColumn()`](addTarColumn.md),
 
 ``` r
 conDet <- getExampleConnectionDetails()
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
 #> Connecting using SQLite driver
 
 targetTable <- getTargetTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "-- all extracting characterization targets took: 0.0981619358062744 secs"
-#> [1] "-- Total time for extarcting target table: 0.237867832183838 secs"
+#> [1] "-- all extracting characterization targets took: 0.0976681709289551 secs"
+#> [1] "-- Total time for extarcting target table: 0.238475799560547 secs"
 ```

@@ -14,7 +14,8 @@ getCmMetaEstimation(
   esTablePrefix = "es_",
   targetIds = NULL,
   outcomeIds = NULL,
-  comparatorIds = NULL
+  comparatorIds = NULL,
+  includeOneSidedP = TRUE
 )
 ```
 
@@ -53,6 +54,11 @@ getCmMetaEstimation(
 - comparatorIds:
 
   A vector of integers corresponding to the comparator cohort IDs
+
+- includeOneSidedP:
+
+  This lets you extract from older results that do not have the one
+  sided p by setting this to FALSE
 
 ## Value
 
