@@ -142,6 +142,7 @@ Other Characterization:
 
 ``` r
 conDet <- getExampleConnectionDetails()
+#> Closing database connection
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #> Connecting using SQLite driver

@@ -163,18 +163,13 @@ conDet <- getExampleConnectionDetails()
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #> Connecting using SQLite driver
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
 
 targetTable <- getTargetTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "-- all extracting characterization targets took: 0.0976214408874512 secs"
-#> [1] "-- Total time for extarcting target table: 0.238523006439209 secs"
+#> Closing database connection
+#> Closing database connection
+#> [1] "-- all extracting characterization targets took: 0.093986988067627 secs"
+#> [1] "-- Total time for extarcting target table: 0.248699426651001 secs"
 ```

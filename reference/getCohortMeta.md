@@ -69,25 +69,4 @@ cohortMeta <- getCohortMeta(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> <simpleError in value[[3L]](cond): SELECT 
-#>   cd.cohort_definition_id as cohort_id, 
-#>   cd.cohort_name,
-#>   cg.generation_status, 
-#>   cg.start_time, 
-#>   cg.end_time, 
-#>   dt.cdm_source_name as database_name,
-#>   dt.database_id
-#>   FROM main.cg_COHORT_GENERATION cg
-#>   INNER JOIN main.database_meta_data dt
-#>   ON cg.database_id = dt.database_id
-#>   INNER JOIN main.cg_COHORT_DEFINITION cd
-#>   ON cg.cohort_definition_id = cd.cohort_definition_id
-#>   ;
-#> 
-#> Error in `.createErrorReport()`:
-#> ! Error executing SQL:
-#> no such column: cg.cohort_definition_id
-#> An error report has been created at  /home/runner/work/OhdsiReportGenerator/OhdsiReportGenerator/docs/reference/errorReportSql.txt
-#> >
-#> [1] "COHORT_GENERATION table has outdated column name for cohort_definition_id"
 ```

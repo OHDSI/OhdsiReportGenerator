@@ -70,5 +70,4 @@ cohortInclsuionsSummary <- getCohortInclusionSummary(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> Closing database connection
 ```
