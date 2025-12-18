@@ -31,14 +31,15 @@ for(ind in 1:nrow(ciTars)){
       
       data <- cohortIncidenceUnstatified %>%
         filter(.data$outcomeId == !!ciOutcomeId) %>%
-        filter(.data$tarStartWith == !!ciTars$tarStartWith[ind]) %>%
-        filter(.data$tarStartOffset == !!ciTars$tarStartOffset[ind]) %>%
-        filter(.data$tarEndWith == !!ciTars$tarEndWith[ind]) %>%
-        filter(.data$tarEndOffset == !!ciTars$tarEndOffset[ind]) %>%
+        #filter(.data$tarStartWith == !!ciTars$tarStartWith[ind]) %>%
+        #filter(.data$tarStartOffset == !!ciTars$tarStartOffset[ind]) %>%
+        #filter(.data$tarEndWith == !!ciTars$tarEndWith[ind]) %>%
+        #filter(.data$tarEndOffset == !!ciTars$tarEndOffset[ind]) %>%
+        filter(.data$tar == !!ciTars$tar[ind]) %>%
         filter(.data$cleanWindow == !!cleanWindow)
       
       
-      boxTitle <- paste0('The incidence proportion/rate for outcome ', cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == ciOutcomeId], ' occuring between ', ciTars$friendlyTarStart[ind], ' and ', ciTars$friendlyTarEnd[ind], ' after exposure when the outcome clean window is ', cleanWindow )
+      boxTitle <- paste0('The incidence proportion/rate for outcome ', cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == ciOutcomeId], ' occuring between ', ciTars$tar[ind], ' after exposure when the outcome clean window is ', cleanWindow )
       
       cat('\n\n::: {.callout-note collapse="true"}')
       cat(paste0("\n# ",boxTitle, '\n\n'))

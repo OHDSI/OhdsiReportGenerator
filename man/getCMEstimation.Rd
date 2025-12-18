@@ -59,6 +59,7 @@ Returns a data.frame with the columns:
  \item{targetOutcomes the total number of outcomes occuring during the time at risk for the target cohort people}
  \item{comparatorOutcomes the total number of outcomes occuring during the time at risk for the comparator cohort people}
  \item{Unblind Whether the results passed diagnostics and were unblinded}
+ \item{unblindForEvidenceSynthesis whether the results can be unblinded for the meta analysis.}
  \item{targetEstimator ...}
  }
 }
