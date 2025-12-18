@@ -170,6 +170,6 @@ targetTable <- getTargetTable(
 )
 #> Closing database connection
 #> Closing database connection
-#> [1] "-- all extracting characterization targets took: 0.093986988067627 secs"
-#> [1] "-- Total time for extarcting target table: 0.248699426651001 secs"
+#> [1] "-- all extracting characterization targets took: 0.0881824493408203 secs"
+#> [1] "-- Total time for extarcting target table: 0.230497598648071 secs"
 ```
