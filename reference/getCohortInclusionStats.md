@@ -73,4 +73,5 @@ cohortInclsuionsStats <- getCohortInclusionStats(
 #> Closing database connection
 #> Closing database connection
 #> Closing database connection
+#> Closing database connection
 ```
