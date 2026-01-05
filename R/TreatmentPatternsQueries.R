@@ -4,60 +4,63 @@
 #'
 #' @details
 #' Specify the connectionHandler and the schema
-#' 
+#'
 #' @template connectionHandler
 #' @template schema
 #' @template tpTablePrefix
 #' @family Treatment Patterns
-#' @return 
+#' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName a concatinated string of all the database names ran for that analysis}
 #'  \item{databaseId a concatinated string of all the database ids ran for that analysis}
 #'  \item{analysisId the analysis ids for the treament patterns run}
-#'  \item{targetName the target cohort name}
-#'  \item{targetId the target cohort unique identifier}
+#'  \item{targetCohortName the target cohort name}
+#'  \item{targetCohortId the target cohort unique identifier}
 #'  \item{eventCohortList a concatinated string of all the event cohort names ran for that target}
 #'  }
-#'  
+#'
 #' @export
-#'  
+#'
 #' @examples
-#'  conDet <- getExampleConnectionDetails()
-#' 
-#'  connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
-#' 
-#'  cohortAnalysis <- getIncidenceRates(
-#'  connectionHandler = connectionHandler, 
-#'  schema = 'main'
-#'  ) 
+#' conDet <- getExampleConnectionDetails()
+#'
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#'
+#' cohortAnalysis <- getIncidenceRates(
+#'   connectionHandler = connectionHandler,
+#'   schema = "main"
+#' )
 getAnalysisCohorts <- function(
-    connectionHandler,
-    schema,
-    tpTablePrefix = 'tp_'
-){
-  
+  connectionHandler,
+  schema,
+  tpTablePrefix = "tp_"
+) {
   sql <- "SELECT
-    distinct
-      string_agg(DISTINCT d.CDM_SOURCE_ABBREVIATION, ', ') AS database_name,
-      string_agg(DISTINCT d.database_id, ', ') AS database_id,
+      d.CDM_SOURCE_ABBREVIATION AS database_name,
+      d.database_id AS database_id,
       t.analysis_id,
       t.target_cohort_name,
       t.target_cohort_id,
-      string_agg(DISTINCT t.event_cohort_name, ', ') AS event_cohort_list
+      t.event_cohort_name AS event
     FROM @schema.@tp_table_prefixanalysis_cohorts t
     Inner JOIN @schema.@tp_table_prefixcdm_source_info d
-    ON t.analysis_id = d.analysis_id
-    GROUP BY t.analysis_id, t.target_cohort_name, t.target_cohort_id"
-  
+    ON t.analysis_id = d.analysis_id"
+
   result <- connectionHandler$queryDb(
     sql = sql,
     schema = schema,
     tp_table_prefix = tpTablePrefix,
-  )
-  
+  ) %>%
+    dplyr::group_by(analysisId, targetCohortName, targetCohortId) %>%
+    dplyr::summarize(
+      databaseName = paste(unique(databaseName), collapse = ", "),
+      databaseId = paste(unique(databaseId), collapse = ", "),
+      eventCohortList = paste(unique(event), collapse = ", "),
+      .groups = "drop"
+    )
+
   return(result)
-    
 }
 
 
@@ -67,11 +70,11 @@ getAnalysisCohorts <- function(
 #'
 #' @details
 #' Specify the connectionHandler and the schema
-#' 
+#'
 #' @template connectionHandler
 #' @template schema
 #' @template tpTablePrefix
-#' @template databaseTable 
+#' @template databaseTable
 #' @param age (optional) a string representing an age bucket to restrict (e.g., "0-17", "18-34", "65+")
 #' @param sex (optional) A string "male" or "female" to restrict
 #' @param indexYear (optional) A string with a four-digit year to restrict
@@ -80,14 +83,14 @@ getAnalysisCohorts <- function(
 #' @param databaseNames (optional) A vector of database Names to restrict to
 #' @param targetIds (optional) A vector of target cohort ids to restrict to
 #' @family Treatment Patterns
-#' @return 
+#' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
 #'  \item{databaseId the unique identifier of the database}
 #'  \item{analysisId the unique identifier of a treament patterns run}
-#'  \item{targetName the target cohort name}
-#'  \item{targetId the target cohort unique identifier}
+#'  \item{targetCohortName the target cohort name}
+#'  \item{targetCohortId the target cohort unique identifier}
 #'  \item{pathway a string representing the progression of events for a target. Use '-' to separate sequential steps and '+' for combination of events at that step}
 #'  \item{freq the count of pathway occurance}
 #'  \item{age the stratifyed pathways for age}
@@ -95,32 +98,31 @@ getAnalysisCohorts <- function(
 #'  \item{sex the stratifyed pathways for sex}
 
 #'  }
-#'  
+#'
 #' @export
-#'  
+#'
 #' @examples
-#'  conDet <- getExampleConnectionDetails()
-#' 
-#'  connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
-#' 
-#'  cohortAnalysis <- getIncidenceRates(
-#'  connectionHandler = connectionHandler, 
-#'  schema = 'main'
-#'  ) 
+#' conDet <- getExampleConnectionDetails()
+#'
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#'
+#' cohortAnalysis <- getIncidenceRates(
+#'   connectionHandler = connectionHandler,
+#'   schema = "main"
+#' )
 getTreatmentPathways <- function(
-    connectionHandler,
-    schema,
-    tpTablePrefix = 'tp_',
-    databaseTable = 'database_meta_data',
-    age = 'all',
-    sex = 'all',
-    indexYear = 'all',
-    analysisIds = NULL,
-    databaseIds = NULL,
-    databaseNames = NULL,
-    targetIds = NULL
-){
-  
+  connectionHandler,
+  schema,
+  tpTablePrefix = "tp_",
+  databaseTable = "database_meta_data",
+  age = "all",
+  sex = "all",
+  indexYear = "all",
+  analysisIds = NULL,
+  databaseIds = NULL,
+  databaseNames = NULL,
+  targetIds = NULL
+) {
   sql <- "SELECT
     d.CDM_SOURCE_ABBREVIATION AS database_name,
     t.database_id,
@@ -145,25 +147,25 @@ getTreatmentPathways <- function(
     {@use_analysis}?{and t.analysis_id IN (@analysis_ids)}
     {@use_database_name}?{and d.CDM_SOURCE_ABBREVIATION IN (@database_name)}
   "
-  
+
   result <- connectionHandler$queryDb(
     sql = sql,
     schema = schema,
     tp_table_prefix = tpTablePrefix,
     database_table = databaseTable,
     use_targets = !is.null(targetIds),
-    target_ids = paste0(targetIds, collapse = ','),
+    target_ids = paste0(targetIds, collapse = ","),
     use_analysis = !is.null(analysisIds),
-    analysis_ids = paste0(analysisIds, collapse = ','),
+    analysis_ids = paste0(analysisIds, collapse = ","),
     use_database_id = !is.null(databaseIds),
-    database_id = paste0("'",databaseIds,"'", collapse = ","),
+    database_id = paste0("'", databaseIds, "'", collapse = ","),
     use_database_name = !is.null(databaseNames),
-    database_name = paste0("'",databaseNames,"'", collapse = ","),
-    age = paste0("'",age,"'"),
-    sex = paste0("'",sex,"'"),
-    index_year = paste0("'",indexYear,"'")
+    database_name = paste0("'", databaseNames, "'", collapse = ","),
+    age = paste0("'", age, "'"),
+    sex = paste0("'", sex, "'"),
+    index_year = paste0("'", indexYear, "'")
   )
-  
+
   return(result)
 }
 
@@ -173,24 +175,24 @@ getTreatmentPathways <- function(
 #'
 #' @details
 #' Specify the connectionHandler, the schema, and the analysisIds
-#' 
+#'
 #' @template connectionHandler
 #' @template schema
 #' @template tpTablePrefix
-#' @template databaseTable 
+#' @template databaseTable
 #' @param analysisIds A vector of analysis ids to restrict to
 #' @param databaseIds (optional) A vector of database ids to restrict to
 #' @param databaseNames (optional) A vector of database Names to restrict to
 #' @param targetIds (optional) A vector of target cohort ids to restrict to
 #' @family Treatment Patterns
-#' @return 
+#' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
 #'  \item{databaseName the name of the database}
 #'  \item{databaseId the unique identifier of the database}
 #'  \item{analysisId the unique identifier of a treament patterns run}
 #'  \item{targetCohortId the target cohort unique identifier}
-#'  \item{targetName the target cohort name}
+#'  \item{targetCohortName the target cohort name}
 #'  \item{eventName a string representing an events for a target. Uses '+' for combination of event cohorts}
 #'  \item{rank the step number of event occurance}
 #'  \item{eventCount the count of event occurance at rank}
@@ -200,32 +202,31 @@ getTreatmentPathways <- function(
 #'  \item{durationMedian the median duration of event}
 #'  \item{p25Value the 25th percentile for duration of event}
 #'  \item{p75Value the 75th percentile for duration of event}
-#'  \item{standardDeviation the standard deviation for duration of event} 
+#'  \item{standardDeviation the standard deviation for duration of event}
 #'  }
-#'  
+#'
 #' @export
-#'  
+#'
 #' @examples
-#'  conDet <- getExampleConnectionDetails()
-#' 
-#'  connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
-#' 
-#'  cohortAnalysis <- getIncidenceRates(
-#'  connectionHandler = connectionHandler, 
-#'  schema = 'main',
-#'  analysisIds = c(1)
-#'  ) 
+#' conDet <- getExampleConnectionDetails()
+#'
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#'
+#' cohortAnalysis <- getIncidenceRates(
+#'   connectionHandler = connectionHandler,
+#'   schema = "main",
+#'   analysisIds = c(1)
+#' )
 getEventDuration <- function(
-    connectionHandler,
-    schema,
-    analysisIds,
-    tpTablePrefix = 'tp_',
-    databaseTable = 'database_meta_data',
-    databaseIds = NULL,
-    databaseNames = NULL,
-    targetIds = NULL
-){
-  
+  connectionHandler,
+  schema,
+  analysisIds,
+  tpTablePrefix = "tp_",
+  databaseTable = "database_meta_data",
+  databaseIds = NULL,
+  databaseNames = NULL,
+  targetIds = NULL
+) {
   sql <- "SELECT
     d.CDM_SOURCE_ABBREVIATION AS database_name,
     t.database_id,
@@ -251,25 +252,20 @@ getEventDuration <- function(
   {@use_database_id}?{AND t.database_id IN (@database_id) }
   {@use_database_name}?{and d.CDM_SOURCE_ABBREVIATION IN (@database_name)}
   "
-  
+
   result <- connectionHandler$queryDb(
     sql = sql,
     schema = schema,
     tp_table_prefix = tpTablePrefix,
     database_table = databaseTable,
     use_targets = !is.null(targetIds),
-    target_ids = paste0(targetIds, collapse = ','),
-    analysis_ids = paste0(analysisIds, collapse = ','),
+    target_ids = paste0(targetIds, collapse = ","),
+    analysis_ids = paste0(analysisIds, collapse = ","),
     use_database_id = !is.null(databaseIds),
-    database_id = paste0("'",databaseIds,"'", collapse = ","),
+    database_id = paste0("'", databaseIds, "'", collapse = ","),
     use_database_name = !is.null(databaseNames),
-    database_name = paste0("'",databaseNames,"'", collapse = ","),
+    database_name = paste0("'", databaseNames, "'", collapse = ","),
   )
-  
+
   return(result)
 }
-
-
-
-
-
