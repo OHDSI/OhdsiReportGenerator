@@ -18,6 +18,7 @@
 #'  \item{targetCohortName the target cohort name}
 #'  \item{targetCohortId the target cohort unique identifier}
 #'  \item{eventCohortList a concatinated string of all the event cohort names ran for that target}
+#'  \item{exitCohortList a concatinated string of all the exit cohort names ran for that target}
 #'  }
 #'
 #' @export
@@ -40,9 +41,9 @@ getAnalysisCohorts <- function(
       d.CDM_SOURCE_ABBREVIATION AS database_name,
       d.database_id AS database_id,
       t.analysis_id,
-      t.target_cohort_name,
-      t.target_cohort_id,
-      t.event_cohort_name AS event
+      t.cohort_name,
+      t.cohort_id,
+      t.type
     FROM @schema.@tp_table_prefixanalysis_cohorts t
     Inner JOIN @schema.@tp_table_prefixcdm_source_info d
     ON t.analysis_id = d.analysis_id"
@@ -51,16 +52,39 @@ getAnalysisCohorts <- function(
     sql = sql,
     schema = schema,
     tp_table_prefix = tpTablePrefix,
-  ) %>%
-    dplyr::group_by(analysisId, targetCohortName, targetCohortId) %>%
-    dplyr::summarize(
-      databaseName = paste(unique(databaseName), collapse = ", "),
-      databaseId = paste(unique(databaseId), collapse = ", "),
-      eventCohortList = paste(unique(event), collapse = ", "),
+  ) 
+
+  targets <- result %>%
+    dplyr::filter(type == "target") %>%
+    dplyr::select(analysisId, targetCohortId = cohortId, targetCohortName = cohortName)
+  
+  events <- result %>%
+    dplyr::filter(type == "event") %>%
+    dplyr::distinct(analysisId, cohortId, .keep_all = TRUE) %>%
+    dplyr::group_by(analysisId) %>%
+    dplyr::summarise(eventCohortList = paste(cohortName, collapse = ", "), .groups = "drop")
+  
+  exits <- result %>%
+    dplyr::filter(type == "exit") %>%
+    dplyr::distinct(analysisId, cohortId, .keep_all = TRUE) %>%
+    dplyr::group_by(analysisId) %>%
+    dplyr::summarise(exitCohortList = paste(cohortName, collapse = ", "), .groups = "drop")
+  
+  databases <- result %>%
+    dplyr::distinct(analysisId, databaseId, .keep_all = TRUE) %>%
+    dplyr::group_by(analysisId) %>%
+    dplyr::summarise(
+      databaseId = paste(databaseId, collapse = ", "),
+      databaseName = paste(databaseName, collapse = ", "),
       .groups = "drop"
     )
-
-  return(result)
+  
+  final <- targets %>%
+    dplyr::left_join(events, by = "analysisId") %>%
+    dplyr::left_join(exits, by = "analysisId") %>%
+    dplyr::left_join(databases, by = "analysisId")
+  
+  return(final)
 }
 
 

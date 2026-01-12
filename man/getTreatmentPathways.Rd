@@ -47,8 +47,8 @@ Returns a data.frame with the columns:
  \item{databaseName the name of the database}
  \item{databaseId the unique identifier of the database}
  \item{analysisId the unique identifier of a treament patterns run}
- \item{targetName the target cohort name}
- \item{targetId the target cohort unique identifier}
+ \item{targetCohortName the target cohort name}
+ \item{targetCohortId the target cohort unique identifier}
  \item{pathway a string representing the progression of events for a target. Use '-' to separate sequential steps and '+' for combination of events at that step}
  \item{freq the count of pathway occurance}
  \item{age the stratifyed pathways for age}
@@ -63,14 +63,14 @@ This function extracts results pathways for specified analysis ids and target co
 Specify the connectionHandler and the schema
 }
 \examples{
- conDet <- getExampleConnectionDetails()
+conDet <- getExampleConnectionDetails()
 
- connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 
- cohortAnalysis <- getIncidenceRates(
- connectionHandler = connectionHandler, 
- schema = 'main'
- ) 
+cohortAnalysis <- getIncidenceRates(
+  connectionHandler = connectionHandler,
+  schema = "main"
+)
 }
 \seealso{
 Other Treatment Patterns: 

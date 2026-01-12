@@ -5,13 +5,14 @@ test_that("cohorts used in treatment patterns analysis", {
     connectionHandler = connectionHandler,
     schema = "main"
   )
-
+  
   testthat::expect_true("databaseName" %in% colnames(analysisCohorts))
   testthat::expect_true("databaseId" %in% colnames(analysisCohorts))
   testthat::expect_true("analysisId" %in% colnames(analysisCohorts))
   testthat::expect_true("targetCohortName" %in% colnames(analysisCohorts))
   testthat::expect_true("targetCohortId" %in% colnames(analysisCohorts))
   testthat::expect_true("eventCohortList" %in% colnames(analysisCohorts))
+  testthat::expect_true("exitCohortList" %in% colnames(analysisCohorts))
 })
 
 test_that("get pathways", {

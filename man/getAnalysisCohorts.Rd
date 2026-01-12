@@ -19,9 +19,10 @@ Returns a data.frame with the columns:
  \item{databaseName a concatinated string of all the database names ran for that analysis}
  \item{databaseId a concatinated string of all the database ids ran for that analysis}
  \item{analysisId the analysis ids for the treament patterns run}
- \item{targetName the target cohort name}
- \item{targetId the target cohort unique identifier}
+ \item{targetCohortName the target cohort name}
+ \item{targetCohortId the target cohort unique identifier}
  \item{eventCohortList a concatinated string of all the event cohort names ran for that target}
+ \item{exitCohortList a concatinated string of all the exit cohort names ran for that target}
  }
 }
 \description{
@@ -31,14 +32,14 @@ This function extracts analysis ids, events cohorts, and databases per target fr
 Specify the connectionHandler and the schema
 }
 \examples{
- conDet <- getExampleConnectionDetails()
+conDet <- getExampleConnectionDetails()
 
- connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 
- cohortAnalysis <- getIncidenceRates(
- connectionHandler = connectionHandler, 
- schema = 'main'
- ) 
+cohortAnalysis <- getIncidenceRates(
+  connectionHandler = connectionHandler,
+  schema = "main"
+)
 }
 \seealso{
 Other Treatment Patterns: 

@@ -39,7 +39,7 @@ Returns a data.frame with the columns:
  \item{databaseId the unique identifier of the database}
  \item{analysisId the unique identifier of a treament patterns run}
  \item{targetCohortId the target cohort unique identifier}
- \item{targetName the target cohort name}
+ \item{targetCohortName the target cohort name}
  \item{eventName a string representing an events for a target. Uses '+' for combination of event cohorts}
  \item{rank the step number of event occurance}
  \item{eventCount the count of event occurance at rank}
@@ -49,7 +49,7 @@ Returns a data.frame with the columns:
  \item{durationMedian the median duration of event}
  \item{p25Value the 25th percentile for duration of event}
  \item{p75Value the 75th percentile for duration of event}
- \item{standardDeviation the standard deviation for duration of event} 
+ \item{standardDeviation the standard deviation for duration of event}
  }
 }
 \description{
@@ -59,15 +59,15 @@ This function extracts results summary stats of event duration for specified ana
 Specify the connectionHandler, the schema, and the analysisIds
 }
 \examples{
- conDet <- getExampleConnectionDetails()
+conDet <- getExampleConnectionDetails()
 
- connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 
- cohortAnalysis <- getIncidenceRates(
- connectionHandler = connectionHandler, 
- schema = 'main',
- analysisIds = c(1)
- ) 
+cohortAnalysis <- getIncidenceRates(
+  connectionHandler = connectionHandler,
+  schema = "main",
+  analysisIds = c(1)
+)
 }
 \seealso{
 Other Treatment Patterns: 
