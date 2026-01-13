@@ -56,6 +56,7 @@ getAnalysisCohorts <- function(
 
   targets <- result %>%
     dplyr::filter(type == "target") %>%
+    dplyr::distinct(analysisId, cohortId, .keep_all = TRUE) %>%
     dplyr::select(analysisId, targetCohortId = cohortId, targetCohortName = cohortName)
   
   events <- result %>%
