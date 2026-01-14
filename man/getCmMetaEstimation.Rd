@@ -12,7 +12,8 @@ getCmMetaEstimation(
   esTablePrefix = "es_",
   targetIds = NULL,
   outcomeIds = NULL,
-  comparatorIds = NULL
+  comparatorIds = NULL,
+  includeOneSidedP = TRUE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ getCmMetaEstimation(
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
 
 \item{comparatorIds}{A vector of integers corresponding to the comparator cohort IDs}
+
+\item{includeOneSidedP}{This lets you extract from older results that do not have the one sided p by setting this to FALSE}
 }
 \value{
 Returns a data.frame with the columns:

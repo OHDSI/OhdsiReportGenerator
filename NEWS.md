@@ -2,6 +2,7 @@ OhdsiReportGenerator v2.0.2
 ======================
 - fixed odd bug with different TimeAtRisks in prediction
 - edited cohort generator queries to work with new and old table column name change
+- updated example results to prevent errorReports
 
 OhdsiReportGenerator v2.0.1
 ======================

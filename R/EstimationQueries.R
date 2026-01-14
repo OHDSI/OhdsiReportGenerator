@@ -184,6 +184,7 @@ getCmOutcomes <- function(
 #'  \item{targetOutcomes the total number of outcomes occuring during the time at risk for the target cohort people}
 #'  \item{comparatorOutcomes the total number of outcomes occuring during the time at risk for the comparator cohort people}
 #'  \item{Unblind Whether the results passed diagnostics and were unblinded}
+#'  \item{unblindForEvidenceSynthesis whether the results can be unblinded for the meta analysis.}
 #'  \item{targetEstimator ...}
 #'  } 
 #' 
@@ -240,6 +241,7 @@ getCMEstimation <- function(
   r.target_outcomes,
   r.comparator_outcomes,
   unblind.unblind,
+  unblind.unblind_for_evidence_synthesis,
   r.target_estimator
   
   from @schema.@cm_table_prefixtarget_comparator tc
@@ -482,6 +484,7 @@ getCmDiagnosticsData <- function(
 #' @template targetIds
 #' @template outcomeIds
 #' @template comparatorIds
+#' @param includeOneSidedP This lets you extract from older results that do not have the one sided p by setting this to FALSE
 #' @family Estimation
 #' @return
 #' Returns a data.frame with the columns:
@@ -535,7 +538,8 @@ getCmMetaEstimation <- function(
     esTablePrefix = 'es_',
     targetIds = NULL,
     outcomeIds = NULL,
-    comparatorIds = NULL
+    comparatorIds = NULL,
+    includeOneSidedP = TRUE
 ){
 
   sql <- "select 
@@ -549,7 +553,8 @@ getCmMetaEstimation <- function(
   c3.cohort_name as outcome_name,
   r.outcome_id, 
   r.calibrated_rr, r.calibrated_ci_95_lb, r.calibrated_ci_95_ub,
-  r.calibrated_p, r.calibrated_one_sided_p,
+  r.calibrated_p, 
+  {@include_one_sided_p}?{r.calibrated_one_sided_p,}
   r.calibrated_log_rr, r.calibrated_se_log_rr,
   r. target_subjects, r.comparator_subjects, r.target_days,
   r.comparator_days, r.target_outcomes, r.comparator_outcomes,
@@ -614,7 +619,8 @@ getCmMetaEstimation <- function(
     outcome_id = paste0(outcomeIds, collapse = ','),
     include_outcome = !is.null(outcomeIds),
     comparator_id = paste0(comparatorIds, collapse = ','),
-    include_comparator = !is.null(comparatorIds)
+    include_comparator = !is.null(comparatorIds),
+    include_one_sided_p = includeOneSidedP
   )
   
   return(unique(result))
@@ -1174,6 +1180,7 @@ getSccsOutcomes <- function(
 #'  \item{llr The log of the likelihood ratio (of the MLE vs the null hypothesis of no effect).}
 #'  \item{mdrr The minimum detectable relative risk.}
 #'  \item{unblind Whether the results can be unblinded}
+#'  \item{unblindForEvidenceSynthesis whether the results can be unblinded for the meta analysis.}
 #'  } 
 #' 
 #' @export
@@ -1250,7 +1257,8 @@ getSccsEstimation <- function(
   --sds.ease_diagnostic,
   --sds.time_trend_diagnostic,
   --sds.pre_exposure_diagnostic,
-  sds.unblind
+  sds.unblind,
+  sds.unblind_for_evidence_synthesis
   
   FROM @schema.@sccs_table_prefixresult sr
   INNER JOIN 
@@ -1508,6 +1516,7 @@ getSccsDiagnosticsData <- function(
 #' @template esTablePrefix
 #' @template targetIds
 #' @template outcomeIds
+#' @param includeOneSidedP This lets you extract from older results that do not have the one sided p by setting this to FALSE
 #' @family Estimation
 #' @return
 #' Returns a data.frame with the columns:
@@ -1560,7 +1569,8 @@ getSccsMetaEstimation <- function(
     cgTablePrefix = 'cg_',
     esTablePrefix = 'es_',
     targetIds = NULL,
-    outcomeIds = NULL
+    outcomeIds = NULL,
+    includeOneSidedP = TRUE
 ) {
 
   sql <- "select distinct
@@ -1588,7 +1598,7 @@ getSccsMetaEstimation <- function(
   r.calibrated_ci_95_lb, 
   r.calibrated_ci_95_ub,  
   r.calibrated_p,
-  r.calibrated_one_sided_p,
+  {@include_one_sided_p}?{r.calibrated_one_sided_p,}
   r.calibrated_log_rr, 
   r.calibrated_se_log_rr,
   
@@ -1661,7 +1671,8 @@ getSccsMetaEstimation <- function(
     target_id = paste0(targetIds, collapse = ','),
     include_target = !is.null(targetIds),
     outcome_id = paste0(outcomeIds, collapse = ','),
-    include_outcome = !is.null(outcomeIds)
+    include_outcome = !is.null(outcomeIds),
+    include_one_sided_p = includeOneSidedP
   )
   
   return(result)
