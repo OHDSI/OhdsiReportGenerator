@@ -764,9 +764,9 @@ getCmTable <- function(
    
    where 
    1 = 1 
-   {@include_target}?{and tab.target_id in (@target_id)}
+   {@include_target}?{and tc.target_id in (@target_id)}
    {@include_outcome}?{and tab.outcome_id in (@outcome_id)}
-  {@include_comparator}?{and tab.comparator_id in (@comparator_id)}
+  {@include_comparator}?{and tc.comparator_id in (@comparator_id)}
   {@include_database}?{and tab.database_id in (@database_id)}
   {@include_analyses}?{and tab.analysis_id in (@analysis_id)}
   ;"
