@@ -424,7 +424,7 @@ getCmDiagnosticsData <- function(
       INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd1 ON tc.target_id = cgcd1.cohort_definition_id
       INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd2 ON tc.comparator_id = cgcd2.cohort_definition_id
       INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd3 ON cmds.outcome_id = cgcd3.cohort_definition_id
-      LEFT JOIN @schema.@cg_table_prefixcohort_definition cgcd4 ON tc.nesting_id = cgcd4.cohort_definition_id
+      LEFT JOIN @schema.@cg_table_prefixcohort_definition cgcd4 ON tc.nesting_cohort_id = cgcd4.cohort_definition_id
       
       WHERE 
       cmds.database_id IS NOT NULL
