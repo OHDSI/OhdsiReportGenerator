@@ -10,6 +10,7 @@ getCmPropensityModel(
   cmTablePrefix = "cm_",
   targetId = NULL,
   comparatorId = NULL,
+  indicationId = NULL,
   analysisId = NULL,
   databaseId = NULL
 )
@@ -28,6 +29,8 @@ getCmPropensityModel(
 \item{analysisId}{the analysis ID to restrict to}
 
 \item{databaseId}{the database ID to restrict to}
+
+\item{indicationIds}{The indications that the target & comparator was nested to}
 }
 \value{
 Returns a data.frame with the cohort method model

@@ -658,6 +658,7 @@ getCmMetaEstimation <- function(
 #' @template cgTablePrefix
 #' @template databaseTable
 #' @template targetIds
+#' @param indicationIds The indications that the target & comparator was nested to
 #' @template outcomeIds
 #' @template comparatorIds
 #' @param analysisIds the analysis IDs to restrict to 
@@ -821,6 +822,7 @@ getCmTable <- function(
 #' @template databaseTable
 #' @template targetIds
 #' @template comparatorIds
+#' @param indicationIds The indications that the target & comparator was nested to
 #' @param analysisIds the analysis IDs to restrict to 
 #' @param databaseIds the database IDs to restrict to 
 #' @param excludePositiveControls Whether to exclude the positive controls 
@@ -918,6 +920,7 @@ getCmNegativeControlEstimates <- function(
 #' @template cmTablePrefix
 #' @template targetId
 #' @param comparatorId the comparator ID of interest
+#' @param indicationIds The indications that the target & comparator was nested to
 #' @param analysisId the analysis ID to restrict to 
 #' @param databaseId the database ID to restrict to 
 #' @family Estimation
