@@ -689,6 +689,7 @@ getCmTable <- function(
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
     targetIds = NULL,
+    indicationIds = NULL,
     outcomeIds = NULL,
     comparatorIds = NULL,
     analysisIds = NULL,
@@ -765,9 +766,10 @@ getCmTable <- function(
    1 = 1 
    {@include_target}?{and tc.target_id in (@target_id)}
    {@include_outcome}?{and tab.outcome_id in (@outcome_id)}
-  {@include_comparator}?{and tc.comparator_id in (@comparator_id)}
-  {@include_database}?{and tab.database_id in (@database_id)}
-  {@include_analyses}?{and tab.analysis_id in (@analysis_id)}
+   {@include_indication}?{and tc.nesting_cohort_id in (@indication_id)}
+   {@include_comparator}?{and tc.comparator_id in (@comparator_id)}
+   {@include_database}?{and tab.database_id in (@database_id)}
+   {@include_analyses}?{and tab.analysis_id in (@analysis_id)}
   ;"
   
   result <- connectionHandler$queryDb(
@@ -782,6 +784,8 @@ getCmTable <- function(
     include_outcome = useOutcome,
     comparator_id = paste0(comparatorIds, collapse = ','),
     include_comparator = !is.null(comparatorIds),
+    indication_id = paste0(indicationIds, collapse = ','),
+    include_indication = !is.null(indicationIds),
     database_id = paste0("'",databaseIds,"'", collapse = ','),
     include_database = !is.null(databaseIds),
     analysis_id = paste0(analysisIds, collapse = ','),
@@ -843,6 +847,7 @@ getCmNegativeControlEstimates <- function(
   databaseTable = 'database_meta_data',
   targetIds = NULL,
   comparatorIds = NULL,
+  indicationIds = NULL,
   analysisIds = NULL,
   databaseIds = NULL,
   excludePositiveControls = TRUE
@@ -872,6 +877,7 @@ getCmNegativeControlEstimates <- function(
       {@exclude_positive_controls}?{AND cmtco.true_effect_size = 1}
       {@use_target}?{AND tc.target_id in (@target_ids)}
       {@use_comparator}?{AND tc.comparator_id in (@comparator_ids)}
+      {@use_indication}?{AND tc.nesting_cohort_id in (@indication_ids)}
       {@use_analysis}?{AND cmr.analysis_id in (@analysis_ids)}
       {@use_database}?{AND cmr.database_id in (@database_ids)}
       ;"
@@ -885,6 +891,9 @@ getCmNegativeControlEstimates <- function(
     target_ids = paste0(targetIds, collapse = ','),
     use_comparator = !is.null(comparatorIds),
     comparator_ids = paste0(comparatorIds, collapse = ','),
+    use_indication = !is.null(indicationIds),
+    indication_ids = paste0(indicationIds, collapse = ','),
+    
 
     use_analysis = !is.null(analysisIds),
     analysis_ids = paste0(analysisIds, collapse = ','),
@@ -931,7 +940,8 @@ getCmPropensityModel <- function(
     schema,
     cmTablePrefix = 'cm_',
     targetId = NULL, 
-    comparatorId = NULL, 
+    comparatorId = NULL,
+    indicationId = NULL,
     analysisId = NULL, 
     databaseId = NULL
 ) {
@@ -967,6 +977,7 @@ getCmPropensityModel <- function(
   WHERE
     tc.target_id = @target_id
     AND tc.comparator_id = @comparator_id
+    {@use_indication}?{AND tc.nesting_cohort_id = @indication_id}
     AND cmpm.analysis_id = @analysis_id
     AND cmpm.database_id = '@database_id'
   "
@@ -977,6 +988,8 @@ getCmPropensityModel <- function(
     cm_table_prefix = cmTablePrefix,
     target_id = targetId,
     comparator_id = comparatorId,
+    use_indication = !is.null(indicationId),
+    indication_id = indicationId,
     analysis_id = analysisId,
     database_id = databaseId
   )
