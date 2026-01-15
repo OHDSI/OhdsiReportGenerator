@@ -45,7 +45,7 @@ getCmTargets <- function(
           
       inner join @schema.@cg_table_prefixcohort_definition t
       
-      on tc.target_id = cd.cohort_definition_id
+      on tc.target_id = t.cohort_definition_id
       ;"
   
   targets <- connectionHandler$queryDb(
@@ -431,8 +431,7 @@ getCmDiagnosticsData <- function(
       {@use_target}?{AND cgcd1.cohort_definition_id in (@targets)}
       {@use_comparator}?{AND cgcd2.cohort_definition_id in (@comparators)}
       {@use_outcome}?{AND cgcd3.cohort_definition_id in (@outcomes)}
-      {@use_nesting}?{AND cgcd4.cohort_definition_id in (@nestings)}
-      
+
       
       {@use_database}?{AND  cmds.database_id in (@database_ids)} 
       {@use_analysis}?{AND cmds.analysis_id in (@analysis_ids)}
@@ -844,7 +843,6 @@ getCmNegativeControlEstimates <- function(
   databaseTable = 'database_meta_data',
   targetIds = NULL,
   comparatorIds = NULL,
-  nestingIds = NULL,
   analysisIds = NULL,
   databaseIds = NULL,
   excludePositiveControls = TRUE
@@ -874,7 +872,6 @@ getCmNegativeControlEstimates <- function(
       {@exclude_positive_controls}?{AND cmtco.true_effect_size = 1}
       {@use_target}?{AND tc.target_id in (@target_ids)}
       {@use_comparator}?{AND tc.comparator_id in (@comparator_ids)}
-      {@use_nesting}?{AND tc.nesting_id in (@nesting_ids)}      
       {@use_analysis}?{AND cmr.analysis_id in (@analysis_ids)}
       {@use_database}?{AND cmr.database_id in (@database_ids)}
       ;"
@@ -888,9 +885,7 @@ getCmNegativeControlEstimates <- function(
     target_ids = paste0(targetIds, collapse = ','),
     use_comparator = !is.null(comparatorIds),
     comparator_ids = paste0(comparatorIds, collapse = ','),
-    nesting_ids = paste0(netstingIds, collapse = ','),
-    use_nesting = !is.null(nestingIds),
-    
+
     use_analysis = !is.null(analysisIds),
     analysis_ids = paste0(analysisIds, collapse = ','),
     use_database = !is.null(databaseIds),
