@@ -1,5 +1,64 @@
 # cohort method
 
+#' An internal function to determine the version of CohortMethod used 
+#' to store results
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes. This
+#' query will attempt to identify if CohortMethod v6 was used by 
+#' inspecing the migration table. When the migration_order is >= 3
+#' then v6 of CohortMethod was used.
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cmTablePrefix
+#' @family Estimation
+#' 
+#' @return
+#' A integer with the major version number of cohort method
+#'
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' version <- .getCmVersion(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+.getCmVersion <- function(
+    connectionHandler,
+    schema,
+    cmTablePrefix = 'cm_'
+){
+  version <- 5 # Default to v5
+  tryCatch(
+    {
+      sql <- "
+      SELECT MAX(migration_order) max_migration_order
+      FROM @schema.@cm_table_prefixmigration
+      ;"
+      
+      maxMigrationOrder <- connectionHandler$queryDb(
+        sql = sql,
+        schema = schema,
+        cm_table_prefix = cmTablePrefix
+      ) %>%
+        dplyr::pull(maxMigrationOrder) %>%
+        dplyr::first()
+      if (maxMigrationOrder >= 3) {
+        version <- 6
+      }
+    },
+    error = function(e) {
+      # Do nothing - most likely the migration table does not exist so assume
+      # CohortMethod v5
+    }
+  )
+  return(version)
+}
+
 #' A function to extract the targets found in cohort method
 #'
 #' @details
