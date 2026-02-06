@@ -1076,19 +1076,19 @@ getFullPredictionPerformances <- function(
     # ?TODO remove this and edit table in OhdsiShinyModules instead
     # set valDb, T, O, TAR to '-' if it is the same as the dev
     sameT <- summaryTable$developmentTargetId == summaryTable$validationTargetId
-    if(sum(sameT) > 0){
+    if(sum(sameT, na.rm = TRUE) > 0){
       summaryTable$validationTargetName[sameT] <- '-'
     }
     sameO <- summaryTable$developmentOutcomeId == summaryTable$validationOutcomeId
-    if(sum(sameO) > 0){
+    if(sum(sameO, na.rm = TRUE) > 0){
       summaryTable$validationOutcomeName[sameO] <- '-'
     }
     sameDb <- summaryTable$developmentDatabase == summaryTable$validationDatabase
-    if(sum(sameDb) > 0){
+    if(sum(sameDb, na.rm = TRUE) > 0){
       summaryTable$validationDatabase[sameDb] <- '-'
     }
     sameTar <- summaryTable$developTimeAtRisk == summaryTable$validationTimeAtRisk
-    if(sum(sameTar) > 0){
+    if(sum(sameTar, na.rm = TRUE) > 0){
       summaryTable$validationTimeAtRisk[sameTar] <- '-'
     }
     
