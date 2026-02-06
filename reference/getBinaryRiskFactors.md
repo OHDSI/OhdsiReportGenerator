@@ -131,4 +131,5 @@ rf <- getBinaryRiskFactors(
   targetId = 1, 
   outcomeId = 3
 )
+#> Closing database connection
 ```

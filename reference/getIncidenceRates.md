@@ -144,7 +144,6 @@ Other Characterization:
 conDet <- getExampleConnectionDetails()
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
-#> Closing database connection
 #> Connecting using SQLite driver
 
 ir <- getIncidenceRates(
