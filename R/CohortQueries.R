@@ -440,14 +440,35 @@ getCohortMeta <- function(
     mustWork = TRUE
   ))
   
-  result <- connectionHandler$queryDb(
+  result <- tryCatch({connectionHandler$queryDb(
     sql = sql,
     schema = schema,
     cg_table_prefix = cgTablePrefix,
     database_table = databaseTable,
     use_cohort_id = !is.null(cohortIds),
+    cohort_id_name = 'cohort_definition_id',
     cohort_definition_ids = paste0(cohortIds, collapse = ',')
-  )
+  )}, error = function(e){
+    print(e);
+    return(NULL)
+  })
+  
+  if(is.null(result)){
+    # try the old column - remove this after a while 
+    print('COHORT_GENERATION table has outdated column name for cohort_definition_id')
+    result <- tryCatch({connectionHandler$queryDb(
+      sql = sql,
+      schema = schema,
+      cg_table_prefix = cgTablePrefix,
+      database_table = databaseTable,
+      use_cohort_id = !is.null(cohortIds),
+      cohort_id_name = 'cohort_id',
+      cohort_definition_ids = paste0(cohortIds, collapse = ',')
+    )}, error = function(e){
+      print(e);
+      return(NULL)
+    })
+  }
   
   return(result)
 }

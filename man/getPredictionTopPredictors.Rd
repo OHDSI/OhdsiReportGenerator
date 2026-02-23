@@ -9,6 +9,7 @@ getPredictionTopPredictors(
   schema,
   plpTablePrefix = "plp_",
   cgTablePrefix = "cg_",
+  databaseTable = "database_meta_data",
   targetIds = NULL,
   outcomeIds = NULL,
   numberPredictors = 100
@@ -22,6 +23,8 @@ getPredictionTopPredictors(
 \item{plpTablePrefix}{The prefix used for the patient level prediction results tables}
 
 \item{cgTablePrefix}{The prefix used for the cohort generator results tables}
+
+\item{databaseTable}{The database table name}
 
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 

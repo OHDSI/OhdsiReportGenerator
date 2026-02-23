@@ -7,3 +7,4 @@ man-roxygen
 ^README\.md$
 ^NEWS\.md$
 ^\.Rhistory$
+^.*errorReportSql\.txt
