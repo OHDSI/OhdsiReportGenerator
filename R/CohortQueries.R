@@ -426,9 +426,16 @@ getCohortMeta <- function(
     databaseTable = 'database_meta_data',
     cohortIds = NULL
 ) {
-  
+  cgVersion <- round(
+    .getCgVersion(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cgTablePrefix = cgTablePrefix
+    )
+  )
+
   sql <- SqlRender::readSql(system.file(
-    "sql/sql_server/cohort/getCohortMeta.sql",
+    paste0("sql/sql_server/cohort/getCohortMetaV", cgVersion, ".sql"),
     package = "OhdsiReportGenerator",
     mustWork = TRUE
   ))

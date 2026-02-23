@@ -141,4 +141,70 @@ test_that("getCohortCounts", {
   testthat::expect_true('databaseName' %in% colnames(result))
   testthat::expect_true('databaseId' %in% colnames(result))
 })
+
+test_that("getCohortAttrition", {
   
+  result <- getCohortAttrition(
+    connectionHandler,
+    schema
+  )
+
+    # check key entries
+  testthat::expect_true('databaseId' %in% colnames(result))
+  testthat::expect_true('databaseName' %in% colnames(result))
+  testthat::expect_true('cohortDefinitionId' %in% colnames(result))
+  testthat::expect_true('modeId' %in% colnames(result))
+  testthat::expect_true('cohortEntry' %in% colnames(result))
+  testthat::expect_true('ruleSequence' %in% colnames(result))
+  testthat::expect_true('ruleName' %in% colnames(result))
+  testthat::expect_true('personCount' %in% colnames(result))  
+})
+
+test_that("getCohortSubsetAttrition", {
+  
+  result <- getCohortSubsetAttrition(
+    connectionHandler,
+    schema
+  )
+
+    # check key entries
+  testthat::expect_true('databaseId' %in% colnames(result))
+  testthat::expect_true('databaseName' %in% colnames(result))
+  testthat::expect_true('cohortDefinitionId' %in% colnames(result))
+  testthat::expect_true('subsetDefinitionId' %in% colnames(result))
+  testthat::expect_true('subsetParentId' %in% colnames(result))
+  testthat::expect_true('modeId' %in% colnames(result))
+  testthat::expect_true('cohortEntry' %in% colnames(result))
+  testthat::expect_true('operatorSequence' %in% colnames(result))
+  testthat::expect_true('operatorName' %in% colnames(result))
+  testthat::expect_true('operatorType' %in% colnames(result))
+  testthat::expect_true('countValue' %in% colnames(result))  
+})
+
+test_that("getCohortAttrition and getCohortSubsetAttrition throw warnings when CG version < 1.1", {
+  # Override the .getCgVersion function to 
+  # return 1 for this test
+  original <- get(".getCgVersion", envir = asNamespace("OhdsiReportGenerator"))
+  assignInNamespace(
+    ".getCgVersion",
+    function(connectionHandler, schema, ...) 1,
+    ns = "OhdsiReportGenerator"
+  )
+  on.exit({
+    assignInNamespace(".getCgVersion", original, ns = "OhdsiReportGenerator")
+  })
+  
+  testthat::expect_warning(
+    getCohortAttrition(
+      connectionHandler,
+      schema
+    )
+  )
+
+  testthat::expect_warning(
+    getCohortSubsetAttrition(
+      connectionHandler,
+      schema
+    )
+  )
+})
