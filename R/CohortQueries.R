@@ -1,3 +1,62 @@
+#' An internal function to determine the version of CohortGenerator is 
+#' used to store results
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes. This
+#' query will attempt to identify if CohortGenerator v0.x was used by 
+#' inspecing the migration table. When the migration_order is >= 3
+#' then v1 of CohortGenerator was used.
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cmTablePrefix
+#' @family Estimation
+#' 
+#' @return
+#' A integer with the major version number of CohortGenerator
+#'
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' version <- .getCgVersion(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+.getCgVersion <- function(
+    connectionHandler,
+    schema,
+    cgTablePrefix = 'cg_'
+){
+  version <- 0 # Default to v0
+  tryCatch(
+    {
+      sql <- "
+      SELECT MAX(migration_order) max_migration_order
+      FROM @schema.@cg_table_prefixmigration
+      ;"
+      
+      maxMigrationOrder <- connectionHandler$queryDb(
+        sql = sql,
+        schema = schema,
+        cg_table_prefix = cmTablePrefix
+      ) %>%
+        dplyr::pull(maxMigrationOrder) %>%
+        dplyr::first()
+      if (maxMigrationOrder >= 3) {
+        version <- 1
+      }
+    },
+    error = function(e) {
+      # Do nothing - most likely the migration table does not exist so assume
+      # CohortGenerator v0
+    }
+  )
+  return(version)
+}
+
 #' Extract the cohort definition details
 #' @description
 #' This function extracts all cohort definitions for the targets of interest.
@@ -30,16 +89,22 @@ getCohortDefinitions <- function(
     cgTablePrefix = 'cg_',
     targetIds = NULL
 ){
+  cgVersion <- .getCgVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cgTablePrefix = cgTablePrefix
+  )
+  
   sql <- SqlRender::readSql(system.file(
-    "sql/sql_server/cohort/getCohortDefinitions.sql",
+    paste0("sql/sql_server/cohort/getCohortDefinitionsV", cgVersion, ".sql"),
     package = "OhdsiReportGenerator",
     mustWork = TRUE
   ))
 
   result <- connectionHandler$queryDb(
     sql = sql,
-    schema = resultDatabaseSettings$schema,
-    cg_table_prefix = resultDatabaseSettings$cgTablePrefix
+    schema = schema,
+    cg_table_prefix = cgTablePrefix
   )
   
   return(result)
