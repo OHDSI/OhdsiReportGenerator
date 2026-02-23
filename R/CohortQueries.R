@@ -448,7 +448,7 @@ getCohortMeta <- function(
 
 
 
-#' Extract the cohort counds
+#' Extract the cohort counts
 #' @description
 #' This function extracts all cohort counts for the cohorts of interest.
 #'
@@ -498,5 +498,97 @@ getCohortCounts <- function(
     cohort_definition_ids = paste0(cohortIds, collapse = ',')
   )
   
+  return(result)
+}
+
+
+
+#' Get cohort attrition
+#'
+#' Retrieves attrition information for specified cohorts from the database.
+#'
+#' @param connectionHandler A connection handler object.
+#' @param schema The database schema name.
+#' @param cgTablePrefix Prefix for cohort generator tables. Default is 'cg_'.
+#' @param databaseTable Name of the database metadata table. Default is 'database_meta_data'.
+#' @param cohortIds Optional vector of cohort IDs to filter.
+#' @return A tibble with attrition details for each cohort.
+#' @export
+getCohortAttrition <- function(
+    connectionHandler,
+    schema,
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    cohortIds = NULL
+) {
+  cgVersion <- .getCgVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cgTablePrefix = cgTablePrefix
+  )
+
+  if (cgVersion < 1.1) {
+    warning("Cohort attrition information is only available for CohortGenerator v1.1 or higher.")
+    return(NULL)
+  }
+ 
+  sql <- SqlRender::readSql(system.file(
+    "sql/sql_server/cohort/getCohortAttrition.sql",
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
+    use_cohort_id = !is.null(cohortIds),
+    cohort_definition_ids = paste0(cohortIds, collapse = ',')
+  )
+  return(result)
+}
+
+#' Get cohort subset attrition
+#'
+#' Retrieves attrition information for specified cohort subsets from the database.
+#'
+#' @param connectionHandler A connection handler object.
+#' @param schema The database schema name.
+#' @param cgTablePrefix Prefix for cohort generator tables. Default is 'cg_'.
+#' @param databaseTable Name of the database metadata table. Default is 'database_meta_data'.
+#' @param cohortIds Optional vector of cohort IDs to filter.
+#' @return A tibble with attrition details for each cohort subset.
+#' @export
+getCohortSubsetAttrition <- function(
+    connectionHandler,
+    schema,
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    cohortIds = NULL
+) {
+  cgVersion <- .getCgVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cgTablePrefix = cgTablePrefix
+  )
+
+  if (cgVersion < 1.1) {
+    warning("Cohort subset attrition information is only available for CohortGenerator v1.1 or higher.")
+    return(NULL)
+  }
+ 
+  sql <- SqlRender::readSql(system.file(
+    "sql/sql_server/cohort/getCohortSubsetAttrition.sql",
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
+    use_cohort_id = !is.null(cohortIds),
+    cohort_definition_ids = paste0(cohortIds, collapse = ',')
+  )
   return(result)
 }

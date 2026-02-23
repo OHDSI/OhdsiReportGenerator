@@ -2,7 +2,7 @@
 % Please edit documentation in R/CohortQueries.R
 \name{getCohortCounts}
 \alias{getCohortCounts}
-\title{Extract the cohort counds}
+\title{Extract the cohort counts}
 \usage{
 getCohortCounts(
   connectionHandler,
