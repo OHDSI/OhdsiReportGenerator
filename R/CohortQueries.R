@@ -30,23 +30,11 @@ getCohortDefinitions <- function(
     cgTablePrefix = 'cg_',
     targetIds = NULL
 ){
-  sql <- "SELECT cd.*,
-    csd.json as subset_json,
-    ctd.template_name,
-    ctd.template_sql,
-    ctd.json as template_json
-
-  FROM @schema.@cg_table_prefixCOHORT_DEFINITION cd
-  left join 
-  @schema.@cg_table_prefixcohort_subset_definition csd
-  on cd.subset_definition_id = csd.subset_definition_id
-
-  left join @schema.@cg_table_prefixcohort_template_link ctl
-  ON ctl.cohort_definition_id = cd.cohort_definition_id
-
-  left join @schema.@cg_table_prefixcohort_template_definition ctd
-  ON ctl.template_definition_id = ctd.template_definition_id
-  ;"
+  sql <- SqlRender::readSql(system.file(
+    "sql/sql_server/cohort/getCohortDefinitions.sql",
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
 
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -145,10 +133,11 @@ getCohortSubsetDefinitions <- function(
     subsetIds = NULL
 ){
   
-  sql <- 'select * 
-  from @schema.@cg_table_prefixcohort_subset_definition
-  {@use_subsets}?{where subset_definition_id in (@subset_id)}
-  ;'
+  sql <- SqlRender::readSql(system.file(
+    "sql/sql_server/cohort/getCohortSubsetDefinitions.sql",
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
   
   result <- tryCatch({connectionHandler$queryDb(
     sql = sql, 
@@ -200,25 +189,11 @@ getCohortInclusionStats <- function(
     cohortIds = NULL
 ) {
   
-  sql <- "SELECT 
-  cir.database_id, 
-  dt.cdm_source_name as database_name,
-  cir.cohort_definition_id, 
-  cd.cohort_name,
-  cir.inclusion_rule_mask, 
-  cir.person_count, 
-  cir.mode_id
-  
-  FROM @schema.@cg_table_prefixCOHORT_INC_RESULT cir
-  
-  INNER JOIN @schema.@database_table dt
-  ON cir.database_id = dt.database_id
-  
-  INNER JOIN @schema.@cg_table_prefixcohort_definition cd
-  ON cir.cohort_definition_id = cd.cohort_definition_id
-  
-  {@use_cohort_id}?{ where cir.cohort_definition_id in (@cohort_definition_ids)}
-  ;"
+  sql <- SqlRender::readSql(system.file(
+    "sql/sql_server/cohort/getCohortInclusionStats.sql",
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -267,18 +242,11 @@ getCohortInclusionRules <- function(
     cohortIds = NULL
 ) {
   
-  sql <- "SELECT 
-  ci.cohort_definition_id, 
-  cd.cohort_name,
-  ci.rule_sequence, 
-  ci.name as rule_name
-  
-  FROM @schema.@cg_table_prefixCOHORT_INCLUSION ci
-  INNER JOIN @schema.@cg_table_prefixCOHORT_DEFINITION cd
-  ON cd.cohort_definition_id = ci.cohort_definition_id
-  
-  {@use_cohort_id}?{ WHERE cd.cohort_definition_id in (@cohort_definition_ids)}
-  ;"
+  sql <- SqlRender::readSql(system.file(
+    "sql/sql_server/cohort/getCohortInclusionRules.sql",
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -328,25 +296,11 @@ getCohortInclusionSummary <- function(
     cohortIds = NULL
 ) {
   
-  sql <- "SELECT 
-  css.cohort_definition_id, 
-  cd.cohort_name,
-  css.base_count, 
-  css.final_count, 
-  css.mode_id,
-  dt.cdm_source_name as database_name,
-  dt.database_id
-  
-  FROM @schema.@cg_table_prefixCOHORT_SUMMARY_STATS css
-  
-  INNER JOIN @schema.@database_table dt
-  ON css.database_id = dt.database_id
-  
-  INNER JOIN @schema.@cg_table_prefixCOHORT_DEFINITION cd
-  ON cd.cohort_definition_id = css.cohort_definition_id
-  
-  {@use_cohort_id}?{ WHERE css.cohort_definition_id in (@cohort_definition_ids)}
-  ;"
+  sql <- SqlRender::readSql(system.file(
+    "sql/sql_server/cohort/getCohortInclusionSummary.sql",
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -398,21 +352,11 @@ getCohortMeta <- function(
     cohortIds = NULL
 ) {
   
-  sql <- "SELECT 
-  cg.cohort_id, 
-  cg.cohort_name,
-  cg.generation_status, 
-  cg.start_time, 
-  cg.end_time, 
-  dt.cdm_source_name as database_name,
-  dt.database_id
-  
-  FROM @schema.@cg_table_prefixCOHORT_GENERATION cg
-  INNER JOIN @schema.@database_table dt
-  ON cg.database_id = dt.database_id
-  
-  {@use_cohort_id}?{ WHERE cg.cohort_id in (@cohort_definition_ids)}
-  ;"
+  sql <- SqlRender::readSql(system.file(
+    "sql/sql_server/cohort/getCohortMeta.sql",
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -464,24 +408,11 @@ getCohortCounts <- function(
     cohortIds = NULL
 ) {
   
-  sql <- "SELECT 
-  cc.cohort_id, 
-  cd.cohort_name,
-  cc.cohort_entries, 
-  cc.cohort_subjects,
-  dt.cdm_source_name as database_name,
-  dt.database_id
-  
-  FROM @schema.@cg_table_prefixCOHORT_COUNT cc
-  
-  INNER JOIN @schema.@database_table dt
-  ON cc.database_id = dt.database_id
-  
-  INNER JOIN @schema.@cg_table_prefixCOHORT_DEFINITION cd
-  ON cd.cohort_definition_id = cc.cohort_id
-
-  {@use_cohort_id}?{ WHERE cc.cohort_id in (@cohort_definition_ids)}
-  ;"
+  sql <- SqlRender::readSql(system.file(
+    "sql/sql_server/cohort/getCohortCounts.sql",
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
   
   result <- connectionHandler$queryDb(
     sql = sql,
