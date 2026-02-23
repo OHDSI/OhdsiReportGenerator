@@ -41,13 +41,21 @@
       maxMigrationOrder <- connectionHandler$queryDb(
         sql = sql,
         schema = schema,
-        cg_table_prefix = cmTablePrefix
+        cg_table_prefix = cgTablePrefix
       ) %>%
         dplyr::pull(maxMigrationOrder) %>%
         dplyr::first()
-      if (maxMigrationOrder >= 3) {
-        version <- 1
-      }
+      version <- switch(
+        as.character(dplyr::case_when(
+          is.na(maxMigrationOrder) ~ "v0",
+          maxMigrationOrder < 3 ~ "v0",
+          maxMigrationOrder == 3 ~ "v1",
+          maxMigrationOrder > 3 ~ "v1.1"
+        )),
+        "v0" = 0,
+        "v1" = 1,
+        "v1.1" = 1.1
+      )
     },
     error = function(e) {
       # Do nothing - most likely the migration table does not exist so assume
@@ -89,10 +97,12 @@ getCohortDefinitions <- function(
     cgTablePrefix = 'cg_',
     targetIds = NULL
 ){
-  cgVersion <- .getCgVersion(
-    connectionHandler = connectionHandler,
-    schema = schema,
-    cgTablePrefix = cgTablePrefix
+  cgVersion <- round(
+      .getCgVersion(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cgTablePrefix = cgTablePrefix
+    )
   )
   
   sql <- SqlRender::readSql(system.file(
