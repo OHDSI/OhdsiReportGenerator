@@ -99,7 +99,7 @@ getCmTargets <- function(
   
   sql <- SqlRender::readSql(
     sourceFile = system.file(
-      paste0("sql/sql_server/getCmTargetsV",cmVersion,".sql"),
+      paste0("sql/sql_server/estimation/getCmTargetsV",cmVersion,".sql"),
       package = "OhdsiReportGenerator",
       mustWork = TRUE
     )
@@ -164,7 +164,7 @@ getCmOutcomes <- function(
   
   sql <- SqlRender::readSql(
     sourceFile = system.file(
-      paste0("sql/sql_server/getCmOutcomesV",cmVersion,".sql"),
+      paste0("sql/sql_server/estimation/getCmOutcomesV",cmVersion,".sql"),
       package = "OhdsiReportGenerator",
       mustWork = TRUE
     )
@@ -266,7 +266,7 @@ getCMEstimation <- function(
   
   sql <- SqlRender::readSql(
     sourceFile = system.file(
-      paste0("sql/sql_server/getCMEstimationV",cmVersion,".sql"),
+      paste0("sql/sql_server/estimation/getCMEstimationV",cmVersion,".sql"),
       package = "OhdsiReportGenerator",
       mustWork = TRUE
     )
@@ -371,7 +371,7 @@ getCmDiagnosticsData <- function(
   
   sql <- SqlRender::readSql(
     sourceFile = system.file(
-      paste0("sql/sql_server/getCmDiagnosticsDataV",cmVersion,".sql"),
+      paste0("sql/sql_server/estimation/getCmDiagnosticsDataV",cmVersion,".sql"),
       package = "OhdsiReportGenerator",
       mustWork = TRUE
     )
@@ -498,7 +498,7 @@ getCmMetaEstimation <- function(
   
   sql <- SqlRender::readSql(
     sourceFile = system.file(
-      paste0("sql/sql_server/getCmMetaEstimationV",cmVersion,".sql"),
+      paste0("sql/sql_server/estimation/getCmMetaEstimationV",cmVersion,".sql"),
       package = "OhdsiReportGenerator",
       mustWork = TRUE
     )
@@ -600,7 +600,7 @@ getCmTable <- function(
   
   sql <- SqlRender::readSql(
     sourceFile = system.file(
-      paste0("sql/sql_server/getCmTableV",cmVersion,".sql"),
+      paste0("sql/sql_server/estimation/getCmTableV",cmVersion,".sql"),
       package = "OhdsiReportGenerator",
       mustWork = TRUE
     )
@@ -695,7 +695,7 @@ getCmNegativeControlEstimates <- function(
   
   sql <- SqlRender::readSql(
     sourceFile = system.file(
-      paste0("sql/sql_server/getCmNegativeControlEstimatesV",cmVersion,".sql"),
+      paste0("sql/sql_server/estimation/getCmNegativeControlEstimatesV",cmVersion,".sql"),
       package = "OhdsiReportGenerator",
       mustWork = TRUE
     )
@@ -779,7 +779,7 @@ getCmPropensityModel <- function(
   
   sql <- SqlRender::readSql(
     sourceFile = system.file(
-      paste0("sql/sql_server/getCmPropensityModelV",cmVersion,".sql"),
+      paste0("sql/sql_server/estimation/getCmPropensityModelV",cmVersion,".sql"),
       package = "OhdsiReportGenerator",
       mustWork = TRUE
     )
