@@ -17,16 +17,6 @@
 #' @return
 #' A integer with the major version number of cohort method
 #'
-#' @examples
-#' conDet <- getExampleConnectionDetails()
-#' 
-#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
-#' 
-#' version <- .getCmVersion(
-#'   connectionHandler = connectionHandler, 
-#'   schema = 'main'
-#' )
-#' 
 .getCmVersion <- function(
     connectionHandler,
     schema,
@@ -737,7 +727,7 @@ getCmNegativeControlEstimates <- function(
 #' @template cmTablePrefix
 #' @template targetId
 #' @param comparatorId the comparator ID of interest
-#' @param indicationIds The indications that the target & comparator was nested to
+#' @param indicationId The indications that the target & comparator was nested to
 #' @param analysisId the analysis ID to restrict to 
 #' @param databaseId the database ID to restrict to 
 #' @family Estimation
