@@ -62,7 +62,7 @@ cat(result, sep = '\n')
 demoList <- list(
   `Exposure Target` = targetIdsOfInterest,
   `Outcome/s` = outcomeIdsOfInterest,
-  `Indication/s` = indicationIdsOfInterest, # what about null?
+  `Indication/s` = ifelse(is.null(indicationIdsOfInterest), NA, indicationIdsOfInterest), # what about null?
   `Comparator/s` = comparatorIdsOfInterest
 )
 

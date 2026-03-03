@@ -18,7 +18,8 @@ params:
   schema: 'main'
   targetId: 1
   outcomeIds: 3
-  indicationIds: ""
+  indicationIds: NULL
+  restrictTargetToIndications: false
   comparatorIds: NULL
   cohortIds: !expr "c(1,3,2)"
   cohortNames: !expr "c('target', 'outcome', 'comp')"
@@ -48,7 +49,7 @@ library(dplyr)
 targetName <- params$cohortNames[params$cohortIds == params$targetId]
 outcomeName <- paste0(params$cohortNames[params$cohortIds %in% params$outcomeIds], collapse = '/')
 
-restrictToIndications <- !('All' %in% params$indicationIds)
+restrictTargetToIndications <- params$restrictTargetToIndications
 indicationIds <- params$indicationIds
 
 #====================================
@@ -105,181 +106,34 @@ cohortDefinitions <- OhdsiReportGenerator::getCohortDefinitions(
   schema = params$schema 
 )
 
-# add the friendly names 
-cohortDefinitions <- 
-  merge(
-    cohortDefinitions,
-    data.frame(
-      cohortId = params$cohortIds,
-      friendlyName = params$cohortNames
-    ), 
-    by.x = 'subsetParent', 
-    by.y = 'cohortId', 
-    all.x = TRUE # TODO - change this if we want to ignore all other cohorts? 
-  )
-cohortDefinitions$friendlyName[is.na(cohortDefinitions$friendlyName)] <- cohortDefinitions$cohortName[is.na(cohortDefinitions$friendlyName)]
-
-
-# function to get indication subset:
-getIndication <- function(json){ 
-  if(is.na(json)){
-    return("")
-  }
-  if(is.null(json)){
-    return("")
-  }
-  sub <- ParallelLogger::convertJsonToSettings(as.character(json))
-  paste0(unlist(lapply(sub$subsetOperators, function(x){
-    
-if(x$subsetType == "CohortSubsetOperator"){
-    if(!x$negate){
-      return(paste0(x$cohortIds, collapse = ','))
-    }
-}
-
-  })), collapse = ',')}
-
-# function to get get TRUE for indication
-getIndication <- function(json){ 
-  if(is.na(json)){
-    return("" %in% params$indicationIds)
-  }
-  if(is.null(json)){
-    return("" %in% params$indicationIds)
-  }
-
-  sub <- ParallelLogger::convertJsonToSettings(as.character(json))
-  result <- any(unlist(lapply(sub$subsetOperators, function(x){
-    
-if(x$subsetType == "CohortSubsetOperator"){
-    if(!x$negate){
-      return(any(x$cohortIds %in% params$indicationIds))
-    }
-} 
-    return(FALSE)
-
-  })))
-  
-}
-
-if(restrictToIndications){
-cohortDefinitions$indicationOfInt <- unlist(lapply(cohortDefinitions$subsetDefinitionJson, getIndication))
-} else{
-  # if no restriction (indicationId == 'Any') set all to TRUE
-  cohortDefinitions$indicationOfInt <- TRUE
-}
-
-# function to convert subset to friendly text
-getSubsetString <- function(x){
-  if(x$subsetType == "CohortSubsetOperator"){
-    txt <- paste0(ifelse(x$negate, 'Not in','In'), ' cohorts ', 
-                  paste0(cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId %in% x$cohortIds],
-                         collapse = ifelse(x$cohortCombinationOperator == 'all', ' and ', ' or ')
-                  ))
-    return(paste0(txt, '.'))
-  }
-  
-  if(x$subsetType == "DemographicSubsetOperator"){
-    gender <- ''
-    if(sum(c(8507,8532) %in% x$gender) == 2){
-      gender = ''
-    } else if( 8507 %in% x$gender){
-      gender = 'Resticted to males.'
-    } else if( 8532 %in% x$gender){
-      gender = 'Resticted to females.'
-    }
-    return(paste0('Aged between ', x$ageMin, ' to ', x$ageMax, '.', 
-                  gender
-    ))
-  }
-  
-  if(x$subsetType == "LimitSubsetOperator"){
-    txt <- ''
-    joiner <- ' and '
-    if(!is.null(x$calendarStartDate)){
-      txt <-  paste0(txt,paste0(
-        'Restict to exposures occurring after ', x$calendarStartDate, 
-        ifelse(!is.null(x$calendarEndDate), paste0(joiner,' before ', x$calendarEndDate), '')
-      ))
-    } else{
-      if(!is.null(x$calendarEndDate)){
-        txt <-  paste0(txt,paste0('Restict to exposures occurring before ', x$calendarEndDate))
-      }
-    }
-    
-    if(x$priorTime > 0){
-      txt <- paste0(txt, ifelse(txt == '', 'Requiring ',paste0(joiner, ' requiring ')) , x$priorTime, ' days observation prior to index')
-    }
-    
-    if(x$followUpTime > 0){
-      txt <- paste0(txt, ifelse(txt == '', 'Requiring ',paste0(joiner, ' requiring ')), x$followUpTime, ' days follow up post index')
-    }
-    
-    if(x$limitTo == 'firstEver'){
-      txt <- paste0(txt, ifelse(txt == '', 'Limit ', ' and limit '), 'to first exposure')
-    }
-    
-    txt <- paste0(txt, '.')
-    return(txt)
-  }
-  
-}
-
-cohortDefinitions$subsetText <- unlist(lapply(1:length(cohortDefinitions$subsetDefinitionJson), function(i){ if(is.null(cohortDefinitions$subsetDefinitionJson[i])){return('')}; if(is.na(cohortDefinitions$subsetDefinitionJson[i])){return('')}
-    paste0(unlist(lapply(ParallelLogger::convertJsonToSettings(cohortDefinitions$subsetDefinitionJson[i])$subsetOperators, function(sub) getSubsetString(sub))), collapse = ' ')}
-))
-
+# code to process the cohortDefinitions - add friendly names etc...
+cohortDefinitions <- OhdsiReportGenerator::processCohortDefinitionsForQuarto(
+  cohortDefinitions = cohortDefinitions,
+  friendlyCohortIds = params$cohortIds,
+  friendlyCohortNames = params$cohortNames,
+  restrictTargetToIndications = restrictTargetToIndications,
+  indicationIds = params$indicationIds
+)
 
 # ===================================
 
-# Restrict cohortDefinitions to: 
-# 1) targetId with indicationOfInt == TRUE
-# 2) comparatorId with indicationOfInt == TRUE
-# 3) indicationId
-# 4) outcomeId
-
-targetsOfInterest <- cohortDefinitions %>%
-  dplyr::filter(
-    ((.data$subsetParent %in% params$targetId) & .data$indicationOfInt) |
-    ((.data$cohortDefinitionId %in% params$targetId) & ("" %in% indicationIds))
-  )
-targetIdsOfInterest <- targetsOfInterest$cohortDefinitionId
-
-
-# if comparators is NULL then include all in results
-comparatorIds <- params$comparatorIds
-if(is.null(params$comparatorIds)){
-  if(params$includeCohortMethod){
-    newComps <- OhdsiReportGenerator::getCmDiagnosticsData(
-      connectionHandler = connectionHandler,
-      schema = params$schema, 
-      targetIds = targetIdsOfInterest, 
-      outcomeIds = params$outcomeIds
-        )
-    
-    comparatorIds <- unique(cohortDefinitions$subsetParent[cohortDefinitions$cohortDefinitionId %in% unique(newComps$comparatorId)])
-    
-  }
-}
-  
-comparatorOfInterest <- cohortDefinitions %>%
-  dplyr::filter(
-    ((.data$subsetParent %in% comparatorIds) & .data$indicationOfInt) |
-    ((.data$cohortDefinitionId %in% comparatorIds) & ("" %in% indicationIds))  
-  )  
- comparatorIdsOfInterest <-  comparatorOfInterest$cohortDefinitionId
-  
- outcomeOfInterest <- cohortDefinitions %>%
-  dplyr::filter(
-    (.data$cohortDefinitionId %in% params$outcomeIds)
-  )
-  outcomeIdsOfInterest <- outcomeOfInterest$cohortDefinitionId
-  
-   indicationOfInterest <- cohortDefinitions %>%
-  dplyr::filter(
-    (.data$cohortDefinitionId %in% indicationIds)
-  )
-  indicationIdsOfInterest <- indicationOfInterest$cohortDefinitionId
+# find the cohort ids of interest to report
+restrictedCohorts <- OhdsiReportGenerator::restrictCohortDefinitionsForQuarto(
+  connectionHandler = connectionHandler,
+  schema = params$schema,
+  cohortDefinitions = cohortDefinitions,
+  targetId = params$targetId,
+  outcomeIds = params$outcomeIds,
+  comparatorIds = params$comparatorIds,
+  restrictTargetToIndications = restrictTargetToIndications,
+  indicationIds = params$indicationIds,
+  includeCohortMethod = includeCohortMethod
+)
+targetIdsOfInterest <- restrictedCohorts$targetIdsOfInterest # includes children
+comparatorIds <- restrictedCohorts$comparatorIds # may get replaced by CM comps if NULL
+comparatorIdsOfInterest <- restrictedCohorts$comparatorIdsOfInterest # includes children
+outcomeIdsOfInterest <- restrictedCohorts$outcomeIdsOfInterest
+indicationIdsOfInterest <- restrictedCohorts$indicationIdsOfInterest
 
 
 # for each  comps in CM get the name
@@ -429,7 +283,7 @@ if(includeCohortMethod){
   if(nrow(cohortMethodDiagnostics) > 0){
     if(!is.null(params$comparatorIds)){
     cohortMethodDiagnostics <- cohortMethodDiagnostics %>%
-      dplyr::filter(.data$comparatorId %in% comparatorOfInterest)
+      dplyr::filter(.data$comparatorId %in% !!comparatorIdsOfInterest)
     }
   }
   
@@ -448,7 +302,7 @@ if(includeCohortMethod){
     if(nrow(cohortMethodResults) > 0){
     if(!is.null(params$comparatorIds)){
     cohortMethodResults <- cohortMethodResults %>%
-      dplyr::filter(.data$comparatorId %in% comparatorOfInterest)
+      dplyr::filter(.data$comparatorId %in% !!comparatorIdsOfInterest)
     }
   }
   
@@ -465,7 +319,7 @@ if(includeCohortMethod){
     if(nrow(cohortMethodES) > 0){
       if(!is.null(params$comparatorIds)){
       cohortMethodES <- cohortMethodES %>%
-       dplyr::filter(.data$comparatorId %in% comparatorOfInterest)
+       dplyr::filter(.data$comparatorId %in% !!comparatorIdsOfInterest)
       }
     }
   }
@@ -491,9 +345,9 @@ if(includeSccs){
   ) 
   
   # filter to the indications of interest
-  if(restrictToIndications){
+  if(restrictTargetToIndications){
     sccsDiagnostics <- sccsDiagnostics %>%
-      dplyr::filter(ifelse(is.na(.data$indicationId), "", .data$indicationId)  %in% params$indicationId)
+      dplyr::filter(ifelse(is.na(.data$indicationId), "", .data$indicationId)  %in% indicationIdsOfInterest)
   }
   
   if(nrow(sccsDiagnostics)  == 0){
@@ -508,9 +362,9 @@ if(includeSccs){
   )
   
     # filter to the indications of interest
-  if(restrictToIndications){
+  if(restrictTargetToIndications){
     sccsResults <- sccsResults %>%
-      dplyr::filter(ifelse(is.na(.data$indicationId), "", .data$indicationId)  %in% params$indicationId)
+      dplyr::filter(ifelse(is.na(.data$indicationId), "", .data$indicationId)  %in% indicationIdsOfInterest)
   }
   
   # return NULL if the evidence synth tables do not exist
@@ -521,10 +375,10 @@ if(includeSccs){
     outcomeIds = outcomeIdsOfInterest
   )}, error = function(e){return(invisible(NULL))})
   
-  if(restrictToIndications){
+  if(restrictTargetToIndications){
     if(!is.null(sccsES)){
     sccsES <- sccsES %>%
-      dplyr::filter(ifelse(is.na(.data$indicationId), "", .data$indicationId)  %in% params$indicationId)
+      dplyr::filter(ifelse(is.na(.data$indicationId), "", .data$indicationId)  %in% indicationIdsOfInterest)
     }
   }
   

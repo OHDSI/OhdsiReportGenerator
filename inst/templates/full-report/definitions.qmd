@@ -21,11 +21,13 @@ cat(
 )
 cat('\n:::\n')
 
+if(!is.null(indicationIds)){
 cat("\n\n")
-cat(paste0("The analysis was implemented for ", sum(indicationIds !='')," indication/s (",
+cat(paste0("The analysis was implemented for ", length(indicationIds)," indication/s (",
            paste0(unique(cohortDefinitions$friendlyName[cohortDefinitions$subsetParent %in% indicationIds]), collapse = '/')
-           ,").",
-           ifelse('' %in% indicationIds, ' The analysis was also implemented for no indication restriction (using all patients exposed).', '')))
+           ,")."))
+
+}
 
 ```   
 
@@ -63,6 +65,7 @@ for(ind in 1:length(outcomeNames)){
 #| echo: false
 #| results: 'asis'
 
+if(!is.null(indicationIds)){
 for(i in 1:length(indicationIds)){
   if(!indicationIds[i] == ''){
     indication <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == indicationIds[i]]
@@ -85,6 +88,7 @@ for(i in 1:length(indicationIds)){
     cat('\n:::\n')
     
   }
+}
 }
 
 

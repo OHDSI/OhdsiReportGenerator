@@ -9,11 +9,18 @@ In the active comparator new user design, large-scale propensity scores were use
 nNegativeControls <- 100
 
 if(includeCohortMethod){
-for(i in 1:length(indicationIds)){
+  
+  if(is.null(indicationIds)){
+    cmIndicationIds <- ""
+  } else{
+    cmIndicationIds <- indicationIds
+  }
+  
+for(i in 1:length(cmIndicationIds)){
   
   indication <- 'No indication'
-  if(!indicationIds[i] == ''){
-    indication <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == indicationIds[i]]
+  if(!cmIndicationIds[i] == ''){
+    indication <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == cmIndicationIds[i]]
   }
   
   exposures <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId %in% comparatorIdsOfInterest]
@@ -24,7 +31,9 @@ for(i in 1:length(indicationIds)){
   
   cat(paste0("The index date was defined as the first observed use of either the, ", targetName, ", or ",paste0(exposures, collapse ='/'),  ". "))
   
-  cat(paste0("Patients were only included if they had a history of ", indication, ".\n")) 
+  if(indication != 'No indication'){
+    cat(paste0("Patients were only included if they had a history of ", indication, ".\n")) 
+  }
   
   if(!is.null(params$excludeText)){ # replace this using cohort subset logic
     cat(
