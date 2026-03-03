@@ -12,6 +12,7 @@ getCmNegativeControlEstimates(
   databaseTable = "database_meta_data",
   targetIds = NULL,
   comparatorIds = NULL,
+  indicationIds = NULL,
   analysisIds = NULL,
   databaseIds = NULL,
   excludePositiveControls = TRUE
@@ -31,6 +32,8 @@ getCmNegativeControlEstimates(
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 
 \item{comparatorIds}{A vector of integers corresponding to the comparator cohort IDs}
+
+\item{indicationIds}{The indications that the target & comparator was nested to}
 
 \item{analysisIds}{the analysis IDs to restrict to}
 
@@ -60,6 +63,7 @@ cmNc <- getCmNegativeControlEstimates(
 }
 \seealso{
 Other Estimation: 
+\code{\link{.getCmVersion}()},
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},

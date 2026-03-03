@@ -1,5 +1,54 @@
 # cohort method
 
+#' An internal function to determine the version of CohortMethod used 
+#' to store results
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes. This
+#' query will attempt to identify if CohortMethod v6 was used by 
+#' inspecing the migration table. When the migration_order is >= 3
+#' then v6 of CohortMethod was used.
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cmTablePrefix
+#' @family Estimation
+#' 
+#' @return
+#' A integer with the major version number of cohort method
+#'
+.getCmVersion <- function(
+    connectionHandler,
+    schema,
+    cmTablePrefix = 'cm_'
+){
+  version <- 5 # Default to v5
+  tryCatch(
+    {
+      sql <- "
+      SELECT MAX(migration_order) max_migration_order
+      FROM @schema.@cm_table_prefixmigration
+      ;"
+      
+      maxMigrationOrder <- connectionHandler$queryDb(
+        sql = sql,
+        schema = schema,
+        cm_table_prefix = cmTablePrefix
+      ) %>%
+        dplyr::pull(maxMigrationOrder) %>%
+        dplyr::first()
+      if (maxMigrationOrder >= 3) {
+        version <- 6
+      }
+    },
+    error = function(e) {
+      # Do nothing - most likely the migration table does not exist so assume
+      # CohortMethod v5
+    }
+  )
+  return(version)
+}
+
 #' A function to extract the targets found in cohort method
 #'
 #' @details
@@ -32,22 +81,20 @@ getCmTargets <- function(
     cmTablePrefix = 'cm_',
     cgTablePrefix = 'cg_'
 ){
+  cmVersion <- .getCmVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cmTablePrefix = cmTablePrefix
+  )
   
-  sql <- "SELECT distinct 
-    cd.cohort_name,
-    cr.target_id as cohort_definition_id, 
-    'cohortMethod' as type,
-    1 as value
+  sql <- SqlRender::readSql(
+    sourceFile = system.file(
+      paste0("sql/sql_server/estimation/getCmTargetsV",cmVersion,".sql"),
+      package = "OhdsiReportGenerator",
+      mustWork = TRUE
+    )
+  )
 
-       FROM
-      
-      @schema.@cm_table_prefixresult as cr
-          
-      inner join @schema.@cg_table_prefixcohort_definition cd
-      
-      on cr.target_id = cd.cohort_definition_id
-      ;"
-  
   targets <- connectionHandler$queryDb(
     sql = sql,
     schema = schema,
@@ -99,31 +146,19 @@ getCmOutcomes <- function(
     cgTablePrefix = 'cg_',
     targetId = NULL
 ){
+  cmVersion <- .getCmVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cmTablePrefix = cmTablePrefix
+  )
   
-  sql <- "SELECT distinct 
-    cd.cohort_name,
-    cr.outcome_id as cohort_definition_id, 
-    'cohortMethod' as type,
-    1 as value
-
-       FROM
-      
-      @schema.@cm_table_prefixresult as cr
-      
-      inner join 
-   @schema.@cm_table_prefixtarget_comparator_outcome as tco
-   on 
-   cr.target_id = tco.target_id and 
-   cr.comparator_id = tco.comparator_id and 
-   cr.outcome_id = tco.outcome_id
-          
-      inner join @schema.@cg_table_prefixcohort_definition cd
-      
-      on cr.outcome_id = cd.cohort_definition_id
-      
-      where tco.outcome_of_interest = 1
-      {@use_target}?{ and cr.target_id in (@target_id)}
-      ;"
+  sql <- SqlRender::readSql(
+    sourceFile = system.file(
+      paste0("sql/sql_server/estimation/getCmOutcomesV",cmVersion,".sql"),
+      package = "OhdsiReportGenerator",
+      mustWork = TRUE
+    )
+  )
   
   outcomes <- connectionHandler$queryDb(
     sql = sql,
@@ -213,84 +248,19 @@ getCMEstimation <- function(
     outcomeIds = NULL,
     comparatorIds = NULL
 ){
+  cmVersion <- .getCmVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cmTablePrefix = cmTablePrefix
+  )
   
-
-  sql <- "select 
-  db.cdm_source_abbreviation as database_name, 
-  db.database_id,
-  r.analysis_id, 
-  a.description,
-  
-  c1.cohort_name as target_name,
-  r.target_id,
-  c2.cohort_name as comparator_name,
-  r.comparator_id, 
-  c3.cohort_name as outcome_name,
-  r.outcome_id, 
-  
-  case when COALESCE(unblind.unblind, 0) = 0 then NULL else r.calibrated_rr end calibrated_rr, 
-  case when COALESCE(unblind.unblind, 0) = 0 then NULL else r.calibrated_ci_95_lb end calibrated_ci_95_lb, 
-  case when COALESCE(unblind.unblind, 0) = 0 then NULL else r.calibrated_ci_95_ub end calibrated_ci_95_ub, 
-  case when COALESCE(unblind.unblind, 0) = 0 then NULL else r.calibrated_p end calibrated_p, 
-  case when COALESCE(unblind.unblind, 0) = 0 then NULL else r.calibrated_one_sided_p end calibrated_one_sided_p,
-  case when COALESCE(unblind.unblind, 0) = 0 then NULL else r.calibrated_log_rr end calibrated_log_rr, 
-  case when COALESCE(unblind.unblind, 0) = 0 then NULL else r.calibrated_se_log_rr end calibrated_se_log_rr,
-  
-  r.target_subjects,
-  r.comparator_subjects,
-  r.target_days,
-  r.comparator_days,
-  r.target_outcomes,
-  r.comparator_outcomes,
-  unblind.unblind,
-  unblind.unblind_for_evidence_synthesis,
-  r.target_estimator
-  
-  from 
-   @schema.@cm_table_prefixresult as r
-   inner join 
-   @schema.@cm_table_prefixtarget_comparator_outcome as tco
-   on 
-   r.target_id = tco.target_id and 
-   r.comparator_id = tco.comparator_id and 
-   r.outcome_id = tco.outcome_id
-   
-   inner join
-   
-   @schema.@cm_table_prefixdiagnostics_summary as unblind
-   on
-   r.analysis_id = unblind.analysis_id and 
-   r.target_id = unblind.target_id and 
-   r.comparator_id = unblind.comparator_id and 
-   r.outcome_id = unblind.outcome_id and 
-   r.database_id = unblind.database_id
-   
-   inner join
-   @schema.@database_table as db
-   on db.database_id = r.database_id
-   
-   inner join
-   @schema.@cg_table_prefixcohort_definition as c1
-   on c1.cohort_definition_id = r.target_id
-   
-   inner join
-   @schema.@cg_table_prefixcohort_definition as c2
-   on c2.cohort_definition_id = r.comparator_id
-   
-   inner join
-   @schema.@cg_table_prefixcohort_definition as c3
-   on c3.cohort_definition_id = r.outcome_id
-   
-   inner join
-   @schema.@cm_table_prefixanalysis as a
-   on a.analysis_id = r.analysis_id
-   
-   where 
-   tco.outcome_of_interest = 1
-   {@restrict_target} ? { and r.target_id in (@target_id)}
-   {@restrict_outcome} ? {and r.outcome_id in (@outcome_id)}
-   {@restrict_comparator} ? { and r.comparator_id in (@comparator_id)}
-  ;"
+  sql <- SqlRender::readSql(
+    sourceFile = system.file(
+      paste0("sql/sql_server/estimation/getCMEstimationV",cmVersion,".sql"),
+      package = "OhdsiReportGenerator",
+      mustWork = TRUE
+    )
+  )
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -383,52 +353,19 @@ getCmDiagnosticsData <- function(
     analysisIds = NULL,
     databaseIds = NULL
 ){
+  cmVersion <- .getCmVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cmTablePrefix = cmTablePrefix
+  )
   
-  sql <- "
-    SELECT DISTINCT
-      dmd.cdm_source_abbreviation database_name,
-      dmd.database_id,
-      cma.analysis_id,
-      cma.description,
-      cgcd1.cohort_name target_name,
-      cmds.target_id,
-      cgcd2.cohort_name comparator_name,
-      cmds.comparator_id,
-      cgcd3.cohort_name outcome_name,
-      cmds.outcome_id,
-      
-      cmds.max_sdm,
-      cmds.shared_max_sdm,
-      cmds.equipoise,
-      cmds.mdrr,
-      cmds.attrition_fraction,
-      cmds.ease,
-      cmds.balance_diagnostic,
-      cmds.shared_balance_diagnostic, -- added back
-      cmds.equipoise_diagnostic,
-      cmds.mdrr_diagnostic,
-      cmds.attrition_diagnostic,
-      cmds.ease_diagnostic,
-      cmds.unblind_for_evidence_synthesis,
-      cmds.unblind
-    FROM
-      @schema.@cm_table_prefixdiagnostics_summary cmds
-      INNER JOIN @schema.@cm_table_prefixanalysis cma ON cmds.analysis_id = cma.analysis_id
-      INNER JOIN @schema.@database_table dmd ON dmd.database_id = cmds.database_id
-      INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd1 ON cmds.target_id = cgcd1.cohort_definition_id
-      INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd2 ON cmds.comparator_id = cgcd2.cohort_definition_id
-      INNER JOIN @schema.@cg_table_prefixcohort_definition cgcd3 ON cmds.outcome_id = cgcd3.cohort_definition_id
-      
-      WHERE 
-      cmds.database_id IS NOT NULL
-      {@use_target}?{AND cgcd1.cohort_definition_id in (@targets)}
-      {@use_comparator}?{AND cgcd2.cohort_definition_id in (@comparators)}
-      {@use_outcome}?{AND cgcd3.cohort_definition_id in (@outcomes)}
-      
-      {@use_database}?{AND  cmds.database_id in (@database_ids)} 
-      {@use_analysis}?{AND cmds.analysis_id in (@analysis_ids)}
-      ;
-      "
+  sql <- SqlRender::readSql(
+    sourceFile = system.file(
+      paste0("sql/sql_server/estimation/getCmDiagnosticsDataV",cmVersion,".sql"),
+      package = "OhdsiReportGenerator",
+      mustWork = TRUE
+    )
+  )
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -442,7 +379,7 @@ getCmDiagnosticsData <- function(
     use_comparator = !is.null(comparatorIds),
     outcomes = paste0(outcomeIds, collapse = ','),
     use_outcome = !is.null(outcomeIds),
-    
+
     database_ids = paste0("'",databaseIds,"'", collapse = ','),
     use_database = !is.null(databaseIds),
     analysis_ids = paste0(analysisIds, collapse = ','),
@@ -543,72 +480,19 @@ getCmMetaEstimation <- function(
     comparatorIds = NULL,
     includeOneSidedP = TRUE
 ){
-
-  sql <- "select 
-  ev.evidence_synthesis_description as database_name,
-  r.analysis_id,
-  a.description,
-  c1.cohort_name as target_name,
-  r.target_id, 
-  c2.cohort_name as comparator_name,
-  r.comparator_id,
-  c3.cohort_name as outcome_name,
-  r.outcome_id, 
-  r.calibrated_rr, r.calibrated_ci_95_lb, r.calibrated_ci_95_ub,
-  r.calibrated_p, 
-  {@include_one_sided_p}?{r.calibrated_one_sided_p,}
-  r.calibrated_log_rr, r.calibrated_se_log_rr,
-  r. target_subjects, r.comparator_subjects, r.target_days,
-  r.comparator_days, r.target_outcomes, r.comparator_outcomes,
-  unblind.unblind,
-  r.n_databases
-
-  from 
-   @schema.@es_table_prefixcm_result as r
-   inner join 
-   @schema.@cm_table_prefixtarget_comparator_outcome as tco
-   on 
-   r.target_id = tco.target_id and 
-   r.comparator_id = tco.comparator_id and 
-   r.outcome_id = tco.outcome_id
-   
-   inner join
-   
-   @schema.@es_table_prefixcm_diagnostics_summary as unblind
-   on
-   r.analysis_id = unblind.analysis_id and 
-   r.target_id = unblind.target_id and 
-   r.comparator_id = unblind.comparator_id and 
-   r.outcome_id = unblind.outcome_id 
-   
-   inner join
-   @schema.@cg_table_prefixcohort_definition as c1
-   on c1.cohort_definition_id = r.target_id
-   
-   inner join
-   @schema.@cg_table_prefixcohort_definition as c2
-   on c2.cohort_definition_id = r.comparator_id
-   
-   inner join
-   @schema.@cg_table_prefixcohort_definition as c3
-   on c3.cohort_definition_id = r.outcome_id
-   
-   inner join
-   @schema.@cm_table_prefixanalysis as a
-   on a.analysis_id = r.analysis_id
-   
-   inner join
-   @schema.@es_table_prefixanalysis as ev
-   on ev.evidence_synthesis_analysis_id = r.evidence_synthesis_analysis_id
-   
-   where 
-   r.calibrated_rr != 0 and
-   tco.outcome_of_interest = 1 and
-   unblind.unblind = 1
-   {@include_target}?{and r.target_id in (@target_id)}
-   {@include_outcome}?{and r.outcome_id in (@outcome_id)}
-   {@include_comparator}?{and r.comparator_id in (@comparator_id)}
-  ;"
+  cmVersion <- .getCmVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cmTablePrefix = cmTablePrefix
+  )
+  
+  sql <- SqlRender::readSql(
+    sourceFile = system.file(
+      paste0("sql/sql_server/estimation/getCmMetaEstimationV",cmVersion,".sql"),
+      package = "OhdsiReportGenerator",
+      mustWork = TRUE
+    )
+  )
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -642,6 +526,7 @@ getCmMetaEstimation <- function(
 #' @template cgTablePrefix
 #' @template databaseTable
 #' @template targetIds
+#' @param indicationIds The indications that the target & comparator was nested to
 #' @template outcomeIds
 #' @template comparatorIds
 #' @param analysisIds the analysis IDs to restrict to 
@@ -673,6 +558,7 @@ getCmTable <- function(
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
     targetIds = NULL,
+    indicationIds = NULL,
     outcomeIds = NULL,
     comparatorIds = NULL,
     analysisIds = NULL,
@@ -696,55 +582,19 @@ getCmTable <- function(
   
   addCovariateName <- table %in% c('shared_covariate_balance','covariate_balance')
   
-  sql <- "select 
-  dmd.cdm_source_abbreviation database_name,
-  a.description as analysis_description,
-  c1.cohort_name as target_name,
-  c2.cohort_name as comparator_name,
-  {@include_outcome}?{c3.cohort_name as outcome_name,}
-  {@include_covariate_name}?{c.covariate_name,}
-  tab.*
-
-  from 
-   @schema.@cm_table_prefix@table as tab
+  cmVersion <- .getCmVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cmTablePrefix = cmTablePrefix
+  )
   
-   {@include_covariate_name}?{
-    JOIN @schema.@cm_table_prefixcovariate c 
-    ON tab.covariate_id = c.covariate_id 
-    AND tab.analysis_id = c.analysis_id 
-    AND tab.database_id = c.database_id
-   }
-
-   inner join
-   @schema.@cg_table_prefixcohort_definition as c1
-   on c1.cohort_definition_id = tab.target_id
-   
-   inner join
-   @schema.@cg_table_prefixcohort_definition as c2
-   on c2.cohort_definition_id = tab.comparator_id
-   
-  {@include_outcome}?{
-   inner join
-   @schema.@cg_table_prefixcohort_definition as c3
-   on c3.cohort_definition_id = tab.outcome_id
-  }
-   
-   inner join
-   @schema.@cm_table_prefixanalysis as a
-   on a.analysis_id = tab.analysis_id
-   
-   inner join
-   @schema.@database_table as dmd
-   on dmd.database_id = tab.database_id
-   
-   where 
-   1 = 1 
-   {@include_target}?{and tab.target_id in (@target_id)}
-   {@include_outcome}?{and tab.outcome_id in (@outcome_id)}
-  {@include_comparator}?{and tab.comparator_id in (@comparator_id)}
-  {@include_database}?{and tab.database_id in (@database_id)}
-  {@include_analyses}?{and tab.analysis_id in (@analysis_id)}
-  ;"
+  sql <- SqlRender::readSql(
+    sourceFile = system.file(
+      paste0("sql/sql_server/estimation/getCmTableV",cmVersion,".sql"),
+      package = "OhdsiReportGenerator",
+      mustWork = TRUE
+    )
+  )
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -758,6 +608,8 @@ getCmTable <- function(
     include_outcome = useOutcome,
     comparator_id = paste0(comparatorIds, collapse = ','),
     include_comparator = !is.null(comparatorIds),
+    indication_id = paste0(indicationIds, collapse = ','),
+    include_indication = !is.null(indicationIds),
     database_id = paste0("'",databaseIds,"'", collapse = ','),
     include_database = !is.null(databaseIds),
     analysis_id = paste0(analysisIds, collapse = ','),
@@ -793,6 +645,7 @@ getCmTable <- function(
 #' @template databaseTable
 #' @template targetIds
 #' @template comparatorIds
+#' @param indicationIds The indications that the target & comparator was nested to
 #' @param analysisIds the analysis IDs to restrict to 
 #' @param databaseIds the database IDs to restrict to 
 #' @param excludePositiveControls Whether to exclude the positive controls 
@@ -819,40 +672,24 @@ getCmNegativeControlEstimates <- function(
   databaseTable = 'database_meta_data',
   targetIds = NULL,
   comparatorIds = NULL,
+  indicationIds = NULL,
   analysisIds = NULL,
   databaseIds = NULL,
   excludePositiveControls = TRUE
 ){
+  cmVersion <- .getCmVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cmTablePrefix = cmTablePrefix
+  )
   
-  
-  sql <- "
-    SELECT
-      cmr.*,
-      cmtco.true_effect_size effect_size,
-      ds.ease
-    FROM
-      @schema.@cm_table_prefixresult cmr
-      
-      INNER JOIN @schema.@cm_table_prefixtarget_comparator_outcome cmtco 
-      ON cmr.target_id = cmtco.target_id 
-      AND cmr.comparator_id = cmtco.comparator_id 
-      AND cmr.outcome_id = cmtco.outcome_id
-      
-     INNER JOIN @schema.@cm_table_prefixdiagnostics_summary ds
-     ON ds.target_id = cmr.target_id
-     AND ds.comparator_id = cmr.comparator_id
-     AND ds.analysis_id = cmr.analysis_id
-     AND ds.database_id = cmr.database_id
-     AND ds.outcome_id = cmr.outcome_id
-      
-    WHERE
-      cmtco.outcome_of_interest != 1
-      {@exclude_positive_controls}?{AND cmtco.true_effect_size = 1}
-      {@use_target}?{AND cmr.target_id in (@target_ids)}
-      {@use_comparator}?{AND cmr.comparator_id in (@comparator_ids)}
-      {@use_analysis}?{AND cmr.analysis_id in (@analysis_ids)}
-      {@use_database}?{AND cmr.database_id in (@database_ids)}
-      ;"
+  sql <- SqlRender::readSql(
+    sourceFile = system.file(
+      paste0("sql/sql_server/estimation/getCmNegativeControlEstimatesV",cmVersion,".sql"),
+      package = "OhdsiReportGenerator",
+      mustWork = TRUE
+    )
+  )
   
   results <- connectionHandler$queryDb(
     sql = sql,
@@ -863,6 +700,10 @@ getCmNegativeControlEstimates <- function(
     target_ids = paste0(targetIds, collapse = ','),
     use_comparator = !is.null(comparatorIds),
     comparator_ids = paste0(comparatorIds, collapse = ','),
+    use_indication = !is.null(indicationIds),
+    indication_ids = paste0(indicationIds, collapse = ','),
+    
+
     use_analysis = !is.null(analysisIds),
     analysis_ids = paste0(analysisIds, collapse = ','),
     use_database = !is.null(databaseIds),
@@ -886,6 +727,7 @@ getCmNegativeControlEstimates <- function(
 #' @template cmTablePrefix
 #' @template targetId
 #' @param comparatorId the comparator ID of interest
+#' @param indicationId The indications that the target & comparator was nested to
 #' @param analysisId the analysis ID to restrict to 
 #' @param databaseId the database ID to restrict to 
 #' @family Estimation
@@ -908,7 +750,8 @@ getCmPropensityModel <- function(
     schema,
     cmTablePrefix = 'cm_',
     targetId = NULL, 
-    comparatorId = NULL, 
+    comparatorId = NULL,
+    indicationId = NULL,
     analysisId = NULL, 
     databaseId = NULL
 ) {
@@ -918,33 +761,19 @@ getCmPropensityModel <- function(
     return(NULL)
   }
   
-  sql <- "
-    SELECT
-    cmc.covariate_id,
-    cmc.covariate_name,
-    cmpm.coefficient
-  FROM
-    (
-      SELECT
-        covariate_id,
-        covariate_name
-      FROM
-        @schema.@cm_table_prefixcovariate
-      WHERE
-        analysis_id = @analysis_id
-        AND database_id = '@database_id'
-      UNION
-      SELECT
-      0 as covariate_id,
-      'intercept' as covariate_name) cmc
-    JOIN @schema.@cm_table_prefixpropensity_model cmpm 
-    ON cmc.covariate_id = cmpm.covariate_id
-  WHERE
-    cmpm.target_id = @target_id
-    AND cmpm.comparator_id = @comparator_id
-    AND cmpm.analysis_id = @analysis_id
-    AND cmpm.database_id = '@database_id'
-  "
+  cmVersion <- .getCmVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cmTablePrefix = cmTablePrefix
+  )
+  
+  sql <- SqlRender::readSql(
+    sourceFile = system.file(
+      paste0("sql/sql_server/estimation/getCmPropensityModelV",cmVersion,".sql"),
+      package = "OhdsiReportGenerator",
+      mustWork = TRUE
+    )
+  )
   
   model <- connectionHandler$queryDb(
     sql = sql,
@@ -952,6 +781,8 @@ getCmPropensityModel <- function(
     cm_table_prefix = cmTablePrefix,
     target_id = targetId,
     comparator_id = comparatorId,
+    use_indication = !is.null(indicationId),
+    indication_id = indicationId,
     analysis_id = analysisId,
     database_id = databaseId
   )
