@@ -14,6 +14,7 @@ getCmTable(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   targetIds = NULL,
+  indicationIds = NULL,
   outcomeIds = NULL,
   comparatorIds = NULL,
   analysisIds = NULL,
@@ -34,6 +35,8 @@ getCmTable(
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
+
+\item{indicationIds}{The indications that the target & comparator was nested to}
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
 
@@ -66,6 +69,7 @@ cmTable <- getCmTable(
 }
 \seealso{
 Other Estimation: 
+\code{\link{.getCmVersion}()},
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
