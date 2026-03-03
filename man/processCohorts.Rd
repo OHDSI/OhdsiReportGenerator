@@ -41,6 +41,9 @@ Other Cohorts:
 \code{\link{getCohortInclusionStats}()},
 \code{\link{getCohortInclusionSummary}()},
 \code{\link{getCohortMeta}()},
-\code{\link{getCohortSubsetDefinitions}()}
+\code{\link{getCohortSubsetDefinitions}()},
+\code{\link{getSubsetText}()},
+\code{\link{processCohortDefinitionsForQuarto}()},
+\code{\link{restrictCohortDefinitionsForQuarto}()}
 }
 \concept{Cohorts}

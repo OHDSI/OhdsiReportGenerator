@@ -129,7 +129,7 @@ resultsConnectionDetails = DatabaseConnector::createConnectionDetails(
   dbms = 'sqlite', 
   server = './inst/exampledata/results.sqlite'
 )
-esModuleSettingsCreator = EvidenceSynthesisModule$new()
+esModuleSettingsCreator = Strategus::EvidenceSynthesisModule$new()
 evidenceSynthesisSourceCm <- esModuleSettingsCreator$createEvidenceSynthesisSource(
   sourceMethod = "CohortMethod",
   likelihoodApproximation = "adaptive grid"
@@ -185,3 +185,11 @@ Strategus::uploadResults(
   resultsDataModelSettings = resultsDataModelSettings,
   resultsConnectionDetails = resultsConnectionDetails
 )
+
+oldWd <- getwd()
+setwd('./inst/exampledata')
+DatabaseConnector::createZipFile(
+  zipFile = 'results.sqlite.zip', 
+  files = 'results.sqlite'
+)
+setwd(oldWd)

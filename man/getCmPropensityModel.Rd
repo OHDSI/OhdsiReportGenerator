@@ -10,6 +10,7 @@ getCmPropensityModel(
   cmTablePrefix = "cm_",
   targetId = NULL,
   comparatorId = NULL,
+  indicationId = NULL,
   analysisId = NULL,
   databaseId = NULL
 )
@@ -24,6 +25,8 @@ getCmPropensityModel(
 \item{targetId}{An integer corresponding to the target cohort ID}
 
 \item{comparatorId}{the comparator ID of interest}
+
+\item{indicationId}{The indications that the target & comparator was nested to}
 
 \item{analysisId}{the analysis ID to restrict to}
 
@@ -51,6 +54,7 @@ cmModel <- getCmPropensityModel(
 }
 \seealso{
 Other Estimation: 
+\code{\link{.getCmVersion}()},
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},

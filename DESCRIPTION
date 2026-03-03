@@ -31,6 +31,7 @@ Imports:
   reactable (>= 0.4.4),
   rlang,
   rmarkdown,
+  SqlRender,
   tibble,
   tidyr
 Suggests:
@@ -38,6 +39,7 @@ Suggests:
   markdown,
   ResultModelManager,
   RSQLite,
-  testthat
+  testthat (>= 3.0.0)
 RoxygenNote: 7.3.3
 Encoding: UTF-8
+Config/testthat/edition: 3

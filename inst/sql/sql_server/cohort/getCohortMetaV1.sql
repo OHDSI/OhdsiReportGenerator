@@ -1,0 +1,17 @@
+SELECT
+cg.cohort_definition_id as cohort_id,
+cd.cohort_name,
+cg.generation_status,
+cg.start_time,
+cg.end_time,
+dt.cdm_source_name as database_name,
+dt.database_id
+
+FROM @schema.@cg_table_prefixCOHORT_GENERATION cg
+INNER JOIN @schema.@cg_table_prefixCOHORT_DEFINITION cd ON 
+  cg.cohort_definition_id = cd.cohort_definition_id
+INNER JOIN @schema.@database_table dt
+ON cg.database_id = dt.database_id
+
+{@use_cohort_id}?{ WHERE cg.cohort_id in (@cohort_definition_ids)}
+;
