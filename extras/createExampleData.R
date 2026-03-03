@@ -28,7 +28,7 @@ Strategus::execute(
   executionSettings = Strategus::createCdmExecutionSettings(
     workDatabaseSchema = 'main', 
     cdmDatabaseSchema = cdmDatabase,
-    cohortTableNames = CohortGenerator::getCohortTableNames('cohort'), 
+    cohortTableNames = CohortGenerator::getCohortTableNames('cohort_table'), 
     workFolder = file.path(outputFolder, 'work'), 
     resultsFolder = file.path(outputFolder, 'result')#, 
     #modulesToExecute = c('CohortGeneratorModule','SelfControlledCaseSeriesModule')
