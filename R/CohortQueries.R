@@ -9,7 +9,7 @@
 #'
 #' @template connectionHandler
 #' @template schema
-#' @template cmTablePrefix
+#' @template cgTablePrefix
 #' @family Estimation
 #' 
 #' @return
@@ -25,6 +25,7 @@
 #'   schema = 'main'
 #' )
 #' 
+#' @export
 .getCgVersion <- function(
     connectionHandler,
     schema,

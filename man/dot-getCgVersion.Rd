@@ -12,7 +12,7 @@ used to store results}
 
 \item{schema}{The result database schema (e.g., 'main' for sqlite)}
 
-\item{cmTablePrefix}{The prefix used for the cohort method results tables}
+\item{cgTablePrefix}{The prefix used for the cohort generator results tables}
 }
 \value{
 A integer with the major version number of CohortGenerator
