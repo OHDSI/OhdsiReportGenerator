@@ -22,3 +22,17 @@ Function that converts a subsetDefinitionJson into text description
 The function takes a subsetDefinitionJson and converts it into friendly text describing the 
 subset logic
 }
+\seealso{
+Other Cohorts: 
+\code{\link{getCohortCounts}()},
+\code{\link{getCohortDefinitions}()},
+\code{\link{getCohortInclusionRules}()},
+\code{\link{getCohortInclusionStats}()},
+\code{\link{getCohortInclusionSummary}()},
+\code{\link{getCohortMeta}()},
+\code{\link{getCohortSubsetDefinitions}()},
+\code{\link{processCohortDefinitionsForQuarto}()},
+\code{\link{processCohorts}()},
+\code{\link{restrictCohortDefinitionsForQuarto}()}
+}
+\concept{Cohorts}

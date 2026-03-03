@@ -34,3 +34,17 @@ Function processes the cohortDefinitions object by adding friendly names for
 specified parent cohorts, determines which cohorts are nested in the specified
 indication cohort ids and ...
 }
+\seealso{
+Other Cohorts: 
+\code{\link{getCohortCounts}()},
+\code{\link{getCohortDefinitions}()},
+\code{\link{getCohortInclusionRules}()},
+\code{\link{getCohortInclusionStats}()},
+\code{\link{getCohortInclusionSummary}()},
+\code{\link{getCohortMeta}()},
+\code{\link{getCohortSubsetDefinitions}()},
+\code{\link{getSubsetText}()},
+\code{\link{processCohorts}()},
+\code{\link{restrictCohortDefinitionsForQuarto}()}
+}
+\concept{Cohorts}

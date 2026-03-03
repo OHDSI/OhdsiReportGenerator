@@ -1,31 +1,3 @@
-#' An internal function to determine the version of CohortGenerator is 
-#' used to store results
-#'
-#' @details
-#' Specify the connectionHandler, the schema and the prefixes. This
-#' query will attempt to identify if CohortGenerator v0.x was used by 
-#' inspecing the migration table. When the migration_order is >= 3
-#' then v1 of CohortGenerator was used.
-#'
-#' @template connectionHandler
-#' @template schema
-#' @template cgTablePrefix
-#' @family Estimation
-#' 
-#' @return
-#' A integer with the major version number of CohortGenerator
-#'
-#' @examples
-#' conDet <- getExampleConnectionDetails()
-#' 
-#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
-#' 
-#' version <- .getCgVersion(
-#'   connectionHandler = connectionHandler, 
-#'   schema = 'main'
-#' )
-#' 
-#' @export
 .getCgVersion <- function(
     connectionHandler,
     schema,
@@ -633,6 +605,7 @@ getCohortSubsetAttrition <- function(
 #' Function processes the cohortDefinitions object by adding friendly names for 
 #' specified parent cohorts, determines which cohorts are nested in the specified
 #' indication cohort ids and ...
+#' @family Cohorts
 #'
 #' @param cohortDefinitions The output of `getCohortDefinitions()`
 #' @param friendlyCohortIds a vector of parent cohort ids that you want to rename
@@ -696,6 +669,7 @@ processCohortDefinitionsForQuarto <- function(
 #' @details
 #' This function finds the targets, comparators, indications and outcomes of interest based
 #' on the user inputs for quarto report generation.
+#' @family Cohorts
 #'
 #' @template connectionHandler
 #' @template schema
@@ -851,6 +825,7 @@ subsetNestedInIds <- function(subsetDefinitionJson = NULL, nestIds){
 #' @details
 #' The function takes a subsetDefinitionJson and converts it into friendly text describing the 
 #' subset logic
+#' @family Cohorts
 #'
 #' @param subsetDefinitionJson The subset logic json
 #' @param cohortDefinitions A data.frame with the columns cohortDefinitionId, cohortName and optionally friendlyName that will

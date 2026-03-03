@@ -51,3 +51,17 @@ for the quarto report based on the user inputs
 This function finds the targets, comparators, indications and outcomes of interest based
 on the user inputs for quarto report generation.
 }
+\seealso{
+Other Cohorts: 
+\code{\link{getCohortCounts}()},
+\code{\link{getCohortDefinitions}()},
+\code{\link{getCohortInclusionRules}()},
+\code{\link{getCohortInclusionStats}()},
+\code{\link{getCohortInclusionSummary}()},
+\code{\link{getCohortMeta}()},
+\code{\link{getCohortSubsetDefinitions}()},
+\code{\link{getSubsetText}()},
+\code{\link{processCohortDefinitionsForQuarto}()},
+\code{\link{processCohorts}()}
+}
+\concept{Cohorts}

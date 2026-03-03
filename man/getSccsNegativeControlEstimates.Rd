@@ -69,7 +69,6 @@ sccsNcs <- getSccsNegativeControlEstimates(
 }
 \seealso{
 Other Estimation: 
-\code{\link{.getCgVersion}()},
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},

@@ -90,7 +90,6 @@ cmDiag <- getCmDiagnosticsData(
 }
 \seealso{
 Other Estimation: 
-\code{\link{.getCgVersion}()},
 \code{\link{getCMEstimation}()},
 \code{\link{getCmMetaEstimation}()},
 \code{\link{getCmNegativeControlEstimates}()},
