@@ -8,7 +8,7 @@
 #' @template connectionHandler
 #' @template schema
 #' @template tpTablePrefix
-#' @family Treatment Patterns
+#' @family TreatmentPatterns
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
@@ -112,7 +112,7 @@ getAnalysisCohorts <- function(
 #' @param databaseIds (optional) A vector of database ids to restrict to
 #' @param databaseNames (optional) A vector of database Names to restrict to
 #' @param targetIds (optional) A vector of target cohort ids to restrict to
-#' @family Treatment Patterns
+#' @family TreatmentPatterns
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
@@ -214,7 +214,7 @@ getTreatmentPathways <- function(
 #' @param databaseIds (optional) A vector of database ids to restrict to
 #' @param databaseNames (optional) A vector of database Names to restrict to
 #' @param targetIds (optional) A vector of target cohort ids to restrict to
-#' @family Treatment Patterns
+#' @family TreatmentPatterns
 #' @return
 #' Returns a data.frame with the columns:
 #' \itemize{
