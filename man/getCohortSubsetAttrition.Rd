@@ -29,3 +29,19 @@ A tibble with attrition details for each cohort subset.
 \description{
 Retrieves attrition information for specified cohort subsets from the database.
 }
+\seealso{
+Other Cohorts: 
+\code{\link{getCohortAttrition}()},
+\code{\link{getCohortCounts}()},
+\code{\link{getCohortDefinitions}()},
+\code{\link{getCohortInclusionRules}()},
+\code{\link{getCohortInclusionStats}()},
+\code{\link{getCohortInclusionSummary}()},
+\code{\link{getCohortMeta}()},
+\code{\link{getCohortSubsetDefinitions}()},
+\code{\link{getSubsetText}()},
+\code{\link{processCohortDefinitionsForQuarto}()},
+\code{\link{processCohorts}()},
+\code{\link{restrictCohortDefinitionsForQuarto}()}
+}
+\concept{Cohorts}

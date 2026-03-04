@@ -45,11 +45,13 @@ cohortMeta <- getCohortCounts(
 }
 \seealso{
 Other Cohorts: 
+\code{\link{getCohortAttrition}()},
 \code{\link{getCohortDefinitions}()},
 \code{\link{getCohortInclusionRules}()},
 \code{\link{getCohortInclusionStats}()},
 \code{\link{getCohortInclusionSummary}()},
 \code{\link{getCohortMeta}()},
+\code{\link{getCohortSubsetAttrition}()},
 \code{\link{getCohortSubsetDefinitions}()},
 \code{\link{getSubsetText}()},
 \code{\link{processCohortDefinitionsForQuarto}()},

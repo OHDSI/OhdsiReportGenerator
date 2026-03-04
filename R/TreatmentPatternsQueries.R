@@ -28,7 +28,7 @@
 #'
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #'
-#' cohortAnalysis <- getIncidenceRates(
+#' cohortAnalysis <- getAnalysisCohorts(
 #'   connectionHandler = connectionHandler,
 #'   schema = "main"
 #' )
@@ -55,28 +55,33 @@ getAnalysisCohorts <- function(
   ) 
 
   targets <- result %>%
-    dplyr::filter(type == "target") %>%
-    dplyr::distinct(analysisId, cohortId, .keep_all = TRUE) %>%
-    dplyr::select(analysisId, targetCohortId = cohortId, targetCohortName = cohortName)
+    dplyr::filter(.data$type == "target") %>%
+    dplyr::rename(targetCohortId = "cohortId",
+                  targetCohortName = "cohortName") %>%
+    dplyr::select("analysisId", "targetCohortId", "targetCohortName") %>%
+    dplyr::distinct()
   
   events <- result %>%
-    dplyr::filter(type == "event") %>%
-    dplyr::distinct(analysisId, cohortId, .keep_all = TRUE) %>%
-    dplyr::group_by(analysisId) %>%
-    dplyr::summarise(eventCohortList = paste(cohortName, collapse = ", "), .groups = "drop")
+    dplyr::filter(.data$type == "event") %>%
+    dplyr::select("analysisId", "cohortId", "cohortName") %>%
+    dplyr::distinct() %>%
+    dplyr::group_by(.data$analysisId) %>%
+    dplyr::summarise(eventCohortList = paste(.data$cohortName, collapse = ", "), .groups = "drop")
   
   exits <- result %>%
-    dplyr::filter(type == "exit") %>%
-    dplyr::distinct(analysisId, cohortId, .keep_all = TRUE) %>%
-    dplyr::group_by(analysisId) %>%
-    dplyr::summarise(exitCohortList = paste(cohortName, collapse = ", "), .groups = "drop")
+    dplyr::filter(.data$type == "exit") %>%
+    dplyr::select("analysisId", "cohortId", "cohortName") %>%
+    dplyr::distinct() %>%
+    dplyr::group_by(.data$analysisId) %>%
+    dplyr::summarise(exitCohortList = paste(.data$cohortName, collapse = ", "), .groups = "drop")
   
   databases <- result %>%
-    dplyr::distinct(analysisId, databaseId, .keep_all = TRUE) %>%
-    dplyr::group_by(analysisId) %>%
+    dplyr::select("analysisId", "databaseId", "databaseName") %>%
+    dplyr::distinct() %>%
+    dplyr::group_by(.data$analysisId) %>%
     dplyr::summarise(
-      databaseId = paste(databaseId, collapse = ", "),
-      databaseName = paste(databaseName, collapse = ", "),
+      databaseId = paste(.data$databaseId, collapse = ", "),
+      databaseName = paste(.data$databaseName, collapse = ", "),
       .groups = "drop"
     )
   
@@ -131,7 +136,7 @@ getAnalysisCohorts <- function(
 #'
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #'
-#' cohortAnalysis <- getIncidenceRates(
+#' tp <- getTreatmentPathways(
 #'   connectionHandler = connectionHandler,
 #'   schema = "main"
 #' )
@@ -237,7 +242,7 @@ getTreatmentPathways <- function(
 #'
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #'
-#' cohortAnalysis <- getIncidenceRates(
+#' ed <- getEventDuration(
 #'   connectionHandler = connectionHandler,
 #'   schema = "main",
 #'   analysisIds = c(1)

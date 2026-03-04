@@ -36,7 +36,7 @@ conDet <- getExampleConnectionDetails()
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 
-cohortAnalysis <- getIncidenceRates(
+cohortAnalysis <- getAnalysisCohorts(
   connectionHandler = connectionHandler,
   schema = "main"
 )

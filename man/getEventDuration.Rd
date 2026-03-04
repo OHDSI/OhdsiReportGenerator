@@ -63,7 +63,7 @@ conDet <- getExampleConnectionDetails()
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 
-cohortAnalysis <- getIncidenceRates(
+ed <- getEventDuration(
   connectionHandler = connectionHandler,
   schema = "main",
   analysisIds = c(1)
