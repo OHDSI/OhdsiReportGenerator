@@ -515,6 +515,7 @@ getCohortCounts <- function(
 #' @param cgTablePrefix Prefix for cohort generator tables. Default is 'cg_'.
 #' @param databaseTable Name of the database metadata table. Default is 'database_meta_data'.
 #' @param cohortIds Optional vector of cohort IDs to filter.
+#' @family Cohorts
 #' @return A tibble with attrition details for each cohort.
 #' @export
 getCohortAttrition <- function(
@@ -560,6 +561,7 @@ getCohortAttrition <- function(
 #' @param cgTablePrefix Prefix for cohort generator tables. Default is 'cg_'.
 #' @param databaseTable Name of the database metadata table. Default is 'database_meta_data'.
 #' @param cohortIds Optional vector of cohort IDs to filter.
+#' @family Cohorts
 #' @return A tibble with attrition details for each cohort subset.
 #' @export
 getCohortSubsetAttrition <- function(
