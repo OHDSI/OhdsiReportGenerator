@@ -13,7 +13,8 @@ getCharacterizationOutcomes(
   printTimes = FALSE,
   useDcrc = TRUE,
   useTte = TRUE,
-  useRf = TRUE
+  useRf = TRUE,
+  useCs = TRUE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ getCharacterizationOutcomes(
 \item{useTte}{look for outcome in time-to-event results}
 
 \item{useRf}{look for outcome in risk-factor results}
+
+\item{useCs}{look for outcome in case series results}
 }
 \value{
 A data.frame with the characterization outcome cohort ids, names and which characterization analyses the cohorts are used in.

@@ -255,7 +255,7 @@ test_that("getBinaryRiskFactors", {
   testthat::expect_true( 'caseAverage' %in% colnames(data))
   testthat::expect_true( 'nonCaseCount' %in% colnames(data))
   testthat::expect_true( 'nonCaseAverage' %in% colnames(data))
-  testthat::expect_true( 'SMD' %in% colnames(data))
+  testthat::expect_true( 'smd' %in% colnames(data))
   
   # add code to test values sum to 1
   data <-  getBinaryRiskFactors(
@@ -291,7 +291,7 @@ test_that("getContinuousRiskFactors", {
   testthat::expect_true( 'caseAverageValue' %in% colnames(data))
   testthat::expect_true( 'targetCountValue' %in% colnames(data))
   testthat::expect_true( 'targetAverageValue' %in% colnames(data))
-  testthat::expect_true( 'SMD' %in% colnames(data))
+  testthat::expect_true( 'smd' %in% colnames(data))
   
 })
 
@@ -311,6 +311,7 @@ test_that("getBinaryCaseSeries", {
   testthat::expect_true( 'outcomeName' %in% colnames(data))
   testthat::expect_true( 'covariateName' %in% colnames(data))
   testthat::expect_true( 'minPriorObservation' %in% colnames(data))
+  testthat::expect_true( 'limitToFirstInNDays' %in% colnames(data))
   testthat::expect_true( 'outcomeWashoutDays' %in% colnames(data))
   testthat::expect_true( 'casePostOutcomeDuration' %in% colnames(data))
   testthat::expect_true( 'casePreTargetDuration' %in% colnames(data))
@@ -318,9 +319,12 @@ test_that("getBinaryCaseSeries", {
   testthat::expect_true( 'startAnchor' %in% colnames(data))
   testthat::expect_true( 'riskWindowEnd' %in% colnames(data))
   testthat::expect_true( 'endAnchor' %in% colnames(data))
-  testthat::expect_true( 'sumValue' %in% colnames(data))
-  testthat::expect_true( 'averageValue' %in% colnames(data))
-  testthat::expect_true( 'type' %in% colnames(data))
+  testthat::expect_true( 'sumValueBefore' %in% colnames(data))
+  testthat::expect_true( 'averageValueBefore' %in% colnames(data))
+  testthat::expect_true( 'sumValueDuring' %in% colnames(data))
+  testthat::expect_true( 'averageValueDuring' %in% colnames(data))
+  testthat::expect_true( 'sumValueAfter' %in% colnames(data))
+  testthat::expect_true( 'averageValueAfter' %in% colnames(data))
   
 })
 
@@ -340,6 +344,7 @@ test_that("getContinuousCaseSeries", {
   testthat::expect_true( 'outcomeName' %in% colnames(data))
   testthat::expect_true( 'covariateName' %in% colnames(data))
   testthat::expect_true( 'minPriorObservation' %in% colnames(data))
+  testthat::expect_true( 'limitToFirstInNDays' %in% colnames(data))
   testthat::expect_true( 'outcomeWashoutDays' %in% colnames(data))
   testthat::expect_true( 'casePostOutcomeDuration' %in% colnames(data))
   testthat::expect_true( 'casePreTargetDuration' %in% colnames(data))
@@ -347,11 +352,15 @@ test_that("getContinuousCaseSeries", {
   testthat::expect_true( 'startAnchor' %in% colnames(data))
   testthat::expect_true( 'riskWindowEnd' %in% colnames(data))
   testthat::expect_true( 'endAnchor' %in% colnames(data))
-  testthat::expect_true( 'countValue' %in% colnames(data))
-  testthat::expect_true( 'averageValue' %in% colnames(data))
-  testthat::expect_true( 'standardDeviation' %in% colnames(data))
-  testthat::expect_true( 'type' %in% colnames(data))
-  
+  testthat::expect_true( 'countValueBefore' %in% colnames(data))
+  testthat::expect_true( 'averageValueBefore' %in% colnames(data))
+  testthat::expect_true( 'standardDeviationBefore' %in% colnames(data))
+  testthat::expect_true( 'countValueDuring' %in% colnames(data))
+  testthat::expect_true( 'averageValueDuring' %in% colnames(data))
+  testthat::expect_true( 'standardDeviationDuring' %in% colnames(data))
+  testthat::expect_true( 'countValueAfter' %in% colnames(data))
+  testthat::expect_true( 'averageValueAfter' %in% colnames(data))
+  testthat::expect_true( 'standardDeviationAfter' %in% colnames(data))
 })
 
 
