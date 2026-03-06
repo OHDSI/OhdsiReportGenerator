@@ -2125,7 +2125,7 @@ addPredictionTimeAtRisk <- function(
   
   if(removeIndividualTarColumns){
     result <- result %>%
-      dplyr::select(-tarStartAnchor, - tarStartDay, -tarEndAnchor, -tarEndDay)
+      dplyr::select(-dplyr::any_of(c("tarStartAnchor", "tarStartDay", "tarEndAnchor", "tarEndDay")))
   }
   
   return(result)

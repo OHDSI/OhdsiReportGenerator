@@ -53,14 +53,39 @@ plotAgeDistributions <- function(
   } 
   # TODO add input checks
   
-  # filter to Target and Cases and remove censored
-  ageData <- ageData %>% 
-    dplyr::filter(.data$sumValue > 0) %>%
-    dplyr::filter(.data$cohortType %in% c('Target', 'Cases'))
   
-ind <- ageData$cohortType == 'Target'
-ageData$averageValue[ind] <- -1*ageData$averageValue[ind] 
+  # filter to Target and Cases and remove censored
+  ageData <- rbind(
+    ageData %>% 
+      dplyr::filter(.data$caseCount > 0) %>%
+      dplyr::select("covariateName","caseAverage", 
+                    "startAnchor","endAnchor", 
+                    "riskWindowStart","riskWindowEnd",
+                    "databaseName") %>%
+      dplyr::rename(averageValue = "caseAverage") %>%
+      dplyr::mutate(cohortType = 'Cases'),
+    ageData %>% 
+      dplyr::filter(.data$nonCaseCount > 0) %>%
+      dplyr::select("covariateName","nonCaseAverage",
+                    "startAnchor","endAnchor", 
+                    "riskWindowStart","riskWindowEnd",
+                    "databaseName") %>%
+      dplyr::rename(averageValue = "nonCaseAverage") %>%
+      dplyr::mutate(
+        averageValue = -1*.data$averageValue,
+        cohortType = 'Non-cases')
+  )
+  
 ageData$tar <- addTar(ageData)
+
+# order the age group
+covNames <- unique(ageData$covariateName)
+covOrder <- as.double(unlist(lapply(strsplit(covNames, '-  '), function(x) x[2])))
+ageData$covariateName <- factor(
+  x = ageData$covariateName, 
+  levels = covNames[order(covOrder)]
+)
+
 result <- ggplot2::ggplot(
   data = ageData,
   ggplot2::aes(
@@ -142,12 +167,27 @@ plotSexDistributions <- function(
   } 
   
   # filter to Target and Cases and remove censored
-  sexData <- sexData %>% 
-    dplyr::filter(.data$sumValue > 0) %>%
-    dplyr::filter(.data$cohortType %in% c('Target', 'Cases'))
+  sexData <- rbind(
+    sexData %>% 
+      dplyr::filter(.data$caseCount > 0) %>%
+      dplyr::select("covariateName","caseAverage", 
+                    "startAnchor","endAnchor", 
+                    "riskWindowStart","riskWindowEnd",
+                    "databaseName") %>%
+      dplyr::rename(averageValue = "caseAverage") %>%
+      dplyr::mutate(cohortType = 'Cases'),
+    sexData %>% 
+      dplyr::filter(.data$nonCaseCount > 0) %>%
+      dplyr::select("covariateName","nonCaseAverage",
+                    "startAnchor","endAnchor", 
+                    "riskWindowStart","riskWindowEnd",
+                    "databaseName") %>%
+      dplyr::rename(averageValue = "nonCaseAverage") %>%
+      dplyr::mutate(
+        averageValue = -1*.data$averageValue,
+        cohortType = 'Non-cases')
+  )
   
-  ind <- sexData$cohortType == 'Target'
-  sexData$averageValue[ind] <- -1*sexData$averageValue[ind] 
   sexData$tar <- addTar(sexData)
   
   result <- ggplot2::ggplot(

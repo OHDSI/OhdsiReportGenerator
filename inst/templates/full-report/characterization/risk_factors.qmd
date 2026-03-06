@@ -67,12 +67,12 @@ if( nrow(charIdsOfInt) >0 ){
       cat(paste0("\n# ",boxTitle, '\n\n'))
       
       temp <- riskFactorsBinary %>%
-          dplyr::arrange(-1*.data$absSMD) %>%
+          dplyr::arrange(-1*.data$absSmd) %>%
           dplyr::filter(
             .data$minPriorObservation == !!minPriorObservation,
             .data$outcomeWashoutDays ==  !!outcomeWashoutDays,
             .data$tar == !!tar,
-            .data$absSMD > 0.1,
+            .data$absSmd > 0.1,
             .data$caseCount >= 0 # make this an input?
           ) %>%
           head(
@@ -85,8 +85,8 @@ if( nrow(charIdsOfInt) >0 ){
           "caseAverage",
           "nonCaseCount", 
           "nonCaseAverage",
-          "SMD", 
-          "absSMD"
+          "smd", 
+          "absSmd"
           )
 
          print(htmltools::tagList(
@@ -98,7 +98,7 @@ if( nrow(charIdsOfInt) >0 ){
         decimals = 2
       ) %>%
       gt::fmt_number(
-        columns = c("SMD", "absSMD"), 
+        columns = c("smd", "absSmd"), 
         decimals = 2
       ) %>%
       gt::fmt_integer(

@@ -12,7 +12,9 @@ getCharacterizationTargets(
   printTimes = FALSE,
   useTte = TRUE,
   useDcrc = TRUE,
-  useRf = TRUE
+  useRf = TRUE,
+  useTb = TRUE,
+  useCs = TRUE
 )
 }
 \arguments{
@@ -31,6 +33,10 @@ getCharacterizationTargets(
 \item{useDcrc}{whether to determine what cohorts are used in dechal-rechal}
 
 \item{useRf}{whether to determine what cohorts are used in risk factor}
+
+\item{useTb}{whether to determine what cohorts are used in target baseline}
+
+\item{useCs}{whether to determine what cohorts are used in case-series}
 }
 \value{
 A data.frame with the characterization target cohort ids, names and which characterization analyses the cohorts are used in.
@@ -56,10 +62,7 @@ cohorts <- getCharacterizationTargets(
 Other Characterization: 
 \code{\link{getBinaryCaseSeries}()},
 \code{\link{getBinaryRiskFactors}()},
-\code{\link{getCaseBinaryFeatures}()},
-\code{\link{getCaseContinuousFeatures}()},
 \code{\link{getCaseCounts}()},
-\code{\link{getCaseTargetBinaryFeatures}()},
 \code{\link{getCaseTargetCounts}()},
 \code{\link{getCharacterizationCohortBinary}()},
 \code{\link{getCharacterizationCohortContinuous}()},
