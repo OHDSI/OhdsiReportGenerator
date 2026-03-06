@@ -23,7 +23,7 @@ if(nrow(cohortIdsDemo) > 0){
         covariateName = paste0(.data$covariateName, ' (', .data$name, ')'),
         averageValue = .data$value
       ) %>%
-      dplyr::select(-"name", -"value") %>%
+      dplyr::select(-dplyr::any_of(c("name", "value"))) %>%
       dplyr::rowwise() %>%
       dplyr:: mutate(
         type = if(.data$covariateId == 1002){

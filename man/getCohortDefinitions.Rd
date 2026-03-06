@@ -42,12 +42,17 @@ cohortDef <- getCohortDefinitions(
 }
 \seealso{
 Other Cohorts: 
+\code{\link{getCohortAttrition}()},
 \code{\link{getCohortCounts}()},
 \code{\link{getCohortInclusionRules}()},
 \code{\link{getCohortInclusionStats}()},
 \code{\link{getCohortInclusionSummary}()},
 \code{\link{getCohortMeta}()},
+\code{\link{getCohortSubsetAttrition}()},
 \code{\link{getCohortSubsetDefinitions}()},
-\code{\link{processCohorts}()}
+\code{\link{getSubsetText}()},
+\code{\link{processCohortDefinitionsForQuarto}()},
+\code{\link{processCohorts}()},
+\code{\link{restrictCohortDefinitionsForQuarto}()}
 }
 \concept{Cohorts}

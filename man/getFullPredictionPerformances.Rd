@@ -39,6 +39,7 @@ Returns a data.frame with the columns:
  \item{performanceId the unique identifier for the performance}
  \item{modelDesignId the unique identifier for the model design}
  \item{modelType the type of classifier}
+ \item{covariateName a summary name for the candidate covariates}
  \item{developmentDatabaseId the unique identifier for the database used to develop the model}
  \item{validationDatabaseId the unique identifier for the database used to validate the model}
  \item{developmentTargetId the unique cohort id for the development target population}
@@ -51,8 +52,10 @@ Returns a data.frame with the columns:
  \item{validationOutcomeName the name for the validation outcome if different from development}
  \item{developmentDatabase the name for the database used to develop the model}
  \item{validationDatabase the name for the database used to validate the model if different from development}
+ \item{validationTarId the validation time at risk id}
  \item{validationTimeAtRisk the time at risk used when evaluating the model if different from development}
- \item{developTimeAtRisk the time at risk used when developing the model}
+ \item{developmentTarId the development time at risk id}
+ \item{developmentTimeAtRisk the time at risk used when developing the model}
  \item{evaluation The type of evaluation: Test/Train/CV/Validation}
  \item{populationSize the test/validation population size used to develop the model}
  \item{outcomeCount the test/validation outcome count used to develop the model}
@@ -97,6 +100,7 @@ perf <- getFullPredictionPerformances(
 Other Prediction: 
 \code{\link{getPredictionAggregateTopPredictors}()},
 \code{\link{getPredictionCohorts}()},
+\code{\link{getPredictionCovariates}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
 \code{\link{getPredictionHyperParamSearch}()},

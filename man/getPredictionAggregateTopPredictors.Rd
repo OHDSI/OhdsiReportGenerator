@@ -64,6 +64,7 @@ topPreds <- getPredictionAggregateTopPredictors(
 Other Prediction: 
 \code{\link{getFullPredictionPerformances}()},
 \code{\link{getPredictionCohorts}()},
+\code{\link{getPredictionCovariates}()},
 \code{\link{getPredictionDiagnosticTable}()},
 \code{\link{getPredictionDiagnostics}()},
 \code{\link{getPredictionHyperParamSearch}()},

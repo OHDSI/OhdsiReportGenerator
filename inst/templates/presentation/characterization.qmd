@@ -12,10 +12,19 @@
 
 
 # figure out which targets are in char
-charTargetIds <- connectionHandler$queryDb("select distinct target_cohort_id from @schema.c_cohort_details where cohort_type = 'Target';", schema = resultsSchema)
+targetCharDf <- OhdsiReportGenerator::getCharacterizationTargets(
+  connectionHandler = connectionHandler, 
+  schema = resultsSchema, 
+  cTablePrefix = 'c_', 
+  useRf = TRUE, 
+  useTte = FALSE, 
+  useDcrc = FALSE
+  )
+
+charTargetIds <- unique(targetCharDf$cohortDefinitionId)
 
 targetsC <- targets %>% filter(
-.data$cohortDefinitionId %in% !!charTargetIds$targetCohortId
+.data$cohortDefinitionId %in% !!charTargetIds
 )
 
 # add targets loop
@@ -186,12 +195,12 @@ cat(paste0('\n\n### ',targetsC$cohortFriendlyName[targetInd], ' \n\n'))
                     name = 'No Outcome',
                     format = reactable::colFormat(digits = 2)
                   ),
-                  SMD = reactable::colDef(
+                  smd = reactable::colDef(
                     aggregate = "mean",
                     name = 'SMD',
                     format = reactable::colFormat(digits = 2)
                   ),
-                  absSMD = reactable::colDef(
+                  absSmd = reactable::colDef(
                     aggregate = "mean",
                     name = 'SMD',
                     format = reactable::colFormat(digits = 2)

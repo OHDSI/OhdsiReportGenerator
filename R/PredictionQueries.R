@@ -9,6 +9,7 @@
 #' @template schema
 #' @template plpTablePrefix
 #' @template cgTablePrefix
+#' @param databaseTable The database table name
 #' @template targetIds
 #' @template outcomeIds
 #' @param numberPredictors the number of predictors per model to return
@@ -57,6 +58,7 @@ getPredictionTopPredictors <- function(
     schema,
     plpTablePrefix = 'plp_',
     cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
     targetIds = NULL,
     outcomeIds = NULL,
     numberPredictors = 100
@@ -88,7 +90,7 @@ getPredictionTopPredictors <- function(
   inner join @schema.@plp_table_prefixdatabase_details dd
   on dd.database_id = p.development_database_id
   
-  inner join @schema.database_meta_data d
+  inner join @schema.@database_table d
   on d.database_id = dd.database_meta_data_id 
   
   inner join @schema.@plp_table_prefixtars tars
@@ -118,6 +120,7 @@ getPredictionTopPredictors <- function(
     schema = schema,
     plp_table_prefix = plpTablePrefix,
     #cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
     outcome_restrict = !is.null(outcomeIds),
     outcome_ids = paste0(outcomeIds, collapse = ','),
     target_restrict = !is.null(targetIds),
@@ -269,7 +272,8 @@ getPredictionTargets <- function(
           inner join
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
-        on c.cohort_definition_id = cd.cohort_definition_id
+        on c.cohort_definition_id = cd.cohort_definition_id 
+        and c.cohort_name = cd.cohort_name
         ) AS cohorts
         ON model_designs.target_id = cohorts.cohort_id
         ;"
@@ -338,6 +342,7 @@ getPredictionOutcomes <- function(
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS cohorts
         ON model_designs.outcome_id = cohorts.cohort_id
         
@@ -423,6 +428,7 @@ getPredictionCohorts <- function(
         (SELECT c.cohort_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS cohorts
         ON model_designs.@type_id = cohorts.cohort_id
         ;"
@@ -565,6 +571,7 @@ getPredictionModelDesigns <- function(
         FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS targets
         ON model_designs.target_id = targets.cohort_id
 
@@ -573,6 +580,7 @@ getPredictionModelDesigns <- function(
         FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS outcomes
         ON model_designs.outcome_id = outcomes.cohort_id
 
@@ -598,17 +606,42 @@ getPredictionModelDesigns <- function(
     model_design_ids = paste(modelDesignIds, collapse = ','),
   )
   
+  # add TAR column and remove individual TARs
+  summaryTable <- addPredictionTimeAtRisk(
+    result = summaryTable,
+    tarColumnName = 'timeAtRisk',
+    tarStartAnchor = 'tarStartAnchor',
+    tarStartDay = 'tarStartDay',
+    tarEndAnchor = 'tarEndAnchor',
+    tarEndDay = 'tarEndDay',
+    removeIndividualTarColumns = TRUE
+  )
   
-  #TODO trim ws
   summaryTable <- summaryTable %>%
-    dplyr::mutate(timeAtRisk = paste0('( ',.data$tarStartAnchor, '+', .data$tarStartDay, ' ) - ',
-                                      '( ',.data$tarEndAnchor, '+', .data$tarEndDay, ' )'
-    )) %>%
-    dplyr::select(-"tarStartAnchor", - "tarStartDay", -"tarEndAnchor", -"tarEndDay") %>%
     dplyr::relocate("timeAtRisk", .after = "developmentOutcomeName")
   
   return(summaryTable)
   
+}
+
+hasPlpModelNameColumn <- function(connectionHandler, schema, plpTablePrefix = "plp_") {
+  sql <- "SELECT model_name
+          FROM @schema.@plp_table_prefixmodel_settings
+          WHERE 1 = 0;"
+
+  hasColumn <- tryCatch(
+    {
+      connectionHandler$queryDb(
+        sql = sql,
+        schema = schema,
+        plp_table_prefix = plpTablePrefix
+      )
+      TRUE
+    },
+    error = function(e) FALSE
+  )
+
+  return(hasColumn)
 }
 
 # can be used per modelDesignId to explore specific models
@@ -636,6 +669,7 @@ getPredictionModelDesigns <- function(
 #'  \item{performanceId the unique identifier for the performance}
 #'  \item{modelDesignId the unique identifier for the model design}
 #'  \item{modelType the type of classifier}
+#'  \item{algorithmName the model algorithm name}
 #'  \item{developmentDatabaseId the unique identifier for the database used to develop the model}
 #'  \item{validationDatabaseId the unique identifier for the database used to validate the model}
 #'  \item{developmentTargetId the unique cohort id for the development target population}
@@ -684,11 +718,22 @@ getPredictionPerformances <- function(
     modelDesignId = NULL,
     developmentDatabaseId = NULL
 ){
+  hasModelName <- hasPlpModelNameColumn(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    plpTablePrefix = plpTablePrefix
+  )
+  algorithmNameSelect <- if (hasModelName) {
+    "COALESCE(model_settings.model_name, models.model_type, model_settings.model_type) AS algorithm_name,"
+  } else {
+    "COALESCE(models.model_type, model_settings.model_type) AS algorithm_name,"
+  }
   
   sql <- "SELECT distinct
        results.performance_id,
        results.model_design_id,
        model_settings.model_type,
+       @algorithm_name_select
        results.development_database_id,
        results.validation_database_id,
        devtargets.cohort_definition_id AS development_target_id,
@@ -736,27 +781,46 @@ getPredictionPerformances <- function(
     on model_designs.model_setting_id = model_settings.model_setting_id
 
     LEFT JOIN
+        (
+          SELECT m.model_design_id, m.database_id, m.model_type
+          FROM @schema.@plp_table_prefixmodels m
+          INNER JOIN
+            (
+              SELECT model_design_id, database_id, MAX(model_id) AS model_id
+              FROM @schema.@plp_table_prefixmodels
+              GROUP BY model_design_id, database_id
+            ) latest_models
+          ON m.model_id = latest_models.model_id
+        ) AS models
+    ON results.model_design_id = models.model_design_id
+    AND results.development_database_id = models.database_id
+
+    LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS devtargets ON model_designs.target_id = devtargets.cohort_id
 
         LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS targets ON results.target_id = targets.cohort_id
 
         LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS outcomes ON results.outcome_id = outcomes.cohort_id
 
         LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS devoutcomes ON model_designs.outcome_id = devoutcomes.cohort_id
 
 
@@ -803,16 +867,22 @@ getPredictionPerformances <- function(
     model_design_restrict = !is.null(modelDesignId),
     development_database_id = developmentDatabaseId,
     development_database_id_restrict = !is.null(developmentDatabaseId),
+    algorithm_name_select = algorithmNameSelect,
     database_table_prefix = databaseTablePrefix,
     database_table = databaseTable,
     cg_table_prefix = cgTablePrefix
   )
   
-  summaryTable <- summaryTable %>%
-    dplyr::mutate(validationTimeAtRisk = paste0('( ',.data$tarStartAnchor, '+', .data$tarStartDay, ' ) - ',
-                                                '( ',.data$tarEndAnchor, '+', .data$tarEndDay, ' )'
-    )) %>%
-    dplyr::select(-"tarStartAnchor", - "tarStartDay", -"tarEndAnchor", -"tarEndDay")
+  
+  summaryTable <- addPredictionTimeAtRisk(
+    result = summaryTable,
+    tarColumnName = 'validationTimeAtRisk',
+    tarStartAnchor = 'tarStartAnchor',
+    tarStartDay = 'tarStartDay',
+    tarEndAnchor = 'tarEndAnchor',
+    tarEndDay = 'tarEndDay',
+    removeIndividualTarColumns = TRUE
+  )
   
   summaryTable$validationTargetName <- trimws(summaryTable$validationTargetName )
   summaryTable$validationOutcomeName <- trimws(summaryTable$validationOutcomeName)
@@ -851,6 +921,8 @@ getPredictionPerformances <- function(
 #'  \item{performanceId the unique identifier for the performance}
 #'  \item{modelDesignId the unique identifier for the model design}
 #'  \item{modelType the type of classifier}
+#'  \item{algorithmName the model algorithm name}
+#'  \item{covariateName a summary name for the candidate covariates}
 #'  \item{developmentDatabaseId the unique identifier for the database used to develop the model}
 #'  \item{validationDatabaseId the unique identifier for the database used to validate the model}
 #'  \item{developmentTargetId the unique cohort id for the development target population}
@@ -863,8 +935,10 @@ getPredictionPerformances <- function(
 #'  \item{validationOutcomeName the name for the validation outcome if different from development}
 #'  \item{developmentDatabase the name for the database used to develop the model}
 #'  \item{validationDatabase the name for the database used to validate the model if different from development}
+#'  \item{validationTarId the validation time at risk id}
 #'  \item{validationTimeAtRisk the time at risk used when evaluating the model if different from development}
-#'  \item{developTimeAtRisk the time at risk used when developing the model}
+#'  \item{developmentTarId the development time at risk id}
+#'  \item{developmentTimeAtRisk the time at risk used when developing the model}
 #'  \item{evaluation The type of evaluation: Test/Train/CV/Validation}
 #'  \item{populationSize the test/validation population size used to develop the model}
 #'  \item{outcomeCount the test/validation outcome count used to develop the model}
@@ -909,6 +983,16 @@ getFullPredictionPerformances <- function(
     modelDesignId = NULL,
     developmentDatabaseId = NULL
 ){
+  hasModelName <- hasPlpModelNameColumn(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    plpTablePrefix = plpTablePrefix
+  )
+  algorithmNameSelect <- if (hasModelName) {
+    "COALESCE(model_settings.model_name, models.model_type, model_settings.model_type) AS algorithm_name,"
+  } else {
+    "COALESCE(models.model_type, model_settings.model_type) AS algorithm_name,"
+  }
   
   sql <- "SELECT distinct
        results.execution_date_time AS time_stamp,
@@ -916,6 +1000,7 @@ getFullPredictionPerformances <- function(
        results.model_design_id,
        
        model_settings.model_type,
+       @algorithm_name_select
        
        results.development_database_id,
        results.validation_database_id,
@@ -933,11 +1018,13 @@ getFullPredictionPerformances <- function(
        d.database_acronym AS development_database,
        v.database_acronym AS validation_database,
        
+       val_tars.tar_id as validation_tar_id,
        val_tars.tar_start_day,
        val_tars.tar_start_anchor,
        val_tars.tar_end_day,
        val_tars.tar_end_anchor,
        
+       dev_tars.tar_id as development_tar_id,
        dev_tars.tar_start_day as dev_tar_start_day,
        dev_tars.tar_start_anchor as dev_tar_start_anchor,
        dev_tars.tar_end_day as dev_tar_end_day,
@@ -961,27 +1048,46 @@ getFullPredictionPerformances <- function(
     on model_designs.model_setting_id = model_settings.model_setting_id
 
     LEFT JOIN
+        (
+          SELECT m.model_design_id, m.database_id, m.model_type
+          FROM @schema.@plp_table_prefixmodels m
+          INNER JOIN
+            (
+              SELECT model_design_id, database_id, MAX(model_id) AS model_id
+              FROM @schema.@plp_table_prefixmodels
+              GROUP BY model_design_id, database_id
+            ) latest_models
+          ON m.model_id = latest_models.model_id
+        ) AS models
+    ON results.model_design_id = models.model_design_id
+    AND results.development_database_id = models.database_id
+
+    LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS devtargets ON model_designs.target_id = devtargets.cohort_id
 
         LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS targets ON results.target_id = targets.cohort_id
 
         LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS outcomes ON results.outcome_id = outcomes.cohort_id
 
         LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
         inner join @schema.@cg_table_prefixcohort_definition cd
         on c.cohort_definition_id = cd.cohort_definition_id
+        and c.cohort_name = cd.cohort_name
         ) AS devoutcomes ON model_designs.outcome_id = devoutcomes.cohort_id
 
 
@@ -1014,6 +1120,7 @@ getFullPredictionPerformances <- function(
     model_design_restrict = !is.null(modelDesignId),
     development_database_id = developmentDatabaseId,
     development_database_id_restrict = !is.null(developmentDatabaseId),
+    algorithm_name_select = algorithmNameSelect,
     database_table_prefix = databaseTablePrefix,
     database_table = databaseTable,
     cg_table_prefix = cgTablePrefix
@@ -1022,46 +1129,68 @@ getFullPredictionPerformances <- function(
   # process table if it is not empty
   if(nrow(summaryTable) > 0){
     
-    summaryTable <- summaryTable %>%
-      dplyr::mutate(
-        validationTimeAtRisk = paste0('( ',trimws(.data$tarStartAnchor), '+', trimws(.data$tarStartDay), ' ) - ',
-                                      '( ',trimws(.data$tarEndAnchor), '+', trimws(.data$tarEndDay), ' )'
-        ),
-        developTimeAtRisk = paste0('( ',trimws(.data$devTarStartAnchor), '+', trimws(.data$devTarStartDay), ' ) - ',
-                                   '( ',trimws(.data$devTarEndAnchor), '+', trimws(.data$devTarEndDay), ' )'
-        )
-        
-      ) %>%
-      dplyr::select(
-        -"tarStartAnchor", - "tarStartDay", -"tarEndAnchor", -"tarEndDay",
-        -"devTarStartAnchor", - "devTarStartDay", -"devTarEndAnchor", -"devTarEndDay"
-      )
+    summaryTable <- addPredictionTimeAtRisk(
+      result = summaryTable,
+      tarColumnName = 'validationTimeAtRisk',
+      tarStartAnchor = 'tarStartAnchor',
+      tarStartDay = 'tarStartDay',
+      tarEndAnchor = 'tarEndAnchor',
+      tarEndDay = 'tarEndDay',
+      removeIndividualTarColumns = TRUE
+    )
     
-    #summaryTable$validationTargetName <- trimws(summaryTable$validationTargetName )
-    #summaryTable$validationOutcomeName <- trimws(summaryTable$validationOutcomeName)
-    #summaryTable$validationTargetName  <- as.factor(summaryTable$validationTargetName )
-    #summaryTable$validationOutcomeName <- as.factor(summaryTable$validationOutcomeName)
-    
+    summaryTable <- addPredictionTimeAtRisk(
+      result = summaryTable,
+      tarColumnName = 'developmentTimeAtRisk',
+      tarStartAnchor = 'devTarStartAnchor',
+      tarStartDay = 'devTarStartDay',
+      tarEndAnchor = 'devTarEndAnchor',
+      tarEndDay = 'devTarEndDay',
+      removeIndividualTarColumns = TRUE
+    )
+
+    # ?TODO remove this and edit table in OhdsiShinyModules instead
     # set valDb, T, O, TAR to '-' if it is the same as the dev
     sameT <- summaryTable$developmentTargetId == summaryTable$validationTargetId
-    if(sum(sameT) > 0){
+    if(sum(sameT, na.rm = TRUE) > 0){
       summaryTable$validationTargetName[sameT] <- '-'
     }
     sameO <- summaryTable$developmentOutcomeId == summaryTable$validationOutcomeId
-    if(sum(sameO) > 0){
+    if(sum(sameO, na.rm = TRUE) > 0){
       summaryTable$validationOutcomeName[sameO] <- '-'
     }
     sameDb <- summaryTable$developmentDatabase == summaryTable$validationDatabase
-    if(sum(sameDb) > 0){
+    if(sum(sameDb, na.rm = TRUE) > 0){
       summaryTable$validationDatabase[sameDb] <- '-'
     }
     sameTar <- summaryTable$developTimeAtRisk == summaryTable$validationTimeAtRisk
-    if(sum(sameTar) > 0){
+    if(sum(sameTar, na.rm = TRUE) > 0){
       summaryTable$validationTimeAtRisk[sameTar] <- '-'
     }
     
   }
   
+  # add covariateName
+  if(nrow(summaryTable) > 0){
+    
+    covariateNames <- getCovariateSummaryName(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      plpTablePrefix = plpTablePrefix,
+      modelDesignIds = modelDesignId
+    )
+    
+    summaryTable <- merge(
+      x = summaryTable, 
+      y = covariateNames, 
+      by = 'modelDesignId'
+      ) %>%
+      dplyr::relocate(
+        "covariateName", 
+        .after = "modelType"
+        )
+    
+  }
   
   if(length(unique(summaryTable$performanceId)) > 0){
     # now select the performances for the performanceIds
@@ -1351,7 +1480,7 @@ getPredictionPerformanceTable <- function(
      ON db2.database_id = p.validation_database_id
     
     
-    WHERE 1=1
+    WHERE (1=1)
     {@use_model_id}?{ and p.model_design_id in (@model_ids)}
     {@use_performance_id}?{ and p.performance_id in (@performance_ids)}
     {@use_evaluation}?{ and toi.evaluation in (@evaluations)}
@@ -1365,13 +1494,202 @@ getPredictionPerformanceTable <- function(
       use_model_id = !is.null(modelDesignIds),
       model_ids = paste0(modelDesignIds, collapse = ','),
       use_performance_id = !is.null(performanceIds),
-      performance_ids = performanceIds,
+      performance_ids = paste0(performanceIds, collapse = ','),
       use_evaluation = !is.null(evaluations),
       evaluations = paste0("'",evaluations, "'", sep = '', collapse = ','),
       plp_table_prefix = plpTablePrefix
     )
     
     return(result)
+}
+
+
+# get prediction covariates for model and validation settings
+#' Extract covariate summary details
+#' @description
+#' This function extracts the covariate summary details
+#'
+#' @details
+#' Specify the connectionHandler, the resultDatabaseSettings, the table of interest and (optionally) modelDesignIds/performanceIds to filter to 
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template plpTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param modelDesignIds (optional) restrict to the input modelDesignIds
+#' @param performanceIds (optional) restrict to the input performanceIds
+#' @family Prediction
+#' @return
+#' Returns a data.frame with the specified table
+#' 
+#' @export
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' covs <- getPredictionCovariates(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main'
+#' )
+#' 
+getPredictionCovariates <- function(
+  connectionHandler, 
+  schema, 
+  plpTablePrefix = 'plp_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  performanceIds = NULL,
+  modelDesignIds = NULL
+){
+  
+  sql <- "SELECT distinct
+    p.model_design_id,
+    p.development_database_id,
+    db1.cdm_source_abbreviation as development_database_name,
+    p.validation_database_id,
+    db2.cdm_source_abbreviation as validation_database_name,
+    targets_dev.cohort_definition_id as development_target_cohort_id,
+    targets_dev.cohort_name as development_target_name,
+    targets.cohort_definition_id as validation_target_cohort_id,
+    targets.cohort_name as validation_target_name,
+    outcomes_dev.cohort_definition_id as development_outcome_cohort_id,
+    outcomes_dev.cohort_name as development_outcome_name,
+    outcomes.cohort_definition_id as validation_outcome_cohort_id,
+    outcomes.cohort_name as validation_outcome_name,
+    t.*,
+    t_dev.tar_start_anchor as development_tar_start_anchor,
+    t_dev.tar_start_day as development_tar_start_day,
+    t_dev.tar_end_anchor as development_tar_end_anchor,
+    t_dev.tar_end_day as development_tar_end_day,
+    p.plp_data_setting_id,
+    ds.plp_data_settings_json,
+    p.population_setting_id,
+    ps.population_settings_json,
+    toi.* 
+    
+    FROM @schema.@plp_table_prefixcovariate_summary toi 
+    
+    INNER JOIN @schema.@plp_table_prefixperformances p 
+    ON p.performance_id = toi.performance_id 
+    
+    INNER JOIN @schema.@plp_table_prefixmodel_designs md 
+    on md.model_design_id = p.model_design_id
+    
+    INNER JOIN
+    (SELECT dd.database_id, md.cdm_source_abbreviation
+     FROM @schema.@database_table md 
+     INNER JOIN @schema.@plp_table_prefixdatabase_details dd
+     ON md.database_id = dd.database_meta_data_id
+     ) as db1
+     ON db1.database_id = p.development_database_id
+     
+    INNER JOIN
+    (SELECT dd.database_id, md.cdm_source_abbreviation
+     FROM @schema.@database_table md 
+     INNER JOIN @schema.@plp_table_prefixdatabase_details dd
+     ON md.database_id = dd.database_meta_data_id
+     ) as db2
+     ON db2.database_id = p.validation_database_id
+     
+     INNER JOIN
+    (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name
+     FROM @schema.@cg_table_prefixcohort_definition cd 
+     INNER JOIN @schema.@plp_table_prefixcohorts c
+     ON c.cohort_definition_id = cd.cohort_definition_id 
+     and c.cohort_name = cd.cohort_name
+     ) as targets
+     ON targets.cohort_id = p.target_id
+     
+     INNER JOIN
+    (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name
+     FROM @schema.@cg_table_prefixcohort_definition cd 
+     INNER JOIN @schema.@plp_table_prefixcohorts c
+     ON c.cohort_definition_id = cd.cohort_definition_id 
+     and c.cohort_name = cd.cohort_name
+     ) as targets_dev
+     ON targets_dev.cohort_id = md.target_id
+     
+     INNER JOIN
+    (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name
+     FROM @schema.@cg_table_prefixcohort_definition cd 
+     INNER JOIN @schema.@plp_table_prefixcohorts c
+     ON c.cohort_definition_id = cd.cohort_definition_id
+     and c.cohort_name = cd.cohort_name
+     ) as outcomes
+     ON outcomes.cohort_id = p.outcome_id
+     
+    INNER JOIN
+    (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name
+     FROM @schema.@cg_table_prefixcohort_definition cd 
+     INNER JOIN @schema.@plp_table_prefixcohorts c
+     ON c.cohort_definition_id = cd.cohort_definition_id
+     and c.cohort_name = cd.cohort_name
+     ) as outcomes_dev
+     ON outcomes_dev.cohort_id = md.outcome_id
+     
+    INNER JOIN @schema.@plp_table_prefixtars t
+    ON p.tar_id = t.tar_id
+    
+    INNER JOIN @schema.@plp_table_prefixtars t_dev
+    ON md.tar_id = t_dev.tar_id
+    
+    INNER JOIN 
+    @schema.@plp_table_prefixplp_data_settings ds
+    ON p.plp_data_setting_id = ds.plp_data_setting_id
+    
+    INNER JOIN 
+    @schema.@plp_table_prefixpopulation_settings ps
+    ON p.population_setting_id = ps.population_setting_id
+    
+    WHERE (1=1)
+    {@use_model_id}?{ and p.model_design_id in (@model_ids)}
+    {@use_performance_id}?{ and p.performance_id in (@performance_ids)}
+    ;"
+  
+  result  <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    plp_table_prefix = plpTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable,
+    use_model_id = !is.null(modelDesignIds),
+    model_ids = paste0(modelDesignIds, collapse = ','),
+    use_performance_id = !is.null(performanceIds),
+    performance_ids = paste0(performanceIds, collapse = ','),
+  )
+  
+  if(nrow(result) >0){
+    
+    result <- addPredictionTimeAtRisk(
+      result = result,
+      tarColumnName = 'validationTimeAtRisk',
+      tarStartAnchor = 'tarStartAnchor',
+      tarStartDay = 'tarStartDay',
+      tarEndAnchor = 'tarEndAnchor',
+      tarEndDay = 'tarEndDay',
+      removeIndividualTarColumns = TRUE
+    )
+    
+    result <- addPredictionTimeAtRisk(
+      result = result,
+      tarColumnName = 'developmentTimeAtRisk',
+      tarStartAnchor = 'developmentTarStartAnchor',
+      tarStartDay = 'developmentTarStartDay',
+      tarEndAnchor = 'developmentTarEndAnchor',
+      tarEndDay = 'developmentTarEndDay',
+      removeIndividualTarColumns = TRUE
+    )
+    
+    
+    result <- result %>%
+      dplyr::relocate("developmentTimeAtRisk", .after = "developmentOutcomeName") %>%
+      dplyr::relocate("validationTimeAtRisk", .after = "validationOutcomeName")
+    
+  }
+  
+  return(result)
 }
 
 # get model lift (PPV/outcomeRate) for a given model sensitivity
@@ -1581,7 +1899,10 @@ getPredictionHyperParamSearch <- function(
       model_design_id = modelDesignId,
       plp_table_prefix = plpTablePrefix
     )
-    trainDetails <- ParallelLogger::convertJsonToSettings(models$trainDetails)
+    trainDetails <- tryCatch(
+      {ParallelLogger::convertJsonToSettings(models$trainDetails)}, 
+      error = function(e){print(e); return(list(hyperParamSearch = data.frame()))}
+    )
     
     return(trainDetails$hyperParamSearch)
   } else{
@@ -1647,4 +1968,165 @@ getPredictionIntercept <- function(
   } else{
     warning('Please enter a modelDesignId and databaseId')
   }
+}
+
+
+# covariateSummary
+getCovariateSummaryName <- function(
+    connectionHandler,
+    schema,
+    plpTablePrefix = 'plp_',
+    modelDesignIds = NULL
+    ){
+  
+  sql <- "select distinct 
+  cs.covariate_setting_id,
+  cs.covariate_settings_json
+  
+  from 
+  @schema.@plp_table_prefixcovariate_settings cs
+  inner join
+  @schema.@plp_table_prefixmodel_designs md
+  
+  on cs.covariate_setting_id = md.covariate_setting_id
+  
+  {@restrict_model_design_ids}?{where md.model_design_id in (@model_design_ids)}
+  ;
+  "
+  
+  covariateDetails <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    restrict_model_design_ids = !is.null(modelDesignIds),
+    model_design_ids = modelDesignIds,
+    plp_table_prefix = plpTablePrefix
+  )
+  
+  covariateFunctions <- lapply(covariateDetails$covariateSettingsJson, function(x){
+    ParallelLogger::convertJsonToSettings(x)
+  })
+  
+
+  covariateFunctionNames <- c()
+  for(i in 1:length(covariateFunctions)){
+    
+    isNotList <- inherits(covariateFunctions[[i]], 'covariateSettings')
+    if(isNotList){
+      covariateFunctions[[i]] <- list(covariateFunctions[[i]])
+    }
+    
+    covariateFunctionNames <- c(
+        covariateFunctionNames,
+        paste0(lapply(covariateFunctions[[i]], getCovariateFunName), collapse = ', ')
+      )
+    
+  }
+  
+  covariateDetails$covariateName <- covariateFunctionNames
+  covariateDetails <- covariateDetails %>%
+    dplyr::select("covariateSettingId","covariateName")
+  
+  # now get model design ids and the covariateFunctionNames
+  sql <- "select distinct 
+  md.model_design_id,
+  md.covariate_setting_id
+  
+  from 
+  @schema.@plp_table_prefixmodel_designs md
+  
+  {@restrict_model_design_ids}?{where md.model_design_id in (@model_design_ids)}
+  ;
+  "
+  
+  modelDesignCovariates <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    restrict_model_design_ids = !is.null(modelDesignIds),
+    model_design_ids = modelDesignIds,
+    plp_table_prefix = plpTablePrefix
+  )
+  
+  modelDesignCovariates <- merge(
+    x = modelDesignCovariates, 
+    y = covariateDetails, 
+    by = 'covariateSettingId'
+    ) %>% 
+    dplyr::select("modelDesignId","covariateName")
+    
+  return(modelDesignCovariates)
+}
+
+# helper for covariate summary name
+getCovariateFunName <- function(covariateSetting){
+  if(inherits(covariateSetting, 'covariateSettings')){
+    func <- attributes(covariateSetting)$fun
+    
+    if(func == 'getDbDefaultCovariateData'){
+      params <- names(covariateSetting)
+      
+      # check age
+      age <- FALSE
+      if('DemographicsAge' %in% params){
+        if(covariateSetting$DemographicsAge){
+          age <- TRUE
+        }}
+      if('DemographicsAgeGroup' %in% params){
+        if(covariateSetting$DemographicsAgeGroup){
+          age <- TRUE
+        }}
+      
+      # check sec
+      sex <- FALSE
+      if('DemographicsGender' %in% params){
+        if(covariateSetting$DemographicsGender){
+          sex <- TRUE
+        }}
+      
+      numberSettings <- length(params[!params %in% c(
+        'temporal', 'temporalSequence', 'longTermStartDays',
+        'mediumTermStartDays', 'shortTermStartDays', 'endDays',
+        'includedCovariateConceptIds', 'addDescendantsToInclude',
+        'excludedCovariateConceptIds', 'addDescendantsToExclude',
+        'includedCovariateIds'
+      )])
+      
+      func <- paste0(
+        func, ' (', numberSettings, ' types)',
+        ifelse(age|sex, ' inc ', ''),
+        ifelse(age, 'age', ''),
+        ifelse(age & sex, ' and ', ''),
+        ifelse(sex, 'sex', '')
+      )
+      
+    }
+    
+    return(func)
+  }
+}
+
+# adding helpter for TAR consistency 
+addPredictionTimeAtRisk <- function(
+    result,
+    tarColumnName = 'timeAtRisk',
+    tarStartAnchor = 'tarStartAnchor',
+    tarStartDay = 'tarStartDay',
+    tarEndAnchor = 'tarEndAnchor',
+    tarEndDay = 'tarEndDay',
+    removeIndividualTarColumns = TRUE
+){
+  
+  result <- result %>%
+    dplyr::mutate(newCol = paste0('(',.data[[tarStartAnchor]], ' + ', .data[[tarStartDay]], ') - ',
+                                                '(',.data[[tarEndAnchor]], ' + ', .data[[tarEndDay]], ')'
+    )) %>%
+    dplyr::rename(
+      !!tarColumnName := "newCol"
+    )
+  
+  if(removeIndividualTarColumns){
+    result <- result %>%
+      dplyr::select(-dplyr::any_of(c("tarStartAnchor", "tarStartDay", "tarEndAnchor", "tarEndDay")))
+  }
+  
+  return(result)
 }

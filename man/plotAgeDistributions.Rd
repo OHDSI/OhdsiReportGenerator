@@ -52,10 +52,7 @@ plotAgeDistributions(ageData = ageData)
 Other Characterization: 
 \code{\link{getBinaryCaseSeries}()},
 \code{\link{getBinaryRiskFactors}()},
-\code{\link{getCaseBinaryFeatures}()},
-\code{\link{getCaseContinuousFeatures}()},
 \code{\link{getCaseCounts}()},
-\code{\link{getCaseTargetBinaryFeatures}()},
 \code{\link{getCaseTargetCounts}()},
 \code{\link{getCharacterizationCohortBinary}()},
 \code{\link{getCharacterizationCohortContinuous}()},

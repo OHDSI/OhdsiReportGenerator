@@ -105,28 +105,41 @@ addTarColumn <- function(
     if(sum(c("tarStartWith","tarStartOffset","tarEndWith","tarEndOffset") %in%
            colnames(data)) == 4){
       message('Found CI TAR columns')
-      data$tar <- paste0(
-        '(',data$tarStartWith,' + ',data$tarStartOffset, ') - ',
-        '(',data$tarEndWith,' + ', data$tarEndOffset, ')'
-      )
+      
+      if(nrow(data) > 0){
+        data$tar <- paste0(
+          '(',data$tarStartWith,' + ',data$tarStartOffset, ') - ',
+          '(',data$tarEndWith,' + ', data$tarEndOffset, ')'
+        )
+      } else{
+        data$tar <- data$tarStartWith
+      }
     }
   
   if(sum(c("tarStartDay","tarStartAnchor","tarEndDay","tarEndAnchor") %in%
          colnames(data)) == 4){
     message('Found PLP TAR columns')
-    data$tar <- paste0(
-      '(',data$tarStartAnchor,' + ',data$tarStartDay, ') - ',
-      '(',data$tarEndAnchor,' + ', data$tarEndDay, ')'
-    )
+    if( nrow(data) > 0){
+      data$tar <- paste0(
+        '(',data$tarStartAnchor,' + ',data$tarStartDay, ') - ',
+        '(',data$tarEndAnchor,' + ', data$tarEndDay, ')'
+      )
+    } else{
+      data$tar <- data$tarStartAnchor
+    }
   }
     
     if(sum(c("startAnchor","riskWindowStart","endAnchor","riskWindowEnd") %in%
            colnames(data)) == 4){
       message('Found CM TAR columns')
+      if( nrow(data) > 0){
       data$tar <- paste0(
         '(',data$startAnchor,' + ',data$riskWindowStart, ') - ',
         '(',data$endAnchor,' + ', data$riskWindowEnd, ')'
       )
+      } else{
+        data$tar <- data$startAnchor
+      }
     }
   
   return(data)

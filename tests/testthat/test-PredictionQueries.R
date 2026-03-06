@@ -113,6 +113,7 @@ test_that("getPredictionPerformances", {
   
   testthat::expect_true('performanceId' %in% colnames(data))
   testthat::expect_true('modelDesignId' %in% colnames(data))
+  testthat::expect_true('algorithmName' %in% colnames(data))
   testthat::expect_true('developmentTargetName' %in% colnames(data))
   testthat::expect_true('developmentOutcomeName' %in% colnames(data))
   testthat::expect_true('validationTargetName' %in% colnames(data))
@@ -130,6 +131,7 @@ test_that("getPredictionPerformances", {
   testthat::expect_true('outcomeCount' %in% colnames(data))
   testthat::expect_true('evalPercent' %in% colnames(data))
   testthat::expect_true('outcomePercent' %in% colnames(data))
+  testthat::expect_true(any(!is.na(data$algorithmName)))
   
   data <- getPredictionPerformances(
     connectionHandler = connectionHandler, 
@@ -153,6 +155,7 @@ test_that("getFullPredictionPerformances", {
   
   testthat::expect_true('performanceId' %in% colnames(data))
   testthat::expect_true('modelDesignId' %in% colnames(data))
+  testthat::expect_true('algorithmName' %in% colnames(data))
   testthat::expect_true('developmentTargetName' %in% colnames(data))
   testthat::expect_true('developmentOutcomeName' %in% colnames(data))
   testthat::expect_true('validationTargetName' %in% colnames(data))
@@ -170,6 +173,7 @@ test_that("getFullPredictionPerformances", {
   testthat::expect_true('AUPRC' %in% colnames(data))
   testthat::expect_true('populationSize' %in% colnames(data))
   testthat::expect_true('outcomeCount' %in% colnames(data))
+  testthat::expect_true(any(!is.na(data$algorithmName)))
   
   data <- getFullPredictionPerformances(
     connectionHandler = connectionHandler, 
@@ -271,7 +275,7 @@ test_that("getPredictionHyperParamSearch", {
 })
 
 
-test_that("getPredictionHyperParamSearch", {
+test_that("getPredictionIntercept", {
   
   data <- getPredictionIntercept(
     connectionHandler = connectionHandler, 
@@ -286,3 +290,79 @@ test_that("getPredictionHyperParamSearch", {
 
 
 
+test_that("getPredictionCovariates ", {
+  
+  alldata <- getPredictionCovariates (
+    connectionHandler = connectionHandler, 
+    schema = schema
+  )
+  
+  testthat::expect_true(nrow(alldata) > 0)
+  
+  filterdata <- getPredictionCovariates (
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    modelDesignId = 1,
+    performanceIds = NULL
+  )
+  testthat::expect_true(unique(filterdata$modelDesignId) == 1)
+  
+  filterdata <- getPredictionCovariates (
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    modelDesignId = NULL,
+    performanceIds = 1
+  )
+  testthat::expect_true(unique(filterdata$performanceId) == 1)
+  
+})
+
+
+test_that("addPredictionTimeAtRisk works ", {
+  
+dres <- data.frame(
+  test = 1:4,
+  tarStartAnchor = c('start', 'end', 'start', 'start'),
+  tarStartDay =  rep(0,4),
+  tarEndAnchor = c('start', 'end', 'end', 'end'),
+  tarEndDay = rep(30,4)
+)
+res <- addPredictionTimeAtRisk(
+  result = dres, 
+  tarColumnName = 'newtar'
+  )
+
+testthat::expect_true('newtar' %in% colnames(res))
+testthat::expect_true(!'tarStartAnchor' %in% colnames(res))
+testthat::expect_true(!'tarStartDay' %in% colnames(res))
+testthat::expect_true(!'tarEndAnchor' %in% colnames(res))
+testthat::expect_true(!'tarEndDay' %in% colnames(res))
+
+# check tar 1 is correct
+testthat::expect_true(res$newtar[1] == '(start + 0) - (start + 30)')
+
+
+dres <- data.frame(
+  test = 1:4,
+  rTarStartAnchor = c('start', 'end', 'start', 'start'),
+  rTarStartDay =  rep(0,4),
+  rTarEndAnchor = c('start', 'end', 'end', 'end'),
+  rTarEndDay = rep(30,4)
+)
+res <- addPredictionTimeAtRisk(
+  result = dres, 
+  tarColumnName = 'tar', 
+  tarStartAnchor = 'rTarStartAnchor', 
+  tarStartDay = 'rTarStartDay', 
+  tarEndAnchor = 'rTarEndAnchor', 
+  tarEndDay = 'rTarEndDay', 
+  removeIndividualTarColumns = FALSE
+  )
+
+testthat::expect_true('tar' %in% colnames(res))
+testthat::expect_true('rTarStartAnchor' %in% colnames(res))
+testthat::expect_true('rTarStartDay' %in% colnames(res))
+testthat::expect_true('rTarEndAnchor' %in% colnames(res))
+testthat::expect_true('rTarEndDay' %in% colnames(res))
+
+})
