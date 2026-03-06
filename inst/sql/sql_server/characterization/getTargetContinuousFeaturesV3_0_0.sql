@@ -38,5 +38,5 @@ ON target.cohort_definition_id = ts.target_id
 WHERE 1 = 1
 {@use_target}?{AND ts.target_id in (@target_id)}
 {@use_database}?{AND c.database_id in (@database_id)}
-
+{@use_analysis}?{AND cr.analysis_id in (@analysis_ids)}
 ;

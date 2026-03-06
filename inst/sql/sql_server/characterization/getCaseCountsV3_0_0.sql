@@ -21,9 +21,9 @@ INNER JOIN @schema.@database_table d
 ON a.database_id = d.database_id
    
 INNER JOIN @schema.@c_table_prefixcase_settings cs
-ON ts.setting_id = a.setting_id
-AND ts.database_id = a.database_id
-AND ts.characterization_case_id*10+1 = a.cohort_definition_id
+ON cs.setting_id = a.setting_id
+AND cs.database_id = a.database_id
+AND cs.characterization_case_id*10+1 = a.cohort_definition_id
 AND a.attr_reason = 'Cases'
 
 INNER JOIN @schema.@cg_table_prefixcohort_definition outcome_cohorts

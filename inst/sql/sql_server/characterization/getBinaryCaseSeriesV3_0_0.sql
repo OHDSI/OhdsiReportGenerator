@@ -1,10 +1,10 @@
 SELECT 
- d.CDM_SOURCE_ABBREVIATION as database_name,
+ d.CDM_SOURCE_ABBREVIATION AS database_name,
  d.database_id,
- target.cohort_name as target_name,
- ts.target_is as target_cohort_id,
- outcome.cohort_name as outcome_name,
- s.outcome_id as outcome_cohort_id,
+ target.cohort_name AS target_name,
+ ts.target_id AS target_cohort_id,
+ outcome.cohort_name AS outcome_name,
+ s.outcome_id AS outcome_cohort_id,
  
   cr.covariate_name, 
   cr.covariate_id, 
@@ -60,4 +60,9 @@ AND s.outcome_id = @outcome_id
 {@use_start_anchor}?{AND s.start_anchor = '@start_anchor'}
 {@use_end_anchor}?{AND s.end_anchor = '@end_anchor'}
 {@use_concepts}?{AND cr.concept_id in (@concept_ids)} 
+{@use_min_val}?{
+AND (cov.before_average_value >= @min_val 
+OR cov.during_average_value >= @min_val
+OR cov.after_average_value >= @min_val)
+} 
 ;

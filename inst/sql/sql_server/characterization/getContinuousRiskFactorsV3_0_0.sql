@@ -70,8 +70,9 @@ ON outcome.cohort_definition_id = cs.outcome_id
 -- add wheres here
 WHERE 1=0
 {@use_target}?{AND ts.target_id IN (@target_id)}
-{@use_outcome}?{AND cs_outcome_id IN (@outcome_id)}
+{@use_outcome}?{AND cs.outcome_id IN (@outcome_id)}
 {@use_database}?{AND d.database_id IN (@database_id)}
+{@use_analysis}?{AND cr.analysis_id IN (@analysis_ids)}
 {@use_risk_window_start}?{AND cs.risk_window_start IN (@risk_window_start)}  
 {@use_risk_window_end}?{AND cs.risk_window_end IN (@risk_window_end)}
 {@use_start_anchor}?{AND cs.start_anchor IN (@start_anchor)}

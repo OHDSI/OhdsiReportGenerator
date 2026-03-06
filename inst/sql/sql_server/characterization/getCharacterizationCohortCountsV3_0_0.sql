@@ -1,7 +1,7 @@
 SELECT 
 ca.database_id,
-d.CDM_SOURCE_ABBREVIATION as database_name,
-ts.target_cohort_id as cohort_id,
+d.cdm_source_abbreviation as database_name,
+ts.target_id as cohort_id,
 cg.cohort_name,
 ts.min_prior_observation,
 ts.limit_to_first_in_n_days,
@@ -23,7 +23,7 @@ WHERE 1 = 1
 {@use_databases}?{AND d.database_id in (@database_ids)}
   
 GROUP BY
-d.database_id, d.CDM_SOURCE_ABBREVIATION,
+ca.database_id, d.cdm_source_abbreviation,
 ts.target_id, cg.cohort_name, 
 ts.min_prior_observation, ts.limit_to_first_in_n_days
 ;

@@ -37,7 +37,7 @@ SELECT
  cov.after_p_10_value AS p_10_value_after,	
  cov.after_p_25_value AS p_25_value_after,	
  cov.after_p_75_value AS p_75_value_after,
- cov.after_p_90_value AS p_90_value_after
+ cov.after_p_90_value AS p_90_value_after,
 
  cr.covariate_name, 
  cr.covariate_id, 
@@ -80,8 +80,8 @@ SELECT
  INNER JOIN @schema.@cg_table_prefixcohort_definition outcome
  ON outcome.cohort_definition_id = cs.outcome_id
 
- WHERE cov.target_cohort_id = @target_id
- AND cov.outcome_cohort_id = @outcome_id
+ WHERE ts.target_id = @target_id
+ AND cs.outcome_id = @outcome_id
  {@use_database}?{AND cov.database_id IN (@database_ids)}
  {@use_risk_window_start}?{AND cs.risk_window_start = @risk_window_start}
  {@use_risk_window_end}?{AND cs.risk_window_end = @risk_window_end}

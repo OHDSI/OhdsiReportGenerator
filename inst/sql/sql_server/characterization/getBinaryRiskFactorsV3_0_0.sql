@@ -7,7 +7,7 @@ outcome.cohort_name AS outcome_name,
 cs.outcome_id as outcome_cohort_id,
 
 ts.min_prior_observation,
-ts.limit_to_first_in_n_days, -- add to V0
+ts.limit_to_first_in_n_days,
 
 cs.outcome_washout_days,
 cs.risk_window_start,
@@ -53,10 +53,7 @@ ON outcome.cohort_definition_id = cs.outcome_id
 -- add wheres here
 WHERE 1=1
 {@use_target}?{AND ts.target_id IN (@target_id)}
-{@use_outcome}?{AND cs_outcome_id IN (@outcome_id)}
+{@use_outcome}?{AND cs.outcome_id IN (@outcome_id)}
 {@use_database}?{AND d.database_id IN (@database_id)}
-{@use_risk_window_start}?{AND cs.risk_window_start IN (@risk_window_start)}  
-{@use_risk_window_end}?{AND cs.risk_window_end IN (@risk_window_end)}
-{@use_start_anchor}?{AND cs.start_anchor IN (@start_anchor)}
-{@use_end_anchor}?{AND cs.end_anchor IN (@end_anchor)}
+{@use_analysis}?{AND cr.analysis_id IN (@analysis_ids)}
 ;

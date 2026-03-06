@@ -191,37 +191,41 @@ test_that("getCharacterizationDemographics", {
   data <- getCharacterizationDemographics(
     connectionHandler = connectionHandler, 
     schema = 'main', 
-    type = 'age'
+    type = 'age', 
+    targetId = 1, 
+    outcomeId = 3
   )
   
   testthat::expect_true(nrow(data) > 0)
-  testthat::expect_true(sum(data$cohortType == 'Cases') > 0)
-  testthat::expect_true(sum(data$cohortType == 'Target') > 0)
   
   testthat::expect_true( 'databaseName' %in% colnames(data))
   testthat::expect_true( 'targetName' %in% colnames(data))
   testthat::expect_true( 'outcomeName' %in% colnames(data))
   testthat::expect_true( 'covariateName' %in% colnames(data))
-  testthat::expect_true( 'sumValue' %in% colnames(data))
-  testthat::expect_true( 'averageValue' %in% colnames(data))
+  testthat::expect_true( 'caseCount' %in% colnames(data))
+  testthat::expect_true( 'caseAverage' %in% colnames(data))
+  testthat::expect_true( 'nonCaseCount' %in% colnames(data))
+  testthat::expect_true( 'nonCaseAverage' %in% colnames(data))
   
   # sex works
   data <- getCharacterizationDemographics(
     connectionHandler = connectionHandler, 
     schema = 'main', 
-    type = 'sex'
+    type = 'sex',
+    targetId = 1, 
+    outcomeId = 3
   )
   
   testthat::expect_true(nrow(data) > 0)
-  testthat::expect_true(sum(data$cohortType == 'Cases') > 0)
-  testthat::expect_true(sum(data$cohortType == 'Target') > 0)
   
   testthat::expect_true( 'databaseName' %in% colnames(data))
   testthat::expect_true( 'targetName' %in% colnames(data))
   testthat::expect_true( 'outcomeName' %in% colnames(data))
   testthat::expect_true( 'covariateName' %in% colnames(data))
-  testthat::expect_true( 'sumValue' %in% colnames(data))
-  testthat::expect_true( 'averageValue' %in% colnames(data))
+  testthat::expect_true( 'caseCount' %in% colnames(data))
+  testthat::expect_true( 'caseAverage' %in% colnames(data))
+  testthat::expect_true( 'nonCaseCount' %in% colnames(data))
+  testthat::expect_true( 'nonCaseAverage' %in% colnames(data))
   
   
   # other type fails
