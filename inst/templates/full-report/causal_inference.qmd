@@ -111,7 +111,7 @@ for(description in descriptions){
                            dplyr::filter(.data$targetId == !!cmIds$targetId[cmInd]) %>%
                            dplyr::filter(.data$outcomeId == !!cmIds$outcomeId[cmInd]) %>%
                            dplyr::select("databaseName", "subsetTextTarget", #"description",
-                                         "friendlyNameComp", 
+                                         "friendlyNameComp", "indicationName",
                                          #"friendlyNameTarget","friendlyNameOutcome",
                                          "balanceDiagnostic", "sharedBalanceDiagnostic","equipoiseDiagnostic",
                                          "mdrrDiagnostic", "attritionDiagnostic", "easeDiagnostic",
@@ -119,13 +119,15 @@ for(description in descriptions){
                                          'unblind')%>%
                            dplyr::group_by(
                              .data$friendlyNameComp,
-                             .data$subsetTextTarget
+                             .data$subsetTextTarget,
+                             .data$indicationName
                            ) %>%
                            gt::gt() %>%
                            gt::cols_label(
                              databaseName = 'Database',
                              #description = "Analysis Description", 
                              friendlyNameComp = "Comparator",
+                             indicationName = "Indication",
                              balanceDiagnostic = "balance",
                              sharedBalanceDiagnostic = "shared balance",
                              equipoiseDiagnostic = "equipoise",
@@ -206,20 +208,22 @@ for(description in descriptions){
                            dplyr::filter(.data$targetId == !!cmIds$targetId[cmInd]) %>%
                            dplyr::filter(.data$outcomeId == !!cmIds$outcomeId[cmInd]) %>% 
                            dplyr::select("databaseName","subsetTextTarget", #"description",
-                                         "friendlyNameComp", 
+                                         "friendlyNameComp", "indicationName",
                                          #"friendlyNameOutcome","friendlyNameTarget", 
                                          "targetSubjects", "comparatorSubjects",
                                          "targetOutcomes", "comparatorOutcomes",
                                          "calibratedRr", "calibratedCi95Lb", "calibratedP","calibratedOneSidedP")%>%
                            dplyr::group_by(
                              .data$friendlyNameComp,
-                             .data$subsetTextTarget
+                             .data$subsetTextTarget,
+                             .data$indicationName
                            ) %>%
                            gt::gt() %>%
                            gt::cols_label(
                              databaseName = 'Database',
                              #description = "Analysis Description", 
                              friendlyNameComp = "Comparator",
+                             indicationName = "Indication",
                              targetSubjects = "Target N",
                              comparatorSubjects = "Comp N",
                              calibratedRr  = "Cal. RR", 
