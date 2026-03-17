@@ -11,7 +11,8 @@ These functions can be used to extract details about the databases.
 
 These functions can be used to extract analyses cohort details.
 
-- [`getCohortCounts()`](getCohortCounts.md) : Extract the cohort counds
+- [`getCohortAttrition()`](getCohortAttrition.md) : Get cohort attrition
+- [`getCohortCounts()`](getCohortCounts.md) : Extract the cohort counts
 - [`getCohortDefinitions()`](getCohortDefinitions.md) : Extract the
   cohort definition details
 - [`getCohortInclusionRules()`](getCohortInclusionRules.md) : Extract
@@ -21,10 +22,21 @@ These functions can be used to extract analyses cohort details.
 - [`getCohortInclusionSummary()`](getCohortInclusionSummary.md) :
   Extract the cohort inclusion summary
 - [`getCohortMeta()`](getCohortMeta.md) : Extract the cohort meta
+- [`getCohortSubsetAttrition()`](getCohortSubsetAttrition.md) : Get
+  cohort subset attrition
 - [`getCohortSubsetDefinitions()`](getCohortSubsetDefinitions.md) :
   Extract the cohort subset definition details
+- [`getSubsetText()`](getSubsetText.md) : Function that converts a
+  subsetDefinitionJson into text description
+- [`processCohortDefinitionsForQuarto()`](processCohortDefinitionsForQuarto.md)
+  : Function processes the cohortDefinitions object ready for use in the
+  main quarto report.
 - [`processCohorts()`](processCohorts.md) : Extract the cohort parents
   and children cohorts (cohorts derieved from the parent cohort)
+- [`restrictCohortDefinitionsForQuarto()`](restrictCohortDefinitionsForQuarto.md)
+  : Function to figure out the target, comparator, outcome and
+  indication ids of interest for the quarto report based on the user
+  inputs
 
 ## Characterization Extractions and Plots
 
@@ -35,17 +47,8 @@ cohort incidence analyses and plot results.
   extract case series characterization results
 - [`getBinaryRiskFactors()`](getBinaryRiskFactors.md) : A function to
   extract non-case and case binary characterization results
-- [`getCaseBinaryFeatures()`](getCaseBinaryFeatures.md) : Extract
-  aggregate statistics of binary feature analysis IDs of interest for
-  cases
-- [`getCaseContinuousFeatures()`](getCaseContinuousFeatures.md) :
-  Extract aggregate statistics of continuous feature analysis IDs of
-  interest for targets
 - [`getCaseCounts()`](getCaseCounts.md) : Extract the outcome cohort
   counts result
-- [`getCaseTargetBinaryFeatures()`](getCaseTargetBinaryFeatures.md) :
-  Extract aggregate statistics of binary feature analysis IDs of
-  interest for targets
 - [`getCaseTargetCounts()`](getCaseTargetCounts.md) : Extract the target
   cohort counts result
 - [`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md)
@@ -93,6 +96,8 @@ cohort incidence analyses and plot results.
 These functions can be used to extract results from estimation studies
 and plot results.
 
+- [`.getCmVersion()`](dot-getCmVersion.md) : An internal function to
+  determine the version of CohortMethod used to store results
 - [`getCMEstimation()`](getCMEstimation.md) : Extract the cohort method
   results
 - [`getCmDiagnosticsData()`](getCmDiagnosticsData.md) : Extract the
@@ -165,6 +170,17 @@ and plot results.
   extarct the targets found in prediction
 - [`getPredictionTopPredictors()`](getPredictionTopPredictors.md) :
   Extract the top N predictors per model
+
+## Treatment Patterns
+
+These functions are used to help result extraction.
+
+- [`getAnalysisCohorts()`](getAnalysisCohorts.md) : Extracts the
+  different analyses ran for each target and event cohorts
+- [`getEventDuration()`](getEventDuration.md) : Extracts summary of
+  event duration
+- [`getTreatmentPathways()`](getTreatmentPathways.md) : Extracts
+  treatment pathways
 
 ## Reporting
 

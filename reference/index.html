@@ -63,10 +63,17 @@
 
       <dl><dt>
 
+          <code><a href="getCohortAttrition.html">getCohortAttrition()</a></code>
+
+        </dt>
+        <dd>Get cohort attrition</dd>
+
+        <dt>
+
           <code><a href="getCohortCounts.html">getCohortCounts()</a></code>
 
         </dt>
-        <dd>Extract the cohort counds</dd>
+        <dd>Extract the cohort counts</dd>
 
         <dt>
 
@@ -105,6 +112,13 @@
 
         <dt>
 
+          <code><a href="getCohortSubsetAttrition.html">getCohortSubsetAttrition()</a></code>
+
+        </dt>
+        <dd>Get cohort subset attrition</dd>
+
+        <dt>
+
           <code><a href="getCohortSubsetDefinitions.html">getCohortSubsetDefinitions()</a></code>
 
         </dt>
@@ -112,10 +126,31 @@
 
         <dt>
 
+          <code><a href="getSubsetText.html">getSubsetText()</a></code>
+
+        </dt>
+        <dd>Function that converts a subsetDefinitionJson into text description</dd>
+
+        <dt>
+
+          <code><a href="processCohortDefinitionsForQuarto.html">processCohortDefinitionsForQuarto()</a></code>
+
+        </dt>
+        <dd>Function processes the cohortDefinitions object ready for use in the main quarto report.</dd>
+
+        <dt>
+
           <code><a href="processCohorts.html">processCohorts()</a></code>
 
         </dt>
         <dd>Extract the cohort parents and children cohorts (cohorts derieved from the parent cohort)</dd>
+
+        <dt>
+
+          <code><a href="restrictCohortDefinitionsForQuarto.html">restrictCohortDefinitionsForQuarto()</a></code>
+
+        </dt>
+        <dd>Function to figure out the target, comparator, outcome and indication ids of interest for the quarto report based on the user inputs</dd>
       </dl></div><div class="section level2">
       <h2 id="characterization-extractions-and-plots">Characterization Extractions and Plots<a class="anchor" aria-label="anchor" href="#characterization-extractions-and-plots"></a></h2>
 
@@ -142,31 +177,10 @@
 
         <dt>
 
-          <code><a href="getCaseBinaryFeatures.html">getCaseBinaryFeatures()</a></code>
-
-        </dt>
-        <dd>Extract aggregate statistics of binary feature analysis IDs of interest for cases</dd>
-
-        <dt>
-
-          <code><a href="getCaseContinuousFeatures.html">getCaseContinuousFeatures()</a></code>
-
-        </dt>
-        <dd>Extract aggregate statistics of continuous feature analysis IDs of interest for targets</dd>
-
-        <dt>
-
           <code><a href="getCaseCounts.html">getCaseCounts()</a></code>
 
         </dt>
         <dd>Extract the outcome cohort counts result</dd>
-
-        <dt>
-
-          <code><a href="getCaseTargetBinaryFeatures.html">getCaseTargetBinaryFeatures()</a></code>
-
-        </dt>
-        <dd>Extract aggregate statistics of binary feature analysis IDs of interest for targets</dd>
 
         <dt>
 
@@ -304,6 +318,13 @@
 
 
       <dl><dt>
+
+          <code><a href="dot-getCmVersion.html">.getCmVersion()</a></code>
+
+        </dt>
+        <dd>An internal function to determine the version of CohortMethod used to store results</dd>
+
+        <dt>
 
           <code><a href="getCMEstimation.html">getCMEstimation()</a></code>
 
@@ -549,6 +570,36 @@
 
         </dt>
         <dd>Extract the top N predictors per model</dd>
+      </dl></div><div class="section level2">
+      <h2 id="treatment-patterns">Treatment Patterns<a class="anchor" aria-label="anchor" href="#treatment-patterns"></a></h2>
+
+      <div class="section-desc"><p>These functions are used to help result extraction.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="getAnalysisCohorts.html">getAnalysisCohorts()</a></code>
+
+        </dt>
+        <dd>Extracts the different analyses ran for each target and event cohorts</dd>
+
+        <dt>
+
+          <code><a href="getEventDuration.html">getEventDuration()</a></code>
+
+        </dt>
+        <dd>Extracts summary of event duration</dd>
+
+        <dt>
+
+          <code><a href="getTreatmentPathways.html">getTreatmentPathways()</a></code>
+
+        </dt>
+        <dd>Extracts treatment pathways</dd>
       </dl></div><div class="section level2">
       <h2 id="reporting">Reporting<a class="anchor" aria-label="anchor" href="#reporting"></a></h2>
 

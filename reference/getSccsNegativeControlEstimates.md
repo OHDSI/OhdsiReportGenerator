@@ -90,7 +90,8 @@ target/outcome/analysis/database IDs
 
 ## See also
 
-Other Estimation: [`getCMEstimation()`](getCMEstimation.md),
+Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
+[`getCMEstimation()`](getCMEstimation.md),
 [`getCmDiagnosticsData()`](getCmDiagnosticsData.md),
 [`getCmMetaEstimation()`](getCmMetaEstimation.md),
 [`getCmNegativeControlEstimates()`](getCmNegativeControlEstimates.md),

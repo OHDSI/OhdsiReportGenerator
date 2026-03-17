@@ -11,6 +11,7 @@ getCmPropensityModel(
   cmTablePrefix = "cm_",
   targetId = NULL,
   comparatorId = NULL,
+  indicationId = NULL,
   analysisId = NULL,
   databaseId = NULL
 )
@@ -40,6 +41,10 @@ getCmPropensityModel(
 
   the comparator ID of interest
 
+- indicationId:
+
+  The indications that the target & comparator was nested to
+
 - analysisId:
 
   the analysis ID to restrict to
@@ -59,7 +64,8 @@ target/comparator/analysis/database IDs
 
 ## See also
 
-Other Estimation: [`getCMEstimation()`](getCMEstimation.md),
+Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
+[`getCMEstimation()`](getCMEstimation.md),
 [`getCmDiagnosticsData()`](getCmDiagnosticsData.md),
 [`getCmMetaEstimation()`](getCmMetaEstimation.md),
 [`getCmNegativeControlEstimates()`](getCmNegativeControlEstimates.md),

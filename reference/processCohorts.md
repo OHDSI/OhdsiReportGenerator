@@ -29,13 +29,18 @@ Finds the parent cohorts and children cohorts
 
 ## See also
 
-Other Cohorts: [`getCohortCounts()`](getCohortCounts.md),
+Other Cohorts: [`getCohortAttrition()`](getCohortAttrition.md),
+[`getCohortCounts()`](getCohortCounts.md),
 [`getCohortDefinitions()`](getCohortDefinitions.md),
 [`getCohortInclusionRules()`](getCohortInclusionRules.md),
 [`getCohortInclusionStats()`](getCohortInclusionStats.md),
 [`getCohortInclusionSummary()`](getCohortInclusionSummary.md),
 [`getCohortMeta()`](getCohortMeta.md),
-[`getCohortSubsetDefinitions()`](getCohortSubsetDefinitions.md)
+[`getCohortSubsetAttrition()`](getCohortSubsetAttrition.md),
+[`getCohortSubsetDefinitions()`](getCohortSubsetDefinitions.md),
+[`getSubsetText()`](getSubsetText.md),
+[`processCohortDefinitionsForQuarto()`](processCohortDefinitionsForQuarto.md),
+[`restrictCohortDefinitionsForQuarto()`](restrictCohortDefinitionsForQuarto.md)
 
 ## Examples
 

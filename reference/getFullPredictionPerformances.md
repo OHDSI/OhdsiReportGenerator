@@ -197,5 +197,4 @@ perf <- getFullPredictionPerformances(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> Closing database connection
 ```

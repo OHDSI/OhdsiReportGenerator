@@ -13,7 +13,9 @@ getCharacterizationTargets(
   printTimes = FALSE,
   useTte = TRUE,
   useDcrc = TRUE,
-  useRf = TRUE
+  useRf = TRUE,
+  useTb = TRUE,
+  useCs = TRUE
 )
 ```
 
@@ -53,6 +55,14 @@ getCharacterizationTargets(
 
   whether to determine what cohorts are used in risk factor
 
+- useTb:
+
+  whether to determine what cohorts are used in target baseline
+
+- useCs:
+
+  whether to determine what cohorts are used in case-series
+
 ## Value
 
 A data.frame with the characterization target cohort ids, names and
@@ -67,10 +77,7 @@ Specify the connectionHandler, the schema and the prefixes
 Other Characterization:
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
-[`getCaseBinaryFeatures()`](getCaseBinaryFeatures.md),
-[`getCaseContinuousFeatures()`](getCaseContinuousFeatures.md),
 [`getCaseCounts()`](getCaseCounts.md),
-[`getCaseTargetBinaryFeatures()`](getCaseTargetBinaryFeatures.md),
 [`getCaseTargetCounts()`](getCaseTargetCounts.md),
 [`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
 [`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),
@@ -101,5 +108,5 @@ cohorts <- getCharacterizationTargets(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "-- all extracting characterization targets took: 0.0735986232757568 secs"
+#> [1] "-- all extracting characterization targets took: 0.0911903381347656 secs"
 ```

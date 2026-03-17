@@ -97,10 +97,7 @@ IDs
 
 Other Characterization:
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
-[`getCaseBinaryFeatures()`](getCaseBinaryFeatures.md),
-[`getCaseContinuousFeatures()`](getCaseContinuousFeatures.md),
 [`getCaseCounts()`](getCaseCounts.md),
-[`getCaseTargetBinaryFeatures()`](getCaseTargetBinaryFeatures.md),
 [`getCaseTargetCounts()`](getCaseTargetCounts.md),
 [`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
 [`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),

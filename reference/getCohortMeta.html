@@ -87,19 +87,23 @@
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other Cohorts:
+<code><a href="getCohortAttrition.html">getCohortAttrition()</a></code>,
 <code><a href="getCohortCounts.html">getCohortCounts()</a></code>,
 <code><a href="getCohortDefinitions.html">getCohortDefinitions()</a></code>,
 <code><a href="getCohortInclusionRules.html">getCohortInclusionRules()</a></code>,
 <code><a href="getCohortInclusionStats.html">getCohortInclusionStats()</a></code>,
 <code><a href="getCohortInclusionSummary.html">getCohortInclusionSummary()</a></code>,
+<code><a href="getCohortSubsetAttrition.html">getCohortSubsetAttrition()</a></code>,
 <code><a href="getCohortSubsetDefinitions.html">getCohortSubsetDefinitions()</a></code>,
-<code><a href="processCohorts.html">processCohorts()</a></code></p></div>
+<code><a href="getSubsetText.html">getSubsetText()</a></code>,
+<code><a href="processCohortDefinitionsForQuarto.html">processCohortDefinitionsForQuarto()</a></code>,
+<code><a href="processCohorts.html">processCohorts()</a></code>,
+<code><a href="restrictCohortDefinitionsForQuarto.html">restrictCohortDefinitionsForQuarto()</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">conDet</span> <span class="op">&lt;-</span> <span class="fu"><a href="getExampleConnectionDetails.html">getExampleConnectionDetails</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Closing database connection</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">connectionHandler</span> <span class="op">&lt;-</span> <span class="fu">ResultModelManager</span><span class="fu">::</span><span class="va"><a href="https://ohdsi.github.io/ResultModelManager/reference/ConnectionHandler.html" class="external-link">ConnectionHandler</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">conDet</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Connecting using SQLite driver</span>
@@ -108,6 +112,7 @@
 <span class="r-in"><span>  connectionHandler <span class="op">=</span> <span class="va">connectionHandler</span>, </span></span>
 <span class="r-in"><span>  schema <span class="op">=</span> <span class="st">'main'</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Parameter 'cohort_id_name' not found in SQL</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

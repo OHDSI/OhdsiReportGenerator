@@ -59,66 +59,78 @@ knitr::kable(
   )
 ```
 
-| cohortDefinitionId | cohortName                            | description | subsetParent | isSubset | subsetDefinitionId | subsetDefinitionJson |
-|-------------------:|:--------------------------------------|:------------|-------------:|---------:|-------------------:|:---------------------|
-|                  1 | Celecoxib                             | NA          |            1 |       NA |                 NA | NA                   |
-|                  2 | Diclofenac                            | NA          |            2 |       NA |                 NA | NA                   |
-|                  3 | GI bleed                              | NA          |            3 |       NA |                 NA | NA                   |
-|               1001 | Celecoxib - age 18 to 64 Age 18 to 64 | NA          |            1 |       NA |                  1 | {                    |
+| cohortDefinitionId | cohortName                            | description | subsetParent | isSubset | subsetDefinitionId | isTemplatedCohort | subsetDefinitionJson | templateName | templateSql | templateJson |
+|-------------------:|:--------------------------------------|------------:|-------------:|---------:|-------------------:|------------------:|:---------------------|-------------:|------------:|-------------:|
+|                  1 | Celecoxib                             |          NA |            1 |        0 |                 NA |                 0 | NA                   |           NA |          NA |           NA |
+|                  2 | Diclofenac                            |          NA |            2 |        0 |                 NA |                 0 | NA                   |           NA |          NA |           NA |
+|                  3 | GI bleed                              |          NA |            3 |        0 |                 NA |                 0 | NA                   |           NA |          NA |           NA |
+|                  4 | Acetaminophen                         |          NA |            4 |        0 |                 NA |                 0 | NA                   |           NA |          NA |           NA |
+|                  5 | Amoxicillin                           |          NA |            5 |        0 |                 NA |                 0 | NA                   |           NA |          NA |           NA |
+|                  6 | Aspirin                               |          NA |            6 |        0 |                 NA |                 0 | NA                   |           NA |          NA |           NA |
+|                  7 | Clavulanate                           |          NA |            7 |        0 |                 NA |                 0 | NA                   |           NA |          NA |           NA |
+|                  8 | Death                                 |          NA |            8 |        0 |                 NA |                 0 | NA                   |           NA |          NA |           NA |
+|                  9 | Doxylamine                            |          NA |            9 |        0 |                 NA |                 0 | NA                   |           NA |          NA |           NA |
+|                 10 | PenicillinV                           |          NA |           10 |        0 |                 NA |                 0 | NA                   |           NA |          NA |           NA |
+|                 11 | ViralSinusitis                        |          NA |           11 |        0 |                 NA |                 0 | NA                   |           NA |          NA |           NA |
+|               1001 | Celecoxib - age 18 to 64 Age 18 to 64 |          NA |            1 |        1 |                  1 |                 0 | {                    |              |             |              |
 
 The data.frame extracted containing the cohort details minus the json
 and sqlCommand columns.
 
 “name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: \[ {
 “name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
-“ageMin”: 18, “ageMax”: 64 } \], “packageVersion”: “0.11.2”,
+“ageMin”: 18, “ageMax”: 64 } \], “packageVersion”: “1.1.0”,
 “identifierExpression”: “targetId \* 1000 + definitionId”,
 “operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| \|
-2001\|Diclofenac - age 18 to 64 Age 18 to 64 \|NA \| 2\| NA\| 1\|{
-“name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: \[ {
+“@baseCohortName - @subsetDefinitionName @operatorNames” } \| NA\| NA\|
+NA\| \| 2001\|Diclofenac - age 18 to 64 Age 18 to 64 \| NA\| 2\| 1\| 1\|
+0\|{ “name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: \[ {
 “name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
-“ageMin”: 18, “ageMax”: 64 } \], “packageVersion”: “0.11.2”,
+“ageMin”: 18, “ageMax”: 64 } \], “packageVersion”: “1.1.0”,
 “identifierExpression”: “targetId \* 1000 + definitionId”,
 “operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| \|
-1002\|Celecoxib - first event with 365 prior obs first event with 365
-prior obs \|NA \| 1\| NA\| 2\|{ “name”: “first event with 365 prior
-obs”, “definitionId”: 2, “subsetOperators”: \[ { “name”: “first event
-with 365 prior obs”, “subsetType”: “LimitSubsetOperator”, “priorTime”:
-365, “followUpTime”: 0, “limitTo”: “firstEver” } \], “packageVersion”:
-“0.11.2”, “identifierExpression”: “targetId \* 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| \|
-2002\|Diclofenac - first event with 365 prior obs first event with 365
-prior obs \|NA \| 2\| NA\| 2\|{ “name”: “first event with 365 prior
-obs”, “definitionId”: 2, “subsetOperators”: \[ { “name”: “first event
-with 365 prior obs”, “subsetType”: “LimitSubsetOperator”, “priorTime”:
-365, “followUpTime”: 0, “limitTo”: “firstEver” } \], “packageVersion”:
-“0.11.2”, “identifierExpression”: “targetId \* 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| \|
-1003\|Celecoxib - age 18 to 64 and first event with 365 prior obs Age 18
-to 64, first event with 365 prior obs \|NA \| 1\| NA\| 3\|{ “name”: “age
-18 to 64 and first event with 365 prior obs”, “definitionId”: 3,
-“subsetOperators”: \[ { “name”: “Age 18 to 64”, “subsetType”:
-“DemographicSubsetOperator”, “ageMin”: 18, “ageMax”: 64 }, { “name”:
+“@baseCohortName - @subsetDefinitionName @operatorNames” } \| NA\| NA\|
+NA\| \| 1002\|Celecoxib - first event with 365 prior obs first event
+with 365 prior obs \| NA\| 1\| 1\| 2\| 0\|{ “name”: “first event with
+365 prior obs”, “definitionId”: 2, “subsetOperators”: \[ { “name”:
 “first event with 365 prior obs”, “subsetType”: “LimitSubsetOperator”,
-“priorTime”: 365, “followUpTime”: 0, “limitTo”: “firstEver” } \],
-“packageVersion”: “0.11.2”, “identifierExpression”: “targetId \* 1000 +
-definitionId”, “operatorNameConcatString”: “,”,
-“subsetCohortNameTemplate”: “@baseCohortName - @subsetDefinitionName
-@operatorNames” } \| \| 2003\|Diclofenac - age 18 to 64 and first event
-with 365 prior obs Age 18 to 64, first event with 365 prior obs \|NA \|
-2\| NA\| 3\|{ “name”: “age 18 to 64 and first event with 365 prior obs”,
+“priorTime”: 365, “followUpTime”: 0, “minimumCohortDuration”: 0,
+“limitTo”: “firstEver” } \], “packageVersion”: “1.1.0”,
+“identifierExpression”: “targetId \* 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
+“@baseCohortName - @subsetDefinitionName @operatorNames” } \| NA\| NA\|
+NA\| \| 2002\|Diclofenac - first event with 365 prior obs first event
+with 365 prior obs \| NA\| 2\| 1\| 2\| 0\|{ “name”: “first event with
+365 prior obs”, “definitionId”: 2, “subsetOperators”: \[ { “name”:
+“first event with 365 prior obs”, “subsetType”: “LimitSubsetOperator”,
+“priorTime”: 365, “followUpTime”: 0, “minimumCohortDuration”: 0,
+“limitTo”: “firstEver” } \], “packageVersion”: “1.1.0”,
+“identifierExpression”: “targetId \* 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
+“@baseCohortName - @subsetDefinitionName @operatorNames” } \| NA\| NA\|
+NA\| \| 1003\|Celecoxib - age 18 to 64 and first event with 365 prior
+obs Age 18 to 64, first event with 365 prior obs \| NA\| 1\| 1\| 3\|
+0\|{ “name”: “age 18 to 64 and first event with 365 prior obs”,
 “definitionId”: 3, “subsetOperators”: \[ { “name”: “Age 18 to 64”,
 “subsetType”: “DemographicSubsetOperator”, “ageMin”: 18, “ageMax”: 64 },
 { “name”: “first event with 365 prior obs”, “subsetType”:
-“LimitSubsetOperator”, “priorTime”: 365, “followUpTime”: 0, “limitTo”:
-“firstEver” } \], “packageVersion”: “0.11.2”, “identifierExpression”:
-“targetId \* 1000 + definitionId”, “operatorNameConcatString”: “,”,
+“LimitSubsetOperator”, “priorTime”: 365, “followUpTime”: 0,
+“minimumCohortDuration”: 0, “limitTo”: “firstEver” } \],
+“packageVersion”: “1.1.0”, “identifierExpression”: “targetId \* 1000 +
+definitionId”, “operatorNameConcatString”: “,”,
 “subsetCohortNameTemplate”: “@baseCohortName - @subsetDefinitionName
-@operatorNames” } \|
+@operatorNames” } \| NA\| NA\| NA\| \| 2003\|Diclofenac - age 18 to 64
+and first event with 365 prior obs Age 18 to 64, first event with 365
+prior obs \| NA\| 2\| 1\| 3\| 0\|{ “name”: “age 18 to 64 and first event
+with 365 prior obs”, “definitionId”: 3, “subsetOperators”: \[ { “name”:
+“Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”, “ageMin”: 18,
+“ageMax”: 64 }, { “name”: “first event with 365 prior obs”,
+“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
+0, “minimumCohortDuration”: 0, “limitTo”: “firstEver” } \],
+“packageVersion”: “1.1.0”, “identifierExpression”: “targetId \* 1000 +
+definitionId”, “operatorNameConcatString”: “,”,
+“subsetCohortNameTemplate”: “@baseCohortName - @subsetDefinitionName
+@operatorNames” } \| NA\| NA\| NA\|
 
 You can process the cohorts definitions to extract the parent cohorts
 and the children for each parent cohort.
@@ -143,38 +155,40 @@ knitr::kable(
 }
 ```
 
-| cohortDefinitionId | cohortName                            | description | subsetParent | isSubset | subsetDefinitionId | subsetDefinitionJson |
-|-------------------:|:--------------------------------------|:------------|-------------:|---------:|-------------------:|:---------------------|
-|                  1 | Celecoxib                             | NA          |            1 |       NA |                 NA | NA                   |
-|               1001 | Celecoxib - age 18 to 64 Age 18 to 64 | NA          |            1 |       NA |                  1 | {                    |
+| cohortDefinitionId | cohortName                            | description | subsetParent | isSubset | subsetDefinitionId | isTemplatedCohort | subsetDefinitionJson | templateName | templateSql | templateJson |
+|-------------------:|:--------------------------------------|------------:|-------------:|---------:|-------------------:|------------------:|:---------------------|-------------:|------------:|-------------:|
+|                  1 | Celecoxib                             |          NA |            1 |        0 |                 NA |                 0 | NA                   |           NA |          NA |           NA |
+|               1001 | Celecoxib - age 18 to 64 Age 18 to 64 |          NA |            1 |        1 |                  1 |                 0 | {                    |              |             |              |
 
 The children/subset cohorts for the first parent cohort.
 
 “name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: \[ {
 “name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
-“ageMin”: 18, “ageMax”: 64 } \], “packageVersion”: “0.11.2”,
+“ageMin”: 18, “ageMax”: 64 } \], “packageVersion”: “1.1.0”,
 “identifierExpression”: “targetId \* 1000 + definitionId”,
 “operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| \|
-1002\|Celecoxib - first event with 365 prior obs first event with 365
-prior obs \|NA \| 1\| NA\| 2\|{ “name”: “first event with 365 prior
-obs”, “definitionId”: 2, “subsetOperators”: \[ { “name”: “first event
-with 365 prior obs”, “subsetType”: “LimitSubsetOperator”, “priorTime”:
-365, “followUpTime”: 0, “limitTo”: “firstEver” } \], “packageVersion”:
-“0.11.2”, “identifierExpression”: “targetId \* 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| \|
-1003\|Celecoxib - age 18 to 64 and first event with 365 prior obs Age 18
-to 64, first event with 365 prior obs \|NA \| 1\| NA\| 3\|{ “name”: “age
-18 to 64 and first event with 365 prior obs”, “definitionId”: 3,
-“subsetOperators”: \[ { “name”: “Age 18 to 64”, “subsetType”:
-“DemographicSubsetOperator”, “ageMin”: 18, “ageMax”: 64 }, { “name”:
+“@baseCohortName - @subsetDefinitionName @operatorNames” } \| NA\| NA\|
+NA\| \| 1002\|Celecoxib - first event with 365 prior obs first event
+with 365 prior obs \| NA\| 1\| 1\| 2\| 0\|{ “name”: “first event with
+365 prior obs”, “definitionId”: 2, “subsetOperators”: \[ { “name”:
 “first event with 365 prior obs”, “subsetType”: “LimitSubsetOperator”,
-“priorTime”: 365, “followUpTime”: 0, “limitTo”: “firstEver” } \],
-“packageVersion”: “0.11.2”, “identifierExpression”: “targetId \* 1000 +
+“priorTime”: 365, “followUpTime”: 0, “minimumCohortDuration”: 0,
+“limitTo”: “firstEver” } \], “packageVersion”: “1.1.0”,
+“identifierExpression”: “targetId \* 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
+“@baseCohortName - @subsetDefinitionName @operatorNames” } \| NA\| NA\|
+NA\| \| 1003\|Celecoxib - age 18 to 64 and first event with 365 prior
+obs Age 18 to 64, first event with 365 prior obs \| NA\| 1\| 1\| 3\|
+0\|{ “name”: “age 18 to 64 and first event with 365 prior obs”,
+“definitionId”: 3, “subsetOperators”: \[ { “name”: “Age 18 to 64”,
+“subsetType”: “DemographicSubsetOperator”, “ageMin”: 18, “ageMax”: 64 },
+{ “name”: “first event with 365 prior obs”, “subsetType”:
+“LimitSubsetOperator”, “priorTime”: 365, “followUpTime”: 0,
+“minimumCohortDuration”: 0, “limitTo”: “firstEver” } \],
+“packageVersion”: “1.1.0”, “identifierExpression”: “targetId \* 1000 +
 definitionId”, “operatorNameConcatString”: “,”,
 “subsetCohortNameTemplate”: “@baseCohortName - @subsetDefinitionName
-@operatorNames” } \|
+@operatorNames” } \| NA\| NA\| NA\|
 
 For example, if you created a cohort corresponding to all patients
 exposed to drug A with an id of 1 and then created ‘children’ subset
@@ -208,24 +222,25 @@ The subset cohort logic used in the analysis.
 
 “name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: \[ {
 “name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
-“ageMin”: 18, “ageMax”: 64 } \], “packageVersion”: “0.11.2”,
+“ageMin”: 18, “ageMax”: 64 } \], “packageVersion”: “1.1.0”,
 “identifierExpression”: “targetId \* 1000 + definitionId”,
 “operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
 “@baseCohortName - @subsetDefinitionName @operatorNames” } \| \| 2\|{
 “name”: “first event with 365 prior obs”, “definitionId”: 2,
 “subsetOperators”: \[ { “name”: “first event with 365 prior obs”,
 “subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
-0, “limitTo”: “firstEver” } \], “packageVersion”: “0.11.2”,
-“identifierExpression”: “targetId \* 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| \| 3\|{
-“name”: “age 18 to 64 and first event with 365 prior obs”,
-“definitionId”: 3, “subsetOperators”: \[ { “name”: “Age 18 to 64”,
-“subsetType”: “DemographicSubsetOperator”, “ageMin”: 18, “ageMax”: 64 },
-{ “name”: “first event with 365 prior obs”, “subsetType”:
-“LimitSubsetOperator”, “priorTime”: 365, “followUpTime”: 0, “limitTo”:
-“firstEver” } \], “packageVersion”: “0.11.2”, “identifierExpression”:
-“targetId \* 1000 + definitionId”, “operatorNameConcatString”: “,”,
+0, “minimumCohortDuration”: 0, “limitTo”: “firstEver” } \],
+“packageVersion”: “1.1.0”, “identifierExpression”: “targetId \* 1000 +
+definitionId”, “operatorNameConcatString”: “,”,
+“subsetCohortNameTemplate”: “@baseCohortName - @subsetDefinitionName
+@operatorNames” } \| \| 3\|{ “name”: “age 18 to 64 and first event with
+365 prior obs”, “definitionId”: 3, “subsetOperators”: \[ { “name”: “Age
+18 to 64”, “subsetType”: “DemographicSubsetOperator”, “ageMin”: 18,
+“ageMax”: 64 }, { “name”: “first event with 365 prior obs”,
+“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
+0, “minimumCohortDuration”: 0, “limitTo”: “firstEver” } \],
+“packageVersion”: “1.1.0”, “identifierExpression”: “targetId \* 1000 +
+definitionId”, “operatorNameConcatString”: “,”,
 “subsetCohortNameTemplate”: “@baseCohortName - @subsetDefinitionName
 @operatorNames” } \|
 
@@ -331,12 +346,10 @@ knitr::kable(
   )
 ```
 
-| databaseName | databaseId | targetName | targetCohortId | outcomeName | outcomeCohortId | minPriorObservation | outcomeWashoutDays | riskWindowStart | riskWindowEnd | startAnchor  | endAnchor  | covariateName      | covariateId | caseCount | caseAverage | nonCaseCount | nonCaseAverage |        SMD |    absSMD |
-|:-------------|:-----------|:-----------|---------------:|:------------|----------------:|--------------------:|-------------------:|----------------:|--------------:|:-------------|:-----------|:-------------------|------------:|----------:|------------:|-------------:|---------------:|-----------:|----------:|
-| Synthea      | 388020256  | Celecoxib  |              1 | GI bleed    |               3 |                 365 |                365 |               1 |           365 | cohort start | cohort end | age group: 30 - 34 |        6003 |        35 |   0.0985916 |          171 |      0.1183391 | -0.0635357 | 0.0635357 |
-| Synthea      | 388020256  | Celecoxib  |              1 | GI bleed    |               3 |                 365 |                365 |               1 |           365 | cohort start | cohort end | age group: 35 - 39 |        7003 |       177 |   0.4985915 |          685 |      0.4740484 |  0.0789649 | 0.0789649 |
-| Synthea      | 388020256  | Celecoxib  |              1 | GI bleed    |               3 |                 365 |                365 |               1 |           365 | cohort start | cohort end | age group: 40 - 44 |        8003 |       129 |   0.3633803 |          531 |      0.3674740 | -0.0131713 | 0.0131713 |
-| Synthea      | 388020256  | Celecoxib  |              1 | GI bleed    |               3 |                 365 |                365 |               1 |           365 | cohort start | cohort end | age group: 45 - 49 |        9003 |        14 |   0.0394366 |           58 |      0.0401384 | -0.0022579 | 0.0022579 |
+| databaseName | databaseId | targetName | targetCohortId | outcomeName | outcomeCohortId | minPriorObservation | limitToFirstInNDays | outcomeWashoutDays | riskWindowStart | startAnchor  | riskWindowEnd | endAnchor  | covariateId | covariateName      | nonCaseCount | caseCount | nonCaseAverage | caseAverage |        smd |    absSmd |
+|:-------------|-----------:|:-----------|---------------:|:------------|----------------:|--------------------:|--------------------:|-------------------:|----------------:|:-------------|--------------:|:-----------|------------:|:-------------------|-------------:|----------:|---------------:|:------------|-----------:|----------:|
+| Synthea      |  388020256 | Celecoxib  |              1 | GI bleed    |               3 |                 365 |               99999 |                365 |               1 | cohort_start |           365 | cohort_end |        6003 | age group: 30 - 34 |          171 |        35 |      0.1183391 | 0.09859155  | -0.0634826 | 0.0634826 |
+| Synthea      |  388020256 | Celecoxib  |              1 | GI bleed    |               3 |                 365 |               99999 |                365 |               1 | cohort_start |           365 | cohort_end |        7003 | age group: 35 - 39 |          685 |       177 |      0.4740484 | 0.49859155  |  0.0490762 | 0.0490762 |
 
 Example risk factors for binary features results.
 
@@ -356,13 +369,11 @@ knitr::kable(
   )
 ```
 
-| databaseName | databaseId | targetName | targetCohortId | minPriorObservation | covariateName                                                                                             | covariateId | targetCountValue | targetMinValue | targetMaxValue | targetAverageValue | targetStandardDeviation | targetMedianValue | targetP10Value | targetP25Value | targetP75Value | targetP90Value | outcomeName | outcomeCohortId | outcomeWashoutDays | riskWindowStart | riskWindowEnd | startAnchor  | endAnchor  | caseCountValue | caseMinValue | caseMaxValue | caseAverageValue | caseStandardDeviation | caseMedianValue | caseP10Value | caseP25Value | caseP75Value | caseP90Value |        SMD |    absSMD |
-|:-------------|:-----------|:-----------|---------------:|--------------------:|:----------------------------------------------------------------------------------------------------------|------------:|-----------------:|---------------:|---------------:|-------------------:|------------------------:|------------------:|---------------:|---------------:|---------------:|---------------:|:------------|----------------:|-------------------:|----------------:|--------------:|:-------------|:-----------|---------------:|-------------:|-------------:|-----------------:|----------------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-----------:|----------:|
-| Synthea      | 388020256  | Celecoxib  |              1 |                 365 | age in years                                                                                              |        1002 |             1800 |             31 |             47 |             38.645 |                3.321244 |                39 |             34 |             36 |             41 |             43 | GI bleed    |               3 |                365 |               1 |           365 | cohort start | cohort end |            355 |           32 |           46 |         38.77465 |              3.274612 |              39 |           35 |           36 |           41 |           43 |  0.0393116 | 0.0393116 |
-| Synthea      | 388020256  | Celecoxib  |              1 |                 365 | observation time (days) after index                                                                       |        1009 |             1800 |             10 |          28328 |           7588.082 |             5352.386801 |              6676 |           1336 |           3442 |          10649 |          14808 | GI bleed    |               3 |                365 |               1 |           365 | cohort start | cohort end |            355 |           10 |        27390 |       7524.37465 |           5611.529121 |            6708 |          996 |         3236 |        10415 |        14884 | -0.0116180 | 0.0116180 |
-| Synthea      | 388020256  | Celecoxib  |              1 |                 365 | observation time (days) prior to index                                                                    |        1008 |             1800 |          11369 |          17044 |          14114.684 |             1195.708067 |             14100 |          12544 |          13160 |          15040 |          15744 | GI bleed    |               3 |                365 |               1 |           365 | cohort start | cohort end |            355 |        11550 |        16805 |      14159.86761 |           1176.652643 |           14155 |        12644 |        13250 |        15075 |        15840 |  0.0380906 | 0.0380906 |
-| Synthea      | 388020256  | Celecoxib  |              1 |                 365 | time (days) between cohort start and end                                                                  |        1010 |             1800 |              0 |              0 |              0.000 |                0.000000 |                 0 |              0 |              0 |              0 |              0 | GI bleed    |               3 |                365 |               1 |           365 | cohort start | cohort end |            355 |            0 |            0 |          0.00000 |              0.000000 |               0 |            0 |            0 |            0 |            0 |        NaN |       NaN |
-| Synthea      | 388020256  | Celecoxib  |              1 |                 365 | visit_occurrence concept count during day -365 through 0 concept_count relative to index: Inpatient Visit |     9201923 |               -5 |              0 |              0 |              0.000 |                0.000000 |                 0 |              0 |              0 |              0 |              0 | GI bleed    |               3 |                365 |               1 |           365 | cohort start | cohort end |              0 |            0 |            0 |          0.00000 |              0.000000 |               0 |            0 |            0 |            0 |            0 |        NaN |       NaN |
+| databaseName | databaseId | targetName | targetCohortId | outcomeName | outcomeCohortId | minPriorObservation | limitToFirstInNDays | outcomeWashoutDays | riskWindowStart | startAnchor  | riskWindowEnd | endAnchor  | covariateId | covariateName                          | targetCountValue | caseCountValue | targetMinValue | caseMinValue | targetMaxValue | caseMaxValue | targetAverageValue | caseAverageValue | targetMedianValue | caseMedianValue | targetP10Value | caseP10Value | targetP25Value | caseP25Value | targetP75Value | caseP75Value | targetP90Value | caseP90Value | targetStandardDeviation | caseStandardDeviation |        smd |    absSmd |
+|:-------------|-----------:|:-----------|---------------:|:------------|----------------:|--------------------:|--------------------:|-------------------:|----------------:|:-------------|--------------:|:-----------|------------:|:---------------------------------------|-----------------:|---------------:|---------------:|-------------:|---------------:|-------------:|-------------------:|-----------------:|------------------:|----------------:|---------------:|-------------:|---------------:|-------------:|---------------:|-------------:|---------------:|-------------:|------------------------:|----------------------:|-----------:|----------:|
+| Synthea      |  388020256 | Celecoxib  |              1 | GI bleed    |               3 |                 365 |               99999 |                365 |               1 | cohort_start |           365 | cohort_end |        1002 | age in years                           |             1445 |            355 |             31 |           32 |             47 |           46 |           38.61315 |         38.77465 |                39 |              39 |             34 |           35 |             36 |           36 |             41 |           41 |             43 |           43 |                 3.33295 |              3.274612 |  0.0488812 | 0.0488812 |
+| Synthea      |  388020256 | Celecoxib  |              1 | GI bleed    |               3 |                 365 |               99999 |                365 |               1 | cohort_start |           365 | cohort_end |        1008 | observation time (days) prior to index |             1445 |            355 |          11369 |        11550 |          17044 |        16805 |        14103.58339 |      14159.86761 |             14100 |           14155 |          12525 |        12644 |          13155 |        13250 |          15015 |        15075 |          15714 |        15840 |              1200.48537 |           1176.652643 |  0.0473522 | 0.0473522 |
+| Synthea      |  388020256 | Celecoxib  |              1 | GI bleed    |               3 |                 365 |               99999 |                365 |               1 | cohort_start |           365 | cohort_end |        1009 | observation time (days) after index    |             1445 |            355 |             13 |           10 |          28328 |        27390 |         7603.73287 |       7524.37465 |              6676 |            6708 |           1431 |          996 |           3482 |         3236 |          10685 |        10415 |          14808 |        14884 |              5288.67757 |           5611.529121 | -0.0145545 | 0.0145545 |
 
 Example risk factors for continuous features results.
 
@@ -416,11 +427,11 @@ knitr::kable(
   )
 ```
 
-| performanceId | modelDesignId | timeStamp  | modelType | covariateName                                        | developmentDatabaseId | validationDatabaseId | developmentTargetId | developmentTargetName                                                     | validationTargetId | validationTargetName | developmentOutcomeId | developmentOutcomeName | validationOutcomeId | validationOutcomeName | developmentDatabase | validationDatabase | validationTarId | developmentTarId | validationTimeAtRisk                      | developmentTimeAtRisk                     | evaluation | populationSize | outcomeCount |     AUROC | 95% lower AUROC | 95% upper AUROC |     AUPRC | brier score | brier score scaled |      Eavg |       E90 |      Emax | calibrationInLarge mean prediction | calibrationInLarge observed risk | calibrationInLarge intercept | weak calibration intercept | weak calibration gradient | Hosmer-Lemeshow calibration intercept | Hosmer-Lemeshow calibration gradient | Average Precision |
-|--------------:|--------------:|:-----------|:----------|:-----------------------------------------------------|----------------------:|---------------------:|--------------------:|:--------------------------------------------------------------------------|-------------------:|:---------------------|---------------------:|:-----------------------|--------------------:|:----------------------|:--------------------|:-------------------|----------------:|-----------------:|:------------------------------------------|:------------------------------------------|:-----------|---------------:|-------------:|----------:|----------------:|----------------:|----------:|------------:|-------------------:|----------:|----------:|----------:|-----------------------------------:|---------------------------------:|-----------------------------:|---------------------------:|--------------------------:|--------------------------------------:|-------------------------------------:|------------------:|
-|             1 |             1 | 2025-02-13 | logistic  | getDbDefaultCovariateData (29 types) inc age and sex |                     1 |                    1 |                1002 | Celecoxib - first event with 365 prior obs first event with 365 prior obs |               1002 | \-                   |                    3 | GI bleed               |                   3 | \-                    | Synthea             | \-                 |               1 |                1 | (cohort start + 1) - (cohort start + 365) | (cohort start + 1) - (cohort start + 365) | Test       |            449 |           88 | 0.6885703 |       0.6264985 |       0.7506421 | 0.3085693 |   0.1469204 |          0.0720927 | 0.0318938 | 0.0650422 | 0.1390867 |                          0.1972381 |                        0.1959911 |                    0.0976443 |                  0.0976443 |                  1.081961 |                             0.0150102 |                            0.9957815 |         0.3141461 |
-|             1 |             1 | 2025-02-13 | logistic  | getDbDefaultCovariateData (29 types) inc age and sex |                     1 |                    1 |                1002 | Celecoxib - first event with 365 prior obs first event with 365 prior obs |               1002 | \-                   |                    3 | GI bleed               |                   3 | \-                    | Synthea             | \-                 |               1 |                1 | (cohort start + 1) - (cohort start + 365) | (cohort start + 1) - (cohort start + 365) | Train      |           1351 |          267 | 0.7091712 |       0.6750978 |       0.7432446 | 0.3665755 |   0.1451619 |          0.0845800 | 0.0211919 | 0.0365588 | 0.0525081 |                          0.1976328 |                        0.1976314 |                    0.2335147 |                  0.2335147 |                  1.181563 |                            -0.0358802 |                            1.1620115 |         0.3702857 |
-|             1 |             1 | 2025-02-13 | logistic  | getDbDefaultCovariateData (29 types) inc age and sex |                     1 |                    1 |                1002 | Celecoxib - first event with 365 prior obs first event with 365 prior obs |               1002 | \-                   |                    3 | GI bleed               |                   3 | \-                    | Synthea             | \-                 |               1 |                1 | (cohort start + 1) - (cohort start + 365) | (cohort start + 1) - (cohort start + 365) | CV         |           1351 |          267 | 0.6818760 |       0.6457077 |       0.7180443 | 0.3151896 |   0.1490119 |          0.0586252 | 0.0265908 | 0.0447049 | 0.2297922 |                          0.1971663 |                        0.1976314 |                    0.0905528 |                  0.0905528 |                  1.066780 |                            -0.0116256 |                            1.0545190 |         0.3196781 |
+| performanceId | modelDesignId | timeStamp  | modelType | covariateName                                        | algorithmName | developmentDatabaseId | validationDatabaseId | developmentTargetId | developmentTargetName                                                     | validationTargetId | validationTargetName | developmentOutcomeId | developmentOutcomeName | validationOutcomeId | validationOutcomeName | developmentDatabase | validationDatabase | validationTarId | developmentTarId | devTarStartDay | devTarStartAnchor | devTarEndDay | devTarEndAnchor | validationTimeAtRisk                      | developmentTimeAtRisk                     | evaluation | populationSize | outcomeCount |     AUROC | 95% lower AUROC | 95% upper AUROC |     AUPRC | brier score | brier score scaled |      Eavg |       E90 |      Emax | calibrationInLarge mean prediction | calibrationInLarge observed risk | calibrationInLarge intercept | weak calibration intercept | weak calibration gradient | Hosmer-Lemeshow calibration intercept | Hosmer-Lemeshow calibration gradient | Average Precision |
+|--------------:|--------------:|:-----------|:----------|:-----------------------------------------------------|:--------------|----------------------:|---------------------:|--------------------:|:--------------------------------------------------------------------------|-------------------:|:---------------------|---------------------:|:-----------------------|--------------------:|:----------------------|:--------------------|:-------------------|----------------:|-----------------:|---------------:|:------------------|-------------:|:----------------|:------------------------------------------|:------------------------------------------|:-----------|---------------:|-------------:|----------:|----------------:|----------------:|----------:|------------:|-------------------:|----------:|----------:|----------:|-----------------------------------:|---------------------------------:|-----------------------------:|---------------------------:|--------------------------:|--------------------------------------:|-------------------------------------:|------------------:|
+|             1 |             1 | 2025-02-13 | logistic  | getDbDefaultCovariateData (29 types) inc age and sex | logistic      |                     1 |                    1 |                1002 | Celecoxib - first event with 365 prior obs first event with 365 prior obs |               1002 | \-                   |                    3 | GI bleed               |                   3 | \-                    | Synthea             | \-                 |               1 |                1 |              1 | cohort start      |          365 | cohort start    | (cohort start + 1) - (cohort start + 365) | (cohort start + 1) - (cohort start + 365) | Test       |            449 |           88 | 0.6885703 |       0.6264985 |       0.7506421 | 0.3085693 |   0.1469204 |          0.0720927 | 0.0318938 | 0.0650422 | 0.1390867 |                          0.1972381 |                        0.1959911 |                    0.0976443 |                  0.0976443 |                  1.081961 |                             0.0150102 |                            0.9957815 |         0.3141461 |
+|             1 |             1 | 2025-02-13 | logistic  | getDbDefaultCovariateData (29 types) inc age and sex | logistic      |                     1 |                    1 |                1002 | Celecoxib - first event with 365 prior obs first event with 365 prior obs |               1002 | \-                   |                    3 | GI bleed               |                   3 | \-                    | Synthea             | \-                 |               1 |                1 |              1 | cohort start      |          365 | cohort start    | (cohort start + 1) - (cohort start + 365) | (cohort start + 1) - (cohort start + 365) | Train      |           1351 |          267 | 0.7091712 |       0.6750978 |       0.7432446 | 0.3665755 |   0.1451619 |          0.0845800 | 0.0211919 | 0.0365588 | 0.0525081 |                          0.1976328 |                        0.1976314 |                    0.2335147 |                  0.2335147 |                  1.181563 |                            -0.0358802 |                            1.1620115 |         0.3702857 |
+|             1 |             1 | 2025-02-13 | logistic  | getDbDefaultCovariateData (29 types) inc age and sex | logistic      |                     1 |                    1 |                1002 | Celecoxib - first event with 365 prior obs first event with 365 prior obs |               1002 | \-                   |                    3 | GI bleed               |                   3 | \-                    | Synthea             | \-                 |               1 |                1 |              1 | cohort start      |          365 | cohort start    | (cohort start + 1) - (cohort start + 365) | (cohort start + 1) - (cohort start + 365) | CV         |           1351 |          267 | 0.6818760 |       0.6457077 |       0.7180443 | 0.3151896 |   0.1490119 |          0.0586252 | 0.0265908 | 0.0447049 | 0.2297922 |                          0.1971663 |                        0.1976314 |                    0.0905528 |                  0.0905528 |                  1.066780 |                            -0.0116256 |                            1.0545190 |         0.3196781 |
 
 Example performance for the prediction results.
 
@@ -499,10 +510,10 @@ knitr::kable(
   )
 ```
 
-| databaseName | databaseId | analysisId | description                                        | targetName                                                                | targetId | comparatorName                                                             | comparatorId | outcomeName | outcomeId | calibratedRr | calibratedCi95Lb | calibratedCi95Ub | calibratedP | calibratedOneSidedP | calibratedLogRr | calibratedSeLogRr | targetSubjects | comparatorSubjects | targetDays | comparatorDays | targetOutcomes | comparatorOutcomes | unblind | unblindForEvidenceSynthesis | targetEstimator |
-|:-------------|:-----------|-----------:|:---------------------------------------------------|:--------------------------------------------------------------------------|---------:|:---------------------------------------------------------------------------|-------------:|:------------|----------:|-------------:|-----------------:|-----------------:|------------:|--------------------:|----------------:|------------------:|---------------:|-------------------:|-----------:|---------------:|---------------:|-------------------:|--------:|----------------------------:|:----------------|
-| Synthea      | 388020256  |          1 | No matching, simple outcome model                  | Celecoxib - first event with 365 prior obs first event with 365 prior obs |     1002 | Diclofenac - first event with 365 prior obs first event with 365 prior obs |         2002 | GI bleed    |         3 |     1.832771 |        0.9724055 |         3.454372 |   0.1078385 |           0.0639169 |       0.6058291 |         0.3233791 |           1800 |                830 |     540789 |         261005 |            355 |                124 |       1 |                           1 | ate             |
-| Synthea      | 388020256  |          2 | Matching on ps and covariates, simple outcomeModel | Celecoxib - first event with 365 prior obs first event with 365 prior obs |     1002 | Diclofenac - first event with 365 prior obs first event with 365 prior obs |         2002 | GI bleed    |         3 |           NA |               NA |               NA |          NA |                  NA |              NA |                NA |            829 |                829 |     263258 |         260639 |            117 |                124 |       0 |                           0 | att             |
+| databaseName | databaseId | analysisId | description                                        | targetName                                                                | targetId | comparatorName                                                             | comparatorId | indicationName | indicationId | outcomeName | outcomeId | calibratedRr | calibratedCi95Lb | calibratedCi95Ub | calibratedP | calibratedOneSidedP | calibratedLogRr | calibratedSeLogRr | targetSubjects | comparatorSubjects | targetDays | comparatorDays | targetOutcomes | comparatorOutcomes | unblind | unblindForEvidenceSynthesis | targetEstimator |
+|:-------------|:-----------|-----------:|:---------------------------------------------------|:--------------------------------------------------------------------------|---------:|:---------------------------------------------------------------------------|-------------:|:---------------|:-------------|:------------|----------:|-------------:|-----------------:|-----------------:|------------:|--------------------:|----------------:|------------------:|---------------:|-------------------:|-----------:|---------------:|---------------:|-------------------:|--------:|----------------------------:|:----------------|
+| Synthea      | 388020256  |          1 | No matching, simple outcome model                  | Celecoxib - first event with 365 prior obs first event with 365 prior obs |     1002 | Diclofenac - first event with 365 prior obs first event with 365 prior obs |         2002 | NA             | NA           | GI bleed    |         3 |     1.832771 |        0.9724055 |         3.454372 |   0.1078385 |           0.0639169 |       0.6058291 |         0.3233791 |           1800 |                830 |     540789 |         261005 |            355 |                124 |       1 |                           1 | ate             |
+| Synthea      | 388020256  |          2 | Matching on ps and covariates, simple outcomeModel | Celecoxib - first event with 365 prior obs first event with 365 prior obs |     1002 | Diclofenac - first event with 365 prior obs first event with 365 prior obs |         2002 | NA             | NA           | GI bleed    |         3 |           NA |               NA |               NA |          NA |                  NA |              NA |                NA |            829 |                829 |     263258 |         260639 |            117 |                124 |       0 |                           0 | att             |
 
 Example cohort method estimation results.
 
@@ -520,8 +531,8 @@ knitr::kable(
   )
 ```
 
-| databaseName | analysisId | description | targetName | targetId | comparatorName | comparatorId | outcomeName | outcomeId | calibratedRr | calibratedCi95Lb | calibratedCi95Ub | calibratedP | calibratedOneSidedP | calibratedLogRr | calibratedSeLogRr | targetSubjects | comparatorSubjects | targetDays | comparatorDays | targetOutcomes | comparatorOutcomes | unblind | nDatabases |
-|--------------|------------|-------------|------------|----------|----------------|--------------|-------------|-----------|--------------|------------------|------------------|-------------|---------------------|-----------------|-------------------|----------------|--------------------|------------|----------------|----------------|--------------------|---------|------------|
+| databaseName | analysisId | description | targetName | targetId | comparatorName | comparatorId | indicationName | indicationId | outcomeName | outcomeId | calibratedRr | calibratedCi95Lb | calibratedCi95Ub | calibratedP | calibratedOneSidedP | calibratedLogRr | calibratedSeLogRr | targetSubjects | comparatorSubjects | targetDays | comparatorDays | targetOutcomes | comparatorOutcomes | unblind | nDatabases |
+|--------------|------------|-------------|------------|----------|----------------|--------------|----------------|--------------|-------------|-----------|--------------|------------------|------------------|-------------|---------------------|-----------------|-------------------|----------------|--------------------|------------|----------------|----------------|--------------------|---------|------------|
 
 Example cohort method meta analysis estimation results.
 

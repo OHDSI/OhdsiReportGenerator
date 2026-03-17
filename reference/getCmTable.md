@@ -15,6 +15,7 @@ getCmTable(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   targetIds = NULL,
+  indicationIds = NULL,
   outcomeIds = NULL,
   comparatorIds = NULL,
   analysisIds = NULL,
@@ -55,6 +56,10 @@ getCmTable(
 
   A vector of integers corresponding to the target cohort IDs
 
+- indicationIds:
+
+  The indications that the target & comparator was nested to
+
 - outcomeIds:
 
   A vector of integers corresponding to the outcome cohort IDs
@@ -82,7 +87,8 @@ target/comparator/outcome/analysis/database IDs
 
 ## See also
 
-Other Estimation: [`getCMEstimation()`](getCMEstimation.md),
+Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
+[`getCMEstimation()`](getCMEstimation.md),
 [`getCmDiagnosticsData()`](getCmDiagnosticsData.md),
 [`getCmMetaEstimation()`](getCmMetaEstimation.md),
 [`getCmNegativeControlEstimates()`](getCmNegativeControlEstimates.md),

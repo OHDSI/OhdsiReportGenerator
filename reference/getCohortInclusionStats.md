@@ -50,13 +50,18 @@ Specify the connectionHandler, the schema and the cohort IDs
 
 ## See also
 
-Other Cohorts: [`getCohortCounts()`](getCohortCounts.md),
+Other Cohorts: [`getCohortAttrition()`](getCohortAttrition.md),
+[`getCohortCounts()`](getCohortCounts.md),
 [`getCohortDefinitions()`](getCohortDefinitions.md),
 [`getCohortInclusionRules()`](getCohortInclusionRules.md),
 [`getCohortInclusionSummary()`](getCohortInclusionSummary.md),
 [`getCohortMeta()`](getCohortMeta.md),
+[`getCohortSubsetAttrition()`](getCohortSubsetAttrition.md),
 [`getCohortSubsetDefinitions()`](getCohortSubsetDefinitions.md),
-[`processCohorts()`](processCohorts.md)
+[`getSubsetText()`](getSubsetText.md),
+[`processCohortDefinitionsForQuarto()`](processCohortDefinitionsForQuarto.md),
+[`processCohorts()`](processCohorts.md),
+[`restrictCohortDefinitionsForQuarto()`](restrictCohortDefinitionsForQuarto.md)
 
 ## Examples
 

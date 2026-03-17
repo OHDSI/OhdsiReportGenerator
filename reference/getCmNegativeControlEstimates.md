@@ -13,6 +13,7 @@ getCmNegativeControlEstimates(
   databaseTable = "database_meta_data",
   targetIds = NULL,
   comparatorIds = NULL,
+  indicationIds = NULL,
   analysisIds = NULL,
   databaseIds = NULL,
   excludePositiveControls = TRUE
@@ -52,6 +53,10 @@ getCmNegativeControlEstimates(
 
   A vector of integers corresponding to the comparator cohort IDs
 
+- indicationIds:
+
+  The indications that the target & comparator was nested to
+
 - analysisIds:
 
   the analysis IDs to restrict to
@@ -75,7 +80,8 @@ target/comparator/outcome/analysis/database IDs
 
 ## See also
 
-Other Estimation: [`getCMEstimation()`](getCMEstimation.md),
+Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
+[`getCMEstimation()`](getCMEstimation.md),
 [`getCmDiagnosticsData()`](getCmDiagnosticsData.md),
 [`getCmMetaEstimation()`](getCmMetaEstimation.md),
 [`getCmOutcomes()`](getCmOutcomes.md),
@@ -105,4 +111,5 @@ cmNc <- getCmNegativeControlEstimates(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
+#> Warning: Parameter 'indication_ids' not found in SQL
 ```

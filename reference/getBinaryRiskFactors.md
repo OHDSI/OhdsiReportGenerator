@@ -94,10 +94,7 @@ IDs
 
 Other Characterization:
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
-[`getCaseBinaryFeatures()`](getCaseBinaryFeatures.md),
-[`getCaseContinuousFeatures()`](getCaseContinuousFeatures.md),
 [`getCaseCounts()`](getCaseCounts.md),
-[`getCaseTargetBinaryFeatures()`](getCaseTargetBinaryFeatures.md),
 [`getCaseTargetCounts()`](getCaseTargetCounts.md),
 [`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
 [`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),
@@ -131,5 +128,4 @@ rf <- getBinaryRiskFactors(
   targetId = 1, 
   outcomeId = 3
 )
-#> Closing database connection
 ```

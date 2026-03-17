@@ -1,4 +1,4 @@
-# Extract the cohort counds
+# Extract the cohort counts
 
 This function extracts all cohort counts for the cohorts of interest.
 
@@ -49,13 +49,18 @@ Specify the connectionHandler, the schema and the cohort IDs
 
 ## See also
 
-Other Cohorts: [`getCohortDefinitions()`](getCohortDefinitions.md),
+Other Cohorts: [`getCohortAttrition()`](getCohortAttrition.md),
+[`getCohortDefinitions()`](getCohortDefinitions.md),
 [`getCohortInclusionRules()`](getCohortInclusionRules.md),
 [`getCohortInclusionStats()`](getCohortInclusionStats.md),
 [`getCohortInclusionSummary()`](getCohortInclusionSummary.md),
 [`getCohortMeta()`](getCohortMeta.md),
+[`getCohortSubsetAttrition()`](getCohortSubsetAttrition.md),
 [`getCohortSubsetDefinitions()`](getCohortSubsetDefinitions.md),
-[`processCohorts()`](processCohorts.md)
+[`getSubsetText()`](getSubsetText.md),
+[`processCohortDefinitionsForQuarto()`](processCohortDefinitionsForQuarto.md),
+[`processCohorts()`](processCohorts.md),
+[`restrictCohortDefinitionsForQuarto()`](restrictCohortDefinitionsForQuarto.md)
 
 ## Examples
 

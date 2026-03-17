@@ -49,19 +49,23 @@ Specify the connectionHandler, the schema and the cohort IDs
 
 ## See also
 
-Other Cohorts: [`getCohortCounts()`](getCohortCounts.md),
+Other Cohorts: [`getCohortAttrition()`](getCohortAttrition.md),
+[`getCohortCounts()`](getCohortCounts.md),
 [`getCohortDefinitions()`](getCohortDefinitions.md),
 [`getCohortInclusionRules()`](getCohortInclusionRules.md),
 [`getCohortInclusionStats()`](getCohortInclusionStats.md),
 [`getCohortInclusionSummary()`](getCohortInclusionSummary.md),
+[`getCohortSubsetAttrition()`](getCohortSubsetAttrition.md),
 [`getCohortSubsetDefinitions()`](getCohortSubsetDefinitions.md),
-[`processCohorts()`](processCohorts.md)
+[`getSubsetText()`](getSubsetText.md),
+[`processCohortDefinitionsForQuarto()`](processCohortDefinitionsForQuarto.md),
+[`processCohorts()`](processCohorts.md),
+[`restrictCohortDefinitionsForQuarto()`](restrictCohortDefinitionsForQuarto.md)
 
 ## Examples
 
 ``` r
 conDet <- getExampleConnectionDetails()
-#> Closing database connection
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #> Connecting using SQLite driver
@@ -70,4 +74,5 @@ cohortMeta <- getCohortMeta(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
+#> Warning: Parameter 'cohort_id_name' not found in SQL
 ```

@@ -2,13 +2,15 @@ DBMS:
 sqlite
 
 Error:
-no such table: main.c_time_to_event_targets
+no such column: model_name
 
 SQL:
-select * from main.c_time_to_event_targets limit 1;
+SELECT model_name
+          FROM main.plp_model_settings
+          WHERE 1 = 0;
 
 R version:
-R version 4.5.2 (2025-10-31)
+R version 4.5.3 (2026-03-11)
 
 Platform:
 x86_64-pc-linux-gnu

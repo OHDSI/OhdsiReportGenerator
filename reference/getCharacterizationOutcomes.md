@@ -14,7 +14,8 @@ getCharacterizationOutcomes(
   printTimes = FALSE,
   useDcrc = TRUE,
   useTte = TRUE,
-  useRf = TRUE
+  useRf = TRUE,
+  useCs = TRUE
 )
 ```
 
@@ -58,6 +59,10 @@ getCharacterizationOutcomes(
 
   look for outcome in risk-factor results
 
+- useCs:
+
+  look for outcome in case series results
+
 ## Value
 
 A data.frame with the characterization outcome cohort ids, names and
@@ -72,10 +77,7 @@ Specify the connectionHandler, the schema and the prefixes
 Other Characterization:
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
-[`getCaseBinaryFeatures()`](getCaseBinaryFeatures.md),
-[`getCaseContinuousFeatures()`](getCaseContinuousFeatures.md),
 [`getCaseCounts()`](getCaseCounts.md),
-[`getCaseTargetBinaryFeatures()`](getCaseTargetBinaryFeatures.md),
 [`getCaseTargetCounts()`](getCaseTargetCounts.md),
 [`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
 [`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),
@@ -106,5 +108,5 @@ cohorts <- getCharacterizationOutcomes(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "Extracting characterization outcomes took: 0.0716478824615479 secs"
+#> [1] "Extracting characterization outcomes took: 0.098656177520752 secs"
 ```
