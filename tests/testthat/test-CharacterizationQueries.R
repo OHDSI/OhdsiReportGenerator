@@ -1,5 +1,3 @@
-context("CharacterizationQueries")
-
 test_that("incidence rates", {
   
   incidence <- getIncidenceRates(

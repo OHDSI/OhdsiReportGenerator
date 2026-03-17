@@ -24,6 +24,10 @@ SELECT ev.evidence_synthesis_description AS database_name
 	,r.comparator_outcomes
 	,unblind.unblind
 	,r.n_databases
+	,r.pi_95_lb
+	,r.pi_95_ub
+	,r.calibrated_pi_95_lb
+	,r.calibrated_pi_95_ub
 FROM @schema.@es_table_prefixcm_result AS r
 INNER JOIN @schema.@cm_table_prefixtarget_comparator AS tc ON r.target_comparator_id = tc.target_comparator_id
 INNER JOIN @schema.@cm_table_prefixtarget_comparator_outcome AS tco ON r.target_comparator_id = tco.target_comparator_id

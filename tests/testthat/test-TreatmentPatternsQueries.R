@@ -1,5 +1,3 @@
-context("TreatmentPatternsQueries")
-
 test_that("cohorts used in treatment patterns analysis", {
   analysisCohorts <- getAnalysisCohorts(
     connectionHandler = connectionHandler,

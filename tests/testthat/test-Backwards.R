@@ -1,5 +1,3 @@
-context("Generate")
-
 #if skipQuarto skip this
 
 test_that("generatePresentationMultiple old works", {

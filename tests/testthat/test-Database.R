@@ -1,5 +1,3 @@
-context("Database")
-
 test_that("getExampleConnectionDetails", {
   
   dbs <- getDatabaseDetails(

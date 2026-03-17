@@ -1,5 +1,3 @@
-context("PredictionReport")
-
 test_that("create prediction report", {
   
   skip('skip prediction report due to odd linux error')
