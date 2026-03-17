@@ -776,7 +776,7 @@ outcomeIdsOfInterest <- outcomeOfInterest$cohortDefinitionId
 #==================
 # INDICATIONS - take the children of all indication ids
 #==================
-if(inherits(indicationIds, 'numeric')){
+if(is.numeric(indicationIds)){
   indicationOfInterest <- cohortDefinitions %>%
     dplyr::filter(
       (.data$subsetParent %in% !!indicationIds)
