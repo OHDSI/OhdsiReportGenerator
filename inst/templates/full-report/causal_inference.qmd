@@ -4,7 +4,7 @@
 ### Active Comparator New User Design
 In the active comparator new user design, large-scale propensity scores were used to match new users of `r targetName` to new users of the comparator in a 1:n ratio (max n=100). Propensity score models included all variables available in the observational medical history, including all previously observed conditions, diagnoses, medications dispensed, measurements, and procedures recorded in the 30 and 365 days preceding the index date. Comorbidity indices calculated using all pre-index medical history and demographic variables (age, sex, race/ethnicity, index year, index month) were also included. Poisson models were used to estimate incidence rate ratios comparing the incidence of `r outcomeName` between new users of `r targetName` and new users of the comparator.
 
-```{r, echo = F, results = 'asis'}
+```{r, echo = FALSE, results = 'asis'}
 
 nNegativeControls <- 100
 
@@ -302,7 +302,7 @@ sccsDiagnostics <- merge(sccsDiagnostics,
 tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
 colnames(tempDf) <- paste0(colnames(tempDf), 'Indication')
 sccsDiagnostics <- merge(sccsDiagnostics, 
-                     tempDf, by.x = 'indicationId', by.y = 'cohortDefinitionIdIndication', all.x = T)
+                     tempDf, by.x = 'indicationId', by.y = 'cohortDefinitionIdIndication', all.x = TRUE)
 
 
 sccsIds <- unique(sccsDiagnostics[,c('targetId', 'outcomeId')])
@@ -387,7 +387,7 @@ sccsResults <- merge(sccsResults,
 tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
 colnames(tempDf) <- paste0(colnames(tempDf), 'Indication')
 sccsResults <- merge(sccsResults, 
-                     tempDf, by.x = 'indicationId', by.y = 'cohortDefinitionIdIndication', all.x = T)
+                     tempDf, by.x = 'indicationId', by.y = 'cohortDefinitionIdIndication', all.x = TRUE)
 
 
 sccsIds <- unique(sccsResults[,c('targetId', 'outcomeId')])

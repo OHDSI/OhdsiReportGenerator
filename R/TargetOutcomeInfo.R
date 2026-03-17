@@ -131,10 +131,10 @@ getTargetTable <- function(
       databaseString = paste0(unique(.data$databaseName), collapse = ', '),
       databaseIdString = paste0(unique(.data$databaseId), collapse = ', '),
       databaseStringCount = paste0(unique(paste0(.data$databaseName,' (', .data$cohortSubjects ,')')), collapse = ', '),
-      minSubjectCount = min(.data$cohortSubjects, na.rm = T),
-      maxSubjectCount = max(.data$cohortSubjects, na.rm = T),
-      minEntryCount = min(.data$cohortEntries, na.rm = T),
-      maxEntryCount = max(.data$cohortEntries, na.rm = T)
+      minSubjectCount = min(.data$cohortSubjects, na.rm = TRUE),
+      maxSubjectCount = max(.data$cohortSubjects, na.rm = TRUE),
+      minEntryCount = min(.data$cohortEntries, na.rm = TRUE),
+      maxEntryCount = max(.data$cohortEntries, na.rm = TRUE)
     )
   
   cohortCounts <- merge(cohorts, counts, by = 'cohortId')
@@ -160,7 +160,7 @@ getTargetTable <- function(
         y = inc, 
         by.x = c('cohortId','cohortName'),
         by.y = c('cohortDefinitionId','cohortName'),
-        all.x = T
+        all.x = TRUE
       )
     }
     
@@ -186,7 +186,7 @@ getTargetTable <- function(
         y = char, 
         by.x = c('cohortId','cohortName'),
         by.y = c('cohortDefinitionId','cohortName'),
-        all.x = T
+        all.x = TRUE
       )
     }
     
@@ -206,7 +206,7 @@ getTargetTable <- function(
         y = pred, 
         by.x = c('cohortId','cohortName'),
         by.y = c('cohortDefinitionId','cohortName'),
-        all.x = T
+        all.x = TRUE
       )
     }
     
@@ -231,7 +231,7 @@ getTargetTable <- function(
         y = cm, 
         by.x = c('cohortId','cohortName'),
         by.y = c('cohortDefinitionId','cohortName'),
-        all.x = T
+        all.x = TRUE
       )
     }
     
@@ -256,7 +256,7 @@ getTargetTable <- function(
         y = sccs, 
         by.x = c('cohortId','cohortName'),
         by.y = c('cohortDefinitionId','cohortName'),
-        all.x = T
+        all.x = TRUE
       )
     }
     
@@ -434,10 +434,10 @@ getOutcomeTable <- function(
       databaseString = paste0(unique(.data$databaseName), collapse = ', '),
       databaseIdString = paste0(unique(.data$databaseId), collapse = ', '),
       databaseStringCount = paste0(unique(paste0(.data$databaseName,' (', .data$cohortSubjects ,')')), collapse = ', '),
-      minSubjectCount = min(.data$cohortSubjects, na.rm = T),
-      maxSubjectCount = max(.data$cohortSubjects, na.rm = T),
-      minEntryCount = max(.data$cohortEntries, na.rm = T),
-      maxEntryCount = max(.data$cohortEntries, na.rm = T)
+      minSubjectCount = min(.data$cohortSubjects, na.rm = TRUE),
+      maxSubjectCount = max(.data$cohortSubjects, na.rm = TRUE),
+      minEntryCount = max(.data$cohortEntries, na.rm = TRUE),
+      maxEntryCount = max(.data$cohortEntries, na.rm = TRUE)
     )
   
   cohortCounts <- merge(cohorts, counts, by = 'cohortId')
@@ -464,7 +464,7 @@ getOutcomeTable <- function(
         y = inc, 
         by.x = c('cohortId','cohortName'),
         by.y = c('cohortDefinitionId','cohortName'),
-        all.x = T
+        all.x = TRUE
       )
     }
     
@@ -489,7 +489,7 @@ getOutcomeTable <- function(
         y = char, 
         by.x = c('cohortId','cohortName'),
         by.y = c('cohortDefinitionId','cohortName'),
-        all.x = T
+        all.x = TRUE
       )
     }
   }
@@ -510,7 +510,7 @@ getOutcomeTable <- function(
         y = pred, 
         by.x = c('cohortId','cohortName'),
         by.y = c('cohortDefinitionId','cohortName'),
-        all.x = T
+        all.x = TRUE
       )
     }
     
@@ -535,7 +535,7 @@ getOutcomeTable <- function(
         y = cm, 
         by.x = c('cohortId','cohortName'),
         by.y = c('cohortDefinitionId','cohortName'),
-        all.x = T
+        all.x = TRUE
       )
     }
     
@@ -560,7 +560,7 @@ getOutcomeTable <- function(
         y = sccs, 
         by.x = c('cohortId','cohortName'),
         by.y = c('cohortDefinitionId','cohortName'),
-        all.x = T
+        all.x = TRUE
       )
     }
     
