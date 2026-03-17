@@ -166,7 +166,7 @@ addTarColumn <- function(
 #'
 #' @export
 formatBinaryCovariateName <- function(data){
-  if('covariateName' %in% colnames(data)){
+  if('covariateName' %in% colnames(data) & nrow(data) > 0 ){
     
     #riskFactorsBinary$covariateName[nchar(riskFactorsBinary$covariateName) < 25]
     

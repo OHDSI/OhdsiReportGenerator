@@ -37,7 +37,13 @@ if( nrow(charIdsOfInt) >0 ){
       outcomeId = charIdsOfInt$outcomeCohortId[cind], #19970,
       analysisIds = c(1,4,5,210,410)
     )
-    if(!is.null(riskFactorsBinary)){
+    
+    notNull <- !is.null(riskFactorsBinary)
+    hasRows <- FALSE
+    if(notNull){
+      hasRows <- nrow(riskFactorsBinary) > 0 
+    }
+    if(notNull & hasRows ){
     riskFactorsBinary <- OhdsiReportGenerator::formatBinaryCovariateName(riskFactorsBinary)
     riskFactorsBinary <- OhdsiReportGenerator::addTarColumn(riskFactorsBinary)
     

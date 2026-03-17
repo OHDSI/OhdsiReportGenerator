@@ -12,6 +12,11 @@ ON cs.outcome_id = cg.cohort_definition_id
 INNER JOIN @schema.@c_table_prefixtarget_settings ts 
 ON cs.characterization_target_id = ts.characterization_target_id 
 WHERE ts.target_id in (@target_ids)
+AND (cs.runtype = 'risk-factor' OR cs.runtype = 'risk-factor,case-series')
+
+}:{
+WHERE cs.runtype = 'risk-factor' OR cs.runtype = 'risk-factor,case-series'
+
 }
 GROUP BY 
 cg.cohort_name, 

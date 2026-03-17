@@ -10,6 +10,6 @@ FROM @schema.@c_table_prefixcase_settings cs
 {@use_target}?{
 INNER JOIN @schema.@c_table_prefixtarget_settings ts
 ON cs.characterization_target_id = ts.characterization_target_id
-AND target_cohort_id IN (@target_ids)
+AND ts.target_id IN (@target_ids)
 }
 ;

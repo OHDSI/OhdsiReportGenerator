@@ -567,7 +567,7 @@ getCharacterizationOutcomes <- function(
   
   # get case series tar: risk_window_start/risk_window_end/start_anchor/end_anchor and outcome_washout_days
   
-  if(useRf){
+  if(useRf | useCs){
     
     sql <- SqlRender::readSql(system.file(
       paste0("sql/sql_server/characterization/getCharacterizationOutcomesTarsV", cVersion, ".sql"),
@@ -1633,18 +1633,6 @@ getBinaryRiskFactors <- function(
     startAnchor = NULL,
     endAnchor = NULL
 ){
-  if(is.null(targetId)){
-    stop('targetId must be entered')
-  }
-  if(is.null(outcomeId)){
-    stop('outcomeId must be entered')
-  }
-  if(length(targetId) > 1){
-    stop('Must be single targetId')
-  }
-  if(length(outcomeId) > 1){
-    stop('Must be single outcomeId')
-  }
   
   cVersion <- .getCVersion(
     connectionHandler = connectionHandler,
@@ -1654,6 +1642,18 @@ getBinaryRiskFactors <- function(
 
   
   if(cVersion == 0){
+    if(is.null(targetId)){
+      stop('targetId must be entered')
+    }
+    if(length(targetId) > 1){
+      stop('Must be single targetId')
+    }
+    if(is.null(outcomeId)){
+      stop('outcomeId must be entered')
+    }
+    if(length(outcomeId) > 1){
+      stop('Must be single outcomeId')
+    }
   # this is the case counts per target, min prior obs,outcome,TAR, and outcome washout
   caseCounts <- getCaseCounts(
     connectionHandler = connectionHandler,

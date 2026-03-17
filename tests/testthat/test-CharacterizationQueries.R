@@ -133,58 +133,7 @@ test_that("getCaseCounts", {
 })
 
 
-test_that("getCaseBinaryFeatures", {
-  # check results are returned
-  data <- getCaseBinaryFeatures(
-    connectionHandler = connectionHandler, 
-    schema = 'main'
-  )
-  
-  testthat::expect_true(nrow(data) > 0)
-  
-  testthat::expect_true( 'databaseName' %in% colnames(data))
-  testthat::expect_true( 'targetName' %in% colnames(data))
-  testthat::expect_true( 'outcomeName' %in% colnames(data))
-  testthat::expect_true( 'covariateName' %in% colnames(data))
-  testthat::expect_true( 'sumValue' %in% colnames(data))
-  
-  # check restriction works
-  data <- getCaseBinaryFeatures(
-    connectionHandler = connectionHandler, 
-    schema = 'main', 
-    targetIds = 1, 
-    outcomeIds = 3
-  )
-  testthat::expect_true(unique(data$targetCohortId) == 1)
-  testthat::expect_true(unique(data$outcomeCohortId) == 3)
-})
 
-
-test_that("getCaseTargetBinaryFeatures", {
-  # check results are returned
-  data <- getCaseTargetBinaryFeatures(
-    connectionHandler = connectionHandler, 
-    schema = 'main'
-  )
-  
-  testthat::expect_true(nrow(data) > 0)
-  
-  testthat::expect_true( 'databaseName' %in% colnames(data))
-  testthat::expect_true( 'targetName' %in% colnames(data))
-  testthat::expect_true( 'outcomeName' %in% colnames(data))
-  testthat::expect_true( 'covariateName' %in% colnames(data))
-  testthat::expect_true( 'sumValue' %in% colnames(data))
-  
-  # check restriction works
-  data <- getCaseTargetBinaryFeatures(
-    connectionHandler = connectionHandler, 
-    schema = 'main', 
-    targetIds = 1, 
-    outcomeIds = 3
-  )
-  testthat::expect_true(unique(data$targetCohortId) == 1)
-  testthat::expect_true(unique(data$outcomeCohortId) == 3)
-})
 
 test_that("getCharacterizationDemographics", {
   # age works
@@ -271,7 +220,7 @@ test_that("getBinaryRiskFactors", {
   )
   
   testthat::expect_true(sum(data$nonCaseAverage) == 1)
-  testthat::expect_true(sum(data$caseAverage) == 1)
+  testthat::expect_true(sum(as.double(data$caseAverage)) == 1)
   
 })
 

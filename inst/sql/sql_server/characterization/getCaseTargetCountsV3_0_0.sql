@@ -18,13 +18,13 @@ select
 
 FROM @schema.@c_table_prefixattrition a
 
-INNER JOIN @schema.@database_table d
+INNER JOIN @schema.@database_table_name d
 ON a.database_id = d.database_id
    
 INNER JOIN @schema.@c_table_prefixcase_settings cs
-ON ts.setting_id = a.setting_id
-AND ts.database_id = a.database_id
-AND ts.characterization_case_id*10+2 = a.cohort_definition_id
+ON cs.setting_id = a.setting_id
+AND cs.database_id = a.database_id
+AND cs.characterization_case_id*10+2 = a.cohort_definition_id
 AND a.attr_reason = 'Non-cases'
 
 INNER JOIN @schema.@cg_table_prefixcohort_definition outcome_cohorts
@@ -42,8 +42,4 @@ WHERE 1 = 1
 {@use_target}?{ AND ts.target_id IN (@target_id)}
 {@use_outcome}?{ AND cs.outcome_id IN (@outcome_id)}
 {@use_database}?{ AND d.database_id IN (@database_id)}
-  
-{@use_risk_window_start}?{ AND cs.risk_window_start IN (@risk_window_start)}  
-{@use_risk_window_end}?{ AND cs.risk_window_end IN (@risk_window_end)}
-{@use_start_anchor}?{ AND cs.start_anchor IN (@start_anchor)}
-{@use_end_anchor}?{ AND cs.end_anchor IN (@end_anchor)}
+

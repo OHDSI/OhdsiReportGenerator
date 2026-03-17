@@ -68,7 +68,7 @@ INNER JOIN @schema.@cg_table_prefixcohort_definition outcome
 ON outcome.cohort_definition_id = cs.outcome_id
 
 -- add wheres here
-WHERE 1=0
+WHERE 1=1
 {@use_target}?{AND ts.target_id IN (@target_id)}
 {@use_outcome}?{AND cs.outcome_id IN (@outcome_id)}
 {@use_database}?{AND d.database_id IN (@database_id)}

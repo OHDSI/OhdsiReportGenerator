@@ -61,7 +61,8 @@ plotAgeDistributions <- function(
       dplyr::select("covariateName","caseAverage", 
                     "startAnchor","endAnchor", 
                     "riskWindowStart","riskWindowEnd",
-                    "databaseName") %>%
+                    "databaseName",
+                    "targetName", "outcomeName") %>%
       dplyr::rename(averageValue = "caseAverage") %>%
       dplyr::mutate(cohortType = 'Cases'),
     ageData %>% 
@@ -69,7 +70,8 @@ plotAgeDistributions <- function(
       dplyr::select("covariateName","nonCaseAverage",
                     "startAnchor","endAnchor", 
                     "riskWindowStart","riskWindowEnd",
-                    "databaseName") %>%
+                    "databaseName",
+                    "targetName", "outcomeName") %>%
       dplyr::rename(averageValue = "nonCaseAverage") %>%
       dplyr::mutate(
         averageValue = -1*.data$averageValue,
@@ -77,6 +79,8 @@ plotAgeDistributions <- function(
   )
   
 ageData$tar <- addTar(ageData)
+
+ageData$averageValue <- as.double(ageData$averageValue)
 
 # order the age group
 covNames <- unique(ageData$covariateName)
@@ -100,7 +104,8 @@ result <- ggplot2::ggplot(
     labels = abs(c(-1,-0.5, 0, 0.5,  1))
   ) +
   ggplot2::facet_grid(
-    cols = ggplot2::vars(.data$databaseName)
+    cols = ggplot2::vars(.data$databaseName), 
+    rows = ggplot2::vars(.data$targetName, .data$outcomeName)
   ) +
   ggplot2::theme(
     legend.title=ggplot2::element_blank()
@@ -173,7 +178,8 @@ plotSexDistributions <- function(
       dplyr::select("covariateName","caseAverage", 
                     "startAnchor","endAnchor", 
                     "riskWindowStart","riskWindowEnd",
-                    "databaseName") %>%
+                    "databaseName", 
+                    "targetName", "outcomeName") %>%
       dplyr::rename(averageValue = "caseAverage") %>%
       dplyr::mutate(cohortType = 'Cases'),
     sexData %>% 
@@ -181,12 +187,14 @@ plotSexDistributions <- function(
       dplyr::select("covariateName","nonCaseAverage",
                     "startAnchor","endAnchor", 
                     "riskWindowStart","riskWindowEnd",
-                    "databaseName") %>%
+                    "databaseName",
+                    "targetName", "outcomeName") %>%
       dplyr::rename(averageValue = "nonCaseAverage") %>%
       dplyr::mutate(
         averageValue = -1*.data$averageValue,
         cohortType = 'Non-cases')
   )
+  sexData$averageValue <- as.double(sexData$averageValue)
   
   sexData$tar <- addTar(sexData)
   
@@ -204,7 +212,8 @@ plotSexDistributions <- function(
       labels = abs(c(-1,-0.5, 0, 0.5,  1))
     ) +
     ggplot2::facet_grid(
-      cols = ggplot2::vars(.data$databaseName)
+      cols = ggplot2::vars(.data$databaseName),
+      rows = ggplot2::vars(.data$targetName, .data$outcomeName)
     ) +
     ggplot2::theme(
       legend.title=ggplot2::element_blank()
