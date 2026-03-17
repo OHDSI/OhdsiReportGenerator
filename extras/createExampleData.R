@@ -129,33 +129,12 @@ resultsConnectionDetails = DatabaseConnector::createConnectionDetails(
   dbms = 'sqlite', 
   server = './inst/exampledata/results.sqlite'
 )
-esModuleSettingsCreator = Strategus::EvidenceSynthesisModule$new()
-evidenceSynthesisSourceCm <- esModuleSettingsCreator$createEvidenceSynthesisSource(
-  sourceMethod = "CohortMethod",
-  likelihoodApproximation = "adaptive grid"
+pathToSpec <- system.file(
+  "testdata",
+  'resultsModulesAnalysisSpecifications.json', 
+  package = "Strategus"
 )
-metaAnalysisCm <- esModuleSettingsCreator$createBayesianMetaAnalysis(
-  evidenceSynthesisAnalysisId = 1,
-  alpha = 0.05,
-  evidenceSynthesisDescription = "Bayesian random-effects alpha 0.05 - adaptive grid",
-  evidenceSynthesisSource = evidenceSynthesisSourceCm
-)
-evidenceSynthesisSourceSccs <- esModuleSettingsCreator$createEvidenceSynthesisSource(
-  sourceMethod = "SelfControlledCaseSeries",
-  likelihoodApproximation = "adaptive grid"
-)
-metaAnalysisSccs <- esModuleSettingsCreator$createBayesianMetaAnalysis(
-  evidenceSynthesisAnalysisId = 2,
-  alpha = 0.05,
-  evidenceSynthesisDescription = "Bayesian random-effects alpha 0.05 - adaptive grid",
-  evidenceSynthesisSource = evidenceSynthesisSourceSccs
-)
-evidenceSynthesisAnalysisList <- list(metaAnalysisCm, metaAnalysisSccs)
-evidenceSynthesisAnalysisSpecifications <- esModuleSettingsCreator$createModuleSpecifications(
-  evidenceSynthesisAnalysisList
-)
-esAnalysisSpecifications <- Strategus::createEmptyAnalysisSpecificiations() |>
-  Strategus::addModuleSpecifications(evidenceSynthesisAnalysisSpecifications)
+esAnalysisSpecifications <- ParallelLogger::loadSettingsFromJson(pathToSpec)
 
 resultsExecutionSettings <- Strategus::createResultsExecutionSettings(
   resultsDatabaseSchema = resultsDatabaseSchema,
