@@ -111,5 +111,4 @@ cmNc <- getCmNegativeControlEstimates(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> Warning: Parameter 'indication_ids' not found in SQL
 ```
