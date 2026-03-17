@@ -1,5 +1,3 @@
-context("CharacterizationPlots")
-
 test_that("plotAgeDistributions", {
   ageData <- getCharacterizationDemographics(
     connectionHandler = connectionHandler, 

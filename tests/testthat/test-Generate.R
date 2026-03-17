@@ -1,6 +1,3 @@
-context("Generate")
-
-
 test_that("generatePresentation", {
   
   #if skipQuarto skip this on CRAN

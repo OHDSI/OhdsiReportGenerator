@@ -1,5 +1,3 @@
-context("PredictionQueries")
-
 test_that("getPredictionTopPredictors", {
   
   data <- getPredictionTopPredictors(

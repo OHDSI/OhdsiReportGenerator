@@ -1,5 +1,3 @@
-context("EstimationPlots")
-
 test_that("plotCmEstimates", {
   
   data <- getCMEstimation(

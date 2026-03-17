@@ -1,5 +1,3 @@
-context("CohortQueries")
-
 test_that("getCohortDefinitions", {
   
   cohorts <- getCohortDefinitions(
