@@ -2,6 +2,7 @@ SELECT db.cdm_source_abbreviation AS database_name
 	,db.database_id
 	,r.analysis_id
 	,a.description
+	,tc.target_comparator_id
 	,c1.cohort_name AS target_name
 	,tc.target_id
 	,c2.cohort_name AS comparator_name
@@ -57,6 +58,7 @@ SELECT db.cdm_source_abbreviation AS database_name
 FROM @schema.@cm_table_prefixtarget_comparator tc
 INNER JOIN @schema.@cm_table_prefixresult AS r ON tc.target_comparator_id = r.target_comparator_id
 INNER JOIN @schema.@cm_table_prefixtarget_comparator_outcome AS tco ON tco.target_comparator_id = r.target_comparator_id
+    AND tco.outcome_id = r.outcome_id
 INNER JOIN @schema.@cm_table_prefixdiagnostics_summary AS unblind ON r.analysis_id = unblind.analysis_id
 	AND r.target_comparator_id = unblind.target_comparator_id
 	AND r.outcome_id = unblind.outcome_id
