@@ -7,7 +7,7 @@ select
   cs.outcome_id as outcome_id,
   a.n as row_count,
   a.n as person_count,
-  -1 as without_excluded_person_count,
+  a.n as without_excluded_person_count,
   ts.min_prior_observation,
   ts.limit_to_first_in_n_days,
   cs.outcome_washout_days,
