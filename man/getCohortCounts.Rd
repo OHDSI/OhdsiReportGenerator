@@ -2,7 +2,7 @@
 % Please edit documentation in R/CohortQueries.R
 \name{getCohortCounts}
 \alias{getCohortCounts}
-\title{Extract the cohort counds}
+\title{Extract the cohort counts}
 \usage{
 getCohortCounts(
   connectionHandler,
@@ -45,12 +45,17 @@ cohortMeta <- getCohortCounts(
 }
 \seealso{
 Other Cohorts: 
+\code{\link{getCohortAttrition}()},
 \code{\link{getCohortDefinitions}()},
 \code{\link{getCohortInclusionRules}()},
 \code{\link{getCohortInclusionStats}()},
 \code{\link{getCohortInclusionSummary}()},
 \code{\link{getCohortMeta}()},
+\code{\link{getCohortSubsetAttrition}()},
 \code{\link{getCohortSubsetDefinitions}()},
-\code{\link{processCohorts}()}
+\code{\link{getSubsetText}()},
+\code{\link{processCohortDefinitionsForQuarto}()},
+\code{\link{processCohorts}()},
+\code{\link{restrictCohortDefinitionsForQuarto}()}
 }
 \concept{Cohorts}

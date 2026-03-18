@@ -624,6 +624,26 @@ getPredictionModelDesigns <- function(
   
 }
 
+hasPlpModelNameColumn <- function(connectionHandler, schema, plpTablePrefix = "plp_") {
+  sql <- "SELECT model_name
+          FROM @schema.@plp_table_prefixmodel_settings
+          WHERE 1 = 0;"
+
+  hasColumn <- tryCatch(
+    {
+      connectionHandler$queryDb(
+        sql = sql,
+        schema = schema,
+        plp_table_prefix = plpTablePrefix
+      )
+      TRUE
+    },
+    error = function(e) FALSE
+  )
+
+  return(hasColumn)
+}
+
 # can be used per modelDesignId to explore specific models
 # or per modelDesignId and developmentDatabaseId to find validations
 
@@ -649,6 +669,7 @@ getPredictionModelDesigns <- function(
 #'  \item{performanceId the unique identifier for the performance}
 #'  \item{modelDesignId the unique identifier for the model design}
 #'  \item{modelType the type of classifier}
+#'  \item{algorithmName the model algorithm name}
 #'  \item{developmentDatabaseId the unique identifier for the database used to develop the model}
 #'  \item{validationDatabaseId the unique identifier for the database used to validate the model}
 #'  \item{developmentTargetId the unique cohort id for the development target population}
@@ -697,11 +718,22 @@ getPredictionPerformances <- function(
     modelDesignId = NULL,
     developmentDatabaseId = NULL
 ){
+  hasModelName <- hasPlpModelNameColumn(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    plpTablePrefix = plpTablePrefix
+  )
+  algorithmNameSelect <- if (hasModelName) {
+    "COALESCE(model_settings.model_name, models.model_type, model_settings.model_type) AS algorithm_name,"
+  } else {
+    "COALESCE(models.model_type, model_settings.model_type) AS algorithm_name,"
+  }
   
   sql <- "SELECT distinct
        results.performance_id,
        results.model_design_id,
        model_settings.model_type,
+       @algorithm_name_select
        results.development_database_id,
        results.validation_database_id,
        devtargets.cohort_definition_id AS development_target_id,
@@ -747,6 +779,21 @@ getPredictionPerformances <- function(
     
     inner join @schema.@plp_table_prefixmodel_settings as model_settings
     on model_designs.model_setting_id = model_settings.model_setting_id
+
+    LEFT JOIN
+        (
+          SELECT m.model_design_id, m.database_id, m.model_type
+          FROM @schema.@plp_table_prefixmodels m
+          INNER JOIN
+            (
+              SELECT model_design_id, database_id, MAX(model_id) AS model_id
+              FROM @schema.@plp_table_prefixmodels
+              GROUP BY model_design_id, database_id
+            ) latest_models
+          ON m.model_id = latest_models.model_id
+        ) AS models
+    ON results.model_design_id = models.model_design_id
+    AND results.development_database_id = models.database_id
 
     LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
@@ -820,6 +867,7 @@ getPredictionPerformances <- function(
     model_design_restrict = !is.null(modelDesignId),
     development_database_id = developmentDatabaseId,
     development_database_id_restrict = !is.null(developmentDatabaseId),
+    algorithm_name_select = algorithmNameSelect,
     database_table_prefix = databaseTablePrefix,
     database_table = databaseTable,
     cg_table_prefix = cgTablePrefix
@@ -873,6 +921,7 @@ getPredictionPerformances <- function(
 #'  \item{performanceId the unique identifier for the performance}
 #'  \item{modelDesignId the unique identifier for the model design}
 #'  \item{modelType the type of classifier}
+#'  \item{algorithmName the model algorithm name}
 #'  \item{covariateName a summary name for the candidate covariates}
 #'  \item{developmentDatabaseId the unique identifier for the database used to develop the model}
 #'  \item{validationDatabaseId the unique identifier for the database used to validate the model}
@@ -934,6 +983,16 @@ getFullPredictionPerformances <- function(
     modelDesignId = NULL,
     developmentDatabaseId = NULL
 ){
+  hasModelName <- hasPlpModelNameColumn(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    plpTablePrefix = plpTablePrefix
+  )
+  algorithmNameSelect <- if (hasModelName) {
+    "COALESCE(model_settings.model_name, models.model_type, model_settings.model_type) AS algorithm_name,"
+  } else {
+    "COALESCE(models.model_type, model_settings.model_type) AS algorithm_name,"
+  }
   
   sql <- "SELECT distinct
        results.execution_date_time AS time_stamp,
@@ -941,6 +1000,7 @@ getFullPredictionPerformances <- function(
        results.model_design_id,
        
        model_settings.model_type,
+       @algorithm_name_select
        
        results.development_database_id,
        results.validation_database_id,
@@ -986,6 +1046,21 @@ getFullPredictionPerformances <- function(
     
     inner join @schema.@plp_table_prefixmodel_settings as model_settings
     on model_designs.model_setting_id = model_settings.model_setting_id
+
+    LEFT JOIN
+        (
+          SELECT m.model_design_id, m.database_id, m.model_type
+          FROM @schema.@plp_table_prefixmodels m
+          INNER JOIN
+            (
+              SELECT model_design_id, database_id, MAX(model_id) AS model_id
+              FROM @schema.@plp_table_prefixmodels
+              GROUP BY model_design_id, database_id
+            ) latest_models
+          ON m.model_id = latest_models.model_id
+        ) AS models
+    ON results.model_design_id = models.model_design_id
+    AND results.development_database_id = models.database_id
 
     LEFT JOIN
         (SELECT c.cohort_id, c.cohort_definition_id, cd.cohort_name FROM @schema.@plp_table_prefixcohorts c
@@ -1045,6 +1120,7 @@ getFullPredictionPerformances <- function(
     model_design_restrict = !is.null(modelDesignId),
     development_database_id = developmentDatabaseId,
     development_database_id_restrict = !is.null(developmentDatabaseId),
+    algorithm_name_select = algorithmNameSelect,
     database_table_prefix = databaseTablePrefix,
     database_table = databaseTable,
     cg_table_prefix = cgTablePrefix
@@ -1076,19 +1152,19 @@ getFullPredictionPerformances <- function(
     # ?TODO remove this and edit table in OhdsiShinyModules instead
     # set valDb, T, O, TAR to '-' if it is the same as the dev
     sameT <- summaryTable$developmentTargetId == summaryTable$validationTargetId
-    if(sum(sameT) > 0){
+    if(sum(sameT, na.rm = TRUE) > 0){
       summaryTable$validationTargetName[sameT] <- '-'
     }
     sameO <- summaryTable$developmentOutcomeId == summaryTable$validationOutcomeId
-    if(sum(sameO) > 0){
+    if(sum(sameO, na.rm = TRUE) > 0){
       summaryTable$validationOutcomeName[sameO] <- '-'
     }
     sameDb <- summaryTable$developmentDatabase == summaryTable$validationDatabase
-    if(sum(sameDb) > 0){
+    if(sum(sameDb, na.rm = TRUE) > 0){
       summaryTable$validationDatabase[sameDb] <- '-'
     }
     sameTar <- summaryTable$developTimeAtRisk == summaryTable$validationTimeAtRisk
-    if(sum(sameTar) > 0){
+    if(sum(sameTar, na.rm = TRUE) > 0){
       summaryTable$validationTimeAtRisk[sameTar] <- '-'
     }
     
@@ -2049,7 +2125,7 @@ addPredictionTimeAtRisk <- function(
   
   if(removeIndividualTarColumns){
     result <- result %>%
-      dplyr::select(-tarStartAnchor, - tarStartDay, -tarEndAnchor, -tarEndDay)
+      dplyr::select(-dplyr::any_of(c("tarStartAnchor", "tarStartDay", "tarEndAnchor", "tarEndDay")))
   }
   
   return(result)

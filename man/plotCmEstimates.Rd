@@ -54,6 +54,7 @@ plotCmEstimates(
 }
 \seealso{
 Other Estimation: 
+\code{\link{.getCmVersion}()},
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},

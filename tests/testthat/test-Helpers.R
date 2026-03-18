@@ -1,5 +1,3 @@
-context("Helpers")
-
 test_that("getExampleConnectionDetails", {
   
   con <- getExampleConnectionDetails()

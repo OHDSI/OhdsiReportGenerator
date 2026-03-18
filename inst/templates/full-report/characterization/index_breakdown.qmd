@@ -75,7 +75,7 @@ for(i in 1:length(params$outcomeIds)){
     aggreggateIndex <- index %>% 
       dplyr::group_by(.data$targetCohortId, .data$outcomeCohortId, .data$covariateName, .data$tar) %>%
       dplyr::summarise(
-        averageValue = mean(.data$averageValue, na.rm = T),
+        averageValue = mean(.data$averageValue, na.rm = TRUE),
         personCount = 0
       ) %>%
       dplyr::mutate(

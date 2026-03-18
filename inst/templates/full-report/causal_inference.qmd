@@ -4,16 +4,23 @@
 ### Active Comparator New User Design
 In the active comparator new user design, large-scale propensity scores were used to match new users of `r targetName` to new users of the comparator in a 1:n ratio (max n=100). Propensity score models included all variables available in the observational medical history, including all previously observed conditions, diagnoses, medications dispensed, measurements, and procedures recorded in the 30 and 365 days preceding the index date. Comorbidity indices calculated using all pre-index medical history and demographic variables (age, sex, race/ethnicity, index year, index month) were also included. Poisson models were used to estimate incidence rate ratios comparing the incidence of `r outcomeName` between new users of `r targetName` and new users of the comparator.
 
-```{r, echo = F, results = 'asis'}
+```{r, echo = FALSE, results = 'asis'}
 
 nNegativeControls <- 100
 
 if(includeCohortMethod){
-for(i in 1:length(indicationIds)){
+  
+  if(is.null(indicationIds)){
+    cmIndicationIds <- ""
+  } else{
+    cmIndicationIds <- indicationIds
+  }
+  
+for(i in 1:length(cmIndicationIds)){
   
   indication <- 'No indication'
-  if(!indicationIds[i] == ''){
-    indication <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == indicationIds[i]]
+  if(!cmIndicationIds[i] == ''){
+    indication <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == cmIndicationIds[i]]
   }
   
   exposures <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId %in% comparatorIdsOfInterest]
@@ -24,7 +31,9 @@ for(i in 1:length(indicationIds)){
   
   cat(paste0("The index date was defined as the first observed use of either the, ", targetName, ", or ",paste0(exposures, collapse ='/'),  ". "))
   
-  cat(paste0("Patients were only included if they had a history of ", indication, ".\n")) 
+  if(indication != 'No indication'){
+    cat(paste0("Patients were only included if they had a history of ", indication, ".\n")) 
+  }
   
   if(!is.null(params$excludeText)){ # replace this using cohort subset logic
     cat(
@@ -111,7 +120,7 @@ for(description in descriptions){
                            dplyr::filter(.data$targetId == !!cmIds$targetId[cmInd]) %>%
                            dplyr::filter(.data$outcomeId == !!cmIds$outcomeId[cmInd]) %>%
                            dplyr::select("databaseName", "subsetTextTarget", #"description",
-                                         "friendlyNameComp", 
+                                         "friendlyNameComp", "indicationName",
                                          #"friendlyNameTarget","friendlyNameOutcome",
                                          "balanceDiagnostic", "sharedBalanceDiagnostic","equipoiseDiagnostic",
                                          "mdrrDiagnostic", "attritionDiagnostic", "easeDiagnostic",
@@ -119,13 +128,15 @@ for(description in descriptions){
                                          'unblind')%>%
                            dplyr::group_by(
                              .data$friendlyNameComp,
-                             .data$subsetTextTarget
+                             .data$subsetTextTarget,
+                             .data$indicationName
                            ) %>%
                            gt::gt() %>%
                            gt::cols_label(
                              databaseName = 'Database',
                              #description = "Analysis Description", 
                              friendlyNameComp = "Comparator",
+                             indicationName = "Indication",
                              balanceDiagnostic = "balance",
                              sharedBalanceDiagnostic = "shared balance",
                              equipoiseDiagnostic = "equipoise",
@@ -206,20 +217,22 @@ for(description in descriptions){
                            dplyr::filter(.data$targetId == !!cmIds$targetId[cmInd]) %>%
                            dplyr::filter(.data$outcomeId == !!cmIds$outcomeId[cmInd]) %>% 
                            dplyr::select("databaseName","subsetTextTarget", #"description",
-                                         "friendlyNameComp", 
+                                         "friendlyNameComp", "indicationName",
                                          #"friendlyNameOutcome","friendlyNameTarget", 
                                          "targetSubjects", "comparatorSubjects",
                                          "targetOutcomes", "comparatorOutcomes",
                                          "calibratedRr", "calibratedCi95Lb", "calibratedP","calibratedOneSidedP")%>%
                            dplyr::group_by(
                              .data$friendlyNameComp,
-                             .data$subsetTextTarget
+                             .data$subsetTextTarget,
+                             .data$indicationName
                            ) %>%
                            gt::gt() %>%
                            gt::cols_label(
                              databaseName = 'Database',
                              #description = "Analysis Description", 
                              friendlyNameComp = "Comparator",
+                             indicationName = "Indication",
                              targetSubjects = "Target N",
                              comparatorSubjects = "Comp N",
                              calibratedRr  = "Cal. RR", 
@@ -293,7 +306,7 @@ sccsDiagnostics <- merge(sccsDiagnostics,
 tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
 colnames(tempDf) <- paste0(colnames(tempDf), 'Indication')
 sccsDiagnostics <- merge(sccsDiagnostics, 
-                     tempDf, by.x = 'indicationId', by.y = 'cohortDefinitionIdIndication', all.x = T)
+                     tempDf, by.x = 'indicationId', by.y = 'cohortDefinitionIdIndication', all.x = TRUE)
 
 
 sccsIds <- unique(sccsDiagnostics[,c('targetId', 'outcomeId')])
@@ -378,7 +391,7 @@ sccsResults <- merge(sccsResults,
 tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
 colnames(tempDf) <- paste0(colnames(tempDf), 'Indication')
 sccsResults <- merge(sccsResults, 
-                     tempDf, by.x = 'indicationId', by.y = 'cohortDefinitionIdIndication', all.x = T)
+                     tempDf, by.x = 'indicationId', by.y = 'cohortDefinitionIdIndication', all.x = TRUE)
 
 
 sccsIds <- unique(sccsResults[,c('targetId', 'outcomeId')])

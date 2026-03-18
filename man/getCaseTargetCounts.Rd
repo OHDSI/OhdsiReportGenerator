@@ -69,10 +69,7 @@ schema = 'main'
 Other Characterization: 
 \code{\link{getBinaryCaseSeries}()},
 \code{\link{getBinaryRiskFactors}()},
-\code{\link{getCaseBinaryFeatures}()},
-\code{\link{getCaseContinuousFeatures}()},
 \code{\link{getCaseCounts}()},
-\code{\link{getCaseTargetBinaryFeatures}()},
 \code{\link{getCharacterizationCohortBinary}()},
 \code{\link{getCharacterizationCohortContinuous}()},
 \code{\link{getCharacterizationDemographics}()},

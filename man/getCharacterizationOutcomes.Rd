@@ -13,7 +13,8 @@ getCharacterizationOutcomes(
   printTimes = FALSE,
   useDcrc = TRUE,
   useTte = TRUE,
-  useRf = TRUE
+  useRf = TRUE,
+  useCs = TRUE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ getCharacterizationOutcomes(
 \item{useTte}{look for outcome in time-to-event results}
 
 \item{useRf}{look for outcome in risk-factor results}
+
+\item{useCs}{look for outcome in case series results}
 }
 \value{
 A data.frame with the characterization outcome cohort ids, names and which characterization analyses the cohorts are used in.
@@ -59,10 +62,7 @@ cohorts <- getCharacterizationOutcomes(
 Other Characterization: 
 \code{\link{getBinaryCaseSeries}()},
 \code{\link{getBinaryRiskFactors}()},
-\code{\link{getCaseBinaryFeatures}()},
-\code{\link{getCaseContinuousFeatures}()},
 \code{\link{getCaseCounts}()},
-\code{\link{getCaseTargetBinaryFeatures}()},
 \code{\link{getCaseTargetCounts}()},
 \code{\link{getCharacterizationCohortBinary}()},
 \code{\link{getCharacterizationCohortContinuous}()},

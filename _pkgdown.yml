@@ -57,6 +57,10 @@ reference:
     desc: >
       These functions can be used to extract results from prediction studies and plot results.
     contents: has_concept("Prediction")
+  - title: "Treatment Patterns"
+    desc: >
+      These functions are used to help result extraction.
+    contents: has_concept("TreatmentPatterns")
   - title: "Reporting"
     desc: >
       These functions can be used to generate reports using quarto templates.

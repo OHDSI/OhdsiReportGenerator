@@ -1,5 +1,3 @@
-context("EstimationQueries")
-
 test_that("getCMEstimation", {
   
   data <- getCMEstimation(

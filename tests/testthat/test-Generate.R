@@ -1,6 +1,3 @@
-context("Generate")
-
-
 test_that("generatePresentation", {
   
   #if skipQuarto skip this on CRAN
@@ -79,7 +76,8 @@ test_that("generateFullReport", {
     targetId = 1,
     outcomeIds = 3,
     comparatorIds = 2,
-    indicationIds = "",
+    indicationIds = NULL,
+    restrictTargetToIndications = FALSE,
     cohortNames = c('target','outcome','comp'),
     cohortIds = c(1,3,2),
     includeCI = TRUE,

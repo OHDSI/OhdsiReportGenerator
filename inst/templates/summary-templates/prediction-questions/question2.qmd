@@ -40,7 +40,7 @@ if(nrow(modelPerf) > 0){
         )
     
     data <- suppressWarnings(ggplot2::ggplot_build(dataPlot))
-    data <- data.frame(data$data[[1]],stringsAsFactors = F)
+    data <- data.frame(data$data[[1]],stringsAsFactors = FALSE)
     
     # cut the x-axis at 10,000 as this will be small and 
     # makes it easier to view

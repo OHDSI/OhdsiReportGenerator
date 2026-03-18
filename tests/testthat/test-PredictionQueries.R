@@ -1,5 +1,3 @@
-context("PredictionQueries")
-
 test_that("getPredictionTopPredictors", {
   
   data <- getPredictionTopPredictors(
@@ -113,6 +111,7 @@ test_that("getPredictionPerformances", {
   
   testthat::expect_true('performanceId' %in% colnames(data))
   testthat::expect_true('modelDesignId' %in% colnames(data))
+  testthat::expect_true('algorithmName' %in% colnames(data))
   testthat::expect_true('developmentTargetName' %in% colnames(data))
   testthat::expect_true('developmentOutcomeName' %in% colnames(data))
   testthat::expect_true('validationTargetName' %in% colnames(data))
@@ -130,6 +129,7 @@ test_that("getPredictionPerformances", {
   testthat::expect_true('outcomeCount' %in% colnames(data))
   testthat::expect_true('evalPercent' %in% colnames(data))
   testthat::expect_true('outcomePercent' %in% colnames(data))
+  testthat::expect_true(any(!is.na(data$algorithmName)))
   
   data <- getPredictionPerformances(
     connectionHandler = connectionHandler, 
@@ -153,6 +153,7 @@ test_that("getFullPredictionPerformances", {
   
   testthat::expect_true('performanceId' %in% colnames(data))
   testthat::expect_true('modelDesignId' %in% colnames(data))
+  testthat::expect_true('algorithmName' %in% colnames(data))
   testthat::expect_true('developmentTargetName' %in% colnames(data))
   testthat::expect_true('developmentOutcomeName' %in% colnames(data))
   testthat::expect_true('validationTargetName' %in% colnames(data))
@@ -170,6 +171,7 @@ test_that("getFullPredictionPerformances", {
   testthat::expect_true('AUPRC' %in% colnames(data))
   testthat::expect_true('populationSize' %in% colnames(data))
   testthat::expect_true('outcomeCount' %in% colnames(data))
+  testthat::expect_true(any(!is.na(data$algorithmName)))
   
   data <- getFullPredictionPerformances(
     connectionHandler = connectionHandler, 

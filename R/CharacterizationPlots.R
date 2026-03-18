@@ -53,14 +53,43 @@ plotAgeDistributions <- function(
   } 
   # TODO add input checks
   
-  # filter to Target and Cases and remove censored
-  ageData <- ageData %>% 
-    dplyr::filter(.data$sumValue > 0) %>%
-    dplyr::filter(.data$cohortType %in% c('Target', 'Cases'))
   
-ind <- ageData$cohortType == 'Target'
-ageData$averageValue[ind] <- -1*ageData$averageValue[ind] 
+  # filter to Target and Cases and remove censored
+  ageData <- rbind(
+    ageData %>% 
+      dplyr::filter(.data$caseCount > 0) %>%
+      dplyr::select("covariateName","caseAverage", 
+                    "startAnchor","endAnchor", 
+                    "riskWindowStart","riskWindowEnd",
+                    "databaseName",
+                    "targetName", "outcomeName") %>%
+      dplyr::rename(averageValue = "caseAverage") %>%
+      dplyr::mutate(cohortType = 'Cases'),
+    ageData %>% 
+      dplyr::filter(.data$nonCaseCount > 0) %>%
+      dplyr::select("covariateName","nonCaseAverage",
+                    "startAnchor","endAnchor", 
+                    "riskWindowStart","riskWindowEnd",
+                    "databaseName",
+                    "targetName", "outcomeName") %>%
+      dplyr::rename(averageValue = "nonCaseAverage") %>%
+      dplyr::mutate(
+        averageValue = -1*.data$averageValue,
+        cohortType = 'Non-cases')
+  )
+  
 ageData$tar <- addTar(ageData)
+
+ageData$averageValue <- as.double(ageData$averageValue)
+
+# order the age group
+covNames <- unique(ageData$covariateName)
+covOrder <- as.double(unlist(lapply(strsplit(covNames, '-  '), function(x) x[2])))
+ageData$covariateName <- factor(
+  x = ageData$covariateName, 
+  levels = covNames[order(covOrder)]
+)
+
 result <- ggplot2::ggplot(
   data = ageData,
   ggplot2::aes(
@@ -75,7 +104,8 @@ result <- ggplot2::ggplot(
     labels = abs(c(-1,-0.5, 0, 0.5,  1))
   ) +
   ggplot2::facet_grid(
-    cols = ggplot2::vars(.data$databaseName)
+    cols = ggplot2::vars(.data$databaseName), 
+    rows = ggplot2::vars(.data$targetName, .data$outcomeName)
   ) +
   ggplot2::theme(
     legend.title=ggplot2::element_blank()
@@ -142,12 +172,30 @@ plotSexDistributions <- function(
   } 
   
   # filter to Target and Cases and remove censored
-  sexData <- sexData %>% 
-    dplyr::filter(.data$sumValue > 0) %>%
-    dplyr::filter(.data$cohortType %in% c('Target', 'Cases'))
+  sexData <- rbind(
+    sexData %>% 
+      dplyr::filter(.data$caseCount > 0) %>%
+      dplyr::select("covariateName","caseAverage", 
+                    "startAnchor","endAnchor", 
+                    "riskWindowStart","riskWindowEnd",
+                    "databaseName", 
+                    "targetName", "outcomeName") %>%
+      dplyr::rename(averageValue = "caseAverage") %>%
+      dplyr::mutate(cohortType = 'Cases'),
+    sexData %>% 
+      dplyr::filter(.data$nonCaseCount > 0) %>%
+      dplyr::select("covariateName","nonCaseAverage",
+                    "startAnchor","endAnchor", 
+                    "riskWindowStart","riskWindowEnd",
+                    "databaseName",
+                    "targetName", "outcomeName") %>%
+      dplyr::rename(averageValue = "nonCaseAverage") %>%
+      dplyr::mutate(
+        averageValue = -1*.data$averageValue,
+        cohortType = 'Non-cases')
+  )
+  sexData$averageValue <- as.double(sexData$averageValue)
   
-  ind <- sexData$cohortType == 'Target'
-  sexData$averageValue[ind] <- -1*sexData$averageValue[ind] 
   sexData$tar <- addTar(sexData)
   
   result <- ggplot2::ggplot(
@@ -164,7 +212,8 @@ plotSexDistributions <- function(
       labels = abs(c(-1,-0.5, 0, 0.5,  1))
     ) +
     ggplot2::facet_grid(
-      cols = ggplot2::vars(.data$databaseName)
+      cols = ggplot2::vars(.data$databaseName),
+      rows = ggplot2::vars(.data$targetName, .data$outcomeName)
     ) +
     ggplot2::theme(
       legend.title=ggplot2::element_blank()

@@ -90,7 +90,7 @@ cohorts <- OhdsiReportGenerator::getCohortDefinitions(
   )
 
 # add cohortFriendlyName to the cohorts
-cohorts <- merge(cohorts, cohortFriendlyNames, by = 'cohortDefinitionId', all.x = T)
+cohorts <- merge(cohorts, cohortFriendlyNames, by = 'cohortDefinitionId', all.x = TRUE)
 cohorts$cohortFriendlyName[is.na(cohorts$cohortFriendlyName)] <- cohorts$cohortName[is.na(cohorts$cohortFriendlyName)]
 
 # get the target and all children in each analyses

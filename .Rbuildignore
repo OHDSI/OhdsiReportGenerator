@@ -8,3 +8,4 @@ man-roxygen
 ^NEWS\.md$
 ^\.Rhistory$
 ^.*errorReportSql\.txt
+^.*oldresults.sqlite\.zip

@@ -37,7 +37,13 @@ if( nrow(charIdsOfInt) >0 ){
       outcomeId = charIdsOfInt$outcomeCohortId[cind], #19970,
       analysisIds = c(1,4,5,210,410)
     )
-    if(!is.null(riskFactorsBinary)){
+    
+    notNull <- !is.null(riskFactorsBinary)
+    hasRows <- FALSE
+    if(notNull){
+      hasRows <- nrow(riskFactorsBinary) > 0 
+    }
+    if(notNull & hasRows ){
     riskFactorsBinary <- OhdsiReportGenerator::formatBinaryCovariateName(riskFactorsBinary)
     riskFactorsBinary <- OhdsiReportGenerator::addTarColumn(riskFactorsBinary)
     
@@ -67,12 +73,12 @@ if( nrow(charIdsOfInt) >0 ){
       cat(paste0("\n# ",boxTitle, '\n\n'))
       
       temp <- riskFactorsBinary %>%
-          dplyr::arrange(-1*.data$absSMD) %>%
+          dplyr::arrange(-1*.data$absSmd) %>%
           dplyr::filter(
             .data$minPriorObservation == !!minPriorObservation,
             .data$outcomeWashoutDays ==  !!outcomeWashoutDays,
             .data$tar == !!tar,
-            .data$absSMD > 0.1,
+            .data$absSmd > 0.1,
             .data$caseCount >= 0 # make this an input?
           ) %>%
           head(
@@ -85,8 +91,8 @@ if( nrow(charIdsOfInt) >0 ){
           "caseAverage",
           "nonCaseCount", 
           "nonCaseAverage",
-          "SMD", 
-          "absSMD"
+          "smd", 
+          "absSmd"
           )
 
          print(htmltools::tagList(
@@ -98,7 +104,7 @@ if( nrow(charIdsOfInt) >0 ){
         decimals = 2
       ) %>%
       gt::fmt_number(
-        columns = c("SMD", "absSMD"), 
+        columns = c("smd", "absSmd"), 
         decimals = 2
       ) %>%
       gt::fmt_integer(
