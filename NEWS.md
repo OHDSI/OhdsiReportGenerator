@@ -1,3 +1,8 @@
+OhdsiReportGenerator v2.1.0
+======================
+- started to move SQL into the inst folder and have SQL version based on the result version
+- updated SQL to support Characterization v3, CohortMethod v6 and CohortGenerator v1.1
+
 OhdsiReportGenerator v2.0.2
 ======================
 - fixed odd bug with different TimeAtRisks in prediction
