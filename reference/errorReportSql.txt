@@ -25,4 +25,4 @@ Attached base packages:
 - base
 
 Other attached packages:
-- OhdsiReportGenerator (2.0.2)
+- OhdsiReportGenerator (2.1.0)
