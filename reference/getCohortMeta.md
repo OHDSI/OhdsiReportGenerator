@@ -74,5 +74,4 @@ cohortMeta <- getCohortMeta(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> Warning: Parameter 'cohort_id_name' not found in SQL
 ```
