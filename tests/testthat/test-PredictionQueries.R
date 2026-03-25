@@ -282,7 +282,7 @@ test_that("getPredictionIntercept", {
     databaseId = 1
   )
   
-  testthat::expect_is(data, 'numeric')
+  testthat::expect_true(is.numeric(data))
   
 })
 

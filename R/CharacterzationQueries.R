@@ -166,7 +166,9 @@ getCharacterizationTargets <- function(
         schema = schema,
         c_table_prefix = cTablePrefix
       )
-    }, error = function(e){return(NULL)})
+    }, error = function(e){
+      return(NULL)
+      })
     
     tableOrView <- ifelse(
       is.null(normExists),
