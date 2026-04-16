@@ -21,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.0.0.9999</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.1.0.9999</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,7 @@
                         <h4 data-toc-skip class="author">Jenna Reps,
 Anthony Sena</h4>
             
-            <h4 data-toc-skip class="date">2025-09-26</h4>
+            <h4 data-toc-skip class="date">2026-04-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/develop/vignettes/ExampleCode.Rmd" class="external-link"><code>vignettes/ExampleCode.Rmd</code></a></small>
       <div class="d-none name"><code>ExampleCode.Rmd</code></div>
@@ -123,104 +123,236 @@ connection handler, schema, table prefix used by CohortGenerator
 the json and sqlCommand columns.</caption>
 <colgroup>
 <col width="2%">
-<col width="13%">
+<col width="12%">
 <col width="1%">
 <col width="1%">
 <col width="1%">
 <col width="2%">
-<col width="77%">
+<col width="2%">
+<col width="73%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">cohortDefinitionId</th>
 <th align="left">cohortName</th>
-<th align="left">description</th>
+<th align="right">description</th>
 <th align="right">subsetParent</th>
 <th align="right">isSubset</th>
 <th align="right">subsetDefinitionId</th>
+<th align="right">isTemplatedCohort</th>
 <th align="left">subsetDefinitionJson</th>
+<th align="right">templateName</th>
+<th align="right">templateSql</th>
+<th align="right">templateJson</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
 <td align="left">Celecoxib</td>
-<td align="left">NA</td>
+<td align="right">NA</td>
 <td align="right">1</td>
+<td align="right">0</td>
 <td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">0</td>
 <td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
 <td align="left">Diclofenac</td>
-<td align="left">NA</td>
+<td align="right">NA</td>
 <td align="right">2</td>
+<td align="right">0</td>
 <td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">0</td>
 <td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
 <td align="left">GI bleed</td>
-<td align="left">NA</td>
+<td align="right">NA</td>
 <td align="right">3</td>
+<td align="right">0</td>
 <td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">0</td>
 <td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">Acetaminophen</td>
+<td align="right">NA</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">Amoxicillin</td>
+<td align="right">NA</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">Aspirin</td>
+<td align="right">NA</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left">Clavulanate</td>
+<td align="right">NA</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="left">Death</td>
+<td align="right">NA</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="left">Doxylamine</td>
+<td align="right">NA</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">PenicillinV</td>
+<td align="right">NA</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="left">ViralSinusitis</td>
+<td align="right">NA</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="right">1001</td>
 <td align="left">Celecoxib - age 18 to 64 Age 18 to 64</td>
-<td align="left">NA</td>
-<td align="right">1</td>
 <td align="right">NA</td>
 <td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
 <td align="left">{</td>
+<td align="right"></td>
+<td align="right"></td>
+<td align="right"></td>
 </tr>
 </tbody>
 </table>
 <p>“name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: [ {
 “name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
-“ageMin”: 18, “ageMax”: 64 } ], “packageVersion”: “0.11.2”,
+“ageMin”: 18, “ageMax”: 64 } ], “packageVersion”: “1.1.0”,
 “identifierExpression”: “targetId * 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 2001|Diclofenac - age 18
-to 64 Age 18 to 64 |NA | 2| NA| 1|{ “name”: “age 18 to 64”,
-“definitionId”: 1, “subsetOperators”: [ { “name”: “Age 18 to 64”,
-“subsetType”: “DemographicSubsetOperator”, “ageMin”: 18, “ageMax”: 64 }
-], “packageVersion”: “0.11.2”, “identifierExpression”: “targetId * 1000
-+ definitionId”, “operatorNameConcatString”: “,”,
-“subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 1002|Celecoxib - first
-event with 365 prior obs first event with 365 prior obs |NA | 1| NA| 2|{
-“name”: “first event with 365 prior obs”, “definitionId”: 2,
-“subsetOperators”: [ { “name”: “first event with 365 prior obs”,
-“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
-0, “limitTo”: “firstEver” } ], “packageVersion”: “0.11.2”,
-“identifierExpression”: “targetId * 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 2002|Diclofenac - first
-event with 365 prior obs first event with 365 prior obs |NA | 2| NA| 2|{
-“name”: “first event with 365 prior obs”, “definitionId”: 2,
-“subsetOperators”: [ { “name”: “first event with 365 prior obs”,
-“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
-0, “limitTo”: “firstEver” } ], “packageVersion”: “0.11.2”,
-“identifierExpression”: “targetId * 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 1003|Celecoxib - age 18 to
-64 and first event with 365 prior obs Age 18 to 64, first event with 365
-prior obs |NA | 1| NA| 3|{ “name”: “age 18 to 64 and first event with
-365 prior obs”, “definitionId”: 3, “subsetOperators”: [ { “name”: “Age
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | NA| NA| NA| |
+2001|Diclofenac - age 18 to 64 Age 18 to 64 | NA| 2| 1| 1| 0|{ “name”:
+“age 18 to 64”, “definitionId”: 1, “subsetOperators”: [ { “name”: “Age
 18 to 64”, “subsetType”: “DemographicSubsetOperator”, “ageMin”: 18,
-“ageMax”: 64 }, { “name”: “first event with 365 prior obs”,
+“ageMax”: 64 } ], “packageVersion”: “1.1.0”, “identifierExpression”:
+“targetId * 1000 + definitionId”, “operatorNameConcatString”: “,”,
+“subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | NA| NA| NA| | 1002|Celecoxib
+- first event with 365 prior obs first event with 365 prior obs | NA| 1|
+1| 2| 0|{ “name”: “first event with 365 prior obs”, “definitionId”: 2,
+“subsetOperators”: [ { “name”: “first event with 365 prior obs”,
 “subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
-0, “limitTo”: “firstEver” } ], “packageVersion”: “0.11.2”,
+0, “minimumCohortDuration”: 0, “limitTo”: “firstEver” } ],
+“packageVersion”: “1.1.0”, “identifierExpression”: “targetId * 1000 +
+definitionId”, “operatorNameConcatString”: “,”,
+“subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | NA| NA| NA| |
+2002|Diclofenac - first event with 365 prior obs first event with 365
+prior obs | NA| 2| 1| 2| 0|{ “name”: “first event with 365 prior obs”,
+“definitionId”: 2, “subsetOperators”: [ { “name”: “first event with 365
+prior obs”, “subsetType”: “LimitSubsetOperator”, “priorTime”: 365,
+“followUpTime”: 0, “minimumCohortDuration”: 0, “limitTo”: “firstEver” }
+], “packageVersion”: “1.1.0”, “identifierExpression”: “targetId * 1000 +
+definitionId”, “operatorNameConcatString”: “,”,
+“subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | NA| NA| NA| | 1003|Celecoxib
+- age 18 to 64 and first event with 365 prior obs Age 18 to 64, first
+event with 365 prior obs | NA| 1| 1| 3| 0|{ “name”: “age 18 to 64 and
+first event with 365 prior obs”, “definitionId”: 3, “subsetOperators”: [
+{ “name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
+“ageMin”: 18, “ageMax”: 64 }, { “name”: “first event with 365 prior
+obs”, “subsetType”: “LimitSubsetOperator”, “priorTime”: 365,
+“followUpTime”: 0, “minimumCohortDuration”: 0, “limitTo”: “firstEver” }
+], “packageVersion”: “1.1.0”, “identifierExpression”: “targetId * 1000 +
+definitionId”, “operatorNameConcatString”: “,”,
+“subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | NA| NA| NA| |
+2003|Diclofenac - age 18 to 64 and first event with 365 prior obs Age 18
+to 64, first event with 365 prior obs | NA| 2| 1| 3| 0|{ “name”: “age 18
+to 64 and first event with 365 prior obs”, “definitionId”: 3,
+“subsetOperators”: [ { “name”: “Age 18 to 64”, “subsetType”:
+“DemographicSubsetOperator”, “ageMin”: 18, “ageMax”: 64 }, { “name”:
+“first event with 365 prior obs”, “subsetType”: “LimitSubsetOperator”,
+“priorTime”: 365, “followUpTime”: 0, “minimumCohortDuration”: 0,
+“limitTo”: “firstEver” } ], “packageVersion”: “1.1.0”,
 “identifierExpression”: “targetId * 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 2003|Diclofenac - age 18
-to 64 and first event with 365 prior obs Age 18 to 64, first event with
-365 prior obs |NA | 2| NA| 3|{ “name”: “age 18 to 64 and first event
-with 365 prior obs”, “definitionId”: 3, “subsetOperators”: [ { “name”:
-“Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”, “ageMin”: 18,
-“ageMax”: 64 }, { “name”: “first event with 365 prior obs”,
-“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
-0, “limitTo”: “firstEver” } ], “packageVersion”: “0.11.2”,
-“identifierExpression”: “targetId * 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } |</p>
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | NA| NA| NA|</p>
 <p>You can process the cohorts definitions to extract the parent cohorts
 and the children for each parent cohort.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -246,64 +378,82 @@ and the children for each parent cohort.</p>
 cohort.</caption>
 <colgroup>
 <col width="2%">
-<col width="13%">
+<col width="11%">
 <col width="1%">
 <col width="1%">
 <col width="1%">
 <col width="2%">
-<col width="77%">
+<col width="2%">
+<col width="73%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">cohortDefinitionId</th>
 <th align="left">cohortName</th>
-<th align="left">description</th>
+<th align="right">description</th>
 <th align="right">subsetParent</th>
 <th align="right">isSubset</th>
 <th align="right">subsetDefinitionId</th>
+<th align="right">isTemplatedCohort</th>
 <th align="left">subsetDefinitionJson</th>
+<th align="right">templateName</th>
+<th align="right">templateSql</th>
+<th align="right">templateJson</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
 <td align="left">Celecoxib</td>
-<td align="left">NA</td>
+<td align="right">NA</td>
 <td align="right">1</td>
+<td align="right">0</td>
 <td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">0</td>
 <td align="left">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
 </tr>
 <tr class="even">
 <td align="right">1001</td>
 <td align="left">Celecoxib - age 18 to 64 Age 18 to 64</td>
-<td align="left">NA</td>
-<td align="right">1</td>
 <td align="right">NA</td>
 <td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
 <td align="left">{</td>
+<td align="right"></td>
+<td align="right"></td>
+<td align="right"></td>
 </tr>
 </tbody>
 </table>
 <p>“name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: [ {
 “name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
-“ageMin”: 18, “ageMax”: 64 } ], “packageVersion”: “0.11.2”,
+“ageMin”: 18, “ageMax”: 64 } ], “packageVersion”: “1.1.0”,
 “identifierExpression”: “targetId * 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 1002|Celecoxib - first
-event with 365 prior obs first event with 365 prior obs |NA | 1| NA| 2|{
-“name”: “first event with 365 prior obs”, “definitionId”: 2,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | NA| NA| NA| | 1002|Celecoxib
+- first event with 365 prior obs first event with 365 prior obs | NA| 1|
+1| 2| 0|{ “name”: “first event with 365 prior obs”, “definitionId”: 2,
 “subsetOperators”: [ { “name”: “first event with 365 prior obs”,
 “subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
-0, “limitTo”: “firstEver” } ], “packageVersion”: “0.11.2”,
-“identifierExpression”: “targetId * 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 1003|Celecoxib - age 18 to
-64 and first event with 365 prior obs Age 18 to 64, first event with 365
-prior obs |NA | 1| NA| 3|{ “name”: “age 18 to 64 and first event with
-365 prior obs”, “definitionId”: 3, “subsetOperators”: [ { “name”: “Age
-18 to 64”, “subsetType”: “DemographicSubsetOperator”, “ageMin”: 18,
-“ageMax”: 64 }, { “name”: “first event with 365 prior obs”,
-“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
-0, “limitTo”: “firstEver” } ], “packageVersion”: “0.11.2”,
-“identifierExpression”: “targetId * 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } |</p>
+0, “minimumCohortDuration”: 0, “limitTo”: “firstEver” } ],
+“packageVersion”: “1.1.0”, “identifierExpression”: “targetId * 1000 +
+definitionId”, “operatorNameConcatString”: “,”,
+“subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | NA| NA| NA| | 1003|Celecoxib
+- age 18 to 64 and first event with 365 prior obs Age 18 to 64, first
+event with 365 prior obs | NA| 1| 1| 3| 0|{ “name”: “age 18 to 64 and
+first event with 365 prior obs”, “definitionId”: 3, “subsetOperators”: [
+{ “name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
+“ageMin”: 18, “ageMax”: 64 }, { “name”: “first event with 365 prior
+obs”, “subsetType”: “LimitSubsetOperator”, “priorTime”: 365,
+“followUpTime”: 0, “minimumCohortDuration”: 0, “limitTo”: “firstEver” }
+], “packageVersion”: “1.1.0”, “identifierExpression”: “targetId * 1000 +
+definitionId”, “operatorNameConcatString”: “,”,
+“subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | NA| NA| NA|</p>
 <p>For example, if you created a cohort corresponding to all patients
 exposed to drug A with an id of 1 and then created ‘children’ subset
 cohorts corresponding to patients exposed to drug A for indication X
@@ -341,23 +491,23 @@ as the parent and cohorts 1,1001,1002 as the children/subset of cohort
 </table>
 <p>“name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: [ {
 “name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
-“ageMin”: 18, “ageMax”: 64 } ], “packageVersion”: “0.11.2”,
+“ageMin”: 18, “ageMax”: 64 } ], “packageVersion”: “1.1.0”,
 “identifierExpression”: “targetId * 1000 + definitionId”,
 “operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 2|{ “name”: “first event
 with 365 prior obs”, “definitionId”: 2, “subsetOperators”: [ { “name”:
 “first event with 365 prior obs”, “subsetType”: “LimitSubsetOperator”,
-“priorTime”: 365, “followUpTime”: 0, “limitTo”: “firstEver” } ],
-“packageVersion”: “0.11.2”, “identifierExpression”: “targetId * 1000 +
-definitionId”, “operatorNameConcatString”: “,”,
-“subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 3|{ “name”: “age 18 to 64
+“priorTime”: 365, “followUpTime”: 0, “minimumCohortDuration”: 0,
+“limitTo”: “firstEver” } ], “packageVersion”: “1.1.0”,
+“identifierExpression”: “targetId * 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } | | 3|{ “name”: “age 18 to 64
 and first event with 365 prior obs”, “definitionId”: 3,
 “subsetOperators”: [ { “name”: “Age 18 to 64”, “subsetType”:
 “DemographicSubsetOperator”, “ageMin”: 18, “ageMax”: 64 }, { “name”:
 “first event with 365 prior obs”, “subsetType”: “LimitSubsetOperator”,
-“priorTime”: 365, “followUpTime”: 0, “limitTo”: “firstEver” } ],
-“packageVersion”: “0.11.2”, “identifierExpression”: “targetId * 1000 +
-definitionId”, “operatorNameConcatString”: “,”,
-“subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } |</p>
+“priorTime”: 365, “followUpTime”: 0, “minimumCohortDuration”: 0,
+“limitTo”: “firstEver” } ], “packageVersion”: “1.1.0”,
+“identifierExpression”: “targetId * 1000 + definitionId”,
+“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”: “<span class="citation">@baseCohortName</span> - <span class="citation">@subsetDefinitionName</span> <span class="citation">@operatorNames</span>” } |</p>
 </div>
 <div class="section level3">
 <h3 id="extracting-characterization-results">Extracting Characterization Results<a class="anchor" aria-label="anchor" href="#extracting-characterization-results"></a>
@@ -763,131 +913,91 @@ features and the occurrence of the outcome during a time-at-risk) using
 <col width="5%">
 <col width="4%">
 <col width="5%">
-<col width="7%">
+<col width="6%">
+<col width="6%">
 <col width="6%">
 <col width="5%">
-<col width="5%">
+<col width="4%">
 <col width="4%">
 <col width="3%">
+<col width="4%">
 <col width="7%">
 <col width="4%">
 <col width="3%">
-<col width="4%">
-<col width="4%">
 <col width="5%">
+<col width="4%">
 <col width="3%">
 <col width="3%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">databaseName</th>
-<th align="left">databaseId</th>
+<th align="right">databaseId</th>
 <th align="left">targetName</th>
 <th align="right">targetCohortId</th>
 <th align="left">outcomeName</th>
 <th align="right">outcomeCohortId</th>
 <th align="right">minPriorObservation</th>
+<th align="right">limitToFirstInNDays</th>
 <th align="right">outcomeWashoutDays</th>
 <th align="right">riskWindowStart</th>
-<th align="right">riskWindowEnd</th>
 <th align="left">startAnchor</th>
+<th align="right">riskWindowEnd</th>
 <th align="left">endAnchor</th>
-<th align="left">covariateName</th>
 <th align="right">covariateId</th>
-<th align="right">caseCount</th>
-<th align="right">caseAverage</th>
+<th align="left">covariateName</th>
 <th align="right">nonCaseCount</th>
+<th align="right">caseCount</th>
 <th align="right">nonCaseAverage</th>
-<th align="right">SMD</th>
-<th align="right">absSMD</th>
+<th align="left">caseAverage</th>
+<th align="right">smd</th>
+<th align="right">absSmd</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">Synthea</td>
-<td align="left">388020256</td>
+<td align="right">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="left">GI bleed</td>
 <td align="right">3</td>
 <td align="right">365</td>
+<td align="right">99999</td>
 <td align="right">365</td>
 <td align="right">1</td>
+<td align="left">cohort_start</td>
 <td align="right">365</td>
-<td align="left">cohort start</td>
-<td align="left">cohort end</td>
-<td align="left">age group: 30 - 34</td>
+<td align="left">cohort_end</td>
 <td align="right">6003</td>
-<td align="right">35</td>
-<td align="right">0.0985916</td>
+<td align="left">age group: 30 - 34</td>
 <td align="right">171</td>
+<td align="right">35</td>
 <td align="right">0.1183391</td>
-<td align="right">-0.0635357</td>
-<td align="right">0.0635357</td>
+<td align="left">0.09859155</td>
+<td align="right">-0.0634826</td>
+<td align="right">0.0634826</td>
 </tr>
 <tr class="even">
 <td align="left">Synthea</td>
-<td align="left">388020256</td>
+<td align="right">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
 <td align="left">GI bleed</td>
 <td align="right">3</td>
 <td align="right">365</td>
+<td align="right">99999</td>
 <td align="right">365</td>
 <td align="right">1</td>
+<td align="left">cohort_start</td>
 <td align="right">365</td>
-<td align="left">cohort start</td>
-<td align="left">cohort end</td>
-<td align="left">age group: 35 - 39</td>
+<td align="left">cohort_end</td>
 <td align="right">7003</td>
-<td align="right">177</td>
-<td align="right">0.4985915</td>
+<td align="left">age group: 35 - 39</td>
 <td align="right">685</td>
+<td align="right">177</td>
 <td align="right">0.4740484</td>
-<td align="right">0.0789649</td>
-<td align="right">0.0789649</td>
-</tr>
-<tr class="odd">
-<td align="left">Synthea</td>
-<td align="left">388020256</td>
-<td align="left">Celecoxib</td>
-<td align="right">1</td>
-<td align="left">GI bleed</td>
-<td align="right">3</td>
-<td align="right">365</td>
-<td align="right">365</td>
-<td align="right">1</td>
-<td align="right">365</td>
-<td align="left">cohort start</td>
-<td align="left">cohort end</td>
-<td align="left">age group: 40 - 44</td>
-<td align="right">8003</td>
-<td align="right">129</td>
-<td align="right">0.3633803</td>
-<td align="right">531</td>
-<td align="right">0.3674740</td>
-<td align="right">-0.0131713</td>
-<td align="right">0.0131713</td>
-</tr>
-<tr class="even">
-<td align="left">Synthea</td>
-<td align="left">388020256</td>
-<td align="left">Celecoxib</td>
-<td align="right">1</td>
-<td align="left">GI bleed</td>
-<td align="right">3</td>
-<td align="right">365</td>
-<td align="right">365</td>
-<td align="right">1</td>
-<td align="right">365</td>
-<td align="left">cohort start</td>
-<td align="left">cohort end</td>
-<td align="left">age group: 45 - 49</td>
-<td align="right">9003</td>
-<td align="right">14</td>
-<td align="right">0.0394366</td>
-<td align="right">58</td>
-<td align="right">0.0401384</td>
-<td align="right">-0.0022579</td>
-<td align="right">0.0022579</td>
+<td align="left">0.49859155</td>
+<td align="right">0.0490762</td>
+<td align="right">0.0490762</td>
 </tr>
 </tbody>
 </table>
@@ -905,36 +1015,31 @@ features:</p>
 <span>  x <span class="op">=</span> <span class="va">rf</span>, </span>
 <span>  caption <span class="op">=</span> <span class="st">'Example risk factors for continuous features results.'</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
+<table class="table">
 <caption>Example risk factors for continuous features results.</caption>
 <colgroup>
 <col width="2%">
 <col width="1%">
 <col width="1%">
 <col width="2%">
-<col width="3%">
-<col width="16%">
-<col width="1%">
-<col width="2%">
 <col width="2%">
 <col width="2%">
 <col width="3%">
 <col width="3%">
-<col width="2%">
-<col width="2%">
-<col width="2%">
-<col width="2%">
-<col width="2%">
-<col width="1%">
-<col width="2%">
 <col width="3%">
 <col width="2%">
 <col width="2%">
 <col width="2%">
 <col width="1%">
 <col width="2%">
+<col width="6%">
 <col width="2%">
 <col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="3%">
 <col width="2%">
 <col width="3%">
 <col width="2%">
@@ -942,238 +1047,171 @@ features:</p>
 <col width="2%">
 <col width="2%">
 <col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="4%">
+<col width="3%">
 <col width="1%">
 <col width="1%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">databaseName</th>
-<th align="left">databaseId</th>
+<th align="right">databaseId</th>
 <th align="left">targetName</th>
 <th align="right">targetCohortId</th>
-<th align="right">minPriorObservation</th>
-<th align="left">covariateName</th>
-<th align="right">covariateId</th>
-<th align="right">targetCountValue</th>
-<th align="right">targetMinValue</th>
-<th align="right">targetMaxValue</th>
-<th align="right">targetAverageValue</th>
-<th align="right">targetStandardDeviation</th>
-<th align="right">targetMedianValue</th>
-<th align="right">targetP10Value</th>
-<th align="right">targetP25Value</th>
-<th align="right">targetP75Value</th>
-<th align="right">targetP90Value</th>
 <th align="left">outcomeName</th>
 <th align="right">outcomeCohortId</th>
+<th align="right">minPriorObservation</th>
+<th align="right">limitToFirstInNDays</th>
 <th align="right">outcomeWashoutDays</th>
 <th align="right">riskWindowStart</th>
-<th align="right">riskWindowEnd</th>
 <th align="left">startAnchor</th>
+<th align="right">riskWindowEnd</th>
 <th align="left">endAnchor</th>
+<th align="right">covariateId</th>
+<th align="left">covariateName</th>
+<th align="right">targetCountValue</th>
 <th align="right">caseCountValue</th>
+<th align="right">targetMinValue</th>
 <th align="right">caseMinValue</th>
+<th align="right">targetMaxValue</th>
 <th align="right">caseMaxValue</th>
+<th align="right">targetAverageValue</th>
 <th align="right">caseAverageValue</th>
-<th align="right">caseStandardDeviation</th>
+<th align="right">targetMedianValue</th>
 <th align="right">caseMedianValue</th>
+<th align="right">targetP10Value</th>
 <th align="right">caseP10Value</th>
+<th align="right">targetP25Value</th>
 <th align="right">caseP25Value</th>
+<th align="right">targetP75Value</th>
 <th align="right">caseP75Value</th>
+<th align="right">targetP90Value</th>
 <th align="right">caseP90Value</th>
-<th align="right">SMD</th>
-<th align="right">absSMD</th>
+<th align="right">targetStandardDeviation</th>
+<th align="right">caseStandardDeviation</th>
+<th align="right">smd</th>
+<th align="right">absSmd</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">Synthea</td>
-<td align="left">388020256</td>
+<td align="right">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
+<td align="left">GI bleed</td>
+<td align="right">3</td>
 <td align="right">365</td>
-<td align="left">age in years</td>
+<td align="right">99999</td>
+<td align="right">365</td>
+<td align="right">1</td>
+<td align="left">cohort_start</td>
+<td align="right">365</td>
+<td align="left">cohort_end</td>
 <td align="right">1002</td>
-<td align="right">1800</td>
+<td align="left">age in years</td>
+<td align="right">1445</td>
+<td align="right">355</td>
 <td align="right">31</td>
+<td align="right">32</td>
 <td align="right">47</td>
-<td align="right">38.645</td>
-<td align="right">3.321244</td>
+<td align="right">46</td>
+<td align="right">38.61315</td>
+<td align="right">38.77465</td>
+<td align="right">39</td>
 <td align="right">39</td>
 <td align="right">34</td>
-<td align="right">36</td>
-<td align="right">41</td>
-<td align="right">43</td>
-<td align="left">GI bleed</td>
-<td align="right">3</td>
-<td align="right">365</td>
-<td align="right">1</td>
-<td align="right">365</td>
-<td align="left">cohort start</td>
-<td align="left">cohort end</td>
-<td align="right">355</td>
-<td align="right">32</td>
-<td align="right">46</td>
-<td align="right">38.77465</td>
-<td align="right">3.274612</td>
-<td align="right">39</td>
 <td align="right">35</td>
 <td align="right">36</td>
+<td align="right">36</td>
+<td align="right">41</td>
 <td align="right">41</td>
 <td align="right">43</td>
-<td align="right">0.0393116</td>
-<td align="right">0.0393116</td>
+<td align="right">43</td>
+<td align="right">3.33295</td>
+<td align="right">3.274612</td>
+<td align="right">0.0488812</td>
+<td align="right">0.0488812</td>
 </tr>
 <tr class="even">
 <td align="left">Synthea</td>
-<td align="left">388020256</td>
+<td align="right">388020256</td>
 <td align="left">Celecoxib</td>
 <td align="right">1</td>
+<td align="left">GI bleed</td>
+<td align="right">3</td>
 <td align="right">365</td>
-<td align="left">observation time (days) after index</td>
+<td align="right">99999</td>
+<td align="right">365</td>
+<td align="right">1</td>
+<td align="left">cohort_start</td>
+<td align="right">365</td>
+<td align="left">cohort_end</td>
+<td align="right">1008</td>
+<td align="left">observation time (days) prior to index</td>
+<td align="right">1445</td>
+<td align="right">355</td>
+<td align="right">11369</td>
+<td align="right">11550</td>
+<td align="right">17044</td>
+<td align="right">16805</td>
+<td align="right">14103.58339</td>
+<td align="right">14159.86761</td>
+<td align="right">14100</td>
+<td align="right">14155</td>
+<td align="right">12525</td>
+<td align="right">12644</td>
+<td align="right">13155</td>
+<td align="right">13250</td>
+<td align="right">15015</td>
+<td align="right">15075</td>
+<td align="right">15714</td>
+<td align="right">15840</td>
+<td align="right">1200.48537</td>
+<td align="right">1176.652643</td>
+<td align="right">0.0473522</td>
+<td align="right">0.0473522</td>
+</tr>
+<tr class="odd">
+<td align="left">Synthea</td>
+<td align="right">388020256</td>
+<td align="left">Celecoxib</td>
+<td align="right">1</td>
+<td align="left">GI bleed</td>
+<td align="right">3</td>
+<td align="right">365</td>
+<td align="right">99999</td>
+<td align="right">365</td>
+<td align="right">1</td>
+<td align="left">cohort_start</td>
+<td align="right">365</td>
+<td align="left">cohort_end</td>
 <td align="right">1009</td>
-<td align="right">1800</td>
+<td align="left">observation time (days) after index</td>
+<td align="right">1445</td>
+<td align="right">355</td>
+<td align="right">13</td>
 <td align="right">10</td>
 <td align="right">28328</td>
-<td align="right">7588.082</td>
-<td align="right">5352.386801</td>
-<td align="right">6676</td>
-<td align="right">1336</td>
-<td align="right">3442</td>
-<td align="right">10649</td>
-<td align="right">14808</td>
-<td align="left">GI bleed</td>
-<td align="right">3</td>
-<td align="right">365</td>
-<td align="right">1</td>
-<td align="right">365</td>
-<td align="left">cohort start</td>
-<td align="left">cohort end</td>
-<td align="right">355</td>
-<td align="right">10</td>
 <td align="right">27390</td>
+<td align="right">7603.73287</td>
 <td align="right">7524.37465</td>
-<td align="right">5611.529121</td>
+<td align="right">6676</td>
 <td align="right">6708</td>
+<td align="right">1431</td>
 <td align="right">996</td>
+<td align="right">3482</td>
 <td align="right">3236</td>
+<td align="right">10685</td>
 <td align="right">10415</td>
+<td align="right">14808</td>
 <td align="right">14884</td>
-<td align="right">-0.0116180</td>
-<td align="right">0.0116180</td>
-</tr>
-<tr class="odd">
-<td align="left">Synthea</td>
-<td align="left">388020256</td>
-<td align="left">Celecoxib</td>
-<td align="right">1</td>
-<td align="right">365</td>
-<td align="left">observation time (days) prior to index</td>
-<td align="right">1008</td>
-<td align="right">1800</td>
-<td align="right">11369</td>
-<td align="right">17044</td>
-<td align="right">14114.684</td>
-<td align="right">1195.708067</td>
-<td align="right">14100</td>
-<td align="right">12544</td>
-<td align="right">13160</td>
-<td align="right">15040</td>
-<td align="right">15744</td>
-<td align="left">GI bleed</td>
-<td align="right">3</td>
-<td align="right">365</td>
-<td align="right">1</td>
-<td align="right">365</td>
-<td align="left">cohort start</td>
-<td align="left">cohort end</td>
-<td align="right">355</td>
-<td align="right">11550</td>
-<td align="right">16805</td>
-<td align="right">14159.86761</td>
-<td align="right">1176.652643</td>
-<td align="right">14155</td>
-<td align="right">12644</td>
-<td align="right">13250</td>
-<td align="right">15075</td>
-<td align="right">15840</td>
-<td align="right">0.0380906</td>
-<td align="right">0.0380906</td>
-</tr>
-<tr class="even">
-<td align="left">Synthea</td>
-<td align="left">388020256</td>
-<td align="left">Celecoxib</td>
-<td align="right">1</td>
-<td align="right">365</td>
-<td align="left">time (days) between cohort start and end</td>
-<td align="right">1010</td>
-<td align="right">1800</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.000000</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">GI bleed</td>
-<td align="right">3</td>
-<td align="right">365</td>
-<td align="right">1</td>
-<td align="right">365</td>
-<td align="left">cohort start</td>
-<td align="left">cohort end</td>
-<td align="right">355</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.00000</td>
-<td align="right">0.000000</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">NaN</td>
-<td align="right">NaN</td>
-</tr>
-<tr class="odd">
-<td align="left">Synthea</td>
-<td align="left">388020256</td>
-<td align="left">Celecoxib</td>
-<td align="right">1</td>
-<td align="right">365</td>
-<td align="left">visit_occurrence concept count during day -365 through
-0 concept_count relative to index: Inpatient Visit</td>
-<td align="right">9201923</td>
-<td align="right">-5</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.000000</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="left">GI bleed</td>
-<td align="right">3</td>
-<td align="right">365</td>
-<td align="right">1</td>
-<td align="right">365</td>
-<td align="left">cohort start</td>
-<td align="left">cohort end</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.00000</td>
-<td align="right">0.000000</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">NaN</td>
-<td align="right">NaN</td>
+<td align="right">5288.67757</td>
+<td align="right">5611.529121</td>
+<td align="right">-0.0145545</td>
+<td align="right">0.0145545</td>
 </tr>
 </tbody>
 </table>
@@ -1232,7 +1270,7 @@ can be extracted using <code>getPredictionModelDesigns</code>:</p>
 with 365 prior obs</td>
 <td align="right">3</td>
 <td align="left">GI bleed</td>
-<td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
+<td align="left">(cohort start + 1) - (cohort start + 365)</td>
 </tr></tbody>
 </table>
 <p>Once you know the modelDesignId of interest, you can then extract the
@@ -1255,18 +1293,24 @@ model performance:</p>
 <col width="1%">
 <col width="1%">
 <col width="1%">
+<col width="5%">
+<col width="1%">
 <col width="2%">
 <col width="2%">
 <col width="2%">
-<col width="8%">
+<col width="7%">
+<col width="1%">
 <col width="2%">
 <col width="2%">
 <col width="2%">
 <col width="2%">
 <col width="2%">
 <col width="2%">
-<col width="2%">
-<col width="2%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
+<col width="1%">
 <col width="1%">
 <col width="1%">
 <col width="4%">
@@ -1279,24 +1323,26 @@ model performance:</p>
 <col width="1%">
 <col width="1%">
 <col width="1%">
-<col width="2%">
 <col width="1%">
 <col width="1%">
 <col width="1%">
-<col width="4%">
+<col width="1%">
 <col width="3%">
 <col width="3%">
-<col width="3%">
-<col width="3%">
-<col width="4%">
-<col width="4%">
 <col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="3%">
+<col width="3%">
+<col width="1%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">performanceId</th>
-<th align="left">timeStamp</th>
 <th align="right">modelDesignId</th>
+<th align="left">timeStamp</th>
 <th align="left">modelType</th>
+<th align="left">covariateName</th>
+<th align="left">algorithmName</th>
 <th align="right">developmentDatabaseId</th>
 <th align="right">validationDatabaseId</th>
 <th align="right">developmentTargetId</th>
@@ -1311,6 +1357,10 @@ model performance:</p>
 <th align="left">validationDatabase</th>
 <th align="right">validationTarId</th>
 <th align="right">developmentTarId</th>
+<th align="right">devTarStartDay</th>
+<th align="left">devTarStartAnchor</th>
+<th align="right">devTarEndDay</th>
+<th align="left">devTarEndAnchor</th>
 <th align="left">validationTimeAtRisk</th>
 <th align="left">developmentTimeAtRisk</th>
 <th align="left">evaluation</th>
@@ -1337,8 +1387,11 @@ model performance:</p>
 <tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="left">2025-02-13</td>
 <td align="right">1</td>
+<td align="left">2025-02-13</td>
+<td align="left">logistic</td>
+<td align="left">getDbDefaultCovariateData (29 types) inc age and
+sex</td>
 <td align="left">logistic</td>
 <td align="right">1</td>
 <td align="right">1</td>
@@ -1355,8 +1408,12 @@ with 365 prior obs</td>
 <td align="left">-</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
-<td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
+<td align="right">1</td>
+<td align="left">cohort start</td>
+<td align="right">365</td>
+<td align="left">cohort start</td>
+<td align="left">(cohort start + 1) - (cohort start + 365)</td>
+<td align="left">(cohort start + 1) - (cohort start + 365)</td>
 <td align="left">Test</td>
 <td align="right">449</td>
 <td align="right">88</td>
@@ -1380,8 +1437,11 @@ with 365 prior obs</td>
 </tr>
 <tr class="even">
 <td align="right">1</td>
-<td align="left">2025-02-13</td>
 <td align="right">1</td>
+<td align="left">2025-02-13</td>
+<td align="left">logistic</td>
+<td align="left">getDbDefaultCovariateData (29 types) inc age and
+sex</td>
 <td align="left">logistic</td>
 <td align="right">1</td>
 <td align="right">1</td>
@@ -1398,8 +1458,12 @@ with 365 prior obs</td>
 <td align="left">-</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
-<td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
+<td align="right">1</td>
+<td align="left">cohort start</td>
+<td align="right">365</td>
+<td align="left">cohort start</td>
+<td align="left">(cohort start + 1) - (cohort start + 365)</td>
+<td align="left">(cohort start + 1) - (cohort start + 365)</td>
 <td align="left">Train</td>
 <td align="right">1351</td>
 <td align="right">267</td>
@@ -1423,8 +1487,11 @@ with 365 prior obs</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
-<td align="left">2025-02-13</td>
 <td align="right">1</td>
+<td align="left">2025-02-13</td>
+<td align="left">logistic</td>
+<td align="left">getDbDefaultCovariateData (29 types) inc age and
+sex</td>
 <td align="left">logistic</td>
 <td align="right">1</td>
 <td align="right">1</td>
@@ -1441,8 +1508,12 @@ with 365 prior obs</td>
 <td align="left">-</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
-<td align="left">( cohort start+1 ) - ( cohort start+365 )</td>
+<td align="right">1</td>
+<td align="left">cohort start</td>
+<td align="right">365</td>
+<td align="left">cohort start</td>
+<td align="left">(cohort start + 1) - (cohort start + 365)</td>
+<td align="left">(cohort start + 1) - (cohort start + 365)</td>
 <td align="left">CV</td>
 <td align="right">1351</td>
 <td align="right">267</td>
@@ -1789,40 +1860,47 @@ outcome 3:</p>
 <caption>Example cohort method estimation results.</caption>
 <colgroup>
 <col width="2%">
-<col width="2%">
-<col width="2%">
-<col width="10%">
-<col width="14%">
 <col width="1%">
-<col width="14%">
+<col width="1%">
+<col width="8%">
+<col width="3%">
+<col width="12%">
+<col width="1%">
+<col width="12%">
+<col width="2%">
+<col width="2%">
 <col width="2%">
 <col width="2%">
 <col width="1%">
 <col width="2%">
-<col width="3%">
-<col width="3%">
 <col width="2%">
-<col width="3%">
-<col width="3%">
-<col width="3%">
+<col width="2%">
 <col width="2%">
 <col width="3%">
 <col width="2%">
+<col width="3%">
+<col width="2%">
+<col width="3%">
+<col width="1%">
 <col width="2%">
 <col width="2%">
 <col width="3%">
 <col width="1%">
-<col width="3%">
+<col width="4%">
+<col width="2%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">databaseName</th>
 <th align="left">databaseId</th>
 <th align="right">analysisId</th>
 <th align="left">description</th>
+<th align="right">targetComparatorId</th>
 <th align="left">targetName</th>
 <th align="right">targetId</th>
 <th align="left">comparatorName</th>
 <th align="right">comparatorId</th>
+<th align="left">indicationName</th>
+<th align="right">indicationId</th>
 <th align="left">outcomeName</th>
 <th align="right">outcomeId</th>
 <th align="right">calibratedRr</th>
@@ -1839,6 +1917,7 @@ outcome 3:</p>
 <th align="right">targetOutcomes</th>
 <th align="right">comparatorOutcomes</th>
 <th align="right">unblind</th>
+<th align="right">unblindForEvidenceSynthesis</th>
 <th align="left">targetEstimator</th>
 </tr></thead>
 <tbody>
@@ -1847,27 +1926,31 @@ outcome 3:</p>
 <td align="left">388020256</td>
 <td align="right">1</td>
 <td align="left">No matching, simple outcome model</td>
+<td align="right">-927689127</td>
 <td align="left">Celecoxib - first event with 365 prior obs first event
 with 365 prior obs</td>
 <td align="right">1002</td>
 <td align="left">Diclofenac - first event with 365 prior obs first event
 with 365 prior obs</td>
 <td align="right">2002</td>
+<td align="left">NA</td>
+<td align="right">0</td>
 <td align="left">GI bleed</td>
 <td align="right">3</td>
-<td align="right">1.832771</td>
-<td align="right">0.9724055</td>
-<td align="right">3.454372</td>
-<td align="right">0.1078385</td>
-<td align="right">0.0639169</td>
-<td align="right">0.6058291</td>
-<td align="right">0.3233791</td>
-<td align="right">1800</td>
+<td align="right">1.342495</td>
+<td align="right">1.097514</td>
+<td align="right">1.653167</td>
+<td align="right">0.0048267</td>
+<td align="right">0.0024133</td>
+<td align="right">0.29453</td>
+<td align="right">0.1045033</td>
+<td align="right">1793</td>
 <td align="right">830</td>
-<td align="right">540789</td>
+<td align="right">539527</td>
 <td align="right">261005</td>
-<td align="right">355</td>
+<td align="right">353</td>
 <td align="right">124</td>
+<td align="right">1</td>
 <td align="right">1</td>
 <td align="left">ate</td>
 </tr>
@@ -1876,12 +1959,15 @@ with 365 prior obs</td>
 <td align="left">388020256</td>
 <td align="right">2</td>
 <td align="left">Matching on ps and covariates, simple outcomeModel</td>
+<td align="right">-927689127</td>
 <td align="left">Celecoxib - first event with 365 prior obs first event
 with 365 prior obs</td>
 <td align="right">1002</td>
 <td align="left">Diclofenac - first event with 365 prior obs first event
 with 365 prior obs</td>
 <td align="right">2002</td>
+<td align="left">NA</td>
+<td align="right">0</td>
 <td align="left">GI bleed</td>
 <td align="right">3</td>
 <td align="right">NA</td>
@@ -1891,12 +1977,13 @@ with 365 prior obs</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
 <td align="right">NA</td>
-<td align="right">829</td>
-<td align="right">829</td>
-<td align="right">263258</td>
-<td align="right">260639</td>
-<td align="right">117</td>
+<td align="right">830</td>
+<td align="right">830</td>
+<td align="right">267053</td>
+<td align="right">261005</td>
+<td align="right">108</td>
 <td align="right">124</td>
+<td align="right">0</td>
 <td align="right">0</td>
 <td align="left">att</td>
 </tr>
@@ -1919,29 +2006,35 @@ method:</p>
 results.</caption>
 <colgroup>
 <col width="3%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="2%">
+<col width="3%">
 <col width="3%">
 <col width="3%">
 <col width="3%">
 <col width="2%">
-<col width="4%">
-<col width="3%">
-<col width="3%">
-<col width="3%">
-<col width="3%">
-<col width="5%">
-<col width="5%">
-<col width="3%">
-<col width="6%">
-<col width="4%">
-<col width="5%">
-<col width="4%">
-<col width="5%">
-<col width="3%">
-<col width="4%">
-<col width="4%">
-<col width="5%">
 <col width="2%">
 <col width="3%">
+<col width="4%">
+<col width="4%">
+<col width="2%">
+<col width="4%">
+<col width="3%">
+<col width="4%">
+<col width="3%">
+<col width="4%">
+<col width="2%">
+<col width="3%">
+<col width="3%">
+<col width="4%">
+<col width="1%">
+<col width="2%">
+<col width="1%">
+<col width="1%">
+<col width="4%">
+<col width="4%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">databaseName</th>
@@ -1951,6 +2044,8 @@ results.</caption>
 <th align="right">targetId</th>
 <th align="left">comparatorName</th>
 <th align="right">comparatorId</th>
+<th align="left">indicationName</th>
+<th align="left">indicationId</th>
 <th align="left">outcomeName</th>
 <th align="right">outcomeId</th>
 <th align="right">calibratedRr</th>
@@ -1968,6 +2063,10 @@ results.</caption>
 <th align="right">comparatorOutcomes</th>
 <th align="right">unblind</th>
 <th align="right">nDatabases</th>
+<th align="right">pi95Lb</th>
+<th align="right">pi95Ub</th>
+<th align="right">calibratedPi95Lb</th>
+<th align="right">calibratedPi95Ub</th>
 </tr></thead>
 <tbody></tbody>
 </table>
@@ -1976,11 +2075,14 @@ results.</caption>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotCmEstimates.html">plotCmEstimates</a></span><span class="op">(</span></span>
 <span>  cmData <span class="op">=</span> <span class="va">cmEst</span>, </span>
 <span>  cmMeta <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  targetName <span class="op">=</span> <span class="st">'Example Target'</span>, </span>
-<span>  comparatorName <span class="op">=</span> <span class="st">'Example Comp'</span>, </span>
+<span>  cohortNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    cohortName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Example Target'</span>, <span class="st">'Example Comp'</span><span class="op">)</span>,</span>
+<span>    cohortId<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1002</span>,<span class="fl">2002</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>,</span>
 <span>  selectedAnalysisId <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="ExampleCode_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
+<p><img src="ExampleCode_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="700"></p>
+<pre><code><span><span class="co">## $`1002-3`</span></span></code></pre>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -1994,7 +2096,7 @@ results.</caption>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
