@@ -12,6 +12,7 @@ getCmMetaEstimation(
   esTablePrefix = "es_",
   targetIds = NULL,
   outcomeIds = NULL,
+  indicationIds = NULL,
   comparatorIds = NULL,
   includeOneSidedP = TRUE
 )
@@ -30,6 +31,8 @@ getCmMetaEstimation(
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
+
+\item{indicationIds}{A vector of cohort ids for the indication (nesting id) to restrict to}
 
 \item{comparatorIds}{A vector of integers corresponding to the comparator cohort IDs}
 

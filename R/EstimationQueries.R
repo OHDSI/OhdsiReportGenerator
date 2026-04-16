@@ -192,6 +192,7 @@ getCmOutcomes <- function(
 #' @template databaseTable
 #' @template targetIds
 #' @template outcomeIds
+#' @param indicationIds A vector of cohort ids for the indication (nesting id) to restrict to
 #' @template comparatorIds
 #' @family Estimation
 #' @return
@@ -246,6 +247,7 @@ getCMEstimation <- function(
     databaseTable = 'database_meta_data',
     targetIds = NULL,
     outcomeIds = NULL,
+    indicationIds = NULL,
     comparatorIds = NULL
 ){
   cmVersion <- .getCmVersion(
@@ -272,6 +274,8 @@ getCMEstimation <- function(
     restrict_outcome = !is.null(outcomeIds),
     target_id = paste0(targetIds, collapse = ','),
     restrict_target = !is.null(targetIds),
+    indication_id = paste0(indicationIds, collapse = ','),
+    restrict_indication = !is.null(indicationIds),
     comparator_id = paste(comparatorIds, collapse = ','),
     restrict_comparator = !is.null(comparatorIds)
   )
@@ -294,6 +298,7 @@ getCMEstimation <- function(
 #' @template databaseTable
 #' @template targetIds
 #' @template outcomeIds
+#' @param indicationIds A vector of cohort ids for the indication (nesting id) to restrict to
 #' @template comparatorIds
 #' @param analysisIds An optional vector of analysisIds to filter to
 #' @param databaseIds An optional vector of databaseIds to filter to
@@ -350,6 +355,7 @@ getCmDiagnosticsData <- function(
     targetIds = NULL,
     outcomeIds = NULL,
     comparatorIds = NULL,
+    indicationIds = NULL,
     analysisIds = NULL,
     databaseIds = NULL
 ){
@@ -379,6 +385,9 @@ getCmDiagnosticsData <- function(
     use_comparator = !is.null(comparatorIds),
     outcomes = paste0(outcomeIds, collapse = ','),
     use_outcome = !is.null(outcomeIds),
+    
+    indication_ids = paste0(indicationIds, collapse = ','),
+    use_indication = !is.null(indicationIds),
 
     database_ids = paste0("'",databaseIds,"'", collapse = ','),
     use_database = !is.null(databaseIds),
@@ -422,6 +431,7 @@ getCmDiagnosticsData <- function(
 #' @template esTablePrefix
 #' @template targetIds
 #' @template outcomeIds
+#' @param indicationIds A vector of cohort ids for the indication (nesting id) to restrict to
 #' @template comparatorIds
 #' @param includeOneSidedP This lets you extract from older results that do not have the one sided p by setting this to FALSE
 #' @family Estimation
@@ -477,6 +487,7 @@ getCmMetaEstimation <- function(
     esTablePrefix = 'es_',
     targetIds = NULL,
     outcomeIds = NULL,
+    indicationIds = NULL,
     comparatorIds = NULL,
     includeOneSidedP = TRUE
 ){
@@ -504,6 +515,8 @@ getCmMetaEstimation <- function(
     include_target = !is.null(targetIds),
     outcome_id = paste0(outcomeIds, collapse = ','),
     include_outcome = !is.null(outcomeIds),
+    indication_id = paste0(indicationIds, collapse = ','),
+    include_indication = !is.null(indicationIds),
     comparator_id = paste0(comparatorIds, collapse = ','),
     include_comparator = !is.null(comparatorIds),
     include_one_sided_p = includeOneSidedP

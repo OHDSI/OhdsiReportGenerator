@@ -6,7 +6,7 @@ SELECT ev.evidence_synthesis_description AS database_name
 	,c2.cohort_name AS comparator_name
 	,r.comparator_id
 	,NULL AS indication_name
-	,NULL AS indication_id
+	,0 AS indication_id
 	,c3.cohort_name AS outcome_name
 	,r.outcome_id
 	,r.calibrated_rr

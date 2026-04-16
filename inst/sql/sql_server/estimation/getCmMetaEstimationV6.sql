@@ -6,7 +6,7 @@ SELECT ev.evidence_synthesis_description AS database_name
 	,c2.cohort_name AS comparator_name
 	,tc.comparator_id
 	,c4.cohort_name AS indication_name
-	,tc.nesting_cohort_id AS indication_id
+	,ISNULL(tc.nesting_cohort_id,0) AS indication_id
 	,c3.cohort_name AS outcome_name
 	,r.outcome_id
 	,r.calibrated_rr
@@ -43,4 +43,9 @@ INNER JOIN @schema.@cm_table_prefixanalysis AS a ON a.analysis_id = r.analysis_i
 INNER JOIN @schema.@es_table_prefixanalysis AS ev ON ev.evidence_synthesis_analysis_id = r.evidence_synthesis_analysis_id
 WHERE r.calibrated_rr != 0
 	AND tco.outcome_of_interest = 1
-	AND unblind.unblind = 1 {@include_target}?{and tc.target_id IN (@target_id) } {@include_outcome}?{and r.outcome_id IN (@outcome_id) } {@include_comparator}?{and tc.comparator_id IN (@comparator_id) };
+	AND unblind.unblind = 1 
+	{@include_target}?{AND tc.target_id IN (@target_id) } 
+	{@include_outcome}?{AND r.outcome_id IN (@outcome_id) } 
+	{@include_comparator}?{AND tc.comparator_id IN (@comparator_id) }
+	{@include_indication} ? {AND ISNULL(tc.nesting_cohort_id,0) IN (@indication_id) }
+	;

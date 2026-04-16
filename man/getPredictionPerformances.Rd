@@ -38,6 +38,7 @@ Returns a data.frame with the columns:
  \item{performanceId the unique identifier for the performance}
  \item{modelDesignId the unique identifier for the model design}
  \item{modelType the type of classifier}
+ \item{algorithmName the model algorithm name}
  \item{developmentDatabaseId the unique identifier for the database used to develop the model}
  \item{validationDatabaseId the unique identifier for the database used to validate the model}
  \item{developmentTargetId the unique cohort id for the development target population}

@@ -17,4 +17,8 @@ INNER JOIN @schema.@cg_table_prefixcohort_definition AS c2 ON c2.cohort_definiti
 INNER JOIN @schema.@cg_table_prefixcohort_definition AS c3 ON c3.cohort_definition_id = tab.outcome_id }
 INNER JOIN @schema.@cm_table_prefixanalysis AS a ON a.analysis_id = tab.analysis_id
 INNER JOIN @schema.@database_table AS dmd ON dmd.database_id = tab.database_id
-WHERE 1 = 1 {@include_target}?{and tab.target_id IN (@target_id) } {@include_outcome}?{and tab.outcome_id IN (@outcome_id) } {@include_comparator}?{and tab.comparator_id IN (@comparator_id) } {@include_database}?{and tab.database_id IN (@database_id) } {@include_analyses}?{and tab.analysis_id IN (@analysis_id) };
+WHERE 1 = 1 {@include_target}?{and tab.target_id IN (@target_id) } 
+{@include_outcome}?{and tab.outcome_id IN (@outcome_id) } 
+{@include_comparator}?{and tab.comparator_id IN (@comparator_id) } 
+{@include_database}?{and tab.database_id IN (@database_id) } 
+{@include_analyses}?{and tab.analysis_id IN (@analysis_id) };

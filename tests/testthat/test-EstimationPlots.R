@@ -10,13 +10,15 @@ test_that("plotCmEstimates", {
   
   p <- plotCmEstimates(
     cmData = data,
-    cmMeta = NULL,
-    targetName = 'target',
-    comparatorName = 'comp',
+    cmMeta = NULL, 
+    cohortNames = data.frame(
+      cohortName = c('target', 'comp'), 
+      cohortId = c(1002,2002)
+    ),
     selectedAnalysisId = 1
   )
   
-  testthat::expect_s3_class(p, "gforge_forestplot")
+  testthat::expect_s3_class(p[[1]], "gforge_forestplot")
   
 })
 

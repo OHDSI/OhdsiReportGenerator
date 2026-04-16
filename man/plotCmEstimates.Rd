@@ -4,22 +4,14 @@
 \alias{plotCmEstimates}
 \title{Plots the cohort method results for one analysis}
 \usage{
-plotCmEstimates(
-  cmData,
-  cmMeta = NULL,
-  targetName,
-  comparatorName,
-  selectedAnalysisId
-)
+plotCmEstimates(cmData, cmMeta = NULL, cohortNames = NULL, selectedAnalysisId)
 }
 \arguments{
 \item{cmData}{The cohort method data}
 
 \item{cmMeta}{(optional) The cohort method evidence synthesis data}
 
-\item{targetName}{A friendly name for the target cohort}
-
-\item{comparatorName}{A friendly name for the comparator cohort}
+\item{cohortNames}{A data.frame with columns cohortId and cohortName}
 
 \item{selectedAnalysisId}{The analysis ID of interest to plot}
 }
@@ -40,14 +32,12 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 cmEst <- getCMEstimation(
   connectionHandler = connectionHandler, 
   schema = 'main',
-  targetIds = 1,
+  targetIds = 1002,
   outcomeIds = 3
 )
 plotCmEstimates(
   cmData = cmEst, 
   cmMeta = NULL, 
-  targetName = 'target', 
-  comparatorName = 'comp', 
   selectedAnalysisId = 1
 )
 
