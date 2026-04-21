@@ -6,7 +6,11 @@
 <url><loc>/dev/news/index.html</loc></url>
 <url><loc>/dev/reference/OhdsiReportGenerator.html</loc></url>
 <url><loc>/dev/reference/addTarColumn.html</loc></url>
+<url><loc>/dev/reference/createCharacterizationIndexes.html</loc></url>
+<url><loc>/dev/reference/createCohortIndexes.html</loc></url>
+<url><loc>/dev/reference/createIncidenceIndexes.html</loc></url>
 <url><loc>/dev/reference/createPredictionReport.html</loc></url>
+<url><loc>/dev/reference/createSccsIndexes.html</loc></url>
 <url><loc>/dev/reference/dot-getCmVersion.html</loc></url>
 <url><loc>/dev/reference/formatBinaryCovariateName.html</loc></url>
 <url><loc>/dev/reference/generateFullReport.html</loc></url>

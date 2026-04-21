@@ -74,6 +74,10 @@ plotCmEstimates(
   cmMeta = NULL, 
   selectedAnalysisId = 1
 )
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
 
 #> $`1002-3`
 #> 

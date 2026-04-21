@@ -214,6 +214,20 @@ These functions are used to help result extraction.
   quarto document
 - [`removeSpaces()`](removeSpaces.md) : removeSpaces
 
+## Indexes
+
+These functions are used to add indexes to speed up database result
+extraction.
+
+- [`createCharacterizationIndexes()`](createCharacterizationIndexes.md)
+  : A function to add indexes to the Characterization results
+- [`createCohortIndexes()`](createCohortIndexes.md) : A function to add
+  indexes to the Cohort Generator results
+- [`createIncidenceIndexes()`](createIncidenceIndexes.md) : A function
+  to add indexes to the incidence results
+- [`createSccsIndexes()`](createSccsIndexes.md) : A function to add
+  indexes to the SCCS results
+
 ## OhdsiReportGenerator
 
 A package for extracting analyses results and generating reports.

@@ -169,6 +169,11 @@ outcomeTable <- getOutcomeTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "Extracting characterization outcomes took: 0.0871469974517822 secs"
-#> [1] "-- Total time for extarcting outcome table: 0.250195264816284 secs"
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> [1] "Extracting characterization outcomes took: 0.125739574432373 secs"
+#> [1] "-- Total time for extarcting outcome table: 0.31521463394165 secs"
 ```
