@@ -69,6 +69,10 @@ reference:
     desc: >
       These functions are used to help result extraction.
     contents: has_concept("helper")
+  - title: "Indexes"
+    desc: >
+      These functions are used to add indexes to speed up database result extraction.
+    contents: has_concept("Indexes")
   - title: "OhdsiReportGenerator"
     desc: >
       A package for extracting analyses results and generating reports.
