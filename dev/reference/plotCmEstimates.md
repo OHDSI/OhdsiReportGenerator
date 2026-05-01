@@ -5,7 +5,14 @@ Creates nice cohort method plots
 ## Usage
 
 ``` r
-plotCmEstimates(cmData, cmMeta = NULL, cohortNames = NULL, selectedAnalysisId)
+plotCmEstimates(
+  cmData,
+  cmDiagnostics = NULL,
+  cmMeta = NULL,
+  cohortNames = NULL,
+  includeCounts = TRUE,
+  selectedAnalysisId = NULL
+)
 ```
 
 ## Arguments
@@ -14,6 +21,10 @@ plotCmEstimates(cmData, cmMeta = NULL, cohortNames = NULL, selectedAnalysisId)
 
   The cohort method data
 
+- cmDiagnostics:
+
+  (optional) The cohort method diagnostic data
+
 - cmMeta:
 
   (optional) The cohort method evidence synthesis data
@@ -21,6 +32,10 @@ plotCmEstimates(cmData, cmMeta = NULL, cohortNames = NULL, selectedAnalysisId)
 - cohortNames:
 
   A data.frame with columns cohortId and cohortName
+
+- includeCounts:
+
+  Whether to include the target/comp size and event counts
 
 - selectedAnalysisId:
 
@@ -37,6 +52,7 @@ Input the cohort method data
 ## See also
 
 Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
+[`.getSccsVersion()`](dot-getSccsVersion.md),
 [`getCMEstimation()`](getCMEstimation.md),
 [`getCmDiagnosticsData()`](getCmDiagnosticsData.md),
 [`getCmMetaEstimation()`](getCmMetaEstimation.md),
@@ -74,11 +90,11 @@ plotCmEstimates(
   cmMeta = NULL, 
   selectedAnalysisId = 1
 )
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
+#> refline_col will be deprecated, use refline_gp instead.
+#> footnote_col will be deprecated, use footnote_gp instead.
+#> $`Celecoxib - first event with 365 prior obs first event with 365 prior obs-GI bleed-NA`
 
-#> $`1002-3`
+#> Closing database connection
+#> Closing database connection
 #> 
 ```

@@ -28,8 +28,7 @@ Other helper: [`addTarColumn()`](addTarColumn.md),
 [`formatBinaryCovariateName()`](formatBinaryCovariateName.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
 [`getOutcomeTable()`](getOutcomeTable.md),
-[`getTargetTable()`](getTargetTable.md), [`kableDark()`](kableDark.md),
-[`printReactable()`](printReactable.md)
+[`getTargetTable()`](getTargetTable.md), [`kableDark()`](kableDark.md)
 
 ## Examples
 

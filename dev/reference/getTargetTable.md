@@ -153,8 +153,7 @@ Other helper: [`addTarColumn()`](addTarColumn.md),
 [`formatBinaryCovariateName()`](formatBinaryCovariateName.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
 [`getOutcomeTable()`](getOutcomeTable.md),
-[`kableDark()`](kableDark.md), [`printReactable()`](printReactable.md),
-[`removeSpaces()`](removeSpaces.md)
+[`kableDark()`](kableDark.md), [`removeSpaces()`](removeSpaces.md)
 
 ## Examples
 
@@ -168,6 +167,6 @@ targetTable <- getTargetTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "-- all extracting characterization targets took: 0.103851795196533 secs"
-#> [1] "-- Total time for extarcting target table: 0.287866353988647 secs"
+#> [1] "-- all extracting characterization targets took: 0.0794453620910645 secs"
+#> [1] "-- Total time for extarcting target table: 0.248457670211792 secs"
 ```

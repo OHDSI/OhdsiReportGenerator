@@ -43,7 +43,6 @@ Other helper: [`addTarColumn()`](addTarColumn.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
 [`getOutcomeTable()`](getOutcomeTable.md),
 [`getTargetTable()`](getTargetTable.md),
-[`printReactable()`](printReactable.md),
 [`removeSpaces()`](removeSpaces.md)
 
 ## Examples

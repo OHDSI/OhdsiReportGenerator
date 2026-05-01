@@ -51,6 +51,7 @@ Input the data returned from 'getCharacterizationDemographics(type =
 Other Characterization:
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
+[`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
 [`getCaseCounts()`](getCaseCounts.md),
 [`getCaseTargetCounts()`](getCaseTargetCounts.md),
 [`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
@@ -68,7 +69,8 @@ Other Characterization:
 [`getTargetBinaryFeatures()`](getTargetBinaryFeatures.md),
 [`getTargetContinuousFeatures()`](getTargetContinuousFeatures.md),
 [`getTimeToEvent()`](getTimeToEvent.md),
-[`plotAgeDistributions()`](plotAgeDistributions.md)
+[`plotAgeDistributions()`](plotAgeDistributions.md),
+[`viewIncidenceRate()`](viewIncidenceRate.md)
 
 ## Examples
 

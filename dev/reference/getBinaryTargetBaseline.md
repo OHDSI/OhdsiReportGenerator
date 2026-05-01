@@ -1,20 +1,22 @@
-# Extract the binary age groups for the cases and targets
+# Extract the aggregate covariates for the target ids of interest
 
-This function extracts the age group feature extraction results for
-cases and targets corresponding to specified target and outcome cohorts.
+This function extracts the specified covariates for the specified
+targets
 
 ## Usage
 
 ``` r
-getCharacterizationDemographics(
+getBinaryTargetBaseline(
   connectionHandler,
   schema,
   cTablePrefix = "c_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
-  targetId = NULL,
-  outcomeId = NULL,
-  type = "age"
+  targetIds = NULL,
+  analysisIds = NULL,
+  covariateIds = NULL,
+  conceptIds = NULL,
+  databaseIds = NULL
 )
 ```
 
@@ -43,17 +45,25 @@ getCharacterizationDemographics(
   The name of the table with the database details (default
   'database_meta_data')
 
-- targetId:
+- targetIds:
 
-  An integer corresponding to the target cohort ID
+  A vector of integers corresponding to the target cohort IDs
 
-- outcomeId:
+- analysisIds:
 
-  Am integer corresponding to the outcome cohort ID
+  The analysisIds of the covariate to restrict results to
 
-- type:
+- covariateIds:
 
-  A character of 'age' or 'sex'
+  The covariateIds to restict results to
+
+- conceptIds:
+
+  The conceptIds of the covariate to restrict results to
+
+- databaseIds:
+
+  The databaseIds of the covariate to restrict results to
 
 ## Value
 
@@ -67,49 +77,34 @@ Returns a data.frame with the columns:
 
 - targetId the target cohort unique identifier
 
-- outcomeName the outcome name
+- minPriorObservation the
 
-- outcomeId the outcome unique identifier
+- limitToFirstINDays the
 
-- minPriorObservation the minimum required observation days prior to
-  index for an entry
+- covariateName the
 
-- outcomeWashoutDays patients with the outcome occurring within this
-  number of days prior to index are excluded (NA means no exclusion)
+- covariateId the
 
-- riskWindowStart the number of days ofset the start anchor that is the
-  start of the time-at-risk
+- analysisId the
 
-- startAnchor the start anchor is either the target cohort start or
-  cohort end date
+- sumValue the
 
-- riskWindowEnd the number of days ofset the end anchor that is the end
-  of the time-at-risk
-
-- endAnchor the end anchor is either the target cohort start or cohort
-  end date
-
-- covariateName the name of the feature
-
-- sumValue the number of cases who have the feature value of 1
-
-- averageValue the mean feature value
+- averageValue the
 
 ## Details
 
-Specify the connectionHandler, the schema and the target/outcome cohort
-IDs
+Specify the connectionHandler, the schema and the target cohort IDs
 
 ## See also
 
 Other Characterization:
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
-[`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
 [`getCaseCounts()`](getCaseCounts.md),
 [`getCaseTargetCounts()`](getCaseTargetCounts.md),
 [`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
 [`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),
+[`getCharacterizationDemographics()`](getCharacterizationDemographics.md),
 [`getCharacterizationOutcomes()`](getCharacterizationOutcomes.md),
 [`getCharacterizationTargets()`](getCharacterizationTargets.md),
 [`getContinuousCaseSeries()`](getContinuousCaseSeries.md),
@@ -129,15 +124,15 @@ Other Characterization:
 ## Examples
 
 ``` r
-# example code
-
 conDet <- getExampleConnectionDetails()
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #> Connecting using SQLite driver
 
-ageData <- getCharacterizationDemographics(
+btb <- getBinaryTargetBaseline(
 connectionHandler = connectionHandler, 
-schema = 'main'
+schema = 'main', 
+targetIds = 1
 )
+ 
 ```

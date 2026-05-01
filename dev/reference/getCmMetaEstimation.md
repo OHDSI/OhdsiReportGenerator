@@ -134,6 +134,7 @@ target/comparator/outcome cohort IDs
 ## See also
 
 Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
+[`.getSccsVersion()`](dot-getSccsVersion.md),
 [`getCMEstimation()`](getCMEstimation.md),
 [`getCmDiagnosticsData()`](getCmDiagnosticsData.md),
 [`getCmNegativeControlEstimates()`](getCmNegativeControlEstimates.md),

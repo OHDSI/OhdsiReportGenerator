@@ -12,14 +12,14 @@
 <url><loc>/dev/reference/createPredictionReport.html</loc></url>
 <url><loc>/dev/reference/createSccsIndexes.html</loc></url>
 <url><loc>/dev/reference/dot-getCmVersion.html</loc></url>
+<url><loc>/dev/reference/dot-getSccsVersion.html</loc></url>
 <url><loc>/dev/reference/formatBinaryCovariateName.html</loc></url>
 <url><loc>/dev/reference/generateFullReport.html</loc></url>
-<url><loc>/dev/reference/generatePresentation.html</loc></url>
-<url><loc>/dev/reference/generatePresentationMultiple.html</loc></url>
 <url><loc>/dev/reference/generateSummaryPredictionReport.html</loc></url>
 <url><loc>/dev/reference/getAnalysisCohorts.html</loc></url>
 <url><loc>/dev/reference/getBinaryCaseSeries.html</loc></url>
 <url><loc>/dev/reference/getBinaryRiskFactors.html</loc></url>
+<url><loc>/dev/reference/getBinaryTargetBaseline.html</loc></url>
 <url><loc>/dev/reference/getCMEstimation.html</loc></url>
 <url><loc>/dev/reference/getCaseCounts.html</loc></url>
 <url><loc>/dev/reference/getCaseTargetCounts.html</loc></url>
@@ -91,10 +91,10 @@
 <url><loc>/dev/reference/plotCmEstimates.html</loc></url>
 <url><loc>/dev/reference/plotSccsEstimates.html</loc></url>
 <url><loc>/dev/reference/plotSexDistributions.html</loc></url>
-<url><loc>/dev/reference/printReactable.html</loc></url>
 <url><loc>/dev/reference/processCohortDefinitionsForQuarto.html</loc></url>
 <url><loc>/dev/reference/processCohorts.html</loc></url>
 <url><loc>/dev/reference/removeSpaces.html</loc></url>
 <url><loc>/dev/reference/restrictCohortDefinitionsForQuarto.html</loc></url>
+<url><loc>/dev/reference/viewIncidenceRate.html</loc></url>
 </urlset>
 

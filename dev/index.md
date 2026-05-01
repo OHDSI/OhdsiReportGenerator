@@ -21,6 +21,7 @@ Download this repository and using RStudio, install the package. Then
 you can make use of the report generator by running:
 
 ``` r
+
 # Install OhdsiReportGenerator using remotes}
 install.packages('remotes')
 remotes::install_github('OHDSI/OhdsiReportGenerator')

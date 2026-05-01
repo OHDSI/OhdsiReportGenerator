@@ -1,17 +1,12 @@
-# A function to extract the outcomes found in cohort method
+# An internal function to determine the version of SCCS used to store results
 
-A function to extract the outcomes found in cohort method
+An internal function to determine the version of SCCS used to store
+results
 
 ## Usage
 
 ``` r
-getCmOutcomes(
-  connectionHandler,
-  schema,
-  cmTablePrefix = "cm_",
-  cgTablePrefix = "cg_",
-  targetId = NULL
-)
+.getSccsVersion(connectionHandler, schema, sccsTablePrefix = "sccs_")
 ```
 
 ## Arguments
@@ -26,34 +21,29 @@ getCmOutcomes(
 
   The result database schema (e.g., 'main' for sqlite)
 
-- cmTablePrefix:
-
-  The prefix used for the cohort method results tables
-
-- cgTablePrefix:
+- sccsTablePrefix:
 
   The prefix used for the cohort generator results tables
 
-- targetId:
-
-  An integer corresponding to the target cohort ID
-
 ## Value
 
-A data.frame with the cohort method outcome ids and names.
+A integer with the major version number of cohort method
 
 ## Details
 
-Specify the connectionHandler, the schema and the prefixes
+Specify the connectionHandler, the schema and the prefixes. This query
+will attempt to identify if SelfControlledCaseSeries v6.1.4 was used by
+inspecing the migration table. When the migration_order is \>= 3 then
+v6.1.4 of SelfControlledCaseSeries was used.
 
 ## See also
 
 Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
-[`.getSccsVersion()`](dot-getSccsVersion.md),
 [`getCMEstimation()`](getCMEstimation.md),
 [`getCmDiagnosticsData()`](getCmDiagnosticsData.md),
 [`getCmMetaEstimation()`](getCmMetaEstimation.md),
 [`getCmNegativeControlEstimates()`](getCmNegativeControlEstimates.md),
+[`getCmOutcomes()`](getCmOutcomes.md),
 [`getCmPropensityModel()`](getCmPropensityModel.md),
 [`getCmTable()`](getCmTable.md), [`getCmTargets()`](getCmTargets.md),
 [`getSccsDiagnosticsData()`](getSccsDiagnosticsData.md),
@@ -67,17 +57,3 @@ Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
 [`getSccsTimeToEvent()`](getSccsTimeToEvent.md),
 [`plotCmEstimates()`](plotCmEstimates.md),
 [`plotSccsEstimates()`](plotSccsEstimates.md)
-
-## Examples
-
-``` r
-conDet <- getExampleConnectionDetails()
-
-connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
-#> Connecting using SQLite driver
-
-outcomes <- getCmOutcomes(
-  connectionHandler = connectionHandler, 
-  schema = 'main'
-)
-```

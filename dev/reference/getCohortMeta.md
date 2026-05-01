@@ -74,5 +74,4 @@ cohortMeta <- getCohortMeta(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> Closing database connection
 ```

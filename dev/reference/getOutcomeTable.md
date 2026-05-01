@@ -154,7 +154,6 @@ Other helper: [`addTarColumn()`](addTarColumn.md),
 [`formatBinaryCovariateName()`](formatBinaryCovariateName.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
 [`getTargetTable()`](getTargetTable.md), [`kableDark()`](kableDark.md),
-[`printReactable()`](printReactable.md),
 [`removeSpaces()`](removeSpaces.md)
 
 ## Examples
@@ -169,11 +168,9 @@ outcomeTable <- getOutcomeTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
+#> [1] "Extracting characterization outcomes took: 0.0795712471008301 secs"
 #> Closing database connection
 #> Closing database connection
 #> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> [1] "Extracting characterization outcomes took: 0.125739574432373 secs"
-#> [1] "-- Total time for extarcting outcome table: 0.31521463394165 secs"
+#> [1] "-- Total time for extarcting outcome table: 0.272626876831055 secs"
 ```

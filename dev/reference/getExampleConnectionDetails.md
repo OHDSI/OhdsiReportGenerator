@@ -34,7 +34,6 @@ Other helper: [`addTarColumn()`](addTarColumn.md),
 [`formatBinaryCovariateName()`](formatBinaryCovariateName.md),
 [`getOutcomeTable()`](getOutcomeTable.md),
 [`getTargetTable()`](getTargetTable.md), [`kableDark()`](kableDark.md),
-[`printReactable()`](printReactable.md),
 [`removeSpaces()`](removeSpaces.md)
 
 ## Examples
