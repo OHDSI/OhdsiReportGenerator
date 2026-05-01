@@ -75,6 +75,7 @@ cs <- getBinaryCaseSeries(
 \seealso{
 Other Characterization: 
 \code{\link{getBinaryRiskFactors}()},
+\code{\link{getBinaryTargetBaseline}()},
 \code{\link{getCaseCounts}()},
 \code{\link{getCaseTargetCounts}()},
 \code{\link{getCharacterizationCohortBinary}()},
@@ -93,6 +94,7 @@ Other Characterization:
 \code{\link{getTargetContinuousFeatures}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},
-\code{\link{plotSexDistributions}()}
+\code{\link{plotSexDistributions}()},
+\code{\link{viewIncidenceRate}()}
 }
 \concept{Characterization}

@@ -42,7 +42,6 @@ Other helper:
 \code{\link{getExampleConnectionDetails}()},
 \code{\link{getOutcomeTable}()},
 \code{\link{getTargetTable}()},
-\code{\link{printReactable}()},
 \code{\link{removeSpaces}()}
 }
 \concept{helper}

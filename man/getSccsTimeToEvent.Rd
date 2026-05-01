@@ -64,6 +64,7 @@ getSccsTimeToEvent <- getSccsNegativeControlEstimates(
 \seealso{
 Other Estimation: 
 \code{\link{.getCmVersion}()},
+\code{\link{.getSccsVersion}()},
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},

@@ -49,8 +49,6 @@ performance of models developed across databases.
 \seealso{
 Other Reporting: 
 \code{\link{generateFullReport}()},
-\code{\link{generatePresentation}()},
-\code{\link{generatePresentationMultiple}()},
 \code{\link{generateSummaryPredictionReport}()}
 }
 \concept{Reporting}

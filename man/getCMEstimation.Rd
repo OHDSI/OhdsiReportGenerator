@@ -88,6 +88,7 @@ cmEst <- getCMEstimation(
 \seealso{
 Other Estimation: 
 \code{\link{.getCmVersion}()},
+\code{\link{.getSccsVersion}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
 \code{\link{getCmNegativeControlEstimates}()},

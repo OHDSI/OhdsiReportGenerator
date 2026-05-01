@@ -1021,6 +1021,106 @@ getDechallengeRechallenge <- function(
   return(result)
 }
 
+
+#' Extract the aggregate covariates for the target ids of interest
+#' @description
+#' This function extracts the specified covariates for the specified targets
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @template targetIds
+#' @param analysisIds The analysisIds of the covariate to restrict results to
+#' @param covariateIds The covariateIds to restict results to
+#' @param conceptIds The conceptIds of the covariate to restrict results to
+#' @param databaseIds The databaseIds of the covariate to restrict results to
+#' @family Characterization
+#' @return
+#' Returns a data.frame with the columns:
+#' \itemize{
+#'  \item{databaseName the name of the database}
+#'  \item{databaseId the unique identifier of the database}
+#'  \item{targetName the target cohort name}
+#'  \item{targetId the target cohort unique identifier}
+#'  \item{minPriorObservation the }
+#'  \item{limitToFirstINDays the }
+#'  \item{covariateName the }
+#'  \item{covariateId the }
+#'  \item{analysisId the }
+#'  \item{sumValue the }
+#'  \item{averageValue the }
+#'  } 
+#' 
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' btb <- getBinaryTargetBaseline(
+#' connectionHandler = connectionHandler, 
+#' schema = 'main', 
+#' targetIds = 1
+#' )
+#'  
+getBinaryTargetBaseline <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    targetIds = NULL,
+    analysisIds = NULL,
+    covariateIds = NULL,
+    conceptIds = NULL,
+    databaseIds = NULL
+){
+  
+  cVersion <- .getCVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = cTablePrefix
+  )
+  
+  if(cVersion == 0){
+    message('Function not available with result version')
+    return(NULL)
+  }
+  
+  # add code here
+  sql <- SqlRender::readSql(system.file(
+    paste0("sql/sql_server/characterization/getBinaryTargetBaselineV",cVersion,".sql"),
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
+  
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    target_ids = paste0(targetIds, collapse = ','),
+    use_targets = !is.null(targetIds),
+    covariate_ids = paste0(covariateIds, collapse = ','),
+    use_covariate = !is.null(covariateIds),
+    analysis_ids = paste0(analysisIds, collapse = ','),
+    use_analysis = !is.null(analysisIds),
+    concept_ids = paste0(conceptIds, collapse = ','),
+    use_concept = !is.null(conceptIds),
+    database_ids = paste0(databaseIds, collapse = ','),
+    use_database = !is.null(databaseIds),
+    c_table_prefix = cTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    database_table = databaseTable
+  )
+  
+  return(result)
+}
+
 #' Extract the target cohort counts result
 #' @description
 #' This function extracts target cohort counts across databases in the results for specified target and outcome cohorts.

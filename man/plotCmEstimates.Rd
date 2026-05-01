@@ -4,14 +4,25 @@
 \alias{plotCmEstimates}
 \title{Plots the cohort method results for one analysis}
 \usage{
-plotCmEstimates(cmData, cmMeta = NULL, cohortNames = NULL, selectedAnalysisId)
+plotCmEstimates(
+  cmData,
+  cmDiagnostics = NULL,
+  cmMeta = NULL,
+  cohortNames = NULL,
+  includeCounts = TRUE,
+  selectedAnalysisId = NULL
+)
 }
 \arguments{
 \item{cmData}{The cohort method data}
 
+\item{cmDiagnostics}{(optional) The cohort method diagnostic data}
+
 \item{cmMeta}{(optional) The cohort method evidence synthesis data}
 
 \item{cohortNames}{A data.frame with columns cohortId and cohortName}
+
+\item{includeCounts}{Whether to include the target/comp size and event counts}
 
 \item{selectedAnalysisId}{The analysis ID of interest to plot}
 }
@@ -45,6 +56,7 @@ plotCmEstimates(
 \seealso{
 Other Estimation: 
 \code{\link{.getCmVersion}()},
+\code{\link{.getSccsVersion}()},
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
