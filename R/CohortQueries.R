@@ -610,18 +610,22 @@ processCohortDefinitionsForQuarto <- function(
 ){
   
   # 1) add the friendly names 
-  cohortDefinitions <- 
-    merge(
-      cohortDefinitions,
-      data.frame(
-        cohortId = friendlyCohortIds,
-        friendlyName = friendlyCohortNames
-      ), 
-      by.x = 'subsetParent', 
-      by.y = 'cohortId', 
-      all.x = TRUE 
-    )
-  cohortDefinitions$friendlyName[is.na(cohortDefinitions$friendlyName)] <- cohortDefinitions$cohortName[is.na(cohortDefinitions$friendlyName)]
+  if(!is.null(friendlyCohortIds)){
+    cohortDefinitions <- 
+      merge(
+        cohortDefinitions,
+        data.frame(
+          cohortId = friendlyCohortIds,
+          friendlyName = friendlyCohortNames
+        ), 
+        by.x = 'subsetParent', 
+        by.y = 'cohortId', 
+        all.x = TRUE 
+      )
+    cohortDefinitions$friendlyName[is.na(cohortDefinitions$friendlyName)] <- cohortDefinitions$cohortName[is.na(cohortDefinitions$friendlyName)]
+  } else{
+    cohortDefinitions$friendlyName <- cohortDefinitions$cohortName
+  }
   
   # 2) add friendly subset logic text
   # add subset text for the subsetDefinitionJson

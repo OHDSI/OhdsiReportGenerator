@@ -180,7 +180,7 @@ if(!is.null(genderData) & stratification == 'overall'){
   if(stratification == 'overall'){
     x <- x %>% 
       dplyr::mutate(
-        type = ' '
+        type = ''
       )
   } else if(stratification == 'age'){
     x <- x %>% 
@@ -235,9 +235,19 @@ if(!is.null(genderData) & stratification == 'overall'){
       decimals = 3
     ) %>%
    gt::fmt_number(
-     columns = c('personsAtRisk', 'outcomes','meanFollowUp'),
+     columns = c('meanFollowUp'),
      sep_mark = ',',
      decimals = 0
+   ) %>%
+   gt::fmt(
+     columns = c('personsAtRisk', 'outcomes'),
+     fns = function(x){ 
+       x <- sprintf("%.0f", x)
+       if(sum(x < 0) > 0){ 
+         x[x < 0] <- paste('<', abs(x[x < 0]))
+       }
+       return(x)
+     }
    ) %>%
     gt::cols_label(
       incidenceProportionP100p =  gt::md("**Proportion per 100 persons**"),
