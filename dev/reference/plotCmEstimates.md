@@ -94,7 +94,5 @@ plotCmEstimates(
 #> footnote_col will be deprecated, use footnote_gp instead.
 #> $`Celecoxib - first event with 365 prior obs first event with 365 prior obs-GI bleed-NA`
 
-#> Closing database connection
-#> Closing database connection
 #> 
 ```

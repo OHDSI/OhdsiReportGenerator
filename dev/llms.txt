@@ -22,6 +22,7 @@ you can make use of the report generator by running:
 
 ``` r
 
+
 # Install OhdsiReportGenerator using remotes}
 install.packages('remotes')
 remotes::install_github('OHDSI/OhdsiReportGenerator')
@@ -34,36 +35,29 @@ conDet <- OhdsiReportGenerator:::getExampleConnectionDetails()
 
 # render a quarto template report with the results in the 
 # example database for targetId 1 and outcomeId 3.
-generatePresentation(
+generateFullReport( 
   server = conDet$server(),
   username = conDet$user(),
   password = conDet$password(),
   dbms = conDet$dbms,
   resultsSchema = 'main',
-  dbDetails = NULL,
-  lead = 'John Doe',
-  team = 'name 1, name 2',
-  trigger = 'A signal was found in spontaneous reports',
-  safetyQuestion = '',
-  objective = '',
-  date = as.character(Sys.Date()),
+  
   targetId = 1,
   outcomeIds = 3,
+  comparatorIds = NULL,
+  indicationIds = NULL,
+  restrictTargetToIndications = FALSE,
+  
   cohortNames = c('target','outcome'),
   cohortIds = c(1,3),
-  covariateIds = NULL,
-  details = list(
-    studyPeriod = 'All Time',
-    restrictions = "Age - None"
-  ),
-  evaluationText = '',
+  
   includeCI = TRUE,
   includeCharacterization = TRUE,
-  includeCM = TRUE,
-  includeSCCS = TRUE,
-  includePLP = FALSE,
+  includeCohortMethod = TRUE,
+  includeSccs = TRUE,
+  includePrediction = FALSE,
   outputLocation = file.path(getwd(), "extras/reportTest"),
-  outputName = paste0('presentation_', gsub(':', '_',gsub(' ','_',as.character(date()))),'.html')
+  outputName = paste0('report_', gsub(':', '_',gsub(' ','_',as.character(date()))),'.html'),
   intermediateDir = tempdir()
 )
 ```

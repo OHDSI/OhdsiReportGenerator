@@ -110,5 +110,5 @@ cohorts <- getCharacterizationOutcomes(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "Extracting characterization outcomes took: 0.0947592258453369 secs"
+#> [1] "Extracting characterization outcomes took: 0.105073690414429 secs"
 ```
