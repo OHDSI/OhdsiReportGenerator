@@ -9,10 +9,12 @@ ANALYZE @schema.@c_table_prefixattrition;
 
 CREATE INDEX IF NOT EXISTS c_ts_target ON @schema.@c_table_prefixtarget_settings(target_id);
 CREATE INDEX IF NOT EXISTS c_ts_db_set_target ON @schema.@c_table_prefixtarget_settings(database_id, setting_id, characterization_target_id);
+CREATE INDEX IF NOT EXISTS c_ts_char_target ON @schema.@c_table_prefixtarget_settings (characterization_target_id, target_id);
 ANALYZE @schema.@c_table_prefixtarget_settings;
 
 CREATE INDEX IF NOT EXISTS c_cs_outcome ON @schema.@c_table_prefixcase_settings(outcome_id);
 CREATE INDEX IF NOT EXISTS c_cs_db_set_case ON @schema.@c_table_prefixcase_settings(database_id, setting_id, characterization_case_id);
+CREATE INDEX IF NOT EXISTS c_cs_runtype_target ON @schema.@c_table_prefixcase_settings (runtype, characterization_target_id);
 ANALYZE @schema.@c_table_prefixcase_settings;
 
 CREATE INDEX IF NOT EXISTS c_tc_db_set_target ON @schema.@c_table_prefixtarget_covariates(database_id, setting_id, characterization_target_id);
