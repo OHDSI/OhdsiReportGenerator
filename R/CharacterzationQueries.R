@@ -602,7 +602,8 @@ getCharacterizationOutcomes <- function(
       outcomes <- merge(
         x = outcomes,
         y = outcomeDetails, 
-        by = 'cohortDefinitionId'
+        by = 'cohortDefinitionId', 
+        all.x = TRUE
       )
     }
     
