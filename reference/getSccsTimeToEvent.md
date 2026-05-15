@@ -112,4 +112,5 @@ getSccsTimeToEvent <- getSccsNegativeControlEstimates(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
+#> Closing database connection
 ```

@@ -112,7 +112,6 @@ viewIncidenceRate(
   genderData = genderData
   )
 #> Closing database connection
-#> Closing database connection
 
 
   
