@@ -115,7 +115,7 @@ for(description in descriptions){
   cmIds <- unique(cohortMethodDiagnosticsTemp[,c('targetId', 'outcomeId')])
   
   for(cmInd in 1:nrow(cmIds)){
-    print(htmltools::tagList(cohortMethodDiagnostics %>% 
+   cat(gt::as_raw_html(cohortMethodDiagnostics %>% 
                            dplyr::filter(.data$description == !!description) %>%
                            dplyr::filter(.data$targetId == !!cmIds$targetId[cmInd]) %>%
                            dplyr::filter(.data$outcomeId == !!cmIds$outcomeId[cmInd]) %>%
@@ -184,7 +184,7 @@ if(includeCohortMethod){
   
   # add Evidence synth if the results exist
   if(!is.null(cohortMethodES)){
-    cohortMethodResults <- dplyr::bind_rows(cohortMethodResults, cohortMethodES)
+    cohortMethodResults <- dplyr::bind_rows(cmResults, cohortMethodES)
   } 
 
 tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId', 'subsetText')]
@@ -212,16 +212,16 @@ for(description in descriptions){
   cmIds <- unique(cohortMethodResultsTemp[,c('targetId', 'outcomeId')])
   
   for(cmInd in 1:nrow(cmIds)){
-    print(htmltools::tagList(cohortMethodResults %>% 
+    cat(gt::as_raw_html(cohortMethodResults %>% 
                            dplyr::filter(.data$description == !!description) %>%
                            dplyr::filter(.data$targetId == !!cmIds$targetId[cmInd]) %>%
                            dplyr::filter(.data$outcomeId == !!cmIds$outcomeId[cmInd]) %>% 
-                           dplyr::select("databaseName","subsetTextTarget", #"description",
-                                         "friendlyNameComp", "indicationName",
-                                         #"friendlyNameOutcome","friendlyNameTarget", 
+                           dplyr::select("databaseName","subsetTextTarget",
+                                         "friendlyNameComp", "indicationName", 
                                          "targetSubjects", "comparatorSubjects",
                                          "targetOutcomes", "comparatorOutcomes",
-                                         "calibratedRr", "calibratedCi95Lb", "calibratedP","calibratedOneSidedP")%>%
+                                         "calibratedRr", "calibratedCi95Lb",
+                                         "calibratedP","calibratedOneSidedP")%>%
                            dplyr::group_by(
                              .data$friendlyNameComp,
                              .data$subsetTextTarget,
@@ -285,6 +285,43 @@ for(description in descriptions){
 ```
 
 
+### Active Comparator New User Design Plots
+```{r}
+#| label: cohort_method_plots
+#| echo: false
+#| results: 'asis'
+#| fig-width: 13
+#| out-width: "100%"
+#| fig-align: "center"
+
+if(includeCohortMethod){
+  
+  analysisIds <- unique(cmResults$analysisId)
+  
+  for(analysisId in analysisIds){
+  
+    plots <- OhdsiReportGenerator::plotCmEstimates(
+              cmData = cmResults, 
+              cmDiagnostics = cohortMethodDiagnostics, 
+              cmMeta = cohortMethodES, 
+              includeCounts = TRUE, 
+              selectedAnalysisId = analysisId
+              )
+    
+    for(i in 1:length(plots)){
+      cat('\n\n::: {.callout-note collapse="true"}\n')
+      cat(paste0('## ', names(plots)[i], '\n\n'))
+      print(plots[[i]])
+      cat('\n:::\n')
+    }
+    
+  }
+
+  
+}
+```
+
+
 ### Self-Controlled Case Series Design Diagnostics
 ```{r}
 #| label: sccs_diagnostics
@@ -312,7 +349,7 @@ sccsDiagnostics <- merge(sccsDiagnostics,
 sccsIds <- unique(sccsDiagnostics[,c('targetId', 'outcomeId')])
 
 for(sccsInd in 1:nrow(sccsIds)){
-  print(htmltools::tagList(sccsDiagnostics %>% 
+  cat(gt::as_raw_html(sccsDiagnostics %>% 
                          dplyr::filter(.data$targetId == !!sccsIds$targetId[sccsInd]) %>%
                          dplyr::filter(.data$outcomeId == !!sccsIds$outcomeId[sccsInd]) %>%
                          dplyr::select("databaseName", "subsetTextTarget", "description","friendlyNameIndication",
@@ -375,29 +412,31 @@ for(sccsInd in 1:nrow(sccsIds)){
 if(includeSccs){
   # add evidence synth results exist
   if(!is.null(sccsES)){
-    sccsResults <- dplyr::bind_rows(sccsResults, sccsES)
+    sccsCombined <- dplyr::bind_rows(sccsResults, sccsES)
+  } else{
+    sccsCombined <- sccsResults
   }
 
 tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId', 'subsetText')]
 colnames(tempDf) <- paste0(colnames(tempDf), 'Target')
-sccsResults <- merge(sccsResults, 
+sccsCombined <- merge(sccsCombined, 
                      tempDf, by.x = 'targetId', by.y = 'cohortDefinitionIdTarget')
 tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
 colnames(tempDf) <- paste0(colnames(tempDf), 'Outcome')
-sccsResults <- merge(sccsResults, 
+sccsCombined <- merge(sccsCombined, 
                      tempDf, by.x = 'outcomeId', by.y = 'cohortDefinitionIdOutcome')
 
 # join by "indicationId" to add friendlyNameIndication
 tempDf <- cohortDefinitions[, c("friendlyName", 'cohortDefinitionId')]
 colnames(tempDf) <- paste0(colnames(tempDf), 'Indication')
-sccsResults <- merge(sccsResults, 
+sccsCombined <- merge(sccsCombined, 
                      tempDf, by.x = 'indicationId', by.y = 'cohortDefinitionIdIndication', all.x = TRUE)
 
 
-sccsIds <- unique(sccsResults[,c('targetId', 'outcomeId')])
+sccsIds <- unique(sccsCombined[,c('targetId', 'outcomeId')])
 
 for(sccsInd in 1:nrow(sccsIds)){
-  print(htmltools::tagList(sccsResults %>% 
+  cat(gt::as_raw_html(sccsCombined %>% 
                          dplyr::filter(.data$targetId == !!sccsIds$targetId[sccsInd]) %>%
                          dplyr::filter(.data$outcomeId == !!sccsIds$outcomeId[sccsInd]) %>%
                          dplyr::select("databaseName","subsetTextTarget", "description",
@@ -464,5 +503,42 @@ for(sccsInd in 1:nrow(sccsIds)){
 
 }
 
+```
+
+
+### Self-Controlled Case Series Design Plots
+```{r}
+#| label: sccs_plots
+#| echo: false
+#| results: 'asis'
+#| fig-width: 13
+#| out-width: "100%"
+#| fig-align: "center"
+
+if(includeSccs){
+  
+  analysisIds <- unique(sccsResults$analysisId)
+  
+  for(analysisId in analysisIds){
+  
+    plots <- OhdsiReportGenerator::plotSccsEstimates(
+              sccsData = sccsResults, 
+              sccsDiagnostics = sccsDiagnostics, 
+              sccsMeta = sccsES, 
+              includeCounts = TRUE, 
+              selectedAnalysisId = analysisId
+              )
+    
+    for(i in 1:length(plots)){
+      cat('\n\n::: {.callout-note collapse="true"}\n')
+      cat(paste0('## ', names(plots)[i], '\n\n'))
+      print(plots[[i]])
+      cat('\n:::\n')
+    }
+    
+  }
+
+  
+}
 ```
 

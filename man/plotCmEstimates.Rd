@@ -6,20 +6,23 @@
 \usage{
 plotCmEstimates(
   cmData,
+  cmDiagnostics = NULL,
   cmMeta = NULL,
-  targetName,
-  comparatorName,
-  selectedAnalysisId
+  cohortNames = NULL,
+  includeCounts = TRUE,
+  selectedAnalysisId = NULL
 )
 }
 \arguments{
 \item{cmData}{The cohort method data}
 
+\item{cmDiagnostics}{(optional) The cohort method diagnostic data}
+
 \item{cmMeta}{(optional) The cohort method evidence synthesis data}
 
-\item{targetName}{A friendly name for the target cohort}
+\item{cohortNames}{A data.frame with columns cohortId and cohortName}
 
-\item{comparatorName}{A friendly name for the comparator cohort}
+\item{includeCounts}{Whether to include the target/comp size and event counts}
 
 \item{selectedAnalysisId}{The analysis ID of interest to plot}
 }
@@ -40,14 +43,12 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 cmEst <- getCMEstimation(
   connectionHandler = connectionHandler, 
   schema = 'main',
-  targetIds = 1,
+  targetIds = 1002,
   outcomeIds = 3
 )
 plotCmEstimates(
   cmData = cmEst, 
   cmMeta = NULL, 
-  targetName = 'target', 
-  comparatorName = 'comp', 
   selectedAnalysisId = 1
 )
 
@@ -55,6 +56,7 @@ plotCmEstimates(
 \seealso{
 Other Estimation: 
 \code{\link{.getCmVersion}()},
+\code{\link{.getSccsVersion}()},
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},

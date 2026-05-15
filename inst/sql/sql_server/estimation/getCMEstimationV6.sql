@@ -8,7 +8,7 @@ SELECT db.cdm_source_abbreviation AS database_name
 	,c2.cohort_name AS comparator_name
 	,tc.comparator_id
 	,c4.cohort_name AS indication_name
-	,tc.nesting_cohort_id AS indication_id
+	,ISNULL(tc.nesting_cohort_id,0) AS indication_id
 	,c3.cohort_name AS outcome_name
 	,r.outcome_id
 	,CASE 
@@ -69,6 +69,9 @@ INNER JOIN @schema.@cg_table_prefixcohort_definition AS c2 ON c2.cohort_definiti
 INNER JOIN @schema.@cg_table_prefixcohort_definition AS c3 ON c3.cohort_definition_id = r.outcome_id
 LEFT JOIN @schema.@cg_table_prefixcohort_definition AS c4 ON c4.cohort_definition_id = tc.nesting_cohort_id
 INNER JOIN @schema.@cm_table_prefixanalysis AS a ON a.analysis_id = r.analysis_id
-WHERE tco.outcome_of_interest = 1 {@restrict_target} ? {
-	AND tc.target_id IN (@target_id) } {@restrict_outcome} ? {and r.outcome_id IN (@outcome_id) } {@restrict_comparator} ? {
-	AND tc.comparator_id IN (@comparator_id) };
+WHERE tco.outcome_of_interest = 1 
+{@restrict_target} ? { AND tc.target_id IN (@target_id) } 
+{@restrict_outcome} ? {AND r.outcome_id IN (@outcome_id) } 
+{@restrict_comparator} ? {AND tc.comparator_id IN (@comparator_id) }
+{@restrict_indication} ? {AND ISNULL(tc.nesting_cohort_id,0) IN (@indication_id) }
+;

@@ -97,8 +97,6 @@ to generate the full report.
 \seealso{
 Other Reporting: 
 \code{\link{createPredictionReport}()},
-\code{\link{generatePresentation}()},
-\code{\link{generatePresentationMultiple}()},
 \code{\link{generateSummaryPredictionReport}()}
 }
 \concept{Reporting}

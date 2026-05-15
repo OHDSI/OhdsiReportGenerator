@@ -192,6 +192,7 @@ getCmOutcomes <- function(
 #' @template databaseTable
 #' @template targetIds
 #' @template outcomeIds
+#' @param indicationIds A vector of cohort ids for the indication (nesting id) to restrict to
 #' @template comparatorIds
 #' @family Estimation
 #' @return
@@ -246,6 +247,7 @@ getCMEstimation <- function(
     databaseTable = 'database_meta_data',
     targetIds = NULL,
     outcomeIds = NULL,
+    indicationIds = NULL,
     comparatorIds = NULL
 ){
   cmVersion <- .getCmVersion(
@@ -272,6 +274,8 @@ getCMEstimation <- function(
     restrict_outcome = !is.null(outcomeIds),
     target_id = paste0(targetIds, collapse = ','),
     restrict_target = !is.null(targetIds),
+    indication_id = paste0(indicationIds, collapse = ','),
+    restrict_indication = !is.null(indicationIds),
     comparator_id = paste(comparatorIds, collapse = ','),
     restrict_comparator = !is.null(comparatorIds)
   )
@@ -294,6 +298,7 @@ getCMEstimation <- function(
 #' @template databaseTable
 #' @template targetIds
 #' @template outcomeIds
+#' @param indicationIds A vector of cohort ids for the indication (nesting id) to restrict to
 #' @template comparatorIds
 #' @param analysisIds An optional vector of analysisIds to filter to
 #' @param databaseIds An optional vector of databaseIds to filter to
@@ -350,6 +355,7 @@ getCmDiagnosticsData <- function(
     targetIds = NULL,
     outcomeIds = NULL,
     comparatorIds = NULL,
+    indicationIds = NULL,
     analysisIds = NULL,
     databaseIds = NULL
 ){
@@ -379,6 +385,9 @@ getCmDiagnosticsData <- function(
     use_comparator = !is.null(comparatorIds),
     outcomes = paste0(outcomeIds, collapse = ','),
     use_outcome = !is.null(outcomeIds),
+    
+    indication_ids = paste0(indicationIds, collapse = ','),
+    use_indication = !is.null(indicationIds),
 
     database_ids = paste0("'",databaseIds,"'", collapse = ','),
     use_database = !is.null(databaseIds),
@@ -422,6 +431,7 @@ getCmDiagnosticsData <- function(
 #' @template esTablePrefix
 #' @template targetIds
 #' @template outcomeIds
+#' @param indicationIds A vector of cohort ids for the indication (nesting id) to restrict to
 #' @template comparatorIds
 #' @param includeOneSidedP This lets you extract from older results that do not have the one sided p by setting this to FALSE
 #' @family Estimation
@@ -477,6 +487,7 @@ getCmMetaEstimation <- function(
     esTablePrefix = 'es_',
     targetIds = NULL,
     outcomeIds = NULL,
+    indicationIds = NULL,
     comparatorIds = NULL,
     includeOneSidedP = TRUE
 ){
@@ -504,6 +515,8 @@ getCmMetaEstimation <- function(
     include_target = !is.null(targetIds),
     outcome_id = paste0(outcomeIds, collapse = ','),
     include_outcome = !is.null(outcomeIds),
+    indication_id = paste0(indicationIds, collapse = ','),
+    include_indication = !is.null(indicationIds),
     comparator_id = paste0(comparatorIds, collapse = ','),
     include_comparator = !is.null(comparatorIds),
     include_one_sided_p = includeOneSidedP
@@ -791,6 +804,56 @@ getCmPropensityModel <- function(
     dplyr::arrange(dplyr::desc(abs(.data$coefficient)))
   
   return(model)
+}
+
+
+#' An internal function to determine the version of SCCS used 
+#' to store results
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the prefixes. This
+#' query will attempt to identify if SelfControlledCaseSeries v6.1.4 was used by 
+#' inspecing the migration table. When the migration_order is >= 3
+#' then v6.1.4 of SelfControlledCaseSeries was used.
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template sccsTablePrefix
+#' @family Estimation
+#' 
+#' @return
+#' A integer with the major version number of cohort method
+#'
+.getSccsVersion <- function(
+    connectionHandler,
+    schema,
+    sccsTablePrefix = 'sccs_'
+){
+  version <- 0 # Default to v0
+  tryCatch(
+    {
+      sql <- "
+      SELECT MAX(migration_order) max_migration_order
+      FROM @schema.@sccs_table_prefixmigration
+      ;"
+      
+      maxMigrationOrder <- connectionHandler$queryDb(
+        sql = sql,
+        schema = schema,
+        sccs_table_prefix = sccsTablePrefix
+      ) %>%
+        dplyr::pull(maxMigrationOrder) %>%
+        dplyr::first()
+      if (maxMigrationOrder >= 3) {
+        version <- '6_1_4'
+      }
+    },
+    error = function(e) {
+      # Do nothing - most likely the migration table does not exist so assume
+      # older SCCS
+    }
+  )
+  return(version)
 }
 
 #' A function to extract the targets found in self controlled case series
@@ -1231,61 +1294,22 @@ getSccsDiagnosticsData <- function(
     targetIds = NULL,
     outcomeIds = NULL
 ) {
+  
+ sccsVersion <- .getSccsVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    sccsTablePrefix = sccsTablePrefix
+  )
+  
+  sql <- SqlRender::readSql(
+    sourceFile = system.file(
+      paste0("sql/sql_server/estimation/getSccsMetaEstimationV",sccsVersion,".sql"),
+      package = "OhdsiReportGenerator",
+      mustWork = TRUE
+    )
+  )
 
-  sql <- "
-  SELECT 
-  d.cdm_source_abbreviation as database_name,
-  d.database_id as database_id,
-  a.analysis_id,
-  a.description,
-  c2.cohort_name as target_name,
-  cov.era_id as target_id,
-  c.cohort_name as outcome_name,
-  eos.outcome_id,
-  cg3.cohort_name as indication_name,
-  eos.nesting_cohort_id as indication_id,
-  cov.covariate_name,
-  ds.*
-  
-  FROM @schema.@sccs_table_prefixdiagnostics_summary ds
-            inner join
-  @schema.@sccs_table_prefixexposures_outcome_set eos
-  on ds.exposures_outcome_set_id = eos.exposures_outcome_set_id
-     inner join
-   @schema.@cg_table_prefixcohort_definition as c
-   on c.cohort_definition_id = eos.outcome_id
-   
-   INNER JOIN
-  @schema.@database_table d
-  on d.database_id = ds.database_id
-  
-  INNER JOIN
-  @schema.@sccs_table_prefixanalysis a
-  on a.analysis_id = ds.analysis_id
-  
-  INNER JOIN
-  @schema.@sccs_table_prefixcovariate cov
-  on cov.covariate_id = ds.covariate_id and 
-  cov.exposures_outcome_set_id = ds.exposures_outcome_set_id and
-  cov.analysis_id = ds.analysis_id and
-  cov.database_id = ds.database_id
-  
-   inner join
-   @schema.@cg_table_prefixcohort_definition as c2
-   on cov.era_id = c2.cohort_definition_id
-   
-   left join
-   @schema.@cg_table_prefixcohort_definition as cg3
-   on eos.nesting_cohort_id = cg3.cohort_definition_id
-   
-   
-   where
-   1 = 1
-   {@restrict_target}?{and c2.cohort_definition_id in (@target_ids)}
-   {@restrict_outcome}?{and c.cohort_definition_id in (@outcome_ids)}
-  ;
-  "
-  
+
   result <- connectionHandler$queryDb(
     sql = sql,
     schema = schema,
@@ -1407,6 +1431,16 @@ getSccsMetaEstimation <- function(
     includeOneSidedP = TRUE
 ) {
 
+  # figure out if PI cols exist
+  sql <- "SELECT * from @schema.@es_table_prefixsccs_result
+          WHERE exposures_outcome_set_id = 0;"
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    es_table_prefix = esTablePrefix
+  )
+  piCols <- 'pi95Lb' %in% colnames(result)
+  
   sql <- "select distinct
     ev.evidence_synthesis_description as database_name, 
     r.analysis_id, 
@@ -1428,15 +1462,23 @@ getSccsMetaEstimation <- function(
   r.covariate_outcomes,
   r.observed_days,
   
-  r.calibrated_rr, 
-  r.calibrated_ci_95_lb, 
-  r.calibrated_ci_95_ub,  
-  r.calibrated_p,
-  {@include_one_sided_p}?{r.calibrated_one_sided_p,}
-  r.calibrated_log_rr, 
-  r.calibrated_se_log_rr,
+  CASE WHEN unblind.unblind = 1 THEN r.calibrated_rr ELSE NULL END calibrated_rr,
+  CASE WHEN unblind.unblind = 1 THEN r.calibrated_ci_95_lb ELSE NULL END calibrated_ci_95_lb,
+  CASE WHEN unblind.unblind = 1 THEN r.calibrated_ci_95_ub ELSE NULL END calibrated_ci_95_ub,
+  CASE WHEN unblind.unblind = 1 THEN r.calibrated_p ELSE NULL END calibrated_p,
+  {@include_one_sided_p}?{CASE WHEN unblind.unblind = 1 THEN r.calibrated_one_sided_p ELSE NULL END calibrated_one_sided_p,}
   
-  r.n_databases
+  CASE WHEN unblind.unblind = 1 THEN r.calibrated_log_rr ELSE NULL END calibrated_log_rr,
+  CASE WHEN unblind.unblind = 1 THEN r.calibrated_se_log_rr ELSE NULL END calibrated_se_log_rr,
+  
+  r.n_databases,
+  
+  {@pi_cols}?{CASE WHEN unblind.unblind = 1 THEN r.pi_95_lb ELSE NULL END pi_95_lb,}:{NULL as pi_95_lb,}
+	{@pi_cols}?{CASE WHEN unblind.unblind = 1 THEN r.pi_95_ub ELSE NULL END pi_95_ub,}:{NULL as pi_95_ub,}
+	{@pi_cols}?{CASE WHEN unblind.unblind = 1 THEN r.calibrated_pi_95_lb ELSE NULL END calibrated_pi_95_lb,}:{NULL as calibrated_pi_95_lb,}
+	{@pi_cols}?{CASE WHEN unblind.unblind = 1 THEN r.calibrated_pi_95_ub ELSE NULL END calibrated_pi_95_ub,}:{NULL as calibrated_pi_95_ub,}
+	unblind.tau,
+	unblind.i_2
   
   from 
    @schema.@es_table_prefixsccs_result as r
@@ -1488,12 +1530,11 @@ getSccsMetaEstimation <- function(
    on eos.nesting_cohort_id = cg3.cohort_definition_id
    
    where 
-   r.calibrated_rr != 0 and
-   --ex.true_effect_size != 1 and
-   cov.covariate_name in ('Main', 'Second dose') and
-   unblind.unblind = 1
-   {@include_target}?{and cov.era_id in (@target_id)}
-   {@include_outcome}?{and eos.outcome_id in(@outcome_id)}
+   r.calibrated_rr != 0
+   --AND ex.true_effect_size != 1
+   AND cov.covariate_name in ('Main', 'Second dose') 
+   {@include_target}?{AND cov.era_id in (@target_id)}
+   {@include_outcome}?{AND eos.outcome_id in(@outcome_id)}
   ;"  
   
   result <- connectionHandler$queryDb(
@@ -1506,7 +1547,8 @@ getSccsMetaEstimation <- function(
     include_target = !is.null(targetIds),
     outcome_id = paste0(outcomeIds, collapse = ','),
     include_outcome = !is.null(outcomeIds),
-    include_one_sided_p = includeOneSidedP
+    include_one_sided_p = includeOneSidedP,
+    pi_cols = piCols
   )
   
   return(result)

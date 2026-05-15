@@ -12,6 +12,7 @@ getCMEstimation(
   databaseTable = "database_meta_data",
   targetIds = NULL,
   outcomeIds = NULL,
+  indicationIds = NULL,
   comparatorIds = NULL
 )
 }
@@ -29,6 +30,8 @@ getCMEstimation(
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
+
+\item{indicationIds}{A vector of cohort ids for the indication (nesting id) to restrict to}
 
 \item{comparatorIds}{A vector of integers corresponding to the comparator cohort IDs}
 }
@@ -85,6 +88,7 @@ cmEst <- getCMEstimation(
 \seealso{
 Other Estimation: 
 \code{\link{.getCmVersion}()},
+\code{\link{.getSccsVersion}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},
 \code{\link{getCmNegativeControlEstimates}()},

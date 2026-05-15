@@ -62,6 +62,7 @@ cohorts <- getCharacterizationTargets(
 Other Characterization: 
 \code{\link{getBinaryCaseSeries}()},
 \code{\link{getBinaryRiskFactors}()},
+\code{\link{getBinaryTargetBaseline}()},
 \code{\link{getCaseCounts}()},
 \code{\link{getCaseTargetCounts}()},
 \code{\link{getCharacterizationCohortBinary}()},
@@ -79,6 +80,7 @@ Other Characterization:
 \code{\link{getTargetContinuousFeatures}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},
-\code{\link{plotSexDistributions}()}
+\code{\link{plotSexDistributions}()},
+\code{\link{viewIncidenceRate}()}
 }
 \concept{Characterization}

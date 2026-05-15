@@ -24,7 +24,7 @@ getCohortSubsetAttrition(
 \item{cohortIds}{Optional vector of cohort IDs to filter.}
 }
 \value{
-A tibble with attrition details for each cohort subset.
+A data.frame with attrition details for each cohort subset.
 }
 \description{
 Retrieves attrition information for specified cohort subsets from the database.

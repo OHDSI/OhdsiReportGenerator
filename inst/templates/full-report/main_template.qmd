@@ -1,6 +1,12 @@
 ---
 title: "ASSURE Full Report"
-format: html
+format:
+  html:
+    page-layout: full
+    toc-location: right
+    grid:
+      sidebar-width: 0px
+      body-width: 1200px
 self-contained: true
 toc: true
 toc-depth: 4
@@ -46,6 +52,8 @@ params:
 
 library(dplyr)
 
+# note: the targetName and outcomeName below currently requires
+# specifying friendly names
 targetName <- params$cohortNames[params$cohortIds == params$targetId]
 outcomeName <- paste0(params$cohortNames[params$cohortIds %in% params$outcomeIds], collapse = '/')
 
@@ -177,8 +185,11 @@ cohortDefinitions <-
 #| echo: false
 #| results: 'asis'
 
-result <- knitr::knit_child(text = knitr::knit_expand("summary.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
-cat(result, sep = '\n')
+cat(
+  knitr::knit_child('summary.qmd', quiet = TRUE, envir = parent.frame()),
+  sep = '\n'
+)
+
 ```
 
 ```{r}
@@ -186,8 +197,11 @@ cat(result, sep = '\n')
 #| echo: false
 #| results: 'asis'
 
-result <- knitr::knit_child(text = knitr::knit_expand("data.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
-cat(result, sep = '\n')
+cat(
+  knitr::knit_child('data.qmd', quiet = TRUE, envir = parent.frame()),
+  sep = '\n'
+)
+
 ```
 
 ```{r}
@@ -195,8 +209,11 @@ cat(result, sep = '\n')
 #| echo: false
 #| results: 'asis'
 
-result <- knitr::knit_child(text = knitr::knit_expand("definitions.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
-cat(result, sep = '\n')
+cat(
+  knitr::knit_child('definitions.qmd', quiet = TRUE, envir = parent.frame()),
+  sep = '\n'
+)
+
 ```
 
 
@@ -206,42 +223,10 @@ cat(result, sep = '\n')
 #| results: 'asis'
 
 if(includeCI){
-  # ===================================
-  # Get CI
-  # ===================================
-  cohortIncidence <- OhdsiReportGenerator::getIncidenceRates(
-    connectionHandler = connectionHandler, 
-    schema = params$schema, 
-    targetIds = unique(c(targetIdsOfInterest, comparatorIdsOfInterest, indicationIdsOfInterest)), 
-    outcomeIds = outcomeIdsOfInterest
-  )
-  
-  cohortIncidenceUnstatified <- cohortIncidence %>%
-    dplyr::filter(.data$ageGroupName == 'Any') %>%
-    dplyr::filter(.data$genderName == 'Any') %>%
-    dplyr::filter(.data$startYear == 'Any')
-  
-  # only show CI results if there are any
-  if(nrow(cohortIncidenceUnstatified) != 0){
-    
-  ciTargets <- unique(cohortIncidenceUnstatified$targetId)
-  ciCohorts <- cohortDefinitions[cohortDefinitions$cohortDefinitionId %in% ciTargets,]
-  
-  ciParents <- unique(ciCohorts$subsetParent)
-  ciSubset <- unique(ciCohorts$subsetDefinitionId) # different for comp vs ind
-  
-  ciOutcomes <- unique(cohortIncidenceUnstatified$outcomeId)
-  
-  ciTars <- unique(
-    cohortIncidenceUnstatified %>% 
-      dplyr::select('tar')
-  )
-
-  # ===================================
-result <- knitr::knit_child(text = knitr::knit_expand("cohort_incidence.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
-cat(result, sep = '\n')
-  }
- 
+  cat(
+  knitr::knit_child('cohort_incidence.qmd', quiet = TRUE, envir = parent.frame()),
+  sep = '\n'
+)
 }
 ```
 
@@ -292,16 +277,16 @@ if(includeCohortMethod){
   } else {
   
   # TODO: restrict to comparatorIdsOfInterest?
-  cohortMethodResults <- OhdsiReportGenerator::getCMEstimation(
+  cmResults <- OhdsiReportGenerator::getCMEstimation(
     connectionHandler = connectionHandler, 
     schema = params$schema, 
     targetIds = unique(c(targetIdsOfInterest, indicationIdsOfInterest)),
     outcomeIds = outcomeIdsOfInterest
   )
   
-    if(nrow(cohortMethodResults) > 0){
+    if(nrow(cmResults) > 0){
     if(!is.null(params$comparatorIds)){
-    cohortMethodResults <- cohortMethodResults %>%
+    cmResults <- cmResults %>%
       dplyr::filter(.data$comparatorId %in% !!comparatorIdsOfInterest)
     }
   }

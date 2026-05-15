@@ -625,22 +625,22 @@ getPredictionModelDesigns <- function(
 }
 
 hasPlpModelNameColumn <- function(connectionHandler, schema, plpTablePrefix = "plp_") {
-  sql <- "SELECT model_name
+  sql <- "SELECT *
           FROM @schema.@plp_table_prefixmodel_settings
           WHERE 1 = 0;"
 
   hasColumn <- tryCatch(
     {
-      connectionHandler$queryDb(
+      res <- connectionHandler$queryDb(
         sql = sql,
         schema = schema,
         plp_table_prefix = plpTablePrefix
       )
-      TRUE
+      'modelName' %in% colnames(res)
     },
     error = function(e) FALSE
   )
-
+  
   return(hasColumn)
 }
 

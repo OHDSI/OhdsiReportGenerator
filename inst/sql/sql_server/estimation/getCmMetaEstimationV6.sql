@@ -6,28 +6,31 @@ SELECT ev.evidence_synthesis_description AS database_name
 	,c2.cohort_name AS comparator_name
 	,tc.comparator_id
 	,c4.cohort_name AS indication_name
-	,tc.nesting_cohort_id AS indication_id
+	,ISNULL(tc.nesting_cohort_id,0) AS indication_id
 	,c3.cohort_name AS outcome_name
 	,r.outcome_id
-	,r.calibrated_rr
-	,r.calibrated_ci_95_lb
-	,r.calibrated_ci_95_ub
-	,r.calibrated_p
-	,{@include_one_sided_p}?{r.calibrated_one_sided_p
-	,} r.calibrated_log_rr
-	,r.calibrated_se_log_rr
-	,r.target_subjects
-	,r.comparator_subjects
-	,r.target_days
-	,r.comparator_days
-	,r.target_outcomes
-	,r.comparator_outcomes
+	,CASE WHEN unblind.unblind = 1 THEN r.calibrated_rr ELSE NULL END calibrated_rr
+	,CASE WHEN unblind.unblind = 1 THEN r.calibrated_ci_95_lb ELSE NULL END calibrated_ci_95_lb
+	,CASE WHEN unblind.unblind = 1 THEN r.calibrated_ci_95_ub ELSE NULL END calibrated_ci_95_ub
+	,CASE WHEN unblind.unblind = 1 THEN r.calibrated_p ELSE NULL END calibrated_p
+	{@include_one_sided_p}?{,CASE WHEN unblind.unblind = 1 THEN r.calibrated_one_sided_p ELSE NULL END calibrated_one_sided_p}
+	,CASE WHEN unblind.unblind = 1 THEN r.calibrated_log_rr ELSE NULL END calibrated_log_rr
+	,CASE WHEN unblind.unblind = 1 THEN r.calibrated_se_log_rr ELSE NULL END calibrated_se_log_rr
+	,CASE WHEN unblind.unblind = 1 THEN r.target_subjects ELSE NULL END target_subjects
+	,CASE WHEN unblind.unblind = 1 THEN r.comparator_subjects ELSE NULL END comparator_subjects
+	,CASE WHEN unblind.unblind = 1 THEN r.target_days ELSE NULL END target_days
+	,CASE WHEN unblind.unblind = 1 THEN r.comparator_days ELSE NULL END comparator_days
+	,CASE WHEN unblind.unblind = 1 THEN r.target_outcomes ELSE NULL END target_outcomes
+	,CASE WHEN unblind.unblind = 1 THEN r.comparator_outcomes ELSE NULL END comparator_outcomes
 	,unblind.unblind
 	,r.n_databases
-	,r.pi_95_lb
-	,r.pi_95_ub
-	,r.calibrated_pi_95_lb
-	,r.calibrated_pi_95_ub
+	,CASE WHEN unblind.unblind = 1 THEN r.pi_95_lb ELSE NULL END pi_95_lb
+	,CASE WHEN unblind.unblind = 1 THEN r.pi_95_ub ELSE NULL END pi_95_ub
+	,CASE WHEN unblind.unblind = 1 THEN r.calibrated_pi_95_lb ELSE NULL END calibrated_pi_95_lb
+	,CASE WHEN unblind.unblind = 1 THEN r.calibrated_pi_95_ub ELSE NULL END calibrated_pi_95_ub
+	,unblind.tau
+	,unblind.i_2
+	
 FROM @schema.@es_table_prefixcm_result AS r
 INNER JOIN @schema.@cm_table_prefixtarget_comparator AS tc ON r.target_comparator_id = tc.target_comparator_id
 INNER JOIN @schema.@cm_table_prefixtarget_comparator_outcome AS tco ON r.target_comparator_id = tco.target_comparator_id
@@ -43,4 +46,8 @@ INNER JOIN @schema.@cm_table_prefixanalysis AS a ON a.analysis_id = r.analysis_i
 INNER JOIN @schema.@es_table_prefixanalysis AS ev ON ev.evidence_synthesis_analysis_id = r.evidence_synthesis_analysis_id
 WHERE r.calibrated_rr != 0
 	AND tco.outcome_of_interest = 1
-	AND unblind.unblind = 1 {@include_target}?{and tc.target_id IN (@target_id) } {@include_outcome}?{and r.outcome_id IN (@outcome_id) } {@include_comparator}?{and tc.comparator_id IN (@comparator_id) };
+	{@include_target}?{AND tc.target_id IN (@target_id) } 
+	{@include_outcome}?{AND r.outcome_id IN (@outcome_id) } 
+	{@include_comparator}?{AND tc.comparator_id IN (@comparator_id) }
+	{@include_indication} ? {AND ISNULL(tc.nesting_cohort_id,0) IN (@indication_id) }
+	;

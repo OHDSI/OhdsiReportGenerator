@@ -421,29 +421,11 @@ getCohortMeta <- function(
     cg_table_prefix = cgTablePrefix,
     database_table = databaseTable,
     use_cohort_id = !is.null(cohortIds),
-    cohort_id_name = 'cohort_definition_id',
     cohort_definition_ids = paste0(cohortIds, collapse = ',')
   )}, error = function(e){
     print(e);
     return(NULL)
   })
-  
-  if(is.null(result)){
-    # try the old column - remove this after a while 
-    print('COHORT_GENERATION table has outdated column name for cohort_definition_id')
-    result <- tryCatch({connectionHandler$queryDb(
-      sql = sql,
-      schema = schema,
-      cg_table_prefix = cgTablePrefix,
-      database_table = databaseTable,
-      use_cohort_id = !is.null(cohortIds),
-      cohort_id_name = 'cohort_id',
-      cohort_definition_ids = paste0(cohortIds, collapse = ',')
-    )}, error = function(e){
-      print(e);
-      return(NULL)
-    })
-  }
   
   return(result)
 }
@@ -516,7 +498,7 @@ getCohortCounts <- function(
 #' @param databaseTable Name of the database metadata table. Default is 'database_meta_data'.
 #' @param cohortIds Optional vector of cohort IDs to filter.
 #' @family Cohorts
-#' @return A tibble with attrition details for each cohort.
+#' @return A data.frame with attrition details for each cohort.
 #' @export
 getCohortAttrition <- function(
     connectionHandler,
@@ -562,7 +544,7 @@ getCohortAttrition <- function(
 #' @param databaseTable Name of the database metadata table. Default is 'database_meta_data'.
 #' @param cohortIds Optional vector of cohort IDs to filter.
 #' @family Cohorts
-#' @return A tibble with attrition details for each cohort subset.
+#' @return A data.frame with attrition details for each cohort subset.
 #' @export
 getCohortSubsetAttrition <- function(
     connectionHandler,
@@ -628,18 +610,22 @@ processCohortDefinitionsForQuarto <- function(
 ){
   
   # 1) add the friendly names 
-  cohortDefinitions <- 
-    merge(
-      cohortDefinitions,
-      data.frame(
-        cohortId = friendlyCohortIds,
-        friendlyName = friendlyCohortNames
-      ), 
-      by.x = 'subsetParent', 
-      by.y = 'cohortId', 
-      all.x = TRUE 
-    )
-  cohortDefinitions$friendlyName[is.na(cohortDefinitions$friendlyName)] <- cohortDefinitions$cohortName[is.na(cohortDefinitions$friendlyName)]
+  if(!is.null(friendlyCohortIds)){
+    cohortDefinitions <- 
+      merge(
+        cohortDefinitions,
+        data.frame(
+          cohortId = friendlyCohortIds,
+          friendlyName = friendlyCohortNames
+        ), 
+        by.x = 'subsetParent', 
+        by.y = 'cohortId', 
+        all.x = TRUE 
+      )
+    cohortDefinitions$friendlyName[is.na(cohortDefinitions$friendlyName)] <- cohortDefinitions$cohortName[is.na(cohortDefinitions$friendlyName)]
+  } else{
+    cohortDefinitions$friendlyName <- cohortDefinitions$cohortName
+  }
   
   # 2) add friendly subset logic text
   # add subset text for the subsetDefinitionJson

@@ -104,7 +104,7 @@ result <- kableDark( data = data.frame(a=1,b=4),
            caption = 'A made up table to demonstrate this function',
            position = 'h')
 
-testthat::expect_is(result, 'knitr_kable')
+testthat::expect_true(inherits(result, 'knitr_kable'))
 })
 
 test_that("addTarColumn", {

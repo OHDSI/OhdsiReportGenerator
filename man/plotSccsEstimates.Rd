@@ -4,14 +4,22 @@
 \alias{plotSccsEstimates}
 \title{Plots the self controlled case series results for one analysis}
 \usage{
-plotSccsEstimates(sccsData, sccsMeta = NULL, targetName, selectedAnalysisId)
+plotSccsEstimates(
+  sccsData,
+  sccsDiagnostics = NULL,
+  sccsMeta = NULL,
+  includeCounts = TRUE,
+  selectedAnalysisId
+)
 }
 \arguments{
 \item{sccsData}{The self controlled case series data}
 
-\item{sccsMeta}{(optional) The self controlled case seriesd evidence synthesis data}
+\item{sccsDiagnostics}{(optional) The self controlled case series diagnostic data}
 
-\item{targetName}{A friendly name for the target cohort}
+\item{sccsMeta}{(optional) The self controlled case series evidence synthesis data}
+
+\item{includeCounts}{Whether to include count on the plot}
 
 \item{selectedAnalysisId}{The analysis ID of interest to plot}
 }
@@ -39,7 +47,6 @@ sccsEst <- getSccsEstimation(
 plotSccsEstimates(
   sccsData = sccsEst, 
   sccsMeta = NULL, 
-  targetName = 'target', 
   selectedAnalysisId = 1
 )
 
@@ -47,6 +54,7 @@ plotSccsEstimates(
 \seealso{
 Other Estimation: 
 \code{\link{.getCmVersion}()},
+\code{\link{.getSccsVersion}()},
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},

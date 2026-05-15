@@ -345,59 +345,6 @@ kableDark <- function(data, caption = NULL, position = NULL){
   return(result)
 }
 
-#' prints a reactable in a quarto document 
-#'
-#' @description
-#' This function lets you print a reactable in a quarto document 
-#'
-#' @details
-#' Input the values for reactable::reactable
-#' 
-#' @param data The data for the table
-#' @param columns The formating for the columns
-#' @param groupBy A column or columns to group the table by
-#' @param defaultPageSize The number of rows in the table
-#' @param highlight whether to highlight the row of interest
-#' @param striped whether the rows change color to give a striped appearance 
-#' @param searchable whether you can search in the table
-#' @param filterable whether you can filter the table
-#' 
-#' @return
-#' Nothing but the html code for the table is printed (to be used in a quarto document)
-#'
-#' @family helper
-#'
-#' @export
-#' @examples 
-#' printReactable(
-#' data = data.frame(a=1,b=4)
-#' )
-#' 
-printReactable <- function(
-    data,
-    columns = NULL,
-    groupBy = NULL,
-    defaultPageSize = 20,
-    highlight = TRUE, 
-    striped = TRUE,
-    searchable = TRUE, 
-    filterable = TRUE
-){
-  print(
-    htmltools::tagList(
-      reactable::reactable(
-        data = data,
-        columns = columns,
-        groupBy = groupBy,
-        defaultPageSize = defaultPageSize,
-        highlight = highlight, 
-        striped = striped,
-        searchable = searchable, 
-        filterable = filterable
-      )
-    )
-  )
-}
 
 
 

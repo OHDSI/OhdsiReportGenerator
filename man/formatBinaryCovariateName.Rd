@@ -31,7 +31,6 @@ Other helper:
 \code{\link{getOutcomeTable}()},
 \code{\link{getTargetTable}()},
 \code{\link{kableDark}()},
-\code{\link{printReactable}()},
 \code{\link{removeSpaces}()}
 }
 \concept{helper}

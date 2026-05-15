@@ -55,8 +55,6 @@ performance of prediction models in the database.
 \seealso{
 Other Reporting: 
 \code{\link{createPredictionReport}()},
-\code{\link{generateFullReport}()},
-\code{\link{generatePresentation}()},
-\code{\link{generatePresentationMultiple}()}
+\code{\link{generateFullReport}()}
 }
 \concept{Reporting}

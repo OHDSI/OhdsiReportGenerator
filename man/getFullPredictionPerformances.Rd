@@ -39,6 +39,7 @@ Returns a data.frame with the columns:
  \item{performanceId the unique identifier for the performance}
  \item{modelDesignId the unique identifier for the model design}
  \item{modelType the type of classifier}
+ \item{algorithmName the model algorithm name}
  \item{covariateName a summary name for the candidate covariates}
  \item{developmentDatabaseId the unique identifier for the database used to develop the model}
  \item{validationDatabaseId the unique identifier for the database used to validate the model}

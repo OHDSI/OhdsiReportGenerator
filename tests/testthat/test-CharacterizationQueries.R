@@ -76,6 +76,57 @@ test_that("getDechallengeRechallenge", {
   testthat::expect_true(unique(result$outcomeId) == 3)
 })
 
+test_that("getBinaryTargetBaseline", {
+  
+res <- getBinaryTargetBaseline(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    targetIds = NULL,
+    analysisIds = NULL,
+    covariateIds = NULL,
+    conceptIds = NULL,
+    databaseIds = NULL
+)
+
+testthat::expect_true(nrow(res) > 0)
+
+res <- getBinaryTargetBaseline(
+  connectionHandler = connectionHandler,
+  schema = schema,
+  cTablePrefix = 'c_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  targetIds = 1,
+  analysisIds = NULL,
+  covariateIds = NULL,
+  conceptIds = NULL,
+  databaseIds = NULL
+)
+
+testthat::expect_true(nrow(res) > 0)
+testthat::expect_true(unique(res$targetCohortId) == 1)
+
+res <- getBinaryTargetBaseline(
+  connectionHandler = connectionHandler,
+  schema = schema,
+  cTablePrefix = 'c_',
+  cgTablePrefix = 'cg_',
+  databaseTable = 'database_meta_data',
+  targetIds = NULL,
+  analysisIds = 3,
+  covariateIds = NULL,
+  conceptIds = NULL,
+  databaseIds = NULL
+)
+
+testthat::expect_true(nrow(res) > 0)
+testthat::expect_true(unique(res$analysisId) == 3)
+
+})
+
 
 test_that("target counts", {
   # check results are returned

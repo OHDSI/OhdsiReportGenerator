@@ -6,7 +6,7 @@ SELECT ev.evidence_synthesis_description AS database_name
 	,c2.cohort_name AS comparator_name
 	,r.comparator_id
 	,NULL AS indication_name
-	,NULL AS indication_id
+	,0 AS indication_id
 	,c3.cohort_name AS outcome_name
 	,r.outcome_id
 	,r.calibrated_rr
@@ -24,6 +24,12 @@ SELECT ev.evidence_synthesis_description AS database_name
 	,r.comparator_outcomes
 	,unblind.unblind
 	,r.n_databases
+	,NULL as pi_95_lb
+	,NULL as r.pi_95_ub
+	,NULL as calibrated_pi_95_lb
+	,NULL as calibrated_pi_95_ub
+	,unblind.tau
+	,unblind.i_2
 FROM @schema.@es_table_prefixcm_result AS r
 INNER JOIN @schema.@cm_table_prefixtarget_comparator_outcome AS tco ON r.target_id = tco.target_id
 	AND r.comparator_id = tco.comparator_id

@@ -13,6 +13,7 @@ getCmDiagnosticsData(
   targetIds = NULL,
   outcomeIds = NULL,
   comparatorIds = NULL,
+  indicationIds = NULL,
   analysisIds = NULL,
   databaseIds = NULL
 )
@@ -33,6 +34,8 @@ getCmDiagnosticsData(
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
 
 \item{comparatorIds}{A vector of integers corresponding to the comparator cohort IDs}
+
+\item{indicationIds}{A vector of cohort ids for the indication (nesting id) to restrict to}
 
 \item{analysisIds}{An optional vector of analysisIds to filter to}
 
@@ -91,6 +94,7 @@ cmDiag <- getCmDiagnosticsData(
 \seealso{
 Other Estimation: 
 \code{\link{.getCmVersion}()},
+\code{\link{.getSccsVersion}()},
 \code{\link{getCMEstimation}()},
 \code{\link{getCmMetaEstimation}()},
 \code{\link{getCmNegativeControlEstimates}()},

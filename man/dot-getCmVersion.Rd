@@ -29,6 +29,7 @@ then v6 of CohortMethod was used.
 }
 \seealso{
 Other Estimation: 
+\code{\link{.getSccsVersion}()},
 \code{\link{getCMEstimation}()},
 \code{\link{getCmDiagnosticsData}()},
 \code{\link{getCmMetaEstimation}()},

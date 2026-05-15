@@ -105,7 +105,6 @@ Other helper:
 \code{\link{getExampleConnectionDetails}()},
 \code{\link{getOutcomeTable}()},
 \code{\link{kableDark}()},
-\code{\link{printReactable}()},
 \code{\link{removeSpaces}()}
 }
 \concept{helper}
