@@ -5,7 +5,13 @@ Creates nice self controlled case series plots
 ## Usage
 
 ``` r
-plotSccsEstimates(sccsData, sccsMeta = NULL, targetName, selectedAnalysisId)
+plotSccsEstimates(
+  sccsData,
+  sccsDiagnostics = NULL,
+  sccsMeta = NULL,
+  includeCounts = TRUE,
+  selectedAnalysisId
+)
 ```
 
 ## Arguments
@@ -14,13 +20,17 @@ plotSccsEstimates(sccsData, sccsMeta = NULL, targetName, selectedAnalysisId)
 
   The self controlled case series data
 
+- sccsDiagnostics:
+
+  (optional) The self controlled case series diagnostic data
+
 - sccsMeta:
 
-  (optional) The self controlled case seriesd evidence synthesis data
+  (optional) The self controlled case series evidence synthesis data
 
-- targetName:
+- includeCounts:
 
-  A friendly name for the target cohort
+  Whether to include count on the plot
 
 - selectedAnalysisId:
 
@@ -37,6 +47,7 @@ Input the self controlled case series data
 ## See also
 
 Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
+[`.getSccsVersion()`](dot-getSccsVersion.md),
 [`getCMEstimation()`](getCMEstimation.md),
 [`getCmDiagnosticsData()`](getCmDiagnosticsData.md),
 [`getCmMetaEstimation()`](getCmMetaEstimation.md),
@@ -58,6 +69,7 @@ Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
 ## Examples
 
 ``` r
+
 conDet <- getExampleConnectionDetails()
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
@@ -72,11 +84,14 @@ sccsEst <- getSccsEstimation(
 plotSccsEstimates(
   sccsData = sccsEst, 
   sccsMeta = NULL, 
-  targetName = 'target', 
   selectedAnalysisId = 1
 )
-#> Closing database connection
-#> Closing database connection
-#> Warning: lower bound is zero - can not use log scale
+#> Warning: no non-missing arguments to min; returning Inf
+#> Warning: no non-missing arguments to max; returning -Inf
+#> refline_col will be deprecated, use refline_gp instead.
+#> footnote_col will be deprecated, use footnote_gp instead.
+#> Warning: Missing lower and/or upper limit on column2 row 3
+#> $`Celecoxib-GI bleed-NA`
 
+#> 
 ```

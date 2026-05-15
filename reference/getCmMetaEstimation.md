@@ -14,6 +14,7 @@ getCmMetaEstimation(
   esTablePrefix = "es_",
   targetIds = NULL,
   outcomeIds = NULL,
+  indicationIds = NULL,
   comparatorIds = NULL,
   includeOneSidedP = TRUE
 )
@@ -50,6 +51,10 @@ getCmMetaEstimation(
 - outcomeIds:
 
   A vector of integers corresponding to the outcome cohort IDs
+
+- indicationIds:
+
+  A vector of cohort ids for the indication (nesting id) to restrict to
 
 - comparatorIds:
 
@@ -129,6 +134,7 @@ target/comparator/outcome cohort IDs
 ## See also
 
 Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
+[`.getSccsVersion()`](dot-getSccsVersion.md),
 [`getCMEstimation()`](getCMEstimation.md),
 [`getCmDiagnosticsData()`](getCmDiagnosticsData.md),
 [`getCmNegativeControlEstimates()`](getCmNegativeControlEstimates.md),

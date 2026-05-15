@@ -38,7 +38,7 @@ getCohortAttrition(
 
 ## Value
 
-A tibble with attrition details for each cohort.
+A data.frame with attrition details for each cohort.
 
 ## See also
 

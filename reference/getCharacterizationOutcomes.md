@@ -77,6 +77,7 @@ Specify the connectionHandler, the schema and the prefixes
 Other Characterization:
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
+[`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
 [`getCaseCounts()`](getCaseCounts.md),
 [`getCaseTargetCounts()`](getCaseTargetCounts.md),
 [`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
@@ -94,7 +95,8 @@ Other Characterization:
 [`getTargetContinuousFeatures()`](getTargetContinuousFeatures.md),
 [`getTimeToEvent()`](getTimeToEvent.md),
 [`plotAgeDistributions()`](plotAgeDistributions.md),
-[`plotSexDistributions()`](plotSexDistributions.md)
+[`plotSexDistributions()`](plotSexDistributions.md),
+[`viewIncidenceRate()`](viewIncidenceRate.md)
 
 ## Examples
 
@@ -108,5 +110,5 @@ cohorts <- getCharacterizationOutcomes(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "Extracting characterization outcomes took: 0.108380794525146 secs"
+#> [1] "Extracting characterization outcomes took: 0.124400854110718 secs"
 ```

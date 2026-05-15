@@ -81,6 +81,4 @@ performance of prediction models in the database.
 
 Other Reporting:
 [`createPredictionReport()`](createPredictionReport.md),
-[`generateFullReport()`](generateFullReport.md),
-[`generatePresentation()`](generatePresentation.md),
-[`generatePresentationMultiple()`](generatePresentationMultiple.md)
+[`generateFullReport()`](generateFullReport.md)

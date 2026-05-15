@@ -66,6 +66,8 @@ Returns a data.frame with the columns:
 
 - modelType the type of classifier
 
+- algorithmName the model algorithm name
+
 - covariateName a summary name for the candidate covariates
 
 - developmentDatabaseId the unique identifier for the database used to

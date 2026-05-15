@@ -1,6 +1,21 @@
 # Changelog
 
+## OhdsiReportGenerator v2.2.0
+
+- added functions to create indexes for the results database to speed up
+  data fetch
+- updated estimation forrest plots
+- added plot/table for cohort incidence
+- fixed SCCS result extraction
+- added prediction intervals in estimation extraction
+- added nesting id specification when extracting cohort method
+- removed presentation generator as it was not being used and was
+  getting outdated (can use a LLM to convert the report to a
+  presentation instead)
+
 ## OhdsiReportGenerator v2.1.0
+
+CRAN release: 2026-03-25
 
 - started to move SQL into the inst folder and have SQL version based on
   the result version

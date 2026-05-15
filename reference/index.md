@@ -47,6 +47,8 @@ cohort incidence analyses and plot results.
   extract case series characterization results
 - [`getBinaryRiskFactors()`](getBinaryRiskFactors.md) : A function to
   extract non-case and case binary characterization results
+- [`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md) : Extract
+  the aggregate covariates for the target ids of interest
 - [`getCaseCounts()`](getCaseCounts.md) : Extract the outcome cohort
   counts result
 - [`getCaseTargetCounts()`](getCaseTargetCounts.md) : Extract the target
@@ -90,6 +92,8 @@ cohort incidence analyses and plot results.
   distributions using the binary age groups
 - [`plotSexDistributions()`](plotSexDistributions.md) : Plots the sex
   distributions using the sex features
+- [`viewIncidenceRate()`](viewIncidenceRate.md) : View the Incidence
+  Rates
 
 ## Estimation Extractions and Plots
 
@@ -98,6 +102,8 @@ and plot results.
 
 - [`.getCmVersion()`](dot-getCmVersion.md) : An internal function to
   determine the version of CohortMethod used to store results
+- [`.getSccsVersion()`](dot-getSccsVersion.md) : An internal function to
+  determine the version of SCCS used to store results
 - [`getCMEstimation()`](getCMEstimation.md) : Extract the cohort method
   results
 - [`getCmDiagnosticsData()`](getCmDiagnosticsData.md) : Extract the
@@ -189,10 +195,6 @@ These functions can be used to generate reports using quarto templates.
 - [`createPredictionReport()`](createPredictionReport.md) :
   createPredictionReport
 - [`generateFullReport()`](generateFullReport.md) : generateFullReport
-- [`generatePresentation()`](generatePresentation.md) :
-  generatePresentation
-- [`generatePresentationMultiple()`](generatePresentationMultiple.md) :
-  generatePresentationMultiple
 - [`generateSummaryPredictionReport()`](generateSummaryPredictionReport.md)
   : generateSummaryPredictionReport
 
@@ -210,9 +212,21 @@ These functions are used to help result extraction.
 - [`getTargetTable()`](getTargetTable.md) : Extract the target cohorts
   and where they are used in the analyses.
 - [`kableDark()`](kableDark.md) : output a nicely formatted html table
-- [`printReactable()`](printReactable.md) : prints a reactable in a
-  quarto document
 - [`removeSpaces()`](removeSpaces.md) : removeSpaces
+
+## Indexes
+
+These functions are used to add indexes to speed up database result
+extraction.
+
+- [`createCharacterizationIndexes()`](createCharacterizationIndexes.md)
+  : A function to add indexes to the Characterization results
+- [`createCohortIndexes()`](createCohortIndexes.md) : A function to add
+  indexes to the Cohort Generator results
+- [`createIncidenceIndexes()`](createIncidenceIndexes.md) : A function
+  to add indexes to the incidence results
+- [`createSccsIndexes()`](createSccsIndexes.md) : A function to add
+  indexes to the SCCS results
 
 ## OhdsiReportGenerator
 

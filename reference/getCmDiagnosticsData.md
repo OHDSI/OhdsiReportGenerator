@@ -16,6 +16,7 @@ getCmDiagnosticsData(
   targetIds = NULL,
   outcomeIds = NULL,
   comparatorIds = NULL,
+  indicationIds = NULL,
   analysisIds = NULL,
   databaseIds = NULL
 )
@@ -57,6 +58,10 @@ getCmDiagnosticsData(
 - comparatorIds:
 
   A vector of integers corresponding to the comparator cohort IDs
+
+- indicationIds:
+
+  A vector of cohort ids for the indication (nesting id) to restrict to
 
 - analysisIds:
 
@@ -140,6 +145,7 @@ target/comparator/outcome cohort IDs
 ## See also
 
 Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
+[`.getSccsVersion()`](dot-getSccsVersion.md),
 [`getCMEstimation()`](getCMEstimation.md),
 [`getCmMetaEstimation()`](getCmMetaEstimation.md),
 [`getCmNegativeControlEstimates()`](getCmNegativeControlEstimates.md),

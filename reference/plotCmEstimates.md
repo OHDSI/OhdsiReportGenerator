@@ -7,10 +7,11 @@ Creates nice cohort method plots
 ``` r
 plotCmEstimates(
   cmData,
+  cmDiagnostics = NULL,
   cmMeta = NULL,
-  targetName,
-  comparatorName,
-  selectedAnalysisId
+  cohortNames = NULL,
+  includeCounts = TRUE,
+  selectedAnalysisId = NULL
 )
 ```
 
@@ -20,17 +21,21 @@ plotCmEstimates(
 
   The cohort method data
 
+- cmDiagnostics:
+
+  (optional) The cohort method diagnostic data
+
 - cmMeta:
 
   (optional) The cohort method evidence synthesis data
 
-- targetName:
+- cohortNames:
 
-  A friendly name for the target cohort
+  A data.frame with columns cohortId and cohortName
 
-- comparatorName:
+- includeCounts:
 
-  A friendly name for the comparator cohort
+  Whether to include the target/comp size and event counts
 
 - selectedAnalysisId:
 
@@ -47,6 +52,7 @@ Input the cohort method data
 ## See also
 
 Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
+[`.getSccsVersion()`](dot-getSccsVersion.md),
 [`getCMEstimation()`](getCMEstimation.md),
 [`getCmDiagnosticsData()`](getCmDiagnosticsData.md),
 [`getCmMetaEstimation()`](getCmMetaEstimation.md),
@@ -76,15 +82,17 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 cmEst <- getCMEstimation(
   connectionHandler = connectionHandler, 
   schema = 'main',
-  targetIds = 1,
+  targetIds = 1002,
   outcomeIds = 3
 )
 plotCmEstimates(
   cmData = cmEst, 
   cmMeta = NULL, 
-  targetName = 'target', 
-  comparatorName = 'comp', 
   selectedAnalysisId = 1
 )
-#> NULL
+#> refline_col will be deprecated, use refline_gp instead.
+#> footnote_col will be deprecated, use footnote_gp instead.
+#> $`Celecoxib - first event with 365 prior obs first event with 365 prior obs-GI bleed-NA`
+
+#> 
 ```

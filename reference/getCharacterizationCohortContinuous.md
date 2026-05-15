@@ -71,6 +71,7 @@ database id
 Other Characterization:
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
+[`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
 [`getCaseCounts()`](getCaseCounts.md),
 [`getCaseTargetCounts()`](getCaseTargetCounts.md),
 [`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
@@ -88,7 +89,8 @@ Other Characterization:
 [`getTargetContinuousFeatures()`](getTargetContinuousFeatures.md),
 [`getTimeToEvent()`](getTimeToEvent.md),
 [`plotAgeDistributions()`](plotAgeDistributions.md),
-[`plotSexDistributions()`](plotSexDistributions.md)
+[`plotSexDistributions()`](plotSexDistributions.md),
+[`viewIncidenceRate()`](viewIncidenceRate.md)
 
 ## Examples
 
@@ -104,4 +106,8 @@ conCohort <- getCharacterizationCohortContinuous(
   targetIds = 1, 
   databaseIds = 'eunomia'
 )
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
 ```

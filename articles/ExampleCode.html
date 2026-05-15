@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +59,7 @@
                         <h4 data-toc-skip class="author">Jenna Reps,
 Anthony Sena</h4>
             
-            <h4 data-toc-skip class="date">2026-03-25</h4>
+            <h4 data-toc-skip class="date">2026-05-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/develop/vignettes/ExampleCode.Rmd" class="external-link"><code>vignettes/ExampleCode.Rmd</code></a></small>
       <div class="d-none name"><code>ExampleCode.Rmd</code></div>
@@ -1933,7 +1933,7 @@ with 365 prior obs</td>
 with 365 prior obs</td>
 <td align="right">2002</td>
 <td align="left">NA</td>
-<td align="right">NA</td>
+<td align="right">0</td>
 <td align="left">GI bleed</td>
 <td align="right">3</td>
 <td align="right">1.342495</td>
@@ -1966,7 +1966,7 @@ with 365 prior obs</td>
 with 365 prior obs</td>
 <td align="right">2002</td>
 <td align="left">NA</td>
-<td align="right">NA</td>
+<td align="right">0</td>
 <td align="left">GI bleed</td>
 <td align="right">3</td>
 <td align="right">NA</td>
@@ -2034,6 +2034,8 @@ results.</caption>
 <col width="1%">
 <col width="4%">
 <col width="4%">
+<col width="0%">
+<col width="0%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">databaseName</th>
@@ -2044,28 +2046,30 @@ results.</caption>
 <th align="left">comparatorName</th>
 <th align="right">comparatorId</th>
 <th align="left">indicationName</th>
-<th align="right">indicationId</th>
+<th align="left">indicationId</th>
 <th align="left">outcomeName</th>
 <th align="right">outcomeId</th>
-<th align="right">calibratedRr</th>
-<th align="right">calibratedCi95Lb</th>
-<th align="right">calibratedCi95Ub</th>
-<th align="right">calibratedP</th>
-<th align="right">calibratedOneSidedP</th>
-<th align="right">calibratedLogRr</th>
-<th align="right">calibratedSeLogRr</th>
-<th align="right">targetSubjects</th>
-<th align="right">comparatorSubjects</th>
-<th align="right">targetDays</th>
-<th align="right">comparatorDays</th>
-<th align="right">targetOutcomes</th>
-<th align="right">comparatorOutcomes</th>
+<th align="left">calibratedRr</th>
+<th align="left">calibratedCi95Lb</th>
+<th align="left">calibratedCi95Ub</th>
+<th align="left">calibratedP</th>
+<th align="left">calibratedOneSidedP</th>
+<th align="left">calibratedLogRr</th>
+<th align="left">calibratedSeLogRr</th>
+<th align="left">targetSubjects</th>
+<th align="left">comparatorSubjects</th>
+<th align="left">targetDays</th>
+<th align="left">comparatorDays</th>
+<th align="left">targetOutcomes</th>
+<th align="left">comparatorOutcomes</th>
 <th align="right">unblind</th>
 <th align="right">nDatabases</th>
-<th align="right">pi95Lb</th>
-<th align="right">pi95Ub</th>
-<th align="right">calibratedPi95Lb</th>
-<th align="right">calibratedPi95Ub</th>
+<th align="left">pi95Lb</th>
+<th align="left">pi95Ub</th>
+<th align="left">calibratedPi95Lb</th>
+<th align="left">calibratedPi95Ub</th>
+<th align="right">tau</th>
+<th align="right">i2</th>
 </tr></thead>
 <tbody></tbody>
 </table>
@@ -2074,10 +2078,15 @@ results.</caption>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotCmEstimates.html">plotCmEstimates</a></span><span class="op">(</span></span>
 <span>  cmData <span class="op">=</span> <span class="va">cmEst</span>, </span>
 <span>  cmMeta <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  targetName <span class="op">=</span> <span class="st">'Example Target'</span>, </span>
-<span>  comparatorName <span class="op">=</span> <span class="st">'Example Comp'</span>, </span>
+<span>  cohortNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    cohortName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Example Target'</span>, <span class="st">'Example Comp'</span><span class="op">)</span>,</span>
+<span>    cohortId<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1002</span>,<span class="fl">2002</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>,</span>
 <span>  selectedAnalysisId <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## refline_col will be deprecated, use refline_gp instead.</span></span></code></pre>
+<pre><code><span><span class="co">## footnote_col will be deprecated, use footnote_gp instead.</span></span></code></pre>
+<pre><code><span><span class="co">## $`Example Target-GI bleed-NA`</span></span></code></pre>
 <p><img src="ExampleCode_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 </div>

@@ -157,6 +157,4 @@ name to generate the full report.
 
 Other Reporting:
 [`createPredictionReport()`](createPredictionReport.md),
-[`generatePresentation()`](generatePresentation.md),
-[`generatePresentationMultiple()`](generatePresentationMultiple.md),
 [`generateSummaryPredictionReport()`](generateSummaryPredictionReport.md)

@@ -64,6 +64,8 @@ Returns a data.frame with the columns:
 
 - modelType the type of classifier
 
+- algorithmName the model algorithm name
+
 - developmentDatabaseId the unique identifier for the database used to
   develop the model
 
@@ -160,4 +162,5 @@ perf <- getPredictionPerformances(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
+#> Closing database connection
 ```

@@ -69,6 +69,4 @@ the performance of models developed across databases.
 ## See also
 
 Other Reporting: [`generateFullReport()`](generateFullReport.md),
-[`generatePresentation()`](generatePresentation.md),
-[`generatePresentationMultiple()`](generatePresentationMultiple.md),
 [`generateSummaryPredictionReport()`](generateSummaryPredictionReport.md)

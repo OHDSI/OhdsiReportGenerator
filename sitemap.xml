@@ -7,16 +7,20 @@
 <url><loc>/news/index.html</loc></url>
 <url><loc>/reference/OhdsiReportGenerator.html</loc></url>
 <url><loc>/reference/addTarColumn.html</loc></url>
+<url><loc>/reference/createCharacterizationIndexes.html</loc></url>
+<url><loc>/reference/createCohortIndexes.html</loc></url>
+<url><loc>/reference/createIncidenceIndexes.html</loc></url>
 <url><loc>/reference/createPredictionReport.html</loc></url>
+<url><loc>/reference/createSccsIndexes.html</loc></url>
 <url><loc>/reference/dot-getCmVersion.html</loc></url>
+<url><loc>/reference/dot-getSccsVersion.html</loc></url>
 <url><loc>/reference/formatBinaryCovariateName.html</loc></url>
 <url><loc>/reference/generateFullReport.html</loc></url>
-<url><loc>/reference/generatePresentation.html</loc></url>
-<url><loc>/reference/generatePresentationMultiple.html</loc></url>
 <url><loc>/reference/generateSummaryPredictionReport.html</loc></url>
 <url><loc>/reference/getAnalysisCohorts.html</loc></url>
 <url><loc>/reference/getBinaryCaseSeries.html</loc></url>
 <url><loc>/reference/getBinaryRiskFactors.html</loc></url>
+<url><loc>/reference/getBinaryTargetBaseline.html</loc></url>
 <url><loc>/reference/getCMEstimation.html</loc></url>
 <url><loc>/reference/getCaseCounts.html</loc></url>
 <url><loc>/reference/getCaseTargetCounts.html</loc></url>
@@ -88,10 +92,10 @@
 <url><loc>/reference/plotCmEstimates.html</loc></url>
 <url><loc>/reference/plotSccsEstimates.html</loc></url>
 <url><loc>/reference/plotSexDistributions.html</loc></url>
-<url><loc>/reference/printReactable.html</loc></url>
 <url><loc>/reference/processCohortDefinitionsForQuarto.html</loc></url>
 <url><loc>/reference/processCohorts.html</loc></url>
 <url><loc>/reference/removeSpaces.html</loc></url>
 <url><loc>/reference/restrictCohortDefinitionsForQuarto.html</loc></url>
+<url><loc>/reference/viewIncidenceRate.html</loc></url>
 </urlset>
 

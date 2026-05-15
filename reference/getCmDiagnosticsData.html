@@ -9,7 +9,7 @@ and checks for different types of bias."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,7 @@ and checks for different types of bias.</p>
 <span>  targetIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  outcomeIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  comparatorIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  indicationIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  analysisIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  databaseIds <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -94,6 +95,10 @@ and checks for different types of bias.</p>
 
 <dt id="arg-comparatorids">comparatorIds<a class="anchor" aria-label="anchor" href="#arg-comparatorids"></a></dt>
 <dd><p>A vector of integers corresponding to the comparator cohort IDs</p></dd>
+
+
+<dt id="arg-indicationids">indicationIds<a class="anchor" aria-label="anchor" href="#arg-indicationids"></a></dt>
+<dd><p>A vector of cohort ids for the indication (nesting id) to restrict to</p></dd>
 
 
 <dt id="arg-analysisids">analysisIds<a class="anchor" aria-label="anchor" href="#arg-analysisids"></a></dt>
@@ -140,6 +145,7 @@ and checks for different types of bias.</p>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other Estimation:
 <code><a href="dot-getCmVersion.html">.getCmVersion()</a></code>,
+<code><a href="dot-getSccsVersion.html">.getSccsVersion()</a></code>,
 <code><a href="getCMEstimation.html">getCMEstimation()</a></code>,
 <code><a href="getCmMetaEstimation.html">getCmMetaEstimation()</a></code>,
 <code><a href="getCmNegativeControlEstimates.html">getCmNegativeControlEstimates()</a></code>,

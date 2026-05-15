@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -177,6 +177,13 @@
 
         <dt>
 
+          <code><a href="getBinaryTargetBaseline.html">getBinaryTargetBaseline()</a></code>
+
+        </dt>
+        <dd>Extract the aggregate covariates for the target ids of interest</dd>
+
+        <dt>
+
           <code><a href="getCaseCounts.html">getCaseCounts()</a></code>
 
         </dt>
@@ -307,6 +314,13 @@
 
         </dt>
         <dd>Plots the sex distributions using the sex features</dd>
+
+        <dt>
+
+          <code><a href="viewIncidenceRate.html">viewIncidenceRate()</a></code>
+
+        </dt>
+        <dd>View the Incidence Rates</dd>
       </dl></div><div class="section level2">
       <h2 id="estimation-extractions-and-plots">Estimation Extractions and Plots<a class="anchor" aria-label="anchor" href="#estimation-extractions-and-plots"></a></h2>
 
@@ -323,6 +337,13 @@
 
         </dt>
         <dd>An internal function to determine the version of CohortMethod used to store results</dd>
+
+        <dt>
+
+          <code><a href="dot-getSccsVersion.html">.getSccsVersion()</a></code>
+
+        </dt>
+        <dd>An internal function to determine the version of SCCS used to store results</dd>
 
         <dt>
 
@@ -626,20 +647,6 @@
 
         <dt>
 
-          <code><a href="generatePresentation.html">generatePresentation()</a></code>
-
-        </dt>
-        <dd>generatePresentation</dd>
-
-        <dt>
-
-          <code><a href="generatePresentationMultiple.html">generatePresentationMultiple()</a></code>
-
-        </dt>
-        <dd>generatePresentationMultiple</dd>
-
-        <dt>
-
           <code><a href="generateSummaryPredictionReport.html">generateSummaryPredictionReport()</a></code>
 
         </dt>
@@ -698,17 +705,47 @@
 
         <dt>
 
-          <code><a href="printReactable.html">printReactable()</a></code>
-
-        </dt>
-        <dd>prints a reactable in a quarto document</dd>
-
-        <dt>
-
           <code><a href="removeSpaces.html">removeSpaces()</a></code>
 
         </dt>
         <dd>removeSpaces</dd>
+      </dl></div><div class="section level2">
+      <h2 id="indexes">Indexes<a class="anchor" aria-label="anchor" href="#indexes"></a></h2>
+
+      <div class="section-desc"><p>These functions are used to add indexes to speed up database result extraction.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="createCharacterizationIndexes.html">createCharacterizationIndexes()</a></code>
+
+        </dt>
+        <dd>A function to add indexes to the Characterization results</dd>
+
+        <dt>
+
+          <code><a href="createCohortIndexes.html">createCohortIndexes()</a></code>
+
+        </dt>
+        <dd>A function to add indexes to the Cohort Generator results</dd>
+
+        <dt>
+
+          <code><a href="createIncidenceIndexes.html">createIncidenceIndexes()</a></code>
+
+        </dt>
+        <dd>A function to add indexes to the incidence results</dd>
+
+        <dt>
+
+          <code><a href="createSccsIndexes.html">createSccsIndexes()</a></code>
+
+        </dt>
+        <dd>A function to add indexes to the SCCS results</dd>
       </dl></div><div class="section level2">
       <h2 id="ohdsireportgenerator">OhdsiReportGenerator<a class="anchor" aria-label="anchor" href="#ohdsireportgenerator"></a></h2>
 

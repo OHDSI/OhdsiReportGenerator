@@ -32,7 +32,6 @@ Other helper:
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
 [`getOutcomeTable()`](getOutcomeTable.md),
 [`getTargetTable()`](getTargetTable.md), [`kableDark()`](kableDark.md),
-[`printReactable()`](printReactable.md),
 [`removeSpaces()`](removeSpaces.md)
 
 ## Examples
