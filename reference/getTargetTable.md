@@ -167,6 +167,6 @@ targetTable <- getTargetTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "-- all extracting characterization targets took: 0.091623067855835 secs"
-#> [1] "-- Total time for extarcting target table: 0.277513265609741 secs"
+#> [1] "-- all extracting characterization targets took: 0.0789022445678711 secs"
+#> [1] "-- Total time for extarcting target table: 0.240627527236938 secs"
 ```
