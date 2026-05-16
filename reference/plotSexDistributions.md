@@ -87,10 +87,10 @@ sexData <- getCharacterizationDemographics(
   outcomeId = 3, 
   type = 'sex'
 )
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
 plotSexDistributions(sexData = sexData)
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
 
 ```
