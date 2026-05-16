@@ -14,7 +14,7 @@ URL: https://ohdsi.github.io/OhdsiReportGenerator/, https://github.com/OHDSI/Ohd
 BugReports: https://github.com/OHDSI/OhdsiReportGenerator/issues
 VignetteBuilder: knitr
 Depends:
-  R (>= 3.3.0)
+  R (>= 4.1.0)
 Imports:
   CirceR,
   DatabaseConnector,
