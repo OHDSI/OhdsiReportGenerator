@@ -2753,16 +2753,16 @@ getCharacterizationCohortBinary <- function(
   if(nrow(colRef) == 2 & twoResultsWithValues){
     res <- res %>% 
       dplyr::mutate(
-        standardDeviation_1 = ((abs(.data$averageValue_1)-1)^2*abs(.data$sumValue_1) + (abs(.data$averageValue_1)-0)^2*(.data$n_1-abs(.data$sumValue_1)))/.data$n_1,
-        standardDeviation_2 = ((abs(.data$averageValue_2)-1)^2*abs(.data$sumValue_2) + (abs(.data$averageValue_2)-0)^2*(.data$n_2-abs(.data$sumValue_2)))/.data$n_2
+        var_1 = ((abs(.data$averageValue_1)-1)^2*abs(.data$sumValue_1) + (abs(.data$averageValue_1)-0)^2*(.data$n_1-abs(.data$sumValue_1)))/(.data$n_1-1),
+        var_2 = ((abs(.data$averageValue_2)-1)^2*abs(.data$sumValue_2) + (abs(.data$averageValue_2)-0)^2*(.data$n_2-abs(.data$sumValue_2)))/(.data$n_2-1)
       ) %>%
       dplyr::mutate(
-        smd = (.data$averageValue_1-.data$averageValue_2)/(sqrt((.data$standardDeviation_1^2 + .data$standardDeviation_2^2)/2))
+        smd = (.data$averageValue_1-.data$averageValue_2)/(sqrt((.data$var_1 + .data$var_2)/2))
     ) %>%
       dplyr::mutate(
         absSmd = abs(.data$smd)
       ) %>%
-      dplyr::select(-"standardDeviation_1", -"standardDeviation_2")
+      dplyr::select(-"var_1", -"var_2")
   }
   
   # remove the ns
