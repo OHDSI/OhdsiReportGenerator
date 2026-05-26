@@ -93,4 +93,5 @@ plotSexDistributions(sexData = sexData)
 #> Closing database connection
 #> Closing database connection
 #> Closing database connection
+#> Closing database connection
 ```

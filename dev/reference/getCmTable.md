@@ -121,4 +121,7 @@ cmTable <- getCmTable(
   schema = 'main',
   table = 'attrition'
 )
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
 ```

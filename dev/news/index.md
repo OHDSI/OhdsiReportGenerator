@@ -1,5 +1,24 @@
 # Changelog
 
+## OhdsiReportGenerator v2.2.0.9999
+
+- fixed bug in SMD formular for binary covariates
+
+## OhdsiReportGenerator v2.2.0
+
+CRAN release: 2026-05-16
+
+- added functions to create indexes for the results database to speed up
+  data fetch
+- updated estimation forrest plots
+- added plot/table for cohort incidence
+- fixed SCCS result extraction
+- added prediction intervals in estimation extraction
+- added nesting id specification when extracting cohort method
+- removed presentation generator as it was not being used and was
+  getting outdated (can use a LLM to convert the report to a
+  presentation instead)
+
 ## OhdsiReportGenerator v2.1.0
 
 CRAN release: 2026-03-25

@@ -53,7 +53,6 @@ data = data.frame(a=1,b=4),
 caption = 'A made up table to demonstrate this function',
 position = 'h'
 )
-#> Closing database connection
 #> <table class=" lightable-material-dark lightable-hover" style='font-family: "Source Sans Pro", helvetica, sans-serif; margin-left: auto; margin-right: auto;'>
 #> <caption>A made up table to demonstrate this function</caption>
 #>  <thead>
