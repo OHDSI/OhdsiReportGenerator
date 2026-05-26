@@ -2,6 +2,8 @@
 
 ## OhdsiReportGenerator v2.2.0
 
+CRAN release: 2026-05-16
+
 - added functions to create indexes for the results database to speed up
   data fetch
 - updated estimation forrest plots

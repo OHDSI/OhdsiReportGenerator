@@ -106,8 +106,4 @@ conCohort <- getCharacterizationCohortContinuous(
   targetIds = 1, 
   databaseIds = 'eunomia'
 )
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
 ```

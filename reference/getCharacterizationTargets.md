@@ -110,5 +110,5 @@ cohorts <- getCharacterizationTargets(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "-- all extracting characterization targets took: 0.0959861278533936 secs"
+#> [1] "-- all extracting characterization targets took: 0.102898120880127 secs"
 ```
