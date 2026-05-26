@@ -1,3 +1,7 @@
+OhdsiReportGenerator v2.2.0.9999
+======================
+- fixed bug in SMD formular for binary covariates 
+
 OhdsiReportGenerator v2.2.0
 ======================
 - added functions to create indexes for the results database to speed up data fetch
