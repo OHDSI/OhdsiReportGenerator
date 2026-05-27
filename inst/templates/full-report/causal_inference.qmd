@@ -18,20 +18,20 @@ if(includeCohortMethod){
   
 for(i in 1:length(cmIndicationIds)){
   
-  indication <- 'No indication'
+  indication <- 'No indication restriction'
   if(!cmIndicationIds[i] == ''){
-    indication <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == cmIndicationIds[i]]
+    indication <- unique(cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == cmIndicationIds[i]])
   }
   
   exposures <- cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId %in% comparatorIdsOfInterest]
   
   cat(paste0("\n\n##### ", indication))
   
-  cat(paste0("\n", length(exposures)+1, " exposure cohorts were created for the active comparator new user cohort design: new users of ", targetName, " (target) and new users of ", paste0(exposures, collapse ='/')," (comparators)."))
+  cat(paste0("\n", length(unique(exposures))+1, " exposure cohorts were created for the active comparator new user cohort design: new users of ", targetName, " (target) and new users of ", paste0(unique(exposures), collapse ='/')," (comparators)."))
   
-  cat(paste0("The index date was defined as the first observed use of either the, ", targetName, ", or ",paste0(exposures, collapse ='/'),  ". "))
+  cat(paste0("The index date was defined as the first observed use of either the, ", targetName, ", or ",paste0(unique(exposures), collapse ='/'),  ". "))
   
-  if(indication != 'No indication'){
+  if(indication != 'No indication restriction'){
     cat(paste0("Patients were only included if they had a history of ", indication, ".\n")) 
   }
   

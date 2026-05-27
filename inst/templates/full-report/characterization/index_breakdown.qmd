@@ -66,16 +66,15 @@ for(i in 1:length(params$outcomeIds)){
       dplyr::select("databaseName", "personCount", "tar")
     
     index <- res %>% 
-      dplyr::filter(.data$type == 'During') %>%
       dplyr::select("databaseName", "targetCohortId", "outcomeCohortId",
                     "covariateName", 
-                    "averageValue", "tar") %>% 
+                    "averageValueDuring", "tar") %>% 
       dplyr::inner_join(counts, by = c("databaseName", "tar"))
     
     aggreggateIndex <- index %>% 
       dplyr::group_by(.data$targetCohortId, .data$outcomeCohortId, .data$covariateName, .data$tar) %>%
       dplyr::summarise(
-        averageValue = mean(.data$averageValue, na.rm = TRUE),
+        averageValueDuring = mean(.data$averageValueDuring, na.rm = TRUE),
         personCount = 0
       ) %>%
       dplyr::mutate(
@@ -111,7 +110,7 @@ indexTar <- tidyr::pivot_wider(
     , 
   names_from = "databaseName", 
   #values_from = c("sumValue","averageValue"), 
-  values_from = c("averageValue"), 
+  values_from = c("averageValueDuring"), 
   id_cols = c("covariateName","friendlyNameTarget","subsetTextTarget")
 ) %>%
     dplyr::arrange(-1*.data$`all (N = 0)`) %>%
