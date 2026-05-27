@@ -2,7 +2,10 @@
 
 ## OhdsiReportGenerator v2.2.0.9999
 
-- fixed bug in SMD formular for binary covariates
+- fixed bug in SMD formula for binary covariates
+- fixed bug in index breakdown when generating the full report
+- edited the estimation template in the full report to remove repeats of
+  the comparison cohort
 
 ## OhdsiReportGenerator v2.2.0
 
