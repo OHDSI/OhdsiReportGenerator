@@ -1,10 +1,19 @@
 select 
-d.cdm_source_abbreviation as database_name,
+0 as setting_id,
 t.database_id,
-target.cohort_name as target_name,
+{@include_names}?{d.cdm_source_abbreviation as database_name,}
 t.target_cohort_id,
+{@include_names}?{target.cohort_name as target_name,}
 t.min_prior_observation,
 99999 as limit_to_first_in_n_days,
+  NULL AS nesting_cohort_id,
+  NULL AS  nesting_name,
+  NULL AS min_age,	
+  NULL AS max_age,
+  NULL AS study_start,	
+  NULL AS study_end,	
+  NULL AS gender_concept_ids,
+  
 t.covariate_name,
 t.covariate_id,
 t.count_value,
@@ -63,7 +72,7 @@ and s.database_id = c.database_id
 
 where 
 cd.COHORT_TYPE = 'Target'
-{@use_target}?{ and c.target_cohort_id in (@target_id)}
+{@use_characterization_target}?{ and c.target_cohort_id in (@characterization_target_id)}
 {@use_database}?{ and c.database_id in (@database_id)}
 ) t
 

@@ -6,13 +6,13 @@ SELECT
   ts.target_id AS target_cohort_id,
   ts.min_prior_observation, 
   ts.limit_to_first_in_n_days,
-  NULL AS nesting_cohort_id,
-  NULL AS  nesting_name,
-  NULL AS min_age,	
-  NULL AS max_age,
-  NULL AS study_start,	
-  NULL AS study_end,	
-  NULL AS gender_concept_ids,
+  ts.nesting_cohort_id,
+  nesting.cohort_name AS  nesting_name,
+  ts.min_age,	
+  ts.max_age,
+  ts.study_start,	
+  ts.study_end,	
+  ts.gender_concept_ids,
  
   outcome.cohort_name AS outcome_name,
   s.outcome_id AS outcome_cohort_id,
@@ -63,7 +63,10 @@ ON target.cohort_definition_id = ts.target_id
 INNER JOIN @schema.@cg_table_prefixcohort_definition outcome
 ON outcome.cohort_definition_id = s.outcome_id
 
-WHERE ts.target_id = @characterization_target_id
+LEFT JOIN @schema.@cg_table_prefixcohort_definition nesting
+ON nesting.cohort_definition_id = ts.nesting_cohort_id
+
+WHERE ts.characterization_target_id = @characterization_target_id
 AND s.outcome_id = @outcome_id
 {@use_database}?{AND cov.database_id in (@database_ids)}
 {@use_risk_window_start}?{AND s.risk_window_start = @risk_window_start}

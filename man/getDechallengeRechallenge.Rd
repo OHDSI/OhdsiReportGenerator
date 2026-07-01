@@ -10,7 +10,7 @@ getDechallengeRechallenge(
   cTablePrefix = "c_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
-  targetIds = NULL,
+  characterizationTargetIds = NULL,
   outcomeIds = NULL
 )
 }
@@ -25,7 +25,7 @@ getDechallengeRechallenge(
 
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
-\item{targetIds}{A vector of integers corresponding to the target cohort IDs}
+\item{characterizationTargetIds}{The characterization target cohort ids of interest}
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
 }
@@ -76,24 +76,27 @@ schema = 'main'
 }
 \seealso{
 Other Characterization: 
+\code{\link{characterizationCompareBinary}()},
+\code{\link{characterizationCompareContinuous}()},
 \code{\link{getBinaryCaseSeries}()},
 \code{\link{getBinaryRiskFactors}()},
 \code{\link{getBinaryTargetBaseline}()},
 \code{\link{getCaseCounts}()},
-\code{\link{getCaseTargetCounts}()},
-\code{\link{getCharacterizationCohortBinary}()},
-\code{\link{getCharacterizationCohortContinuous}()},
+\code{\link{getCharacterizationCaseSettings}()},
 \code{\link{getCharacterizationDemographics}()},
-\code{\link{getCharacterizationOutcomes}()},
-\code{\link{getCharacterizationTargets}()},
+\code{\link{getCharacterizationTargetSettings}()},
 \code{\link{getContinuousCaseSeries}()},
 \code{\link{getContinuousRiskFactors}()},
+\code{\link{getContinuousTargetBaseline}()},
 \code{\link{getDechallengeRechallengeFails}()},
-\code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
-\code{\link{getIncidenceTargets}()},
-\code{\link{getTargetBinaryFeatures}()},
-\code{\link{getTargetContinuousFeatures}()},
+\code{\link{getIncidenceTargetSettings}()},
+\code{\link{getNonCaseCounts}()},
+\code{\link{getOutcomesUsedInCharacterization}()},
+\code{\link{getOutcomesUsedInIncidence}()},
+\code{\link{getTargetCounts}()},
+\code{\link{getTargetsUsedInCharacterization}()},
+\code{\link{getTargetsUsedInIncidence}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()},

@@ -14,26 +14,27 @@ select
   NULL as gender_concept_ids,
   {@include_names}?{outcome_cohorts.cohort_name as outcome_name,}
   cs.outcome_id as outcome_id,
-  cs.outcome_washout_days,
   a.n as row_count,
   a.n as person_count,
-  cs.risk_window_start,
-  cs.risk_window_end,
-  cs.start_anchor,
-  cs.end_anchor
+  a.n as without_excluded_person_count,
+  cs.outcome_washout_days,
+  cs.risk_window_start, -- not in v0
+  cs.risk_window_end, -- not in v0
+  cs.start_anchor, -- not in v0
+  cs.end_anchor -- not in v0
 
 FROM @schema.@c_table_prefixattrition a
 
 {@include_names}?{
-  INNER JOIN @schema.@database_table d
+  INNER JOIN @schema.@database_table_name d
   ON a.database_id = d.database_id
 }
    
 INNER JOIN @schema.@c_table_prefixcase_settings cs
 ON cs.setting_id = a.setting_id
 AND cs.database_id = a.database_id
-AND cs.characterization_case_id*10+1 = a.cohort_definition_id
-AND a.attr_reason = 'Cases'
+AND cs.characterization_case_id*10+2 = a.cohort_definition_id
+AND a.attr_reason = 'Non-cases'
 
 {@include_names}?{
   INNER JOIN @schema.@cg_table_prefixcohort_definition outcome_cohorts
@@ -54,9 +55,4 @@ WHERE 1 = 1
 {@use_characterization_target}?{ AND ts.target_id IN (@characterization_target_id)}
 {@use_outcome}?{ AND cs.outcome_id IN (@outcome_id)}
 {@use_database}?{ AND a.database_id IN (@database_id)}
-  
-{@use_risk_window_start}?{ AND cs.risk_window_start IN (@risk_window_start)}  
-{@use_risk_window_end}?{ AND cs.risk_window_end IN (@risk_window_end)}
-{@use_start_anchor}?{ AND cs.start_anchor IN (@start_anchor)}
-{@use_end_anchor}?{ AND cs.end_anchor IN (@end_anchor)}
 

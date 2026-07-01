@@ -1,8 +1,18 @@
 SELECT 
           d.CDM_SOURCE_ABBREVIATION as database_name,
           d.database_id,
+          dr.target_cohort_definition_id as characterization_target_id,
           target_cohorts.cohort_name as target_name,
           dr.target_cohort_definition_id as target_id,
+          NULL as limit_to_first_in_n_days,
+          NULL as min_prior_observation,
+          NULL as nesting_cohort_id,
+          NULL as  nesting_name,
+          NULL as min_age,
+          NULL as max_age,
+          NULL as study_start,
+          NULL as study_end,
+          NULL as gender_concept_ids,
           outcome_cohorts.cohort_name as outcome_name,
           dr.outcome_cohort_definition_id as outcome_id,
           dr.dechallenge_stop_interval,
@@ -34,7 +44,7 @@ SELECT
            on outcome_cohorts.cohort_definition_id = dr.OUTCOME_COHORT_DEFINITION_ID
            
           where 1 = 1
-          {@use_target}?{ and dr.TARGET_COHORT_DEFINITION_ID in (@target_id)}
+          {@use_characterzation_target}?{ and dr.TARGET_COHORT_DEFINITION_ID in (@characterzation_target_id)}
           {@use_outcome}?{ and dr.OUTCOME_COHORT_DEFINITION_ID in (@outcome_id)}
 
            

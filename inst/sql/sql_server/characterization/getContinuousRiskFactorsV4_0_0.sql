@@ -5,13 +5,13 @@ target.cohort_name AS target_name,
 ts.target_id AS target_cohort_id,
 ts.min_prior_observation,
 ts.limit_to_first_in_n_days,
-  NULL AS nesting_cohort_id,
-  NULL AS nesting_name,
-  NULL AS min_age,	
-  NULL AS max_age,
-  NULL AS study_start,	
-  NULL AS study_end,	
-  NULL AS gender_concept_ids,
+ts.nesting_cohort_id,
+nesting.cohort_name AS nesting_name,
+ts.min_age,	
+ts.max_age,
+ts.study_start,	
+ts.study_end,	
+ts.gender_concept_ids,
 
 outcome.cohort_name AS outcome_name,
 cs.outcome_id as outcome_cohort_id,
@@ -73,9 +73,12 @@ ON target.cohort_definition_id = ts.target_id
 INNER JOIN @schema.@cg_table_prefixcohort_definition outcome
 ON outcome.cohort_definition_id = cs.outcome_id
 
+LEFT JOIN @schema.@cg_table_prefixcohort_definition nesting
+ON nesting.cohort_definition_id = ts.nesting_cohort_id
+
 -- add wheres here
 WHERE 1=1
-{@use_characterization_target}?{AND ts.target_id IN (@characterization_target_id)}
+{@use_characterization_target}?{AND ts.characterization_target_id IN (@characterization_target_id)}
 {@use_outcome}?{AND cs.outcome_id IN (@outcome_id)}
 {@use_database}?{AND d.database_id IN (@database_id)}
 {@use_analysis}?{AND cr.analysis_id IN (@analysis_ids)}

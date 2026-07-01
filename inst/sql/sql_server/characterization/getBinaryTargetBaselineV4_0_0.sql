@@ -1,20 +1,19 @@
 SELECT
-
 c.setting_id,
-{@include_names}?{d.cdm_source_abbreviation as database_name,}
 c.database_id,
+{@include_names}?{d.cdm_source_abbreviation as database_name,}
 ts.characterization_target_id,
 {@include_names}?{target.cohort_name as target_name,}
 ts.target_id as target_cohort_id,
 ts.min_prior_observation,
 ts.limit_to_first_in_n_days,
-NULL as nesting_cohort_id,
-NULL as nesting_name,
-NULL as min_age,
-NULL as max_age,
-NULL as study_start,
-NULL as study_end,
-NULL as gender_concept_ids,
+ts.nesting_cohort_id,
+{@include_names}?{cg2.cohort_name as nesting_name,}
+ts.min_age,
+ts.max_age,
+ts.study_start,
+ts.study_end,
+ts.gender_concept_ids,
 c.covariate_id,
 coi.covariate_name,
 coi.analysis_id,
@@ -41,12 +40,18 @@ ON c.database_id = d.database_id
 INNER JOIN @schema.@cg_table_prefixcohort_definition target
 ON target.cohort_definition_id = ts.target_id
 }
+
+{@include_names}?{
+LEFT JOIN @schema.@cg_table_prefixcohort_definition cg2
+ON cg2.cohort_definition_id = ts.nesting_cohort_id
+}
   
 WHERE 1 = 1
-{@use_characterization_targets}?{AND ts.target_id in (@characterization_target_ids)}
+{@use_characterization_targets}?{AND c.characterization_target_id in (@characterization_target_ids)}
 {@use_database}?{AND c.database_id in (@database_ids) }
 {@use_covariate}?{and coi.covariate_id in (@covariate_ids)}
 {@use_analysis}?{and coi.analysis_id in (@analysis_ids)}
 {@use_concept}?{and coi.concept_id in (@concept_ids)}
 {@use_threshold}?{AND abs(c.average_value) >= @min_threshold}
 ;
+

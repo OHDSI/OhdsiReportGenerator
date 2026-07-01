@@ -10,7 +10,7 @@ getContinuousRiskFactors(
   cTablePrefix = "c_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
-  targetId = NULL,
+  characterizationTargetId = NULL,
   outcomeId = NULL,
   analysisIds = NULL,
   databaseIds = NULL,
@@ -31,7 +31,7 @@ getContinuousRiskFactors(
 
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
-\item{targetId}{An integer corresponding to the target cohort ID}
+\item{characterizationTargetId}{The characterization target id}
 
 \item{outcomeId}{Am integer corresponding to the outcome cohort ID}
 
@@ -64,31 +64,34 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 rf <- getContinuousRiskFactors(
   connectionHandler = connectionHandler, 
   schema = 'main',
-  targetId = 1, 
+  characterizationTargetId = 1, 
   outcomeId = 3
 )
 
 }
 \seealso{
 Other Characterization: 
+\code{\link{characterizationCompareBinary}()},
+\code{\link{characterizationCompareContinuous}()},
 \code{\link{getBinaryCaseSeries}()},
 \code{\link{getBinaryRiskFactors}()},
 \code{\link{getBinaryTargetBaseline}()},
 \code{\link{getCaseCounts}()},
-\code{\link{getCaseTargetCounts}()},
-\code{\link{getCharacterizationCohortBinary}()},
-\code{\link{getCharacterizationCohortContinuous}()},
+\code{\link{getCharacterizationCaseSettings}()},
 \code{\link{getCharacterizationDemographics}()},
-\code{\link{getCharacterizationOutcomes}()},
-\code{\link{getCharacterizationTargets}()},
+\code{\link{getCharacterizationTargetSettings}()},
 \code{\link{getContinuousCaseSeries}()},
+\code{\link{getContinuousTargetBaseline}()},
 \code{\link{getDechallengeRechallenge}()},
 \code{\link{getDechallengeRechallengeFails}()},
-\code{\link{getIncidenceOutcomes}()},
 \code{\link{getIncidenceRates}()},
-\code{\link{getIncidenceTargets}()},
-\code{\link{getTargetBinaryFeatures}()},
-\code{\link{getTargetContinuousFeatures}()},
+\code{\link{getIncidenceTargetSettings}()},
+\code{\link{getNonCaseCounts}()},
+\code{\link{getOutcomesUsedInCharacterization}()},
+\code{\link{getOutcomesUsedInIncidence}()},
+\code{\link{getTargetCounts}()},
+\code{\link{getTargetsUsedInCharacterization}()},
+\code{\link{getTargetsUsedInIncidence}()},
 \code{\link{getTimeToEvent}()},
 \code{\link{plotAgeDistributions}()},
 \code{\link{plotSexDistributions}()},

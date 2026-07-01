@@ -3,13 +3,20 @@ select
   d.database_id,
   target_cohorts.cohort_name as target_name,
   cc.target_cohort_ID as target_id,
-  outcome_cohorts.cohort_name as outcome_name,
-  cc.outcome_cohort_ID as outcome_id,
-  cc.row_count,
-  cc.person_count,
   cc.min_prior_observation,
   99999 as limit_to_first_in_n_days,
+  NULL as nesting_cohort_id,
+  NULL as nesting_name,
+  NULL as min_age,
+  NULL as max_age,	
+  NULL as study_start,
+  NULL as study_end,
+  NULL as gender_concept_ids,
+  outcome_cohorts.cohort_name as outcome_name,
+  cc.outcome_cohort_ID as outcome_id,
   cc.outcome_washout_days,
+  cc.row_count,
+  cc.person_count,
   cc.risk_window_start,
   cc.risk_window_end,
   cc.start_anchor,
@@ -32,7 +39,7 @@ select
   
     where 
     cc.COHORT_TYPE in ('Cases')
-    {@use_target}?{ and cc.TARGET_COHORT_ID in (@target_id)}
+    {@use_characterization_target}?{ and cc.TARGET_COHORT_ID in (@characterization_target_id)}
   {@use_outcome}?{ and cc.OUTCOME_COHORT_ID in (@outcome_id)}
   {@use_database}?{ and d.database_id in (@database_id)}
   

@@ -3,18 +3,25 @@ select distinct
   targets.database_id,
   target_cohorts.cohort_name as target_name,
   targets.target_id,
+  targets.min_prior_observation,
+  99999 as limit_to_first_in_n_days,
+  NULL as nesting_cohort_id,
+  NULL as nesting_name,
+  NULL as min_age,
+  NULL as max_age,	
+  NULL as study_start,
+  NULL as study_end,
+  NULL as gender_concept_ids,
   outcome_cohorts.cohort_name as outcome_name,
   targets.outcome_id,
+  targets.outcome_washout_days,
   case when excludes.row_count is NULL then targets.row_count else
   targets.row_count - excludes.row_count end as row_count,
   case when excludes.person_count is NULL then targets.person_count
   when (excludes.person_count < 0 AND targets.person_count > 0) then targets.person_count - FLOOR(ABS(excludes.person_count)/2)
   when targets.person_count < 0 then targets.person_count
   else targets.person_count - excludes.person_count end as person_count,
-  targets.person_count as without_excluded_person_count,
-  targets.min_prior_observation,
-  99999 as limit_to_first_in_n_days,
-  targets.outcome_washout_days
+  targets.person_count as without_excluded_person_count
   
   from
   
@@ -49,7 +56,7 @@ on ts.setting_id = tcd.setting_id
 and ts.database_id = tcd.database_id
 
 where tcd.outcome_cohort_id != 0
-{@use_target}?{ and tcd.target_cohort_id in (@target_id)}
+{@use_characterization_target}?{ and tcd.target_cohort_id in (@characterization_target_id)}
 {@use_outcome}?{ and tcd.outcome_cohort_id in (@outcome_id)}
 ) s2
 
@@ -58,7 +65,7 @@ cc.target_cohort_id = s2.target_cohort_id
 
   where 
     cc.COHORT_TYPE in ('Target')
-{@use_target}?{ and cc.TARGET_COHORT_ID in (@target_id)}
+{@use_characterization_target}?{ and cc.TARGET_COHORT_ID in (@characterization_target_id)}
 {@use_database}?{ and cc.database_id in (@database_id)}
     ) targets
     
@@ -81,7 +88,7 @@ cc.target_cohort_id = s2.target_cohort_id
 
   where 
   cc.COHORT_TYPE in ('Exclude')
-  {@use_target}?{ and cc.TARGET_COHORT_ID in (@target_id)}
+  {@use_characterization_target}?{ and cc.TARGET_COHORT_ID in (@characterization_target_id)}
   {@use_outcome}?{ and cc.outcome_COHORT_ID in (@outcome_id)}
    
   ) excludes
