@@ -2,7 +2,7 @@ SELECT
 t.setting_id,
 {@include_names}?{d.cdm_source_abbreviation AS database_name,}
 t.database_id,
-{@include_names}?{target.cohort_name AS target_name,)}
+{@include_names}?{target.cohort_name AS target_name,}
 ts.characterization_target_id,
 ts.target_id AS target_cohort_id,
 ts.min_prior_observation,
