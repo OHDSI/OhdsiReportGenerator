@@ -53,7 +53,7 @@
   
   tryCatch(
     {
-      sql <- "SELECT version_number from @schema.@ci_table_prefixpackage_version');"
+      sql <- "SELECT version_number from @schema.@ci_table_prefixpackage_version;"
       
       pkversion <- connectionHandler$queryDb(
         sql = sql,
@@ -86,7 +86,7 @@
   version <- '0.0.0'
   tryCatch(
     {
-      sql <- "SELECT version_number from @schema.@c_table_prefixpackage_version');"
+      sql <- "SELECT version_number from @schema.@c_table_prefixpackage_version;"
       
       version <- connectionHandler$queryDb(
         sql = sql,
@@ -176,9 +176,9 @@ getCharacterizationTargetSettings <- function(
     cg_table_prefix = cgTablePrefix,
     c_table_prefix = cTablePrefix,
     use_target = !is.null(targetIds),
-    target_id = paste0(targetIds, collapse = ''),
+    target_id = paste0(targetIds, collapse = ','),
     use_characterization_target = !is.null(characterizationTargetIds),
-    characterization_target_id = paste0(characterizationTargetIds, collapse = ''),
+    characterization_target_id = paste0(characterizationTargetIds, collapse = ','),
     database_table = databaseTable,
     add_database_details = addDatabaseDetails
   )}, error = function(e){warning(e); return(NULL)})
@@ -186,7 +186,7 @@ getCharacterizationTargetSettings <- function(
   if(addDatabaseDetails){
     
     data <- data %>%
-      dplyr::group_by(dplyr::across(c(-.data$databaseId, -.data$databaseName))) %>%
+      dplyr::group_by(dplyr::across(-c("databaseId", "databaseName"))) %>%
       dplyr::summarise(
         databaseString = paste0(.data$databaseName, collapse = ', '),
         databaseIdString = paste0(.data$databaseId, collapse = ', ')
@@ -247,7 +247,7 @@ getIncidenceTargetSettings <- function(
     cg_table_prefix = cgTablePrefix,
     ci_table_prefix = ciTablePrefix,
     use_target = !is.null(targetIds),
-    target_id = paste0(targetIds, collapse = '')
+    target_id = paste0(targetIds, collapse = ',')
   )}, error = function(e){warning(e); return(NULL)})
   
   return(data)
@@ -317,11 +317,11 @@ getCharacterizationCaseSettings <- function(
     cg_table_prefix = cgTablePrefix,
     c_table_prefix = cTablePrefix,
     use_target = !is.null(targetIds),
-    target_id = paste0(targetIds, collapse = ''),
+    target_id = paste0(targetIds, collapse = ','),
     use_outcome = !is.null(outcomeIds),
-    outcome_id = paste0(outcomeIds, collapse = ''),
+    outcome_id = paste0(outcomeIds, collapse = ','),
     use_characterization_target = !is.null(characterizationTargetIds),
-    characterization_target_id = paste0(characterizationTargetIds, collapse = '')
+    characterization_target_id = paste0(characterizationTargetIds, collapse = ',')
   )}, error = function(e){warning(e); return(NULL)})
   
   return(data)
@@ -554,7 +554,9 @@ getTargetsUsedInCharacterization <- function(
     if(is.null(targets)){
       message('No target data')
       end <- Sys.time()
-      print(paste0('-- all extracting characterization targets took: ',  (end-first), ' ', units((end-first))))
+      if(printTimes){
+        print(paste0('-- all extracting characterization targets took: ',  (end-first), ' ', units((end-first))))
+      }
       return(NULL)
     }
     
@@ -601,8 +603,9 @@ getTargetsUsedInCharacterization <- function(
   }
   
   last <- Sys.time()
-  print(paste0('-- all extracting characterization targets took: ',  (last-first), ' ', units((last-first))))
-  
+  if(printTimes){
+    print(paste0('-- all extracting characterization targets took: ',  (last-first), ' ', units((last-first))))
+  }
   return(targets)
 }
 
@@ -852,7 +855,9 @@ getOutcomesUsedInCharacterization <- function(
   if(is.null(outcomes)){
     end <- Sys.time()
     message('No outcomes found')
-    print(paste0('Extracting characterization outcomes took: ', (end-firstStart), ' ', units((end-firstStart))))
+    if(printTimes){
+      print(paste0('Extracting characterization outcomes took: ', (end-firstStart), ' ', units((end-firstStart))))
+    }
     return(NULL)
   }
   
@@ -931,7 +936,9 @@ getOutcomesUsedInCharacterization <- function(
   }
   
   last <- Sys.time()
-  print(paste0('Extracting characterization outcomes took: ', (last-firstStart), ' ', units((last-firstStart))))
+  if(printTimes){
+    print(paste0('Extracting characterization outcomes took: ', (last-firstStart), ' ', units((last-firstStart))))
+  }
   
   return(outcomes)
   
@@ -1767,7 +1774,7 @@ getCharacterizationDemographics <- function(
       cTablePrefix = cTablePrefix, 
       cgTablePrefix = cgTablePrefix, 
       databaseTable = databaseTable, 
-      characterizationTargetId = characterizationTargetId, 
+      characterizationTargetIds = characterizationTargetId, 
       analysisIds = analysisIds
     )
     
@@ -2581,7 +2588,7 @@ characterizationCompareBinary <- function(
       cTablePrefix = cTablePrefix,
       cgTablePrefix = cgTablePrefix,
       databaseTable = databaseTable,
-      characterizationTargetId = characterizationTargetIds,
+      characterizationTargetIds = characterizationTargetIds,
       databaseIds = databaseIds,
       minThreshold = minThreshold,
       includeNames = FALSE # makes extraction quicker
@@ -2695,7 +2702,7 @@ characterizationCompareContinuous <- function(
       cTablePrefix = cTablePrefix,
       cgTablePrefix = cgTablePrefix,
       databaseTable = databaseTable,
-      characterizationTargetId = characterizationTargetIds,
+      characterizationTargetIds = characterizationTargetIds,
       databaseIds = databaseIds,
       minThreshold = minThreshold,
       includeNames = FALSE # makes extraction quicker
@@ -2789,7 +2796,7 @@ pivotMultipleTargetResults <- function(
     data = targetBaseline, 
     id_cols = c('covariateName', 'covariateId'), 
     names_from = 'id', 
-    values_from = pivotCols, 
+    values_from = dplyr::all_of(pivotCols), 
     values_fn = mean, 
     values_fill = NA
   ) 

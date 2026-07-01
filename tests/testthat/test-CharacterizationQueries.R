@@ -60,7 +60,7 @@ test_that("getCharacterizationTargetSettings", {
     connectionHandler = connectionHandler,
     schema = schema,
     addDatabaseDetails = TRUE
-  )
+  ) %>% suppressWarnings()
 
   testthat::expect_true("databaseString" %in% colnames(withDbDetails))
   testthat::expect_true("databaseIdString" %in% colnames(withDbDetails))
@@ -91,6 +91,9 @@ test_that("getIncidenceTargetSettings", {
   )
 
   testthat::expect_true(nrow(restricted) <= nrow(incidenceSettings))
+  if (nrow(restricted) > 0 && targetCol %in% colnames(restricted)) {
+    testthat::expect_true(all(restricted[[targetCol]] == incidenceSettings[[targetCol]][1]))
+  }
 })
 
 test_that("getCharacterizationCaseSettings", {
@@ -186,22 +189,29 @@ test_that("getDechallengeRechallengeFails extraction", {
   )
 
   testthat::expect_true(is.data.frame(fails))
+  testthat::expect_true(ncol(fails) > 0)
+
+  if (nrow(fails) > 0) {
+    if ("characterizationTargetId" %in% colnames(fails)) {
+      testthat::expect_true(all(fails$characterizationTargetId == dcrc$targetId[1]))
+    }
+    if ("targetId" %in% colnames(fails)) {
+      testthat::expect_true(all(fails$targetId == dcrc$targetId[1]))
+    }
+    if ("outcomeId" %in% colnames(fails)) {
+      testthat::expect_true(all(fails$outcomeId == dcrc$outcomeId[1]))
+    }
+    if ("databaseId" %in% colnames(fails)) {
+      testthat::expect_true(all(fails$databaseId == dcrc$databaseId[1]))
+    }
+  }
 })
 
 test_that("getContinuousTargetBaseline", {
-  ctb <- tryCatch(getContinuousTargetBaseline(
+  ctb <- getContinuousTargetBaseline(
     connectionHandler = connectionHandler,
     schema = schema
-  ), error = function(e) e)
-
-  if (inherits(ctb, "error")) {
-    testthat::expect_match(
-      conditionMessage(ctb),
-      "syntax error|Error executing SQL",
-      ignore.case = TRUE
-    )
-    return(invisible(NULL))
-  }
+  )
 
   testthat::expect_true("covariateName" %in% colnames(ctb))
   testthat::expect_true("covariateId" %in% colnames(ctb))
@@ -218,6 +228,9 @@ test_that("getContinuousTargetBaseline", {
   )
 
   testthat::expect_true(nrow(ctb2) <= nrow(ctb))
+  if (nrow(ctb2) > 0 && "characterizationTargetId" %in% colnames(ctb2)) {
+    testthat::expect_true(all(ctb2$characterizationTargetId == targetId))
+  }
 })
 
 test_that("getTargetCounts", {
@@ -239,6 +252,9 @@ test_that("getTargetCounts", {
   )
 
   testthat::expect_true(nrow(restricted) <= nrow(counts))
+  if (nrow(restricted) > 0) {
+    testthat::expect_true(all(restricted$characterizationTargetId == counts$characterizationTargetId[1]))
+  }
 })
 
 test_that("incidence rates", {
@@ -283,6 +299,14 @@ test_that("getTimeToEvent", {
   )
 
   testthat::expect_true(nrow(tte2) <= nrow(tte))
+  if (nrow(tte2) > 0) {
+    if ("targetId" %in% colnames(tte2)) {
+      testthat::expect_true(all(tte2$targetId == ids$characterizationTargetId))
+    }
+    if ("outcomeId" %in% colnames(tte2)) {
+      testthat::expect_true(all(tte2$outcomeId == ids$outcomeId))
+    }
+  }
 })
 
 test_that("getDechallengeRechallenge", {
@@ -312,6 +336,14 @@ test_that("getDechallengeRechallenge", {
   )
 
   testthat::expect_true(nrow(result2) <= nrow(result))
+  if (nrow(result2) > 0) {
+    if ("targetId" %in% colnames(result2)) {
+      testthat::expect_true(all(result2$targetId == ids$characterizationTargetId))
+    }
+    if ("outcomeId" %in% colnames(result2)) {
+      testthat::expect_true(all(result2$outcomeId == ids$outcomeId))
+    }
+  }
 })
 
 test_that("getBinaryTargetBaseline", {
@@ -337,6 +369,14 @@ test_that("getBinaryTargetBaseline", {
   )
 
   testthat::expect_true(nrow(res2) <= nrow(res))
+  if (nrow(res2) > 0) {
+    if ("characterizationTargetId" %in% colnames(res2)) {
+      testthat::expect_true(all(res2$characterizationTargetId == targetId))
+    }
+    if ("targetId" %in% colnames(res2)) {
+      testthat::expect_true(all(res2$targetId == targetId))
+    }
+  }
 
   res3 <- getBinaryTargetBaseline(
     connectionHandler = connectionHandler,
@@ -372,6 +412,14 @@ test_that("target counts", {
   )
 
   testthat::expect_true(nrow(counts2) <= nrow(counts))
+  if (nrow(counts2) > 0) {
+    if ("targetId" %in% colnames(counts2)) {
+      testthat::expect_true(all(counts2$targetId == ids$characterizationTargetId))
+    }
+    if ("outcomeId" %in% colnames(counts2)) {
+      testthat::expect_true(all(counts2$outcomeId == ids$outcomeId))
+    }
+  }
 })
 
 test_that("getCaseCounts", {
@@ -398,6 +446,14 @@ test_that("getCaseCounts", {
   )
 
   testthat::expect_true(nrow(counts2) <= nrow(counts))
+  if (nrow(counts2) > 0) {
+    if ("targetId" %in% colnames(counts2)) {
+      testthat::expect_true(all(counts2$targetId == ids$characterizationTargetId))
+    }
+    if ("outcomeId" %in% colnames(counts2)) {
+      testthat::expect_true(all(counts2$outcomeId == ids$outcomeId))
+    }
+  }
 })
 
 test_that("getCharacterizationDemographics", {
@@ -598,7 +654,7 @@ test_that("characterizationCompareBinary", {
     connectionHandler = connectionHandler,
     schema = schema,
     characterizationTargetIds = targetId
-  )
+  ) %>% suppressWarnings()
 
   testthat::skip_if(is.null(data), "No binary characterization comparison data in example data")
   testthat::skip_if(nrow(data$covariates) == 0 || ncol(data$covariates) == 0, "No binary covariate comparison rows in example data")
@@ -617,7 +673,7 @@ test_that("characterizationCompareContinuous", {
     connectionHandler = connectionHandler,
     schema = schema,
     characterizationTargetIds = targetId
-  )
+  ) %>% suppressWarnings()
 
   testthat::skip_if(is.null(data), "No continuous characterization comparison data in example data")
   testthat::skip_if(nrow(data$covariates) == 0 || ncol(data$covariates) == 0, "No continuous covariate comparison rows in example data")
