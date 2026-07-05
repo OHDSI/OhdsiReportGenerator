@@ -4,33 +4,19 @@
 \alias{plotSexDistributions}
 \title{Plots the sex distributions using the sex features}
 \usage{
-plotSexDistributions(
-  sexData,
-  riskWindowStart = "1",
-  riskWindowEnd = "365",
-  startAnchor = "cohort start",
-  endAnchor = "cohort start"
-)
+plotSexDistributions(sexData)
 }
 \arguments{
 \item{sexData}{The sex data extracted using 'getCharacterizationDemographics(type = 'sex')'}
-
-\item{riskWindowStart}{The time at risk window start}
-
-\item{riskWindowEnd}{The time at risk window end}
-
-\item{startAnchor}{The anchor for the time at risk start}
-
-\item{endAnchor}{The anchor for the time at risk end}
 }
 \value{
 Returns a ggplot with the distributions
 }
 \description{
-Creates bar charts for the target and case sex.
+Creates bar charts for the target.
 }
 \details{
-Input the data returned from 'getCharacterizationDemographics(type = 'sex')' and the time-at-risk
+Input the data returned from 'getCharacterizationDemographics(type = 'sex')'
 }
 \examples{
 conDet <- getExampleConnectionDetails()
@@ -40,7 +26,7 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 sexData <- getCharacterizationDemographics(
   connectionHandler = connectionHandler, 
   schema = 'main',
-  targetId = 1, 
+  characterizationTargetId = 10, 
   outcomeId = 3, 
   type = 'sex'
 )

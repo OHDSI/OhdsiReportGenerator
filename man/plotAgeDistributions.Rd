@@ -4,33 +4,19 @@
 \alias{plotAgeDistributions}
 \title{Plots the age distributions using the binary age groups}
 \usage{
-plotAgeDistributions(
-  ageData,
-  riskWindowStart = "1",
-  riskWindowEnd = "365",
-  startAnchor = "cohort start",
-  endAnchor = "cohort start"
-)
+plotAgeDistributions(ageData)
 }
 \arguments{
 \item{ageData}{The age data extracted using 'getCharacterizationDemographics(type = 'age')'}
-
-\item{riskWindowStart}{The time at risk window start}
-
-\item{riskWindowEnd}{The time at risk window end}
-
-\item{startAnchor}{The anchor for the time at risk start}
-
-\item{endAnchor}{The anchor for the time at risk end}
 }
 \value{
 Returns a ggplot with the distributions
 }
 \description{
-Creates bar charts for the target and case age groups.
+Creates bar charts for the target.
 }
 \details{
-Input the data returned from 'getCharacterizationDemographics(type = 'age')' and the time-at-risk
+Input the data returned from 'getCharacterizationDemographics(type = 'age')'
 }
 \examples{
 conDet <- getExampleConnectionDetails()
@@ -40,8 +26,7 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 ageData <- getCharacterizationDemographics(
 connectionHandler = connectionHandler, 
 schema = 'main',
-targetId = 1, 
-outcomeId = 3, 
+characterizationTargetId = 10, 
 type = 'age'
 )
 

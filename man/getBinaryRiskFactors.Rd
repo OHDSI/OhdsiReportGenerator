@@ -11,6 +11,7 @@ getBinaryRiskFactors(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   characterizationTargetId = NULL,
+  characterizationCaseId = NULL,
   outcomeId = NULL,
   databaseId = NULL,
   analysisIds = c(3),
@@ -32,6 +33,8 @@ getBinaryRiskFactors(
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
 \item{characterizationTargetId}{the characterization target id}
+
+\item{characterizationCaseId}{the characterization case id}
 
 \item{outcomeId}{Am integer corresponding to the outcome cohort ID}
 

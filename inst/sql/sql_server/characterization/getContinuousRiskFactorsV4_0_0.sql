@@ -79,6 +79,7 @@ ON nesting.cohort_definition_id = ts.nesting_cohort_id
 -- add wheres here
 WHERE 1=1
 {@use_characterization_target}?{AND ts.characterization_target_id IN (@characterization_target_id)}
+{@use_characterization_case}?{AND cs.characterization_case_id IN (@characterization_case_id)}
 {@use_outcome}?{AND cs.outcome_id IN (@outcome_id)}
 {@use_database}?{AND d.database_id IN (@database_id)}
 {@use_analysis}?{AND cr.analysis_id IN (@analysis_ids)}

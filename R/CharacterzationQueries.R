@@ -1088,6 +1088,7 @@ getOutcomesUsedInIncidence <- function(
 #' @template cgTablePrefix
 #' @template databaseTable
 #' @template targetIds
+#' @param parentIds The parent cohort ids to restrict to
 #' @template outcomeIds
 #' @family Characterization
 #' @return
@@ -1800,6 +1801,7 @@ getCharacterizationDemographics <- function(
 #' @template cgTablePrefix
 #' @template databaseTable
 #' @param characterizationTargetId the characterization target id
+#' @param characterizationCaseId the characterization case id
 #' @template outcomeId
 #' @param databaseId The database ID to restrict results to
 #' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
@@ -1833,6 +1835,7 @@ getBinaryRiskFactors <- function(
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
     characterizationTargetId = NULL,
+    characterizationCaseId = NULL,
     outcomeId = NULL,
     databaseId = NULL,
     analysisIds = c(3), # TODO enable this to be NULL?
@@ -1841,6 +1844,24 @@ getBinaryRiskFactors <- function(
     startAnchor = NULL,
     endAnchor = NULL
 ){
+  
+  if(is.null(characterizationCaseId)){
+    if(is.null(characterizationTargetId)){
+      stop('characterizationTargetId must be entered')
+    }
+    if(is.null(outcomeId)){
+      stop('outcomeId must be entered')
+    }
+    if(length(characterizationTargetId) > 1){
+      stop('Must be single characterizationTargetId')
+    }
+    if(length(outcomeId) > 1){
+      stop('Must be single outcomeId')
+    } } else{
+      if(length(characterizationCaseId) > 1){
+        stop('Must be single characterizationCaseId')
+      }
+    }
   
   cVersion <- .getCVersion(
     connectionHandler = connectionHandler,
@@ -1866,6 +1887,8 @@ getBinaryRiskFactors <- function(
       schema = schema,
       characterization_target_id = paste0(characterizationTargetId, collapse = ','),
       use_characterization_target = !is.null(characterizationTargetId),
+      characterization_case_id = paste0(characterizationCaseId, collapse = ','),
+      use_characterization_case = !is.null(characterizationCaseId),
       outcome_id = paste0(outcomeId, collapse = ','),
       use_outcome = !is.null(outcomeId),
       c_table_prefix = cTablePrefix,
@@ -1893,6 +1916,7 @@ getBinaryRiskFactors <- function(
 #' @template cgTablePrefix
 #' @template databaseTable
 #' @param characterizationTargetId The characterization target id
+#' @param characterizationCaseId The characterization case id
 #' @template outcomeId
 #' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
 #' @param databaseIds (optional) A vector of database IDs to restrict to
@@ -1927,6 +1951,7 @@ getContinuousRiskFactors <- function(
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
     characterizationTargetId = NULL,
+    characterizationCaseId = NULL,
     outcomeId = NULL,
     analysisIds = NULL,
     databaseIds = NULL,
@@ -1935,18 +1960,24 @@ getContinuousRiskFactors <- function(
     startAnchor = NULL,
     endAnchor = NULL
 ){
-  if(is.null(characterizationTargetId)){
-    stop('characterizationTargetId must be entered')
-  }
-  if(is.null(outcomeId)){
-    stop('outcomeId must be entered')
-  }
-  if(length(characterizationTargetId) > 1){
-    stop('Must be single characterizationTargetId')
-  }
-  if(length(outcomeId) > 1){
-    stop('Must be single outcomeId')
-  }
+  
+  if(is.null(characterizationCaseId)){
+    if(is.null(characterizationTargetId)){
+      stop('characterizationTargetId must be entered')
+    }
+    if(is.null(outcomeId)){
+      stop('outcomeId must be entered')
+    }
+    if(length(characterizationTargetId) > 1){
+      stop('Must be single characterizationTargetId')
+    }
+    if(length(outcomeId) > 1){
+      stop('Must be single outcomeId')
+    } } else{
+      if(length(characterizationCaseId) > 1){
+        stop('Must be single characterizationCaseId')
+      }
+    }
   
   cVersion <- .getCVersion(
     connectionHandler = connectionHandler,
@@ -1972,6 +2003,8 @@ getContinuousRiskFactors <- function(
       schema = schema,
       characterization_target_id = paste0(characterizationTargetId, collapse = ','),
       use_characterization_target = !is.null(characterizationTargetId),
+      characterization_case_id = paste0(characterizationCaseId, collapse = ','),
+      use_characterization_case = !is.null(characterizationCaseId),
       outcome_id = paste0(outcomeId, collapse = ','),
       use_outcome = !is.null(outcomeId),
       c_table_prefix = cTablePrefix,
@@ -2012,7 +2045,8 @@ getContinuousRiskFactors <- function(
 #' @template cTablePrefix
 #' @template cgTablePrefix
 #' @template databaseTable
-#' @param characterizationTargetId The characterization target id
+#' @param characterizationTargetId The characterization target id to restrict results to
+#' @param characterizationCaseId The characterization case id to restrict results to
 #' @template outcomeId
 #' @param databaseIds (optional) One or more unique identifiers for the databases
 #' @param riskWindowStart (optional) A riskWindowStart to restrict to
@@ -2047,6 +2081,7 @@ getBinaryCaseSeries <- function(
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
     characterizationTargetId = NULL,
+    characterizationCaseId = NULL,
     outcomeId = NULL,
     databaseIds = NULL,
     riskWindowStart = NULL,
@@ -2056,18 +2091,26 @@ getBinaryCaseSeries <- function(
     conceptIds = NULL,
     minVal = NULL
 ){
-  if(is.null(characterizationTargetId)){
-    stop('characterizationTargetId must be entered')
+  
+  if(is.null(characterizationCaseId)){
+    if(is.null(characterizationTargetId)){
+      stop('characterizationTargetId must be entered')
+    }
+    if(is.null(outcomeId)){
+      stop('outcomeId must be entered')
+    }
+    if(length(characterizationTargetId) > 1){
+      stop('Must be single characterizationTargetId')
+    }
+    if(length(outcomeId) > 1){
+      stop('Must be single outcomeId')
+    }
+  } else{
+    if(length(characterizationCaseId) > 1){
+      stop('Must be single characterizationCaseId')
+    }
   }
-  if(is.null(outcomeId)){
-    stop('outcomeId must be entered')
-  }
-  if(length(characterizationTargetId) > 1){
-    stop('Must be single characterizationTargetId')
-  }
-  if(length(outcomeId) > 1){
-    stop('Must be single outcomeId')
-  }
+  
   
   cVersion <- .getCVersion(
     connectionHandler = connectionHandler,
@@ -2084,7 +2127,11 @@ getBinaryCaseSeries <- function(
   result <- connectionHandler$queryDb(
     sql = sql,
     schema = schema,
+    use_characterization_target = !is.null(characterizationTargetId),
     characterization_target_id = paste0(characterizationTargetId, collapse = ','),
+    use_characterization_case = !is.null(characterizationCaseId),
+    characterization_case_id = paste0(characterizationCaseId, collapse = ','),
+    use_outcome_id = !is.null(outcomeId),
     outcome_id = paste0(outcomeId, collapse = ','),
     c_table_prefix = cTablePrefix,
     cg_table_prefix = cgTablePrefix,
@@ -2119,7 +2166,8 @@ getBinaryCaseSeries <- function(
 #' @template cTablePrefix
 #' @template cgTablePrefix
 #' @template databaseTable
-#' @param characterizationTargetId the characterization target id
+#' @param characterizationTargetId The characterization target id to restrict results to
+#' @param characterizationCaseId The characterization case id to restrict results to
 #' @template outcomeId
 #' @param databaseIds (optional) One or more unique identifiers for the databases
 #' @param riskWindowStart (optional) A riskWindowStart to restrict to
@@ -2152,6 +2200,7 @@ getContinuousCaseSeries <- function(
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
     characterizationTargetId = NULL,
+    characterizationCaseId = NULL,
     outcomeId = NULL,
     databaseIds = NULL,
     riskWindowStart = NULL,
@@ -2159,17 +2208,23 @@ getContinuousCaseSeries <- function(
     startAnchor = NULL,
     endAnchor = NULL
 ){
-  if(is.null(characterizationTargetId)){
-    stop('characterizationTargetId must be entered')
-  }
-  if(is.null(outcomeId)){
-    stop('targetId must be entered')
-  }
-  if(length(characterizationTargetId) > 1){
-    stop('Must be single targetId')
-  }
-  if(length(outcomeId) > 1){
-    stop('Must be single outcomeId')
+  if(is.null(characterizationCaseId)){
+    if(is.null(characterizationTargetId)){
+      stop('characterizationTargetId must be entered')
+    }
+    if(is.null(outcomeId)){
+      stop('outcomeId must be entered')
+    }
+    if(length(characterizationTargetId) > 1){
+      stop('Must be single characterizationTargetId')
+    }
+    if(length(outcomeId) > 1){
+      stop('Must be single outcomeId')
+    }
+  } else{
+    if(length(characterizationCaseId) > 1){
+      stop('Must be single characterizationCaseId')
+    }
   }
   
   cVersion <- .getCVersion(
@@ -2187,7 +2242,11 @@ getContinuousCaseSeries <- function(
   result <- connectionHandler$queryDb(
     sql = sql,
     schema = schema,
+    use_characterization_target = !is.null(characterizationTargetId),
     characterization_target_id = paste0(characterizationTargetId, collapse = ','),
+    use_characterization_case = !is.null(characterizationCaseId),
+    characterization_case_id = paste0(characterizationCaseId, collapse = ','),
+    use_outcome_id = !is.null(outcomeId),
     outcome_id = paste0(outcomeId, collapse = ','),
     c_table_prefix = cTablePrefix,
     cg_table_prefix = cgTablePrefix,
@@ -2227,6 +2286,7 @@ getContinuousCaseSeries <- function(
 #' @template cgTablePrefix
 #' @template databaseTable
 #' @param characterizationTargetIds The characterization target cohort ids of interest
+#' @param characterizationCaseIds The characterization case ids of interest
 #' @template outcomeIds
 #' @param databaseIds A vector of database IDs to restrict to
 #' @param includeNames whether to add the database names and cohort names
@@ -2237,6 +2297,7 @@ getContinuousCaseSeries <- function(
 #' \itemize{
 #'  \item{databaseName the name of the database}
 #'  \item{databaseId the unique identifier of the database}
+#'  \item{characterizationCaseId the unique identifier of target, outcome and TAR combination}
 #'  \item{targetName the target cohort name}
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{limitToFirstInNDays target index is limited to first in N days}
@@ -2263,7 +2324,7 @@ getContinuousCaseSeries <- function(
 #' 
 #' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #' 
-#' tc <- getCaseTargetCounts(
+#' tc <- getNonCaseCounts(
 #' connectionHandler = connectionHandler, 
 #' schema = 'main'
 #' )
@@ -2275,6 +2336,7 @@ getNonCaseCounts <- function(
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
     characterizationTargetIds = NULL,
+    characterizationCaseIds = NULL,
     outcomeIds = NULL,
     databaseIds = NULL,
     includeNames = TRUE
@@ -2298,6 +2360,8 @@ getNonCaseCounts <- function(
     schema = schema,
     use_characterization_target = !is.null(characterizationTargetIds),
     characterization_target_id = paste0(characterizationTargetIds, collapse = ','),
+    use_characterization_case = !is.null(characterizationCaseIds),
+    characterization_case_id = paste0(characterizationCaseIds, collapse = ','),
     outcome_id = paste0(outcomeIds, collapse = ','),
     use_outcome = !is.null(outcomeIds),
     c_table_prefix = cTablePrefix,
@@ -2326,6 +2390,7 @@ getNonCaseCounts <- function(
 #' @template cgTablePrefix
 #' @template databaseTable
 #' @param characterizationTargetIds The characterization target cohort ids of interest
+#' @param characterizationCaseIds The characterization case ids of interest
 #' @template outcomeIds
 #' @param databaseIds (optional) A vector of database IDs to restrict to
 #' @param riskWindowStart (optional) A vector of time-at-risk risk window starts to restrict to
@@ -2340,6 +2405,7 @@ getNonCaseCounts <- function(
 #' \itemize{
 #'  \item{databaseName the name of the database}
 #'  \item{databaseId the unique identifier of the database}
+#'  \item{characterizationCaseId the unique identifier of target, outcome and TAR combination}
 #'  \item{targetName the target cohort name}
 #'  \item{targetId the target cohort unique identifier}
 #'  \item{outcomeName the outcome name}
@@ -2373,6 +2439,7 @@ getCaseCounts <- function(
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
     characterizationTargetIds = NULL,
+    characterizationCaseIds = NULL,
     outcomeIds = NULL,
     databaseIds = NULL,
     riskWindowStart = NULL,
@@ -2402,7 +2469,8 @@ getCaseCounts <- function(
     database_table = databaseTable,
     use_characterization_target = !is.null(characterizationTargetIds),
     characterization_target_id = paste0(characterizationTargetIds, collapse = ','),
-    
+    use_characterization_case= !is.null(characterizationCaseIds),
+    characterization_case_id = paste0(characterizationCaseIds, collapse = ','),
     outcome_id = paste0(outcomeIds, collapse = ','),
     use_outcome = !is.null(outcomeIds),
     database_id = paste0("'",databaseIds,"'", collapse = ","),

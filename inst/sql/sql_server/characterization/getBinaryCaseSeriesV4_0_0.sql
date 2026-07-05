@@ -1,7 +1,7 @@
 SELECT 
   d.CDM_SOURCE_ABBREVIATION AS database_name,
   d.database_id,
-  
+  cov.characterization_case_id,
   target.cohort_name AS target_name,
   ts.target_id AS target_cohort_id,
   ts.min_prior_observation, 
@@ -66,8 +66,10 @@ ON outcome.cohort_definition_id = s.outcome_id
 LEFT JOIN @schema.@cg_table_prefixcohort_definition nesting
 ON nesting.cohort_definition_id = ts.nesting_cohort_id
 
-WHERE ts.characterization_target_id = @characterization_target_id
-AND s.outcome_id = @outcome_id
+WHERE 1 = 1
+{@use_characterization_case}?{AND s.characterization_case_id = @characterization_case_id}
+{@use_characterization_target}?{AND ts.characterization_target_id = @characterization_target_id}
+{@use_outcome_id}?{AND s.outcome_id = @outcome_id}
 {@use_database}?{AND cov.database_id in (@database_ids)}
 {@use_risk_window_start}?{AND s.risk_window_start = @risk_window_start}
 {@use_risk_window_end}?{AND s.risk_window_end = @risk_window_end}

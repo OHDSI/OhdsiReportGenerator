@@ -11,6 +11,7 @@ getContinuousRiskFactors(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   characterizationTargetId = NULL,
+  characterizationCaseId = NULL,
   outcomeId = NULL,
   analysisIds = NULL,
   databaseIds = NULL,
@@ -32,6 +33,8 @@ getContinuousRiskFactors(
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
 \item{characterizationTargetId}{The characterization target id}
+
+\item{characterizationCaseId}{The characterization case id}
 
 \item{outcomeId}{Am integer corresponding to the outcome cohort ID}
 

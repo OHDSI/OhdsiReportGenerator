@@ -11,6 +11,7 @@ getIncidenceRates(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   targetIds = NULL,
+  parentIds = NULL,
   outcomeIds = NULL
 )
 }
@@ -26,6 +27,8 @@ getIncidenceRates(
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
+
+\item{parentIds}{The parent cohort ids to restrict to}
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
 }

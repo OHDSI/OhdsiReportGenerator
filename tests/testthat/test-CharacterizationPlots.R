@@ -1,35 +1,37 @@
-pickPlotCharacterizationTarget <- function() {
-  counts <- getTargetCounts(
-    connectionHandler = connectionHandler,
-    schema = schema
-  )
-
-  if (nrow(counts) == 0) {
-    return(NULL)
-  }
-
-  counts$characterizationTargetId[1]
-}
-
 test_that("viewIncidenceRate", {
   
   incidenceData <- getIncidenceRates(
     connectionHandler = connectionHandler , 
-    schema = schema
+    schema = schema, 
+    targetIds = 1
   )
  # incidence data does not have rate values to imputing them
   incidenceData$incidenceRateP100py <- 1+sample(c(-1,1),replace = TRUE)*runif(nrow(incidenceData))
   incidenceData$incidenceProportionP100p<- 0.5+sample(c(-1,1),replace = TRUE)*runif(nrow(incidenceData))
 
+  cTarIds <- getCharacterizationTargetSettings(
+    connectionHandler = connectionHandler, 
+    schema = schema, 
+    targetIds = 1
+    )
+  
+  cTarIds <- cTarIds %>%
+    dplyr::filter(.data$limitToFirstInNDays == 99999 &
+                    .data$databaseComparator > 0 
+                    ) %>%
+    dplyr::pull("characterizationTargetId")
+  
   ageData <- getBinaryTargetBaseline(
     connectionHandler = connectionHandler, 
     schema = schema,  
+    characterizationTargetIds = cTarIds[1],
     analysisIds = 3
   )
 
   genderData <- getBinaryTargetBaseline(
     connectionHandler = connectionHandler, 
     schema = schema,  
+    characterizationTargetIds = cTarIds[1],
     analysisIds = 1
   )
 
@@ -43,13 +45,13 @@ test_that("viewIncidenceRate", {
 
 
 test_that("plotAgeDistributions", {
-  targetId <- pickPlotCharacterizationTarget()
-  testthat::skip_if(is.null(targetId), "No characterization target in example data")
+  characterizationTargetId <- 30
+  testthat::skip_if(is.null(characterizationTargetId), "No characterization target in example data")
 
   ageData <- getCharacterizationDemographics(
     connectionHandler = connectionHandler, 
     schema = 'main',
-    characterizationTargetId = targetId,
+    characterizationTargetId = characterizationTargetId,
     type = 'age'
   )
 
@@ -60,13 +62,13 @@ test_that("plotAgeDistributions", {
 })
 
 test_that("plotSexDistributions", {
-  targetId <- pickPlotCharacterizationTarget()
-  testthat::skip_if(is.null(targetId), "No characterization target in example data")
+  characterizationTargetId <- 30
+  testthat::skip_if(is.null(characterizationTargetId), "No characterization target in example data")
 
   sexData <- getCharacterizationDemographics(
     connectionHandler = connectionHandler, 
     schema = 'main',
-    characterizationTargetId = targetId,
+    characterizationTargetId = characterizationTargetId,
     type = 'sex'
   )
 

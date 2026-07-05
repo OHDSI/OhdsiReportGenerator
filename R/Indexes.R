@@ -106,8 +106,6 @@ createCharacterizationIndexes <- function(
     cTablePrefix = 'c_'
 ){
   
-  tteVersion <- 0
-  
   cVersion <- .getCVersion(
     connectionHandler = connectionHandler,
     schema = schema,
@@ -126,18 +124,21 @@ createCharacterizationIndexes <- function(
     c_table_prefix = cTablePrefix
   )
   
-  # now add the time to event optimization table
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/tteOptimizationV", tteVersion, ".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
-  
-  connectionHandler$executeSql(
-    sql = sql,
-    schema = schema,
-    c_table_prefix = cTablePrefix
-  )
+  if(cVersion == '3_0_0'){
+    tteVersion <- 0
+    # now add the time to event optimization table
+    sql <- SqlRender::readSql(system.file(
+      paste0("sql/sql_server/characterization/tteOptimizationV", tteVersion, ".sql"),
+      package = "OhdsiReportGenerator",
+      mustWork = TRUE
+    ))
+    
+    connectionHandler$executeSql(
+      sql = sql,
+      schema = schema,
+      c_table_prefix = cTablePrefix
+    )
+  }
   
   return(invisible(NULL))
   

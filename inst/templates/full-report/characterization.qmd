@@ -43,40 +43,10 @@ cat(result, sep = '\n')
     )
   }
   
-  targetContinuousOfInterest <- OhdsiReportGenerator::getTargetContinuousFeatures(
-    connectionHandler = connectionHandler, 
-    schema = params$schema, 
-    targetIds = unique(c(targetIdsOfInterest, comparatorIdsOfInterest, indicationIdsOfInterest)), 
-    analysisIds = c(2,8,9,10)
-  )
-  
-  targetBinaryOfInterest <- do.call('rbind', lapply(unique(c(targetIdsOfInterest, comparatorIdsOfInterest, indicationIdsOfInterest)), function(x){
-  OhdsiReportGenerator::getTargetBinaryFeatures(
-    connectionHandler = connectionHandler, 
-    schema = params$schema, 
-    targetId = x, 
-    analysisIds = c(1,2,3,4,5)
-)}))
-  
-# run this per type - 
-demoList <- list(
-  `Exposure Target` = targetIdsOfInterest,
-  `Outcome/s` = outcomeIdsOfInterest,
-  `Indication/s` = ifelse(is.null(indicationIdsOfInterest), NA, indicationIdsOfInterest), # what about null?
-  `Comparator/s` = comparatorIdsOfInterest
-)
 
-cat('\n\n### Index Demographics\n\n')
-for(demoListInd in 1:length(demoList)){
-  result <- knitr::knit_child(
-    text = knitr::knit_expand(
-      file = "characterization/demographics.qmd", 
-      quiet = TRUE, 
-      envir = environment()), 
-    quiet = TRUE
-    )
+result <- knitr::knit_child(text = knitr::knit_expand("characterization/demographics.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
 cat(result, sep = '\n')
-}
+
 ```
 
 ```{r}
@@ -85,6 +55,5 @@ cat(result, sep = '\n')
 #| results: 'asis'
 
 result <- knitr::knit_child(text = knitr::knit_expand("characterization/risk_factors.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
-#result <- knitr::knit_child("characterization/risk_factors.qmd", quiet = TRUE)
 cat(result, sep = '\n')
 ```

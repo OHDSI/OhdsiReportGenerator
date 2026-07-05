@@ -8,7 +8,7 @@ test_that("Characterization indexes", {
   )
   testthat::expect_true(is.null(nullReturn))
 
-  cTargets <- getCharacterizationTargets(
+  cTargets <- getCharacterizationTargetSettings(
     connectionHandler = connectionHandler, 
     schema = schema, 
     cTablePrefix = 'c_', 

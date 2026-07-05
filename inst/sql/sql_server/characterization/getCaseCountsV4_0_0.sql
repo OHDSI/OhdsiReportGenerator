@@ -2,7 +2,8 @@ select
   
   cc.setting_id,
   cc.database_id,
-  {@include_names}?{d.cdm_source_abbreviation as database_name,}  
+  {@include_names}?{d.cdm_source_abbreviation as database_name,} 
+  cs.characterization_case_id,
   ts.target_id as target_id,
   {@include_names}?{target_cohorts.cohort_name as target_name,}
   ts.min_prior_observation,
@@ -58,10 +59,12 @@ AND ts.characterization_target_id = cs.characterization_target_id
 }
   
 WHERE 1 = 1
+{@use_characterization_case}?{ AND cs.characterization_case_id IN (@characterization_case_id)}
+
 {@use_characterization_target}?{ AND ts.characterization_target_id IN (@characterization_target_id)}
 {@use_outcome}?{ AND cs.outcome_id IN (@outcome_id)}
-{@use_database}?{ AND cc.database_id IN (@database_id)}
 
+{@use_database}?{ AND cc.database_id IN (@database_id)}
 {@use_risk_window_start}?{ AND cs.risk_window_start IN (@risk_window_start)}  
 {@use_risk_window_end}?{ AND cs.risk_window_end IN (@risk_window_end)}
 {@use_start_anchor}?{ AND cs.start_anchor IN (@start_anchor)}

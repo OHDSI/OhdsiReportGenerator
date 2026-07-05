@@ -10,31 +10,34 @@
 targetIds <- cohortDefinitions %>%
   dplyr::filter(.data$cohortDefinitionId %in% targetIdsOfInterest) %>%
   dplyr::arrange(.data$order, .data$cohortDefinitionId) %>%
-  dplyr::select("cohortDefinitionId") 
+  dplyr::pull("cohortDefinitionId")
 
-charIdsOfInt <- unique(data.frame(
-  targetCohortId = rep(targetIds$cohortDefinitionId, length(outcomeIdsOfInterest)),
-  outcomeCohortId = unlist(lapply(1:length(outcomeIdsOfInterest), function(oi) rep(outcomeIdsOfInterest[oi], length(targetIds$cohortDefinitionId))))
-))
+caseIds <- OhdsiReportGenerator::getCharacterizationCaseSettings(
+  connectionHandler = connectionHandler,
+  schema = params$schema,
+  targetIds = unique(targetIds),
+  outcomeIds = outcomeIdsOfInterest
+)
 
-# order by id 
-charIdsOfInt <- merge(
-  x = charIdsOfInt, 
-  y = cohortDefinitions[c('cohortDefinitionId', 'order')], 
-  by.x = 'targetCohortId', 
-  by.y = 'cohortDefinitionId'
-) %>%
-  dplyr::arrange(dplyr::desc(-1*.data$order), .data$targetCohortId)
 
-if( nrow(charIdsOfInt) >0 ){
+if(!is.null(caseIds) && nrow(caseIds) > 0){
+
+  caseIds <- caseIds %>% 
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      tar = paste0("(", .data$startAnchor, " + ", .data$riskWindowStart, ") - (",
+      .data$endAnchor, " + ", .data$riskWindowEnd, ")")
+    )
+
   
-  for(cind in 1:nrow(charIdsOfInt)){
-    # need to run this per t and o
+  for(caseId in caseIds$characterizationCaseId){
+
+    ind <- which(caseIds$characterizationCaseId == caseId)
+    # need to run this per t and o and settings
     riskFactorsBinary <- OhdsiReportGenerator::getBinaryRiskFactors(
       connectionHandler = connectionHandler, 
       schema = params$schema, 
-      targetId = charIdsOfInt$targetCohortId[cind], #12401, 
-      outcomeId = charIdsOfInt$outcomeCohortId[cind], #19970,
+      characterizationCaseId = caseId, 
       analysisIds = c(1,4,5,210,410)
     )
     
@@ -45,39 +48,48 @@ if( nrow(charIdsOfInt) >0 ){
     }
     if(notNull & hasRows ){
     riskFactorsBinary <- OhdsiReportGenerator::formatBinaryCovariateName(riskFactorsBinary)
-    riskFactorsBinary <- OhdsiReportGenerator::addTarColumn(riskFactorsBinary)
-    
-    csets <- unique(riskFactorsBinary[, c('tar', 'minPriorObservation','outcomeWashoutDays')])
-    
-    for(cind2 in 1:nrow(csets)){
-      minPriorObservation <- csets$minPriorObservation[cind2]
-      outcomeWashoutDays <- csets$outcomeWashoutDays[cind2]
-      tar <- csets$tar[cind2]
+
+
+      # get all the settings
+      limitToFirstInNDays <- caseIds[ind,]$limitToFirstInNDays
+      minPriorObservation <- caseIds[ind,]$minPriorObservation
+      nestingName <- caseIds[ind,]$nestingName
+      minAge <- caseIds[ind,]$minAge
+      maxAge <- caseIds[ind,]$maxAge
+      studyStart <- caseIds[ind,]$studyStart
+      studyEnd <- caseIds[ind,]$studyEnd
+      genderConceptIds <- caseIds[ind,]$genderConceptIds
+      outcomeWashoutDays <- caseIds[ind,]$outcomeWashoutDays
+      tar <- caseIds[ind,]$tar
       
+      #TODO: add the other target settings in the text
       boxTitle <- paste0(
           'Risk Factors for ', 
-          cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == charIdsOfInt$outcomeCohortId[cind]],
+          cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == caseIds$outcomeId[ind]],
           ' occuring for the first time in ',
           outcomeWashoutDays,
           ' days during ',
           tar,
           ' for patients exposed to ',
-          cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == charIdsOfInt$targetCohortId[cind]], ' ' , cohortDefinitions$subsetText[cohortDefinitions$cohortDefinitionId == charIdsOfInt$targetCohortId[cind]], 
-          ' with >= ',
-          minPriorObservation,
-          ' days prior observation'
+          cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == caseIds$targetId[ind]], ' ' 
+          , cohortDefinitions$subsetText[cohortDefinitions$cohortDefinitionId == caseIds$targetId[ind]],
+          ' nested in cohort ', nestingName, 
+          ' exposed for the first time in ',  limitToFirstInNDays , ' days',
+          ' with >= ', minPriorObservation, ' days prior observation',
+          ' aged between ', minAge, ' - ', maxAge,
+          ' index starting between ', studyStart , ' and ', studyEnd,
+          ' with gender conceptIds restricted to ', genderConceptIds
         )
       
       # print the binary risk factors in a collapseable box
-      cat('\n\n::: {.callout-note collapse="true"}')
+      writeLines("")
+      writeLines("")
+      writeLines("::: {.callout-note collapse=true}")
       cat(paste0("\n# ",boxTitle, '\n\n'))
       
       temp <- riskFactorsBinary %>%
           dplyr::arrange(-1*.data$absSmd) %>%
           dplyr::filter(
-            .data$minPriorObservation == !!minPriorObservation,
-            .data$outcomeWashoutDays ==  !!outcomeWashoutDays,
-            .data$tar == !!tar,
             .data$absSmd > 0.1,
             .data$caseCount >= 0 # make this an input?
           ) %>%
@@ -132,13 +144,21 @@ if( nrow(charIdsOfInt) >0 ){
       ) 
   ))
   
-      cat("\n\n:::\n\n")
+      writeLines("")
+      writeLines("")
+      writeLines(":::")
+      writeLines("")
       
-    }}}} else{
-      cat('\n\n::: {.callout-note collapse="true"}')
+    }}} else{
+      writeLines("")
+      writeLines("")
+      writeLines("::: {.callout-note collapse=true}")
       cat(paste0("\n# No risk factors \n\n"))
       cat("\n\n No risk factors for the target of interest")
-      cat("\n\n:::\n\n")
+      writeLines("")
+      writeLines("")
+      writeLines(":::")
+      writeLines("")
     }
 
 ```

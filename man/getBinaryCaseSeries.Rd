@@ -11,6 +11,7 @@ getBinaryCaseSeries(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   characterizationTargetId = NULL,
+  characterizationCaseId = NULL,
   outcomeId = NULL,
   databaseIds = NULL,
   riskWindowStart = NULL,
@@ -32,7 +33,9 @@ getBinaryCaseSeries(
 
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
-\item{characterizationTargetId}{The characterization target id}
+\item{characterizationTargetId}{The characterization target id to restrict results to}
+
+\item{characterizationCaseId}{The characterization case id to restrict results to}
 
 \item{outcomeId}{Am integer corresponding to the outcome cohort ID}
 

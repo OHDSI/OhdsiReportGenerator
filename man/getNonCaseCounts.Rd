@@ -11,6 +11,7 @@ getNonCaseCounts(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   characterizationTargetIds = NULL,
+  characterizationCaseIds = NULL,
   outcomeIds = NULL,
   databaseIds = NULL,
   includeNames = TRUE
@@ -29,6 +30,8 @@ getNonCaseCounts(
 
 \item{characterizationTargetIds}{The characterization target cohort ids of interest}
 
+\item{characterizationCaseIds}{The characterization case ids of interest}
+
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
 
 \item{databaseIds}{A vector of database IDs to restrict to}
@@ -40,6 +43,7 @@ Returns a data.frame with the columns:
 \itemize{
  \item{databaseName the name of the database}
  \item{databaseId the unique identifier of the database}
+ \item{characterizationCaseId the unique identifier of target, outcome and TAR combination}
  \item{targetName the target cohort name}
  \item{targetId the target cohort unique identifier}
  \item{limitToFirstInNDays target index is limited to first in N days}
@@ -70,7 +74,7 @@ conDet <- getExampleConnectionDetails()
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 
-tc <- getCaseTargetCounts(
+tc <- getNonCaseCounts(
 connectionHandler = connectionHandler, 
 schema = 'main'
 )
