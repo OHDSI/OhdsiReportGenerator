@@ -9,7 +9,8 @@ getOutcomesUsedInIncidence(
   schema,
   ciTablePrefix = "ci_",
   cgTablePrefix = "cg_",
-  targetId = NULL
+  targetId = NULL,
+  parentId = NULL
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ getOutcomesUsedInIncidence(
 \item{cgTablePrefix}{The prefix used for the cohort generator results tables}
 
 \item{targetId}{An integer corresponding to the target cohort ID}
+
+\item{parentId}{the parent target cohort Id to extract outcomes for}
 }
 \value{
 A data.frame with the incidence outcome cohort ids and names

@@ -18,7 +18,16 @@ select distinct
     (select distinct outcome_id from @schema.@ci_table_prefixincidence_summary isum
     INNER JOIN @schema.@cg_table_prefixcohort_definition cg1
     ON cg1.cohort_definition_id = isum.target_cohort_definition_id
-    where cg1.subset_parent in (@target_id)) temp
+    where cg1.cohort_definition_id in (@target_id)) temp
+    on temp.outcome_id = ci.outcome_id
+  }
+  
+    {@use_parent}?{ 
+    inner join 
+    (select distinct outcome_id from @schema.@ci_table_prefixincidence_summary isum
+    INNER JOIN @schema.@cg_table_prefixcohort_definition cg1
+    ON cg1.cohort_definition_id = isum.target_cohort_definition_id
+    where cg1.subset_parent in (@parent_id)) temp
     on temp.outcome_id = ci.outcome_id
   }
   

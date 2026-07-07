@@ -1021,6 +1021,7 @@ getTargetsUsedInIncidence <- function(
 #' @template ciTablePrefix
 #' @template cgTablePrefix
 #' @template targetId
+#' @param parentId the parent target cohort Id to extract outcomes for 
 #' @family Characterization
 #' 
 #' @return
@@ -1043,8 +1044,14 @@ getOutcomesUsedInIncidence <- function(
     schema,
     ciTablePrefix = 'ci_',
     cgTablePrefix = 'cg_',
-    targetId = NULL
+    targetId = NULL,
+    parentId = NULL
 ){
+  
+  if(!is.null(targetId)){
+    message('Can only pick targetId or parentId - using targetId')
+    parentId <- NULL
+  }
   
   ciVersion <- .getCIVersion(
     connectionHandler = connectionHandler,
@@ -1063,7 +1070,9 @@ getOutcomesUsedInIncidence <- function(
     cg_table_prefix = cgTablePrefix,
     ci_table_prefix = ciTablePrefix,
     use_target = !is.null(targetId),
-    target_id = paste0(targetId, collapse = ',')
+    target_id = paste0(targetId, collapse = ','),
+    use_parent = !is.null(parentId),
+    parent_id = paste0(parentId, collapse = ',')
   ) %>%
     tidyr::pivot_wider(
       id_cols = c("cohortName", "cohortDefinitionId"), 
