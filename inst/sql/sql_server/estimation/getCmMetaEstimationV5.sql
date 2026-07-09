@@ -25,7 +25,7 @@ SELECT ev.evidence_synthesis_description AS database_name
 	,unblind.unblind
 	,r.n_databases
 	,NULL as pi_95_lb
-	,NULL as r.pi_95_ub
+	,NULL as pi_95_ub
 	,NULL as calibrated_pi_95_lb
 	,NULL as calibrated_pi_95_ub
 	,unblind.tau
