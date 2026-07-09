@@ -111,6 +111,7 @@ viewIncidenceRate(
   ageData = ageData,
   genderData = genderData
   )
+#> Closing database connection
 
 
   
