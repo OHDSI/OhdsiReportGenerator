@@ -1,9 +1,10 @@
 select 
-  {@include_names}?{d.cdm_source_abbreviation as database_name,}
+  cs.setting_id,
   a.database_id,
+  {@include_names}?{d.cdm_source_abbreviation as database_name,}
   cs.characterization_case_id,
-  {@include_names}?{target_cohorts.cohort_name as target_name,}
   ts.target_id as target_id,
+  {@include_names}?{target_cohorts.cohort_name as target_name,}
   ts.min_prior_observation,
   ts.limit_to_first_in_n_days,
   NULL as nesting_cohort_id,

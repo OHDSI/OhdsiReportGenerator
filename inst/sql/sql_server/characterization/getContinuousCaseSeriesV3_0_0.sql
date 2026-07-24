@@ -35,6 +35,7 @@ SELECT
  cov.before_p_75_value AS p_75_value_before,
  cov.before_p_90_value AS p_90_value_before,
 
+ -- bug with 3_0_0 where during_count_value was not uploaded
  cov.during_count_value AS count_value_during,
  cov.during_min_value AS min_value_during,	
  cov.during_max_value AS max_value_during,	
