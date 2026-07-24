@@ -64,8 +64,8 @@ INNER JOIN @schema.@cg_table_prefixcohort_definition outcome
 ON outcome.cohort_definition_id = s.outcome_id
 
 WHERE 1=1
-@use_characterization_case}?{AND s.characterization_case_id = @characterization_case_id}
-@use_characterization_target}?{AND ts.target_id = @characterization_target_id}
+{@use_characterization_case}?{AND s.characterization_case_id = @characterization_case_id}
+{@use_characterization_target}?{AND ts.characterization_target_id = @characterization_target_id}
 {@use_outcome_id}?{AND s.outcome_id = @outcome_id}
 {@use_database}?{AND cov.database_id in (@database_ids)}
 {@use_risk_window_start}?{AND s.risk_window_start = @risk_window_start}

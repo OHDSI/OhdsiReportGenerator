@@ -43,7 +43,7 @@ ON target.cohort_definition_id = ts.target_id
 }
   
 WHERE 1 = 1
-{@use_characterization_targets}?{AND ts.target_id in (@characterization_target_ids)}
+{@use_characterization_targets}?{AND ts.characterization_target_id in (@characterization_target_ids)}
 {@use_database}?{AND c.database_id in (@database_ids) }
 {@use_covariate}?{and coi.covariate_id in (@covariate_ids)}
 {@use_analysis}?{and coi.analysis_id in (@analysis_ids)}

@@ -54,7 +54,7 @@ AND ts.characterization_target_id = cs.characterization_target_id
   
 WHERE 1 = 1
 {@use_characterization_case}?{ AND cs.characterization_case_id IN (@characterization_case_id)}
-{@use_characterization_target}?{ AND ts.target_id IN (@characterization_target_id)}
+{@use_characterization_target}?{ AND ts.characterization_target_id IN (@characterization_target_id)}
 {@use_outcome}?{ AND cs.outcome_id IN (@outcome_id)}
 {@use_database}?{ AND a.database_id IN (@database_id)}
 

@@ -20,6 +20,10 @@ MAX(database_comparator) as database_comparator,
 MAX(cohort_comparator) as cohort_comparator,
 MAX(risk_factors) as risk_factors,
 MAX(case_series) as case_series
+{@add_database_details}?{
+,database_id
+,database_name
+}
 
 FROM
 
@@ -47,7 +51,7 @@ NULL AS gender_concept_ids,
 1 AS risk_factors,
 1 AS case_series
 {@add_database_details}?{
-,ts.database_id
+,d.database_id
 ,d.cdm_source_abbreviation as database_name
 }
 
@@ -96,12 +100,15 @@ NULL AS gender_concept_ids,
 0 AS risk_factors,
 0 AS case_series
 {@add_database_details}?{
-,tte.database_id
+,d.database_id
 ,d.cdm_source_abbreviation as database_name
 }
 
 
-FROM (SELECT DISTINCT target_cohort_definition_id FROM @schema.@c_table_prefixtime_to_event) tte
+FROM (SELECT DISTINCT 
+{@add_database_details}?{database_id,}
+target_cohort_definition_id 
+FROM @schema.@c_table_prefixtime_to_event) tte
 
 INNER JOIN @schema.@cg_table_prefixcohort_definition cg1
 ON cg1.cohort_definition_id = tte.target_cohort_definition_id
@@ -146,12 +153,15 @@ NULL AS gender_concept_ids,
 0 AS risk_factors,
 0 AS case_series
 {@add_database_details}?{
-,tte.database_id
+,d.database_id
 ,d.cdm_source_abbreviation as database_name
 }
 
 
-FROM (SELECT DISTINCT target_cohort_definition_id FROM @schema.@c_table_prefixdechallenge_rechallenge) dcrc
+FROM (SELECT DISTINCT 
+{@add_database_details}?{database_id,}
+target_cohort_definition_id 
+FROM @schema.@c_table_prefixdechallenge_rechallenge) dcrc
 
 INNER JOIN @schema.@cg_table_prefixcohort_definition cg1
 ON cg1.cohort_definition_id = dcrc.target_cohort_definition_id
@@ -186,6 +196,10 @@ max_age,
 study_start,
 study_end,
 gender_concept_ids
+{@add_database_details}?{
+,database_id
+,database_name
+}
 ;
 
 

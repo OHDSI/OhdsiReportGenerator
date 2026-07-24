@@ -13,8 +13,8 @@ FROM @schema.@c_table_prefixattrition ca
 
 INNER JOIN @schema.@c_table_prefixtarget_settings ts
 ON ts.setting_id = ca.setting_id
-ON ts.database_id = ca.database_id
-ON ts.characterization_target_id = ca.cohort_definition_id
+AND ts.database_id = ca.database_id
+AND ts.characterization_target_id = ca.cohort_definition_id
 
 {@include_names}?{
 INNER JOIN @schema.@database_meta_table d 
@@ -27,7 +27,7 @@ ON cg.cohort_definition_id = ts.target_id
 }
 
 WHERE 1 = 1
-{@use_targets}?{AND ts.target_id in (@target_ids)}
+{@use_characterization_targets}?{AND ts.characterization_target_id in (@characterization_target_ids)}
 {@use_databases}?{AND ca.database_id in (@database_ids)}
   
 GROUP BY

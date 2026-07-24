@@ -91,7 +91,7 @@ SELECT
 
  WHERE 1 = 1
  {@use_characterization_case}?{AND cov.characterization_case_id = @characterization_case_id}
- {@use_characterization_target}?{AND ts.target_id = @characterization_target_id}
+ {@use_characterization_target}?{AND ts.characterization_target_id = @characterization_target_id}
  {@use_outcome_id}?{AND cs.outcome_id = @outcome_id}
  {@use_database}?{AND cov.database_id IN (@database_ids)}
  {@use_risk_window_start}?{AND cs.risk_window_start = @risk_window_start}

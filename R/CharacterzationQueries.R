@@ -301,12 +301,12 @@ getCharacterizationCaseSettings <- function(
     cTablePrefix = cTablePrefix
   )
   
-  if(cVersion != '4_0_0'){
+  if(!cVersion %in% c('3_0_0','4_0_0')){
     stop('Function not available in older characterization results tables')
   }
   
   sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getCaseSettings.sql"),
+    paste0("sql/sql_server/characterization/getCaseSettingsV",cVersion,".sql"),
     package = "OhdsiReportGenerator",
     mustWork = TRUE
   ))

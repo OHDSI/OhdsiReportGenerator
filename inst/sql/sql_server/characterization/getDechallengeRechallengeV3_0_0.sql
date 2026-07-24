@@ -44,7 +44,7 @@ SELECT
            on outcome_cohorts.cohort_definition_id = dr.OUTCOME_COHORT_DEFINITION_ID
            
           where 1 = 1
-          {@use_characterzation_target}?{ and dr.TARGET_COHORT_DEFINITION_ID in (@characterzation_target_id)}
+          {@use_characterization_target}?{ and dr.TARGET_COHORT_DEFINITION_ID in (@characterization_target_id)}
           {@use_outcome}?{ and dr.OUTCOME_COHORT_DEFINITION_ID in (@outcome_id)}
 
            

@@ -2,7 +2,7 @@ SELECT
           d.CDM_SOURCE_ABBREVIATION as database_name,
           d.database_id,
           target_cohorts.cohort_name as target_name,
-          tte.target_cohort_definition_id as tte.characterization_target_id,
+          tte.target_cohort_definition_id as characterization_target_id,
           tte.target_cohort_definition_id as target_id,
           NULL as limit_to_first_in_n_days,
           NULL as min_prior_observation,
