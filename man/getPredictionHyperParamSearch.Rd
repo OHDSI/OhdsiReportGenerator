@@ -50,20 +50,20 @@ hyperParams <- getPredictionHyperParamSearch(
 
 }
 \seealso{
-Other Prediction: 
-\code{\link{getFullPredictionPerformances}()},
-\code{\link{getPredictionAggregateTopPredictors}()},
-\code{\link{getPredictionCohorts}()},
-\code{\link{getPredictionCovariates}()},
-\code{\link{getPredictionDiagnosticTable}()},
-\code{\link{getPredictionDiagnostics}()},
-\code{\link{getPredictionIntercept}()},
-\code{\link{getPredictionLift}()},
-\code{\link{getPredictionModelDesigns}()},
-\code{\link{getPredictionOutcomes}()},
-\code{\link{getPredictionPerformanceTable}()},
-\code{\link{getPredictionPerformances}()},
-\code{\link{getPredictionTargets}()},
-\code{\link{getPredictionTopPredictors}()}
+Other Prediction:
+\code{\link[=getFullPredictionPerformances]{getFullPredictionPerformances()}},
+\code{\link[=getPredictionAggregateTopPredictors]{getPredictionAggregateTopPredictors()}},
+\code{\link[=getPredictionCohorts]{getPredictionCohorts()}},
+\code{\link[=getPredictionCovariates]{getPredictionCovariates()}},
+\code{\link[=getPredictionDiagnosticTable]{getPredictionDiagnosticTable()}},
+\code{\link[=getPredictionDiagnostics]{getPredictionDiagnostics()}},
+\code{\link[=getPredictionIntercept]{getPredictionIntercept()}},
+\code{\link[=getPredictionLift]{getPredictionLift()}},
+\code{\link[=getPredictionModelDesigns]{getPredictionModelDesigns()}},
+\code{\link[=getPredictionOutcomes]{getPredictionOutcomes()}},
+\code{\link[=getPredictionPerformanceTable]{getPredictionPerformanceTable()}},
+\code{\link[=getPredictionPerformances]{getPredictionPerformances()}},
+\code{\link[=getPredictionTargets]{getPredictionTargets()}},
+\code{\link[=getPredictionTopPredictors]{getPredictionTopPredictors()}}
 }
 \concept{Prediction}

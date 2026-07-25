@@ -62,4 +62,5 @@ WHERE 1 = 1
 {@use_risk_window_end}?{ AND cs.risk_window_end IN (@risk_window_end)}
 {@use_start_anchor}?{ AND cs.start_anchor IN (@start_anchor)}
 {@use_end_anchor}?{ AND cs.end_anchor IN (@end_anchor)}
+{@use_outcome_washout}?{ and cs.outcome_washout_days in (@outcome_washout)}
 

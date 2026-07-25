@@ -20,9 +20,9 @@ A function to add indexes to the SCCS results
 Specify the connectionHandler, the schema and the prefixes
 }
 \seealso{
-Other Indexes: 
-\code{\link{createCharacterizationIndexes}()},
-\code{\link{createCohortIndexes}()},
-\code{\link{createIncidenceIndexes}()}
+Other Indexes:
+\code{\link[=createCharacterizationIndexes]{createCharacterizationIndexes()}},
+\code{\link[=createCohortIndexes]{createCohortIndexes()}},
+\code{\link[=createIncidenceIndexes]{createIncidenceIndexes()}}
 }
 \concept{Indexes}

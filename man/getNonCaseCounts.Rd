@@ -2,7 +2,7 @@
 % Please edit documentation in R/CharacterzationQueries.R
 \name{getNonCaseCounts}
 \alias{getNonCaseCounts}
-\title{Extract the target cohort counts result}
+\title{Extract the non-cases counts result}
 \usage{
 getNonCaseCounts(
   connectionHandler,
@@ -12,7 +12,12 @@ getNonCaseCounts(
   databaseTable = "database_meta_data",
   characterizationTargetIds = NULL,
   characterizationCaseIds = NULL,
+  startAnchor = NULL,
+  endAnchor = NULL,
+  riskWindowStart = NULL,
+  riskWindowEnd = NULL,
   outcomeIds = NULL,
+  outcomeWashouts = NULL,
   databaseIds = NULL,
   includeNames = TRUE
 )
@@ -32,7 +37,17 @@ getNonCaseCounts(
 
 \item{characterizationCaseIds}{The characterization case ids of interest}
 
+\item{startAnchor}{optional filter by startAchor}
+
+\item{endAnchor}{optional filter by endAchor}
+
+\item{riskWindowStart}{optional filter by riskWindowStart}
+
+\item{riskWindowEnd}{optional filter by riskWindowEnd}
+
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
+
+\item{outcomeWashouts}{optional filter by washout}
 
 \item{databaseIds}{A vector of database IDs to restrict to}
 
@@ -64,7 +79,7 @@ Returns a data.frame with the columns:
  }
 }
 \description{
-This function extracts target cohort counts across databases in the results for specified target and outcome cohorts.
+This function extracts non-case counts across databases in the results for specified target and outcome cohorts.
 }
 \details{
 Specify the connectionHandler, the schema and the target/outcome cohort IDs
@@ -81,31 +96,31 @@ schema = 'main'
 
 }
 \seealso{
-Other Characterization: 
-\code{\link{characterizationCompareBinary}()},
-\code{\link{characterizationCompareContinuous}()},
-\code{\link{getBinaryCaseSeries}()},
-\code{\link{getBinaryRiskFactors}()},
-\code{\link{getBinaryTargetBaseline}()},
-\code{\link{getCaseCounts}()},
-\code{\link{getCharacterizationCaseSettings}()},
-\code{\link{getCharacterizationDemographics}()},
-\code{\link{getCharacterizationTargetSettings}()},
-\code{\link{getContinuousCaseSeries}()},
-\code{\link{getContinuousRiskFactors}()},
-\code{\link{getContinuousTargetBaseline}()},
-\code{\link{getDechallengeRechallenge}()},
-\code{\link{getDechallengeRechallengeFails}()},
-\code{\link{getIncidenceRates}()},
-\code{\link{getIncidenceTargetSettings}()},
-\code{\link{getOutcomesUsedInCharacterization}()},
-\code{\link{getOutcomesUsedInIncidence}()},
-\code{\link{getTargetCounts}()},
-\code{\link{getTargetsUsedInCharacterization}()},
-\code{\link{getTargetsUsedInIncidence}()},
-\code{\link{getTimeToEvent}()},
-\code{\link{plotAgeDistributions}()},
-\code{\link{plotSexDistributions}()},
-\code{\link{viewIncidenceRate}()}
+Other Characterization:
+\code{\link[=characterizationCompareBinary]{characterizationCompareBinary()}},
+\code{\link[=characterizationCompareContinuous]{characterizationCompareContinuous()}},
+\code{\link[=getBinaryCaseSeries]{getBinaryCaseSeries()}},
+\code{\link[=getBinaryRiskFactors]{getBinaryRiskFactors()}},
+\code{\link[=getBinaryTargetBaseline]{getBinaryTargetBaseline()}},
+\code{\link[=getCaseCounts]{getCaseCounts()}},
+\code{\link[=getCharacterizationCaseSettings]{getCharacterizationCaseSettings()}},
+\code{\link[=getCharacterizationDemographics]{getCharacterizationDemographics()}},
+\code{\link[=getCharacterizationTargetSettings]{getCharacterizationTargetSettings()}},
+\code{\link[=getContinuousCaseSeries]{getContinuousCaseSeries()}},
+\code{\link[=getContinuousRiskFactors]{getContinuousRiskFactors()}},
+\code{\link[=getContinuousTargetBaseline]{getContinuousTargetBaseline()}},
+\code{\link[=getDechallengeRechallenge]{getDechallengeRechallenge()}},
+\code{\link[=getDechallengeRechallengeFails]{getDechallengeRechallengeFails()}},
+\code{\link[=getIncidenceRates]{getIncidenceRates()}},
+\code{\link[=getIncidenceTargetSettings]{getIncidenceTargetSettings()}},
+\code{\link[=getOutcomesUsedInCharacterization]{getOutcomesUsedInCharacterization()}},
+\code{\link[=getOutcomesUsedInIncidence]{getOutcomesUsedInIncidence()}},
+\code{\link[=getTargetCounts]{getTargetCounts()}},
+\code{\link[=getTargetsUsedInCharacterization]{getTargetsUsedInCharacterization()}},
+\code{\link[=getTargetsUsedInIncidence]{getTargetsUsedInIncidence()}},
+\code{\link[=getTimeToEvent]{getTimeToEvent()}},
+\code{\link[=plotAgeDistributions]{plotAgeDistributions()}},
+\code{\link[=plotSexDistributions]{plotSexDistributions()}},
+\code{\link[=viewIncidenceRate]{viewIncidenceRate()}}
 }
 \concept{Characterization}

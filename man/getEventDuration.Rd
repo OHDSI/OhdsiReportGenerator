@@ -70,8 +70,8 @@ ed <- getEventDuration(
 )
 }
 \seealso{
-Other TreatmentPatterns: 
-\code{\link{getAnalysisCohorts}()},
-\code{\link{getTreatmentPathways}()}
+Other TreatmentPatterns:
+\code{\link[=getAnalysisCohorts]{getAnalysisCohorts()}},
+\code{\link[=getTreatmentPathways]{getTreatmentPathways()}}
 }
 \concept{TreatmentPatterns}

@@ -101,4 +101,6 @@ SELECT
  {@use_risk_window_end}?{AND cs.risk_window_end = @risk_window_end}
  {@use_start_anchor}?{AND cs.start_anchor = '@start_anchor'}
  {@use_end_anchor}?{AND cs.end_anchor = '@end_anchor'}
+ {@use_outcome_washout}?{AND cs.outcome_washout_days IN (@outcome_washout)}
+  
 ;

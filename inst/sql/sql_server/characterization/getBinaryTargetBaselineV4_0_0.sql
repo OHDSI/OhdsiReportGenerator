@@ -17,6 +17,7 @@ ts.gender_concept_ids,
 c.covariate_id,
 coi.covariate_name,
 coi.analysis_id,
+--coi.analysis_name,
 c.sum_value,
 c.average_value
 

@@ -47,3 +47,6 @@ select
   {@use_risk_window_end}?{ and cc.RISK_WINDOW_END in (@risk_window_end)}
   {@use_start_anchor}?{ and cc.START_ANCHOR in (@start_anchor)}
   {@use_end_anchor}?{ and cc.END_ANCHOR in (@end_anchor)}
+  {@use_outcome_washout}?{ and cc.outcome_washout_days in (@outcome_washout)}
+  
+  

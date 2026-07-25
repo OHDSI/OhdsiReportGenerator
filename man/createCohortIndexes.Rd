@@ -20,9 +20,9 @@ A function to add indexes to the Cohort Generator results
 Specify the connectionHandler, the schema and the prefixes
 }
 \seealso{
-Other Indexes: 
-\code{\link{createCharacterizationIndexes}()},
-\code{\link{createIncidenceIndexes}()},
-\code{\link{createSccsIndexes}()}
+Other Indexes:
+\code{\link[=createCharacterizationIndexes]{createCharacterizationIndexes()}},
+\code{\link[=createIncidenceIndexes]{createIncidenceIndexes()}},
+\code{\link[=createSccsIndexes]{createSccsIndexes()}}
 }
 \concept{Indexes}

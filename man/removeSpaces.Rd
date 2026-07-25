@@ -23,12 +23,12 @@ removeSpaces(' made up.   string')
 
 }
 \seealso{
-Other helper: 
-\code{\link{addTarColumn}()},
-\code{\link{formatBinaryCovariateName}()},
-\code{\link{getExampleConnectionDetails}()},
-\code{\link{getOutcomeTable}()},
-\code{\link{getTargetTable}()},
-\code{\link{kableDark}()}
+Other helper:
+\code{\link[=addTarColumn]{addTarColumn()}},
+\code{\link[=formatBinaryCovariateName]{formatBinaryCovariateName()}},
+\code{\link[=getExampleConnectionDetails]{getExampleConnectionDetails()}},
+\code{\link[=getOutcomeTable]{getOutcomeTable()}},
+\code{\link[=getTargetTable]{getTargetTable()}},
+\code{\link[=kableDark]{kableDark()}}
 }
 \concept{helper}

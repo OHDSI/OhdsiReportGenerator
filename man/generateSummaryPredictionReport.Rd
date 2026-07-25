@@ -53,8 +53,8 @@ and the cohortId of interest to generate a html report summarizing the
 performance of prediction models in the database.
 }
 \seealso{
-Other Reporting: 
-\code{\link{createPredictionReport}()},
-\code{\link{generateFullReport}()}
+Other Reporting:
+\code{\link[=createPredictionReport]{createPredictionReport()}},
+\code{\link[=generateFullReport]{generateFullReport()}}
 }
 \concept{Reporting}

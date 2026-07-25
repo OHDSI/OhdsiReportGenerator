@@ -90,6 +90,7 @@ SELECT
           and cr.analysis_id in (109, 110, 217, 218, 305, 417, 418, 505, 605, 713, 805, 926, 927)
   {@use_min_val}?{and cov.average_value >= @min_val}   
   {@use_concepts}?{and cr.concept_id in (@concept_ids)}
+  {@use_outcome_washout}?{and s.outcome_washout_days in (@outcome_washout)}
   
   
   GROUP BY

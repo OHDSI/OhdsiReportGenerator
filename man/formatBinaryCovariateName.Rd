@@ -25,12 +25,12 @@ covariateName = c("fdfgfgf: dgdgff","made up test")
 
 }
 \seealso{
-Other helper: 
-\code{\link{addTarColumn}()},
-\code{\link{getExampleConnectionDetails}()},
-\code{\link{getOutcomeTable}()},
-\code{\link{getTargetTable}()},
-\code{\link{kableDark}()},
-\code{\link{removeSpaces}()}
+Other helper:
+\code{\link[=addTarColumn]{addTarColumn()}},
+\code{\link[=getExampleConnectionDetails]{getExampleConnectionDetails()}},
+\code{\link[=getOutcomeTable]{getOutcomeTable()}},
+\code{\link[=getTargetTable]{getTargetTable()}},
+\code{\link[=kableDark]{kableDark()}},
+\code{\link[=removeSpaces]{removeSpaces()}}
 }
 \concept{helper}

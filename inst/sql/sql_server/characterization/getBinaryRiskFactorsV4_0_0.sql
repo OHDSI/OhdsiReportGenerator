@@ -64,6 +64,7 @@ WHERE 1=1
 {@use_characterization_target}?{AND ts.characterization_target_id IN (@characterization_target_id)}
 {@use_characterization_case}?{AND cs.characterization_case_id IN (@characterization_case_id)}
 {@use_outcome}?{AND cs.outcome_id IN (@outcome_id)}
+{@use_outcome_washout}?{AND cs.outcome_washout_days IN (@outcome_washout)}
 {@use_database}?{AND d.database_id IN (@database_id)}
 {@use_analysis}?{AND cr.analysis_id IN (@analysis_ids)}
 ;

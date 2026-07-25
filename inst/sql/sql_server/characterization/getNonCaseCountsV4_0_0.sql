@@ -64,3 +64,7 @@ WHERE 1 = 1
 {@use_characterization_target}?{ AND ts.characterization_target_id IN (@characterization_target_id)}
 {@use_outcome}?{ AND cs.outcome_id IN (@outcome_id)}
 {@use_database}?{ AND cc.database_id IN (@database_id)}
+{@use_risk_window_start}?{ AND cs.risk_window_start IN (@risk_window_start)}  
+{@use_risk_window_end}?{ AND cs.risk_window_end IN (@risk_window_end)}
+{@use_start_anchor}?{ AND cs.start_anchor IN (@start_anchor)}
+{@use_end_anchor}?{ AND cs.end_anchor IN (@end_anchor)}

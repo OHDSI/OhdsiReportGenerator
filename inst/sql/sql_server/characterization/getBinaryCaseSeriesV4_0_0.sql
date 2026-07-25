@@ -76,6 +76,7 @@ WHERE 1 = 1
 {@use_start_anchor}?{AND s.start_anchor = '@start_anchor'}
 {@use_end_anchor}?{AND s.end_anchor = '@end_anchor'}
 {@use_concepts}?{AND cr.concept_id in (@concept_ids)} 
+{@use_outcome_washout}?{and s.outcome_washout_days in (@outcome_washout)}
 {@use_min_val}?{
 AND (cov.before_average_value >= @min_val 
 OR cov.during_average_value >= @min_val

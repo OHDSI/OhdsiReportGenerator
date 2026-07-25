@@ -3,8 +3,8 @@ SELECT
 0 as setting_id,
 {@include_names}?{d.cdm_source_abbreviation as database_name,}
 c.database_id,
-{@include_names}?{target.cohort_name as target_name,}
 c.target_cohort_id as characterization_target_id,
+{@include_names}?{target.cohort_name as target_name,}
 c.target_cohort_id,
 s.min_prior_observation,
 99999 as limit_to_first_in_n_days,
@@ -18,7 +18,8 @@ s.min_prior_observation,
   
 c.covariate_id,
 coi.covariate_name,
-coi.analysis_name,
+coi.analysis_id,
+--coi.analysis_name,
 c.sum_value,
 c.average_value
 
@@ -51,10 +52,11 @@ and s.database_id = c.database_id
   }
   
   WHERE
-  c.TARGET_COHORT_ID = @characterization_target_id AND 
   c.COHORT_TYPE = 'Target'
-  {@use_database}?{AND c.database_id in (@database_id) }
+  {@use_characterization_targets}?{AND c.TARGET_COHORT_ID in (@characterization_target_ids)}
+  {@use_database}?{AND c.database_id in (@database_ids) }
+  {@use_covariate}?{and coi.covariate_id in (@covariate_ids)}
   {@use_analysis}?{and coi.analysis_id in (@analysis_ids)}
-  {@use_concepts}?{and coi.concept_id in (@concept_ids)}
+  {@use_concept}?{and coi.concept_id in (@concept_ids)}
   {@use_threshold}?{AND abs(c.average_value) >= @min_threshold}
 ;

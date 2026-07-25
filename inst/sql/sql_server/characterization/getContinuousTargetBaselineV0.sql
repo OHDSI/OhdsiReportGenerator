@@ -2,6 +2,7 @@ select
 0 as setting_id,
 t.database_id,
 {@include_names}?{d.cdm_source_abbreviation as database_name,}
+t.target_cohort_id as characterization_target_id,
 t.target_cohort_id,
 {@include_names}?{target.cohort_name as target_name,}
 t.min_prior_observation,

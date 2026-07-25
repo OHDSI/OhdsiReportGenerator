@@ -87,26 +87,26 @@ sccsDiag <- getSccsDiagnosticsData(
 
 }
 \seealso{
-Other Estimation: 
-\code{\link{.getCmVersion}()},
-\code{\link{.getSccsVersion}()},
-\code{\link{getCMEstimation}()},
-\code{\link{getCmDiagnosticsData}()},
-\code{\link{getCmMetaEstimation}()},
-\code{\link{getCmNegativeControlEstimates}()},
-\code{\link{getCmOutcomes}()},
-\code{\link{getCmPropensityModel}()},
-\code{\link{getCmTable}()},
-\code{\link{getCmTargets}()},
-\code{\link{getSccsEstimation}()},
-\code{\link{getSccsMetaEstimation}()},
-\code{\link{getSccsModel}()},
-\code{\link{getSccsNegativeControlEstimates}()},
-\code{\link{getSccsOutcomes}()},
-\code{\link{getSccsTable}()},
-\code{\link{getSccsTargets}()},
-\code{\link{getSccsTimeToEvent}()},
-\code{\link{plotCmEstimates}()},
-\code{\link{plotSccsEstimates}()}
+Other Estimation:
+\code{\link[=.getCmVersion]{.getCmVersion()}},
+\code{\link[=.getSccsVersion]{.getSccsVersion()}},
+\code{\link[=getCMEstimation]{getCMEstimation()}},
+\code{\link[=getCmDiagnosticsData]{getCmDiagnosticsData()}},
+\code{\link[=getCmMetaEstimation]{getCmMetaEstimation()}},
+\code{\link[=getCmNegativeControlEstimates]{getCmNegativeControlEstimates()}},
+\code{\link[=getCmOutcomes]{getCmOutcomes()}},
+\code{\link[=getCmPropensityModel]{getCmPropensityModel()}},
+\code{\link[=getCmTable]{getCmTable()}},
+\code{\link[=getCmTargets]{getCmTargets()}},
+\code{\link[=getSccsEstimation]{getSccsEstimation()}},
+\code{\link[=getSccsMetaEstimation]{getSccsMetaEstimation()}},
+\code{\link[=getSccsModel]{getSccsModel()}},
+\code{\link[=getSccsNegativeControlEstimates]{getSccsNegativeControlEstimates()}},
+\code{\link[=getSccsOutcomes]{getSccsOutcomes()}},
+\code{\link[=getSccsTable]{getSccsTable()}},
+\code{\link[=getSccsTargets]{getSccsTargets()}},
+\code{\link[=getSccsTimeToEvent]{getSccsTimeToEvent()}},
+\code{\link[=plotCmEstimates]{plotCmEstimates()}},
+\code{\link[=plotSccsEstimates]{plotSccsEstimates()}}
 }
 \concept{Estimation}

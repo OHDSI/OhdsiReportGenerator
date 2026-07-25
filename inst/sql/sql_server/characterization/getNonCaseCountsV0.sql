@@ -1,3 +1,6 @@
+-- replacing this with just returning the target count for simplicity 
+-- can be simplified a lot more now as ignoring excludes...
+
 select distinct
   targets.database_name,
   targets.database_id,
@@ -15,12 +18,8 @@ select distinct
   outcome_cohorts.cohort_name as outcome_name,
   targets.outcome_id,
   targets.outcome_washout_days,
-  case when excludes.row_count is NULL then targets.row_count else
-  targets.row_count - excludes.row_count end as row_count,
-  case when excludes.person_count is NULL then targets.person_count
-  when (excludes.person_count < 0 AND targets.person_count > 0) then targets.person_count - FLOOR(ABS(excludes.person_count)/2)
-  when targets.person_count < 0 then targets.person_count
-  else targets.person_count - excludes.person_count end as person_count,
+  targets.row_count as row_count,
+  targets.person_count as person_count,
   targets.person_count as without_excluded_person_count
   
   from
@@ -58,6 +57,7 @@ and ts.database_id = tcd.database_id
 where tcd.outcome_cohort_id != 0
 {@use_characterization_target}?{ and tcd.target_cohort_id in (@characterization_target_id)}
 {@use_outcome}?{ and tcd.outcome_cohort_id in (@outcome_id)}
+{@use_outcome_washout}?{ and ts.outcome_washout_days in (@outcome_washout)}
 ) s2
 
 on  
@@ -69,34 +69,6 @@ cc.target_cohort_id = s2.target_cohort_id
 {@use_database}?{ and cc.database_id in (@database_id)}
     ) targets
     
-    left join
- 
-  (select 
-  d.CDM_SOURCE_ABBREVIATION as database_name,
-  cc.target_cohort_ID as target_id,
-  cc.outcome_cohort_ID as outcome_id,
-  cc.row_count as row_count,
-  cc.person_count as person_count,
-  cc.min_prior_observation,
-  cc.outcome_washout_days
-
-  from 
-  @schema.@c_table_prefixcohort_counts cc
-  inner join
-  @schema.@database_table_name d
-  on cc.database_id = d.database_id
-
-  where 
-  cc.COHORT_TYPE in ('Exclude')
-  {@use_characterization_target}?{ and cc.TARGET_COHORT_ID in (@characterization_target_id)}
-  {@use_outcome}?{ and cc.outcome_COHORT_ID in (@outcome_id)}
-   
-  ) excludes
-  
-  on targets.database_name = excludes.database_name
-  and targets.target_id = excludes.target_id
-  and targets.min_prior_observation = excludes.min_prior_observation
-  
   inner join @schema.@cg_table_prefixcohort_definition target_cohorts
     on target_cohorts.cohort_definition_id = targets.target_id
     

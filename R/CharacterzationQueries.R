@@ -161,7 +161,8 @@ getCharacterizationTargetSettings <- function(
   )
   
   if(!cVersion %in% c('3_0_0', '4_0_0')){
-    stop('Function not available in older characterization results tables')
+    warning('Older version of results may not be compatable with latest OhdsiReportGenerator')
+    #stop('Function not available in older characterization results tables')
   }
   
   sql <- SqlRender::readSql(system.file(
@@ -302,7 +303,8 @@ getCharacterizationCaseSettings <- function(
   )
   
   if(!cVersion %in% c('3_0_0','4_0_0')){
-    stop('Function not available in older characterization results tables')
+    warning('Older version of results may not be compatable with latest OhdsiReportGenerator')
+    #stop('Function not available in older characterization results tables')
   }
   
   sql <- SqlRender::readSql(system.file(
@@ -1812,6 +1814,7 @@ getCharacterizationDemographics <- function(
 #' @param characterizationTargetId the characterization target id
 #' @param characterizationCaseId the characterization case id
 #' @template outcomeId
+#' @param outcomeWashout (optional) restrict to outcome washout
 #' @param databaseId The database ID to restrict results to
 #' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
 #' @param riskWindowStart (optional) A vector of time-at-risk risk window starts to restrict to
@@ -1846,6 +1849,7 @@ getBinaryRiskFactors <- function(
     characterizationTargetId = NULL,
     characterizationCaseId = NULL,
     outcomeId = NULL,
+    outcomeWashout = NULL,
     databaseId = NULL,
     analysisIds = c(3), # TODO enable this to be NULL?
     riskWindowStart = NULL,
@@ -1871,19 +1875,19 @@ getBinaryRiskFactors <- function(
         stop('Must be single characterizationCaseId')
       }
     }
-  
+
+    
   cVersion <- .getCVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  
   if(cVersion == 0){
-    warning('This version is no longer supported')
-    return(NULL)
-  } else{
-    
+    warning('The result version you are using is no longer support by OhdsiReportGenerator')
+  } 
+  
+  
     sql <- SqlRender::readSql(system.file(
       paste0("sql/sql_server/characterization/getBinaryRiskFactorsV", cVersion, ".sql"),
       package = "OhdsiReportGenerator",
@@ -1906,9 +1910,20 @@ getBinaryRiskFactors <- function(
       use_analysis = !is.null(analysisIds),
       analysis_ids = paste0(analysisIds, collapse = ','),
       use_database = !is.null(databaseId),
-      database_id = paste0("'",databaseId,"'", collapse = ",")
+      database_id = paste0("'",databaseId,"'", collapse = ","),
+      
+      use_risk_window_start = !is.null(riskWindowStart),
+      risk_window_start = riskWindowStart,
+      use_risk_window_end = !is.null(riskWindowEnd),
+      risk_window_end = riskWindowEnd,
+      use_start_anchor = !is.null(startAnchor),
+      start_anchor = startAnchor,
+      use_end_anchor = !is.null(endAnchor),
+      end_anchor = endAnchor,
+      
+      use_outcome_washout = !is.null(outcomeWashout),
+      outcome_washout = outcomeWashout
     )
-  }
   
   return(result)
 }
@@ -1927,6 +1942,7 @@ getBinaryRiskFactors <- function(
 #' @param characterizationTargetId The characterization target id
 #' @param characterizationCaseId The characterization case id
 #' @template outcomeId
+#' @param outcomeWashout (optional) the outcome washout to restrict to
 #' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
 #' @param databaseIds (optional) A vector of database IDs to restrict to
 #' @param riskWindowStart (optional) A vector of time-at-risk risk window starts to restrict to
@@ -1962,6 +1978,7 @@ getContinuousRiskFactors <- function(
     characterizationTargetId = NULL,
     characterizationCaseId = NULL,
     outcomeId = NULL,
+    outcomeWashout = NULL,
     analysisIds = NULL,
     databaseIds = NULL,
     riskWindowStart = NULL,
@@ -1995,11 +2012,8 @@ getContinuousRiskFactors <- function(
   )
   
   if(cVersion == 0){
-    
-    warning('Result table version no longer supported')
-    return(NULL)
-    
-  } else{
+      warning('You have old results that are no longer supported by OhdsiReportGenerator and my be unstable')
+  } 
     
     sql <- SqlRender::readSql(system.file(
       paste0("sql/sql_server/characterization/getContinuousRiskFactorsV", cVersion, ".sql"),
@@ -2031,10 +2045,12 @@ getContinuousRiskFactors <- function(
       use_start_anchor = !is.null(startAnchor),
       start_anchor = paste0("'",startAnchor,"'", collapse = ","),
       use_end_anchor = !is.null(endAnchor),
-      end_anchor = paste0("'",endAnchor,"'", collapse = ",")
+      end_anchor = paste0("'",endAnchor,"'", collapse = ","),
+      
+      use_outcome_washout = !is.null(outcomeWashout),
+      outcome_washout = outcomeWashout
     )
-    
-  }
+  
   
   return(result)
 }
@@ -2064,6 +2080,7 @@ getContinuousRiskFactors <- function(
 #' @param endAnchor (optional) An endAnchor to restrict to
 #' @param conceptIds (optional) An conceptIds to restrict to
 #' @param minVal (optional) the minimum averageVal to extract
+#' @param outcomeWashout (optional) the outcomeWashout to restrict to
 #' @family Characterization
 #' 
 #' @return
@@ -2098,7 +2115,8 @@ getBinaryCaseSeries <- function(
     startAnchor = NULL,
     endAnchor = NULL,
     conceptIds = NULL,
-    minVal = NULL
+    minVal = NULL,
+    outcomeWashout = NULL
 ){
   
   if(is.null(characterizationCaseId)){
@@ -2158,7 +2176,9 @@ getBinaryCaseSeries <- function(
     use_min_val = !is.null(minVal),
     min_val = minVal,
     use_concepts = !is.null(conceptIds),
-    concept_ids = paste0(conceptIds, collapse = ',')
+    concept_ids = paste0(conceptIds, collapse = ','),
+    use_outcome_washout = !is.null(outcomeWashout),
+    outcome_washout = paste0(outcomeWashout, collapse = ',')
   )
   
   return(result)
@@ -2183,6 +2203,7 @@ getBinaryCaseSeries <- function(
 #' @param riskWindowEnd (optional) A riskWindowEnd to restrict to
 #' @param startAnchor (optional) A startAnchor to restrict to
 #' @param endAnchor (optional) An endAnchor to restrict to
+#' @param outcomeWashout (optional) the outcomeWashout to restrict to
 #' @family Characterization
 #' 
 #' @return
@@ -2215,7 +2236,8 @@ getContinuousCaseSeries <- function(
     riskWindowStart = NULL,
     riskWindowEnd = NULL,
     startAnchor = NULL,
-    endAnchor = NULL
+    endAnchor = NULL,
+    outcomeWashout = NULL
 ){
   if(is.null(characterizationCaseId)){
     if(is.null(characterizationTargetId)){
@@ -2269,7 +2291,9 @@ getContinuousCaseSeries <- function(
     use_start_anchor = !is.null(startAnchor),
     start_anchor = startAnchor,
     use_end_anchor = !is.null(endAnchor),
-    end_anchor = endAnchor
+    end_anchor = endAnchor,
+    use_outcome_washout = !is.null(outcomeWashout),
+    outcome_washout = paste0(outcomeWashout, collapse = ',')
   )
   
   return(result)
@@ -2282,9 +2306,9 @@ getContinuousCaseSeries <- function(
 
 # this results the case+non-case counts
 
-#' Extract the target cohort counts result
+#' Extract the non-cases counts result
 #' @description
-#' This function extracts target cohort counts across databases in the results for specified target and outcome cohorts.
+#' This function extracts non-case counts across databases in the results for specified target and outcome cohorts.
 #'
 #' @details
 #' Specify the connectionHandler, the schema and the target/outcome cohort IDs
@@ -2296,7 +2320,12 @@ getContinuousCaseSeries <- function(
 #' @template databaseTable
 #' @param characterizationTargetIds The characterization target cohort ids of interest
 #' @param characterizationCaseIds The characterization case ids of interest
+#' @param startAnchor optional filter by startAchor
+#' @param endAnchor optional filter by endAchor
+#' @param riskWindowStart optional filter by riskWindowStart
+#' @param riskWindowEnd optional filter by riskWindowEnd
 #' @template outcomeIds
+#' @param outcomeWashouts optional filter by washout
 #' @param databaseIds A vector of database IDs to restrict to
 #' @param includeNames whether to add the database names and cohort names
 #' 
@@ -2346,7 +2375,12 @@ getNonCaseCounts <- function(
     databaseTable = 'database_meta_data',
     characterizationTargetIds = NULL,
     characterizationCaseIds = NULL,
+    startAnchor = NULL,
+    endAnchor = NULL, 
+    riskWindowStart = NULL,
+    riskWindowEnd = NULL,
     outcomeIds = NULL,
+    outcomeWashouts = NULL,
     databaseIds = NULL,
     includeNames = TRUE
 ){
@@ -2378,7 +2412,20 @@ getNonCaseCounts <- function(
     database_table_name = databaseTable,
     database_id = paste0("'",databaseIds,"'", collapse = ","),
     use_database = !is.null(databaseIds),
-    include_names = includeNames
+    include_names = includeNames,
+    
+    outcome_washout = paste0(outcomeWashouts, collapse = ','),
+    use_outcome_washout = !is.null(outcomeWashouts),
+    
+    use_start_anchor = !is.null(startAnchor),
+    start_anchor = paste0("'",startAnchor,"'", collapse = ","),
+    use_end_anchor = !is.null(endAnchor),
+    end_anchor = paste0("'",endAnchor,"'", collapse = ","), 
+    use_risk_window_start = !is.null(riskWindowStart),
+    risk_window_start = riskWindowStart,
+    use_risk_window_end = !is.null(riskWindowEnd),
+    risk_window_end = riskWindowEnd
+    
   )
   
   return(result)
@@ -2407,6 +2454,7 @@ getNonCaseCounts <- function(
 #' @param startAnchor (optional) A vector of time-at-risk start anchors to restrict to
 #' @param endAnchor (optional) A vector of time-at-risk end anchors to restrict to
 #' @param includeNames whether to add the database names and cohort names
+#' @param outcomeWashout (option) whether to restrict to outcomeWashout
 #' 
 #' @family Characterization
 #' @return
@@ -2455,7 +2503,8 @@ getCaseCounts <- function(
     riskWindowEnd = NULL,
     startAnchor = NULL,
     endAnchor = NULL,
-    includeNames = TRUE
+    includeNames = TRUE,
+    outcomeWashout = NULL
 ){
   
   cVersion <- .getCVersion(
@@ -2493,6 +2542,9 @@ getCaseCounts <- function(
     start_anchor = paste0("'",startAnchor,"'", collapse = ","),
     use_end_anchor = !is.null(endAnchor),
     end_anchor = paste0("'",endAnchor,"'", collapse = ","),
+    
+    use_outcome_washout = !is.null(outcomeWashout),
+    outcome_washout = paste0(outcomeWashout, collapse = ','),
     
     include_names = includeNames
   )
@@ -2639,9 +2691,8 @@ characterizationCompareBinary <- function(
   )
   
   if(cVersion == '0'){
-    warning('No this function is not supported for version 0')
-    return(NULL)
-  } else{
+    warning('Results detected are old and no longer supported by OhdsiReportGenerator')
+  } 
     
     # gives an id and setting_id, database_id, characterization_target_id and n
     colHeader <- columnHeader(
@@ -2653,7 +2704,7 @@ characterizationCompareBinary <- function(
       characterizationTargetIds = characterizationTargetIds,
       databaseIds = databaseIds
     )
-    
+
     if(nrow(colHeader) == 0){
       return(NULL)
     }
@@ -2689,8 +2740,7 @@ characterizationCompareBinary <- function(
       pivotedTargetBaseline = tb,
       colHeader = colHeader
       )
-    
-  }
+  
   
   return(
     list(
@@ -2753,9 +2803,8 @@ characterizationCompareContinuous <- function(
   )
   
   if(cVersion == '0'){
-    warning('No this function is not supported for version 0')
-    return(NULL)
-  } else{
+    warning('Results detected are old and no longer supported by OhdsiReportGenerator')
+  } 
     
     # gives an id and setting_id, database_id, characterization_target_id and n
     colHeader <- columnHeader(
@@ -2803,8 +2852,7 @@ characterizationCompareContinuous <- function(
       pivotedTargetBaseline = tb,
       colHeader = colHeader
     )
-    
-  }
+  
   
   return(
     list(

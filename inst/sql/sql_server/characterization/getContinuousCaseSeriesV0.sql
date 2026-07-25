@@ -123,6 +123,8 @@ SELECT
   {@use_risk_window_end}?{and s.risk_window_end = @risk_window_end}
   {@use_start_anchor}?{and s.start_anchor = '@start_anchor'}
   {@use_end_anchor}?{and s.end_anchor = '@end_anchor'}
+  {@use_outcome_washout}?{and s.outcome_washout_days in (@outcome_washout)}
+  
   and cov.cohort_type in ('CasesBetween','CasesAfter','CasesBefore')
           
   GROUP BY
