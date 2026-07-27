@@ -6,15 +6,17 @@ cat('\n\n### Index Demographics\n\n')
 
 demoList <- list(
   `Exposure Target` = targetIdsOfInterest,
-  `Outcome/s` = outcomeIdsOfInterest,
+  `Outcome/s` = ifelse(is.null(outcomeIdsOfInterest), NA, outcomeIdsOfInterest),
   `Indication/s` = ifelse(is.null(indicationIdsOfInterest), NA, indicationIdsOfInterest), # what about null?
-  `Comparator/s` = comparatorIdsOfInterest
+  `Comparator/s` = ifelse(is.null(comparatorIdsOfInterest), NA, comparatorIdsOfInterest)
 )
 
 for(demoListInd in 1:length(demoList)){
 
 cohortIds <- demoList[[demoListInd]]
 headingName <- names(demoList)[demoListInd]
+
+if(sum(is.na(cohortIds)) != 1){
 
 charTargetSettings <- OhdsiReportGenerator::getCharacterizationTargetSettings(
   connectionHandler = connectionHandler,
@@ -184,6 +186,8 @@ if(length(charTargetIds) > 0){
     cat('\n\n:::\n\n')
     
   }
+}
+
 }
 
 }

@@ -30,16 +30,32 @@ if(!is.null(caseIds) && nrow(caseIds) > 0){
     )
 
   
-  for(caseId in caseIds$characterizationCaseId){
-
-    ind <- which(caseIds$characterizationCaseId == caseId)
+  for(ind in 1:nrow(caseIds)){
+    
+    caseId <- caseIds$characterizationCaseId[ind]
+    
     # need to run this per t and o and settings
+    if(caseId != 0){
     riskFactorsBinary <- OhdsiReportGenerator::getBinaryRiskFactors(
       connectionHandler = connectionHandler, 
       schema = params$schema, 
       characterizationCaseId = caseId, 
       analysisIds = c(1,4,5,210,410)
+    )} else{
+      #older inputs
+      riskFactorsBinary <- OhdsiReportGenerator::getBinaryRiskFactors(
+      connectionHandler = connectionHandler, 
+      schema = params$schema, 
+      characterizationTargetId = caseIds$targetId[ind], 
+      outcomeId = caseIds$outcomeId[ind], 
+      outcomeWashout = caseIds$outcomeWashoutDays[ind], 
+      riskWindowStart = caseIds$riskWindowStart[ind], 
+      riskWindowEnd = caseIds$riskWindowEnd[ind], 
+      endAnchor = caseIds$endAnchor[ind], 
+      startAnchor = caseIds$startAnchor[ind],
+      analysisIds = c(1,4,5,210,410)
     )
+    }
     
     notNull <- !is.null(riskFactorsBinary)
     hasRows <- FALSE
