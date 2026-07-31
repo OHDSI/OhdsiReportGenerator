@@ -183,7 +183,7 @@ for(description in descriptions){
 if(includeCohortMethod){
   
   cohortMethodResults <- cmResults
-    # add Evidence synth if the results exist
+  # add Evidence synth if the results exist
   if(!is.null(cohortMethodES)){
     cohortMethodResults <- dplyr::bind_rows(cmResults, cohortMethodES)
   } 
