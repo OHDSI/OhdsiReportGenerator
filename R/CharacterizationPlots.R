@@ -211,7 +211,7 @@ if(!is.null(genderData) & stratification == 'overall'){
                   "proportion","incidenceProportionP100p", "personsAtRisk" , "meanFollowUp",
                   "outcomes", "type", "ageList", "malePerc") %>%
     dplyr::arrange(.data$targetNameWithId,.data$type) %>%
-    dplyr::group_by(targetNameWithId, .data$type, .data$analysis) |>
+    dplyr::group_by(.data$targetNameWithId, .data$type, .data$analysis) |>
     gt::gt() %>%
     gtExtras::gt_plt_bar(
       column = "incidenceRateP100py",
