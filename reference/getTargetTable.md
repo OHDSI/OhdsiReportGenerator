@@ -168,5 +168,5 @@ targetTable <- getTargetTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "-- Total time for extarcting target table: 0.157885551452637 secs"
+#> [1] "-- Total time for extarcting target table: 0.286130666732788 secs"
 ```
