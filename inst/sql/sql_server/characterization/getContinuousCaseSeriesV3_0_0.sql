@@ -1,10 +1,28 @@
 SELECT 
  d.cdm_source_abbreviation AS database_name,
  cov.database_id,
+ cov.characterization_case_id,
  target.cohort_name AS target_name,
  ts.target_id,
+ ts.min_prior_observation, 
+ ts.limit_to_first_in_n_days,
+ NULL AS nesting_cohort_id,	
+ NULL AS nesting_name,
+ NULL AS min_age,
+ NULL AS max_age,	
+ NULL AS study_start,	
+ NULL AS study_end,	
+ NULL AS gender_concept_ids,
  outcome.cohort_name AS outcome_name,
  cs.outcome_id,
+ cs.outcome_washout_days,
+ cs.risk_window_start,
+ cs.start_anchor,
+ cs.risk_window_end,
+ cs.end_anchor,
+ 
+ cr.covariate_name, 
+ cr.covariate_id, 
 
  cov.before_count_value AS count_value_before,
  cov.before_min_value AS min_value_before,	
@@ -17,6 +35,7 @@ SELECT
  cov.before_p_75_value AS p_75_value_before,
  cov.before_p_90_value AS p_90_value_before,
 
+ -- bug with 3_0_0 where during_count_value was not uploaded
  cov.during_count_value AS count_value_during,
  cov.during_min_value AS min_value_during,	
  cov.during_max_value AS max_value_during,	
@@ -39,17 +58,8 @@ SELECT
  cov.after_p_75_value AS p_75_value_after,
  cov.after_p_90_value AS p_90_value_after,
 
- cr.covariate_name, 
- cr.covariate_id, 
- ts.min_prior_observation, 
- ts.limit_to_first_in_n_days,
- cs.outcome_washout_days,
  css.case_post_outcome_duration, 
- css.case_pre_target_duration,
- cs.risk_window_start,
- cs.start_anchor,
- cs.risk_window_end,
- cs.end_anchor
+ css.case_pre_target_duration
 
  FROM @schema.@c_table_prefixcase_series_covariates_continuous cov
  INNER JOIN @schema.@c_table_prefixcase_settings cs
@@ -80,11 +90,15 @@ SELECT
  INNER JOIN @schema.@cg_table_prefixcohort_definition outcome
  ON outcome.cohort_definition_id = cs.outcome_id
 
- WHERE ts.target_id = @target_id
- AND cs.outcome_id = @outcome_id
+ WHERE 1 = 1
+ {@use_characterization_case}?{AND cov.characterization_case_id = @characterization_case_id}
+ {@use_characterization_target}?{AND ts.characterization_target_id = @characterization_target_id}
+ {@use_outcome_id}?{AND cs.outcome_id = @outcome_id}
  {@use_database}?{AND cov.database_id IN (@database_ids)}
  {@use_risk_window_start}?{AND cs.risk_window_start = @risk_window_start}
  {@use_risk_window_end}?{AND cs.risk_window_end = @risk_window_end}
  {@use_start_anchor}?{AND cs.start_anchor = '@start_anchor'}
  {@use_end_anchor}?{AND cs.end_anchor = '@end_anchor'}
+ {@use_outcome_washout}?{and cs.outcome_washout_days in (@outcome_washout)}
+  
 ;

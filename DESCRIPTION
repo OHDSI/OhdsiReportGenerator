@@ -1,8 +1,8 @@
 Package: OhdsiReportGenerator
 Type: Package
 Title: Observational Health Data Sciences and Informatics Report Generator
-Version: 2.2.0
-Date: 2026-05-15
+Version: 2.3.0
+Date: 2026-07-28
 Authors@R: c(
   person("Jenna", "Reps", email = "jreps@its.jnj.com", role = c("aut", "cre")),
   person("Anthony", "Sena", email = "sena@ohdsi.org", role = c("aut"))
@@ -14,7 +14,7 @@ URL: https://ohdsi.github.io/OhdsiReportGenerator/, https://github.com/OHDSI/Ohd
 BugReports: https://github.com/OHDSI/OhdsiReportGenerator/issues
 VignetteBuilder: knitr
 Depends:
-  R (>= 3.3.0)
+  R (>= 4.1.0)
 Imports:
   CirceR,
   DatabaseConnector,
@@ -39,6 +39,6 @@ Suggests:
   ResultModelManager,
   RSQLite,
   testthat (>= 3.0.0)
-RoxygenNote: 7.3.3
 Encoding: UTF-8
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

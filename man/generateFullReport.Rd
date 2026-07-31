@@ -95,8 +95,8 @@ Specify the connection details to the result database and the schema name
 to generate the full report.
 }
 \seealso{
-Other Reporting: 
-\code{\link{createPredictionReport}()},
-\code{\link{generateSummaryPredictionReport}()}
+Other Reporting:
+\code{\link[=createPredictionReport]{createPredictionReport()}},
+\code{\link[=generateSummaryPredictionReport]{generateSummaryPredictionReport()}}
 }
 \concept{Reporting}

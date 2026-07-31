@@ -10,9 +10,9 @@ SELECT ev.evidence_synthesis_description AS database_name
 	,c3.cohort_name AS outcome_name
 	,r.outcome_id
 	,r.calibrated_rr
-	,r.calibrated_ci_95_lb
-	,r.calibrated_ci_95_ub
-	,r.calibrated_p
+	,CAST(r.calibrated_ci_95_lb AS DOUBLE PRECISION)
+	,CAST(r.calibrated_ci_95_ub AS DOUBLE PRECISION)
+	,CAST(r.calibrated_p AS DOUBLE PRECISION)
 	,{@include_one_sided_p}?{r.calibrated_one_sided_p
 	,} r.calibrated_log_rr
 	,r.calibrated_se_log_rr
@@ -25,9 +25,9 @@ SELECT ev.evidence_synthesis_description AS database_name
 	,unblind.unblind
 	,r.n_databases
 	,NULL as pi_95_lb
-	,NULL as r.pi_95_ub
-	,NULL as calibrated_pi_95_lb
-	,NULL as calibrated_pi_95_ub
+	,NULL as pi_95_ub
+	,CAST(NULL AS DOUBLE PRECISION) as calibrated_pi_95_lb
+	,CAST(NULL AS DOUBLE PRECISION) as calibrated_pi_95_ub
 	,unblind.tau
 	,unblind.i_2
 FROM @schema.@es_table_prefixcm_result AS r

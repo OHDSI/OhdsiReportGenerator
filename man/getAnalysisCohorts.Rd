@@ -42,8 +42,8 @@ cohortAnalysis <- getAnalysisCohorts(
 )
 }
 \seealso{
-Other TreatmentPatterns: 
-\code{\link{getEventDuration}()},
-\code{\link{getTreatmentPathways}()}
+Other TreatmentPatterns:
+\code{\link[=getEventDuration]{getEventDuration()}},
+\code{\link[=getTreatmentPathways]{getTreatmentPathways()}}
 }
 \concept{TreatmentPatterns}

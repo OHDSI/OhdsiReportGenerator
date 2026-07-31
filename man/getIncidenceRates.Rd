@@ -11,6 +11,7 @@ getIncidenceRates(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   targetIds = NULL,
+  parentIds = NULL,
   outcomeIds = NULL
 )
 }
@@ -26,6 +27,8 @@ getIncidenceRates(
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
 
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
+
+\item{parentIds}{The parent cohort ids to restrict to}
 
 \item{outcomeIds}{A vector of integers corresponding to the outcome cohort IDs}
 }
@@ -78,28 +81,31 @@ schema = 'main'
 
 }
 \seealso{
-Other Characterization: 
-\code{\link{getBinaryCaseSeries}()},
-\code{\link{getBinaryRiskFactors}()},
-\code{\link{getBinaryTargetBaseline}()},
-\code{\link{getCaseCounts}()},
-\code{\link{getCaseTargetCounts}()},
-\code{\link{getCharacterizationCohortBinary}()},
-\code{\link{getCharacterizationCohortContinuous}()},
-\code{\link{getCharacterizationDemographics}()},
-\code{\link{getCharacterizationOutcomes}()},
-\code{\link{getCharacterizationTargets}()},
-\code{\link{getContinuousCaseSeries}()},
-\code{\link{getContinuousRiskFactors}()},
-\code{\link{getDechallengeRechallenge}()},
-\code{\link{getDechallengeRechallengeFails}()},
-\code{\link{getIncidenceOutcomes}()},
-\code{\link{getIncidenceTargets}()},
-\code{\link{getTargetBinaryFeatures}()},
-\code{\link{getTargetContinuousFeatures}()},
-\code{\link{getTimeToEvent}()},
-\code{\link{plotAgeDistributions}()},
-\code{\link{plotSexDistributions}()},
-\code{\link{viewIncidenceRate}()}
+Other Characterization:
+\code{\link[=characterizationCompareBinary]{characterizationCompareBinary()}},
+\code{\link[=characterizationCompareContinuous]{characterizationCompareContinuous()}},
+\code{\link[=getBinaryCaseSeries]{getBinaryCaseSeries()}},
+\code{\link[=getBinaryRiskFactors]{getBinaryRiskFactors()}},
+\code{\link[=getBinaryTargetBaseline]{getBinaryTargetBaseline()}},
+\code{\link[=getCaseCounts]{getCaseCounts()}},
+\code{\link[=getCharacterizationCaseSettings]{getCharacterizationCaseSettings()}},
+\code{\link[=getCharacterizationDemographics]{getCharacterizationDemographics()}},
+\code{\link[=getCharacterizationTargetSettings]{getCharacterizationTargetSettings()}},
+\code{\link[=getContinuousCaseSeries]{getContinuousCaseSeries()}},
+\code{\link[=getContinuousRiskFactors]{getContinuousRiskFactors()}},
+\code{\link[=getContinuousTargetBaseline]{getContinuousTargetBaseline()}},
+\code{\link[=getDechallengeRechallenge]{getDechallengeRechallenge()}},
+\code{\link[=getDechallengeRechallengeFails]{getDechallengeRechallengeFails()}},
+\code{\link[=getIncidenceTargetSettings]{getIncidenceTargetSettings()}},
+\code{\link[=getNonCaseCounts]{getNonCaseCounts()}},
+\code{\link[=getOutcomesUsedInCharacterization]{getOutcomesUsedInCharacterization()}},
+\code{\link[=getOutcomesUsedInIncidence]{getOutcomesUsedInIncidence()}},
+\code{\link[=getTargetCounts]{getTargetCounts()}},
+\code{\link[=getTargetsUsedInCharacterization]{getTargetsUsedInCharacterization()}},
+\code{\link[=getTargetsUsedInIncidence]{getTargetsUsedInIncidence()}},
+\code{\link[=getTimeToEvent]{getTimeToEvent()}},
+\code{\link[=plotAgeDistributions]{plotAgeDistributions()}},
+\code{\link[=plotSexDistributions]{plotSexDistributions()}},
+\code{\link[=viewIncidenceRate]{viewIncidenceRate()}}
 }
 \concept{Characterization}

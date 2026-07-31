@@ -12,6 +12,11 @@ vignette: >
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
+
+dropJsonColumns <- function(data) {
+  jsonCols <- grep("json", names(data), ignore.case = TRUE, value = TRUE)
+  data %>% dplyr::select(-dplyr::any_of(jsonCols))
+}
 ```
 
 # Using the OhdsiReportGenerator Package
@@ -49,9 +54,10 @@ cohorts <- getCohortDefinitions(
 )
 
 knitr::kable(
-  x = cohorts %>% 
-    dplyr::select(-"json", -"sqlCommand"), 
-  caption = 'The data.frame extracted containing the cohort details minus the json and sqlCommand columns.'
+  x = cohorts %>%
+    dropJsonColumns() %>%
+    dplyr::select(-dplyr::any_of(c("sqlCommand"))),
+  caption = 'The data.frame extracted containing the cohort details minus JSON columns and sqlCommand.'
   )
 
 ```
@@ -71,8 +77,9 @@ knitr::kable(
   )
 
 knitr::kable(
-  x = processedCohorts$cohortList[[1]] %>% 
-    dplyr::select(-"json", -"sqlCommand"),
+  x = processedCohorts$cohortList[[1]] %>%
+    dropJsonColumns() %>%
+    dplyr::select(-dplyr::any_of(c("sqlCommand"))),
   caption = 'The children/subset cohorts for the first parent cohort.'
   )
 }
@@ -92,7 +99,7 @@ subsets <- getCohortSubsetDefinitions(
 )
 
 knitr::kable(
-  x = subsets, 
+  x = subsets %>% dropJsonColumns(),
   caption = 'The subset cohort logic used in the analysis.'
   )
 
@@ -157,15 +164,23 @@ knitr::kable(
 
 ```
 
-Finally, it is possible to get risk factors (associations between features and the occurrence of the outcome during a time-at-risk) using `getBinaryRiskFactors` to identify the binary features:
+Finally, it is possible to get risk factors (associations between features and the occurrence of the outcome during a time-at-risk). The risk-factor functions now use characterization identifiers (for example `characterizationCaseId`) rather than only `targetId`/`outcomeId`:
 
 ```{r echo=TRUE}
+
+caseSettings <- getCharacterizationCaseSettings(
+  connectionHandler = ConnectionHandler,
+  schema = 'main',
+  targetIds = 1,
+  outcomeIds = 3
+)
+
+charCaseId <- caseSettings$characterizationCaseId[1]
 
 rf <- getBinaryRiskFactors(
     connectionHandler = ConnectionHandler,
     schema = 'main', 
-    targetId = 1, 
-    outcomeId = 3
+  characterizationCaseId = charCaseId
 )
 
 knitr::kable(
@@ -182,8 +197,7 @@ and `getContinuousRiskFactors` for the continuous features:
 rf <- getContinuousRiskFactors(
     connectionHandler = ConnectionHandler,
     schema = 'main', 
-    targetId = 1, 
-    outcomeId = 3
+  characterizationCaseId = charCaseId
 )
 
 knitr::kable(

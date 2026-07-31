@@ -44,18 +44,18 @@ cohortMeta <- getCohortMeta(
 
 }
 \seealso{
-Other Cohorts: 
-\code{\link{getCohortAttrition}()},
-\code{\link{getCohortCounts}()},
-\code{\link{getCohortDefinitions}()},
-\code{\link{getCohortInclusionRules}()},
-\code{\link{getCohortInclusionStats}()},
-\code{\link{getCohortInclusionSummary}()},
-\code{\link{getCohortSubsetAttrition}()},
-\code{\link{getCohortSubsetDefinitions}()},
-\code{\link{getSubsetText}()},
-\code{\link{processCohortDefinitionsForQuarto}()},
-\code{\link{processCohorts}()},
-\code{\link{restrictCohortDefinitionsForQuarto}()}
+Other Cohorts:
+\code{\link[=getCohortAttrition]{getCohortAttrition()}},
+\code{\link[=getCohortCounts]{getCohortCounts()}},
+\code{\link[=getCohortDefinitions]{getCohortDefinitions()}},
+\code{\link[=getCohortInclusionRules]{getCohortInclusionRules()}},
+\code{\link[=getCohortInclusionStats]{getCohortInclusionStats()}},
+\code{\link[=getCohortInclusionSummary]{getCohortInclusionSummary()}},
+\code{\link[=getCohortSubsetAttrition]{getCohortSubsetAttrition()}},
+\code{\link[=getCohortSubsetDefinitions]{getCohortSubsetDefinitions()}},
+\code{\link[=getSubsetText]{getSubsetText()}},
+\code{\link[=processCohortDefinitionsForQuarto]{processCohortDefinitionsForQuarto()}},
+\code{\link[=processCohorts]{processCohorts()}},
+\code{\link[=restrictCohortDefinitionsForQuarto]{restrictCohortDefinitionsForQuarto()}}
 }
 \concept{Cohorts}
