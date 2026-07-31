@@ -86,7 +86,7 @@ viewIncidenceRate <- function(
         .data$databaseId, .data$targetCohortId
       ) %>%
       dplyr::summarise(
-        n = sum(.data$sumValue)
+        n = sum(abs(.data$sumValue))
       ) %>%
       dplyr::rowwise() %>%
       dplyr::mutate(
@@ -107,7 +107,7 @@ viewIncidenceRate <- function(
         ageMax = strsplit(x = gsub('age group:  ', '', .data$covariateName), split = ' -  ')[[1]][2],
       ) %>%
       dplyr::mutate(
-        ageList = list(sample(.data$ageMin:.data$ageMax, size = ceiling(.data$sumValue/.data$scale), replace = TRUE))
+        ageList = list(sample(.data$ageMin:.data$ageMax, size = ceiling(abs(.data$sumValue)/.data$scale), replace = TRUE))
       ) %>%
       dplyr::group_by(
         .data$databaseId, .data$targetCohortId
@@ -211,7 +211,7 @@ if(!is.null(genderData) & stratification == 'overall'){
                   "proportion","incidenceProportionP100p", "personsAtRisk" , "meanFollowUp",
                   "outcomes", "type", "ageList", "malePerc") %>%
     dplyr::arrange(.data$targetNameWithId,.data$type) %>%
-    dplyr::group_by(.data$type, .data$analysis) |>
+    dplyr::group_by(targetNameWithId, .data$type, .data$analysis) |>
     gt::gt() %>%
     gtExtras::gt_plt_bar(
       column = "incidenceRateP100py",
@@ -244,7 +244,7 @@ if(!is.null(genderData) & stratification == 'overall'){
      fns = function(x){ 
        x <- sprintf("%.0f", x)
        if(sum(x < 0) > 0){ 
-         x[x < 0] <- paste('<', abs(x[x < 0]))
+         x[x < 0] <- paste('<', abs(as.double(x)[x < 0]))
        }
        return(x)
      }
