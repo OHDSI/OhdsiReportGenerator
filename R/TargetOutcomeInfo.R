@@ -148,7 +148,7 @@ getTargetTable <- function(
   # now find whether it is a target for each analysis
   
   if(getIncidenceInclusion){
-    inc <- tryCatch(getIncidenceTargets(
+    inc <- tryCatch(getTargetsUsedInIncidence(
       connectionHandler = connectionHandler,
       schema = schema,
       cgTablePrefix = cgTablePrefix,
@@ -173,7 +173,7 @@ getTargetTable <- function(
   }
   
   if(getCharacterizationInclusion){
-    char <- tryCatch(getCharacterizationTargets(
+    char <- tryCatch(getTargetsUsedInCharacterization(
       connectionHandler = connectionHandler,
       schema = schema,
       cgTablePrefix = cgTablePrefix,
@@ -451,7 +451,7 @@ getOutcomeTable <- function(
   
   if(getIncidenceInclusion){
     start <- Sys.time()
-    inc <- tryCatch(getIncidenceOutcomes(
+    inc <- tryCatch(getOutcomesUsedInIncidence(
       connectionHandler = connectionHandler,
       schema = schema,
       cgTablePrefix = cgTablePrefix,
@@ -475,7 +475,7 @@ getOutcomeTable <- function(
   }
   
   if(getCharacterizationInclusion){
-    char <- tryCatch(getCharacterizationOutcomes(
+    char <- tryCatch(getOutcomesUsedInCharacterization(
       connectionHandler = connectionHandler,
       schema = schema,
       cgTablePrefix = cgTablePrefix,

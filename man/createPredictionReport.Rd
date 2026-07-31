@@ -47,8 +47,8 @@ and the modelDesignId of interest to generate a html report summarizing the
 performance of models developed across databases.
 }
 \seealso{
-Other Reporting: 
-\code{\link{generateFullReport}()},
-\code{\link{generateSummaryPredictionReport}()}
+Other Reporting:
+\code{\link[=generateFullReport]{generateFullReport()}},
+\code{\link[=generateSummaryPredictionReport]{generateSummaryPredictionReport()}}
 }
 \concept{Reporting}

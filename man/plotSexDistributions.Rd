@@ -4,33 +4,19 @@
 \alias{plotSexDistributions}
 \title{Plots the sex distributions using the sex features}
 \usage{
-plotSexDistributions(
-  sexData,
-  riskWindowStart = "1",
-  riskWindowEnd = "365",
-  startAnchor = "cohort start",
-  endAnchor = "cohort start"
-)
+plotSexDistributions(sexData)
 }
 \arguments{
 \item{sexData}{The sex data extracted using 'getCharacterizationDemographics(type = 'sex')'}
-
-\item{riskWindowStart}{The time at risk window start}
-
-\item{riskWindowEnd}{The time at risk window end}
-
-\item{startAnchor}{The anchor for the time at risk start}
-
-\item{endAnchor}{The anchor for the time at risk end}
 }
 \value{
 Returns a ggplot with the distributions
 }
 \description{
-Creates bar charts for the target and case sex.
+Creates bar charts for the target.
 }
 \details{
-Input the data returned from 'getCharacterizationDemographics(type = 'sex')' and the time-at-risk
+Input the data returned from 'getCharacterizationDemographics(type = 'sex')'
 }
 \examples{
 conDet <- getExampleConnectionDetails()
@@ -40,7 +26,7 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 sexData <- getCharacterizationDemographics(
   connectionHandler = connectionHandler, 
   schema = 'main',
-  targetId = 1, 
+  characterizationTargetId = 10, 
   outcomeId = 3, 
   type = 'sex'
 )
@@ -48,28 +34,31 @@ plotSexDistributions(sexData = sexData)
 
 }
 \seealso{
-Other Characterization: 
-\code{\link{getBinaryCaseSeries}()},
-\code{\link{getBinaryRiskFactors}()},
-\code{\link{getBinaryTargetBaseline}()},
-\code{\link{getCaseCounts}()},
-\code{\link{getCaseTargetCounts}()},
-\code{\link{getCharacterizationCohortBinary}()},
-\code{\link{getCharacterizationCohortContinuous}()},
-\code{\link{getCharacterizationDemographics}()},
-\code{\link{getCharacterizationOutcomes}()},
-\code{\link{getCharacterizationTargets}()},
-\code{\link{getContinuousCaseSeries}()},
-\code{\link{getContinuousRiskFactors}()},
-\code{\link{getDechallengeRechallenge}()},
-\code{\link{getDechallengeRechallengeFails}()},
-\code{\link{getIncidenceOutcomes}()},
-\code{\link{getIncidenceRates}()},
-\code{\link{getIncidenceTargets}()},
-\code{\link{getTargetBinaryFeatures}()},
-\code{\link{getTargetContinuousFeatures}()},
-\code{\link{getTimeToEvent}()},
-\code{\link{plotAgeDistributions}()},
-\code{\link{viewIncidenceRate}()}
+Other Characterization:
+\code{\link[=characterizationCompareBinary]{characterizationCompareBinary()}},
+\code{\link[=characterizationCompareContinuous]{characterizationCompareContinuous()}},
+\code{\link[=getBinaryCaseSeries]{getBinaryCaseSeries()}},
+\code{\link[=getBinaryRiskFactors]{getBinaryRiskFactors()}},
+\code{\link[=getBinaryTargetBaseline]{getBinaryTargetBaseline()}},
+\code{\link[=getCaseCounts]{getCaseCounts()}},
+\code{\link[=getCharacterizationCaseSettings]{getCharacterizationCaseSettings()}},
+\code{\link[=getCharacterizationDemographics]{getCharacterizationDemographics()}},
+\code{\link[=getCharacterizationTargetSettings]{getCharacterizationTargetSettings()}},
+\code{\link[=getContinuousCaseSeries]{getContinuousCaseSeries()}},
+\code{\link[=getContinuousRiskFactors]{getContinuousRiskFactors()}},
+\code{\link[=getContinuousTargetBaseline]{getContinuousTargetBaseline()}},
+\code{\link[=getDechallengeRechallenge]{getDechallengeRechallenge()}},
+\code{\link[=getDechallengeRechallengeFails]{getDechallengeRechallengeFails()}},
+\code{\link[=getIncidenceRates]{getIncidenceRates()}},
+\code{\link[=getIncidenceTargetSettings]{getIncidenceTargetSettings()}},
+\code{\link[=getNonCaseCounts]{getNonCaseCounts()}},
+\code{\link[=getOutcomesUsedInCharacterization]{getOutcomesUsedInCharacterization()}},
+\code{\link[=getOutcomesUsedInIncidence]{getOutcomesUsedInIncidence()}},
+\code{\link[=getTargetCounts]{getTargetCounts()}},
+\code{\link[=getTargetsUsedInCharacterization]{getTargetsUsedInCharacterization()}},
+\code{\link[=getTargetsUsedInIncidence]{getTargetsUsedInIncidence()}},
+\code{\link[=getTimeToEvent]{getTimeToEvent()}},
+\code{\link[=plotAgeDistributions]{plotAgeDistributions()}},
+\code{\link[=viewIncidenceRate]{viewIncidenceRate()}}
 }
 \concept{Characterization}

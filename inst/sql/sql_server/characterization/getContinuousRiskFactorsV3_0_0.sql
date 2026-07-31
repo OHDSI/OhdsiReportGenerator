@@ -3,12 +3,18 @@ d.cdm_source_abbreviation AS database_name,
 cov.database_id,
 target.cohort_name AS target_name,
 ts.target_id AS target_cohort_id,
-outcome.cohort_name AS outcome_name,
-cs.outcome_id as outcome_cohort_id,
-
 ts.min_prior_observation,
 ts.limit_to_first_in_n_days,
+  NULL AS nesting_cohort_id,
+  NULL AS nesting_name,
+  NULL AS min_age,	
+  NULL AS max_age,
+  NULL AS study_start,	
+  NULL AS study_end,	
+  NULL AS gender_concept_ids,
 
+outcome.cohort_name AS outcome_name,
+cs.outcome_id as outcome_cohort_id,
 cs.outcome_washout_days,
 cs.risk_window_start,
 cs.start_anchor,
@@ -69,8 +75,10 @@ ON outcome.cohort_definition_id = cs.outcome_id
 
 -- add wheres here
 WHERE 1=1
-{@use_target}?{AND ts.target_id IN (@target_id)}
+{@use_characterization_target}?{AND ts.characterization_target_id IN (@characterization_target_id)}
+{@use_characterization_case}?{AND cs.characterization_case_id IN (@characterization_case_id)}
 {@use_outcome}?{AND cs.outcome_id IN (@outcome_id)}
+{@use_outcome_washout}?{AND cs.outcome_washout_days IN (@outcome_washout)}
 {@use_database}?{AND d.database_id IN (@database_id)}
 {@use_analysis}?{AND cr.analysis_id IN (@analysis_ids)}
 {@use_risk_window_start}?{AND cs.risk_window_start IN (@risk_window_start)}  

@@ -25,12 +25,12 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 
 }
 \seealso{
-Other helper: 
-\code{\link{addTarColumn}()},
-\code{\link{formatBinaryCovariateName}()},
-\code{\link{getOutcomeTable}()},
-\code{\link{getTargetTable}()},
-\code{\link{kableDark}()},
-\code{\link{removeSpaces}()}
+Other helper:
+\code{\link[=addTarColumn]{addTarColumn()}},
+\code{\link[=formatBinaryCovariateName]{formatBinaryCovariateName()}},
+\code{\link[=getOutcomeTable]{getOutcomeTable()}},
+\code{\link[=getTargetTable]{getTargetTable()}},
+\code{\link[=kableDark]{kableDark()}},
+\code{\link[=removeSpaces]{removeSpaces()}}
 }
 \concept{helper}

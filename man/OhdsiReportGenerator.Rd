@@ -22,6 +22,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Jenna Reps \email{jreps@its.jnj.com}
   \item Anthony Sena \email{sena@ohdsi.org}
 }
 

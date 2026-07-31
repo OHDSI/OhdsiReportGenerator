@@ -54,5 +54,6 @@ select
     where 
     1 = 1
     {@use_target}?{ and target_cohort_definition_id in (@target_id)}
+    {@use_parent}?{ and cg1.subset_parent in (@parent_id)}
     {@use_outcome}?{ and outcome_cohort_definition_id in (@outcome_id)}
     ;

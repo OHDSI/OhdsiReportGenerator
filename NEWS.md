@@ -1,3 +1,9 @@
+OhdsiReportGenerator v2.3.0
+======================
+- updated characterization extractions for new data model (characterization v4) but also
+  kept backwards compatibility.
+- some exported characterization extraction functions were renamed 
+
 OhdsiReportGenerator v2.2.0.9999
 ======================
 - fixed bug in SMD formula for binary covariates 
