@@ -9,7 +9,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/OHDSI/OhdsiReportGenerator/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/OHDSI/OhdsiReportGenerator/blob/v2.3.0/DESCRIPTION)
 
 Reps J, Sena A (2026). *OhdsiReportGenerator: Observational Health Data
 Sciences and Informatics Report Generator*. R package version 2.3.0,

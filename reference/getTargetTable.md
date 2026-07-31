@@ -159,7 +159,6 @@ Other helper: [`addTarColumn()`](addTarColumn.md),
 
 ``` r
 conDet <- getExampleConnectionDetails()
-#> Closing database connection
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #> Connecting using SQLite driver
@@ -168,5 +167,5 @@ targetTable <- getTargetTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "-- Total time for extarcting target table: 0.286130666732788 secs"
+#> [1] "-- Total time for extarcting target table: 0.200926065444946 secs"
 ```
