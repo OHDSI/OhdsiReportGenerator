@@ -11,8 +11,10 @@ getBinaryRiskFactors(
   cTablePrefix = "c_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
-  targetId = NULL,
+  characterizationTargetId = NULL,
+  characterizationCaseId = NULL,
   outcomeId = NULL,
+  outcomeWashout = NULL,
   databaseId = NULL,
   analysisIds = c(3),
   riskWindowStart = NULL,
@@ -47,13 +49,21 @@ getBinaryRiskFactors(
   The name of the table with the database details (default
   'database_meta_data')
 
-- targetId:
+- characterizationTargetId:
 
-  An integer corresponding to the target cohort ID
+  the characterization target id
+
+- characterizationCaseId:
+
+  the characterization case id
 
 - outcomeId:
 
   Am integer corresponding to the outcome cohort ID
+
+- outcomeWashout:
+
+  (optional) restrict to outcome washout
 
 - databaseId:
 
@@ -93,24 +103,27 @@ IDs
 ## See also
 
 Other Characterization:
+[`characterizationCompareBinary()`](characterizationCompareBinary.md),
+[`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
 [`getCaseCounts()`](getCaseCounts.md),
-[`getCaseTargetCounts()`](getCaseTargetCounts.md),
-[`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
-[`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),
+[`getCharacterizationCaseSettings()`](getCharacterizationCaseSettings.md),
 [`getCharacterizationDemographics()`](getCharacterizationDemographics.md),
-[`getCharacterizationOutcomes()`](getCharacterizationOutcomes.md),
-[`getCharacterizationTargets()`](getCharacterizationTargets.md),
+[`getCharacterizationTargetSettings()`](getCharacterizationTargetSettings.md),
 [`getContinuousCaseSeries()`](getContinuousCaseSeries.md),
 [`getContinuousRiskFactors()`](getContinuousRiskFactors.md),
+[`getContinuousTargetBaseline()`](getContinuousTargetBaseline.md),
 [`getDechallengeRechallenge()`](getDechallengeRechallenge.md),
 [`getDechallengeRechallengeFails()`](getDechallengeRechallengeFails.md),
-[`getIncidenceOutcomes()`](getIncidenceOutcomes.md),
 [`getIncidenceRates()`](getIncidenceRates.md),
-[`getIncidenceTargets()`](getIncidenceTargets.md),
-[`getTargetBinaryFeatures()`](getTargetBinaryFeatures.md),
-[`getTargetContinuousFeatures()`](getTargetContinuousFeatures.md),
+[`getIncidenceTargetSettings()`](getIncidenceTargetSettings.md),
+[`getNonCaseCounts()`](getNonCaseCounts.md),
+[`getOutcomesUsedInCharacterization()`](getOutcomesUsedInCharacterization.md),
+[`getOutcomesUsedInIncidence()`](getOutcomesUsedInIncidence.md),
+[`getTargetCounts()`](getTargetCounts.md),
+[`getTargetsUsedInCharacterization()`](getTargetsUsedInCharacterization.md),
+[`getTargetsUsedInIncidence()`](getTargetsUsedInIncidence.md),
 [`getTimeToEvent()`](getTimeToEvent.md),
 [`plotAgeDistributions()`](plotAgeDistributions.md),
 [`plotSexDistributions()`](plotSexDistributions.md),
@@ -127,7 +140,15 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 rf <- getBinaryRiskFactors(
   connectionHandler = connectionHandler, 
   schema = 'main',
-  targetId = 1, 
+  characterizationTargetId = 1, 
   outcomeId = 3
 )
+#> Warning: Parameter 'use_risk_window_start' not found in SQL
+#> Warning: Parameter 'risk_window_start' not found in SQL
+#> Warning: Parameter 'use_risk_window_end' not found in SQL
+#> Warning: Parameter 'risk_window_end' not found in SQL
+#> Warning: Parameter 'use_start_anchor' not found in SQL
+#> Warning: Parameter 'start_anchor' not found in SQL
+#> Warning: Parameter 'use_end_anchor' not found in SQL
+#> Warning: Parameter 'end_anchor' not found in SQL
 ```

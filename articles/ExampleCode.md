@@ -56,84 +56,35 @@ cohorts <- getCohortDefinitions(
 )
 
 knitr::kable(
-  x = cohorts %>% 
-    dplyr::select(-"json", -"sqlCommand"), 
-  caption = 'The data.frame extracted containing the cohort details minus the json and sqlCommand columns.'
+  x = cohorts %>%
+    dropJsonColumns() %>%
+    dplyr::select(-dplyr::any_of(c("sqlCommand"))),
+  caption = 'The data.frame extracted containing the cohort details minus JSON columns and sqlCommand.'
   )
 ```
 
-| cohortDefinitionId | cohortName | description | subsetParent | isSubset | subsetDefinitionId | isTemplatedCohort | subsetDefinitionJson | templateName | templateSql | templateJson |
-|---:|:---|---:|---:|---:|---:|---:|:---|---:|---:|---:|
-| 1 | Celecoxib | NA | 1 | 0 | NA | 0 | NA | NA | NA | NA |
-| 2 | Diclofenac | NA | 2 | 0 | NA | 0 | NA | NA | NA | NA |
-| 3 | GI bleed | NA | 3 | 0 | NA | 0 | NA | NA | NA | NA |
-| 4 | Acetaminophen | NA | 4 | 0 | NA | 0 | NA | NA | NA | NA |
-| 5 | Amoxicillin | NA | 5 | 0 | NA | 0 | NA | NA | NA | NA |
-| 6 | Aspirin | NA | 6 | 0 | NA | 0 | NA | NA | NA | NA |
-| 7 | Clavulanate | NA | 7 | 0 | NA | 0 | NA | NA | NA | NA |
-| 8 | Death | NA | 8 | 0 | NA | 0 | NA | NA | NA | NA |
-| 9 | Doxylamine | NA | 9 | 0 | NA | 0 | NA | NA | NA | NA |
-| 10 | PenicillinV | NA | 10 | 0 | NA | 0 | NA | NA | NA | NA |
-| 11 | ViralSinusitis | NA | 11 | 0 | NA | 0 | NA | NA | NA | NA |
-| 1001 | Celecoxib - age 18 to 64 Age 18 to 64 | NA | 1 | 1 | 1 | 0 | { |  |  |  |
+| cohortDefinitionId | cohortName | description | subsetParent | isSubset | subsetDefinitionId | isTemplatedCohort | templateName | templateSql |
+|---:|:---|---:|---:|---:|---:|---:|---:|---:|
+| 1 | Celecoxib | NA | 1 | 0 | NA | 0 | NA | NA |
+| 2 | Diclofenac | NA | 2 | 0 | NA | 0 | NA | NA |
+| 3 | GI bleed | NA | 3 | 0 | NA | 0 | NA | NA |
+| 4 | Acetaminophen | NA | 4 | 0 | NA | 0 | NA | NA |
+| 5 | Amoxicillin | NA | 5 | 0 | NA | 0 | NA | NA |
+| 6 | Aspirin | NA | 6 | 0 | NA | 0 | NA | NA |
+| 7 | Clavulanate | NA | 7 | 0 | NA | 0 | NA | NA |
+| 8 | Death | NA | 8 | 0 | NA | 0 | NA | NA |
+| 9 | Doxylamine | NA | 9 | 0 | NA | 0 | NA | NA |
+| 10 | PenicillinV | NA | 10 | 0 | NA | 0 | NA | NA |
+| 11 | ViralSinusitis | NA | 11 | 0 | NA | 0 | NA | NA |
+| 1001 | Celecoxib - age 18 to 64 Age 18 to 64 | NA | 1 | 1 | 1 | 0 | NA | NA |
+| 2001 | Diclofenac - age 18 to 64 Age 18 to 64 | NA | 2 | 1 | 1 | 0 | NA | NA |
+| 1002 | Celecoxib - first event with 365 prior obs first event with 365 prior obs | NA | 1 | 1 | 2 | 0 | NA | NA |
+| 2002 | Diclofenac - first event with 365 prior obs first event with 365 prior obs | NA | 2 | 1 | 2 | 0 | NA | NA |
+| 1003 | Celecoxib - age 18 to 64 and first event with 365 prior obs Age 18 to 64, first event with 365 prior obs | NA | 1 | 1 | 3 | 0 | NA | NA |
+| 2003 | Diclofenac - age 18 to 64 and first event with 365 prior obs Age 18 to 64, first event with 365 prior obs | NA | 2 | 1 | 3 | 0 | NA | NA |
 
-The data.frame extracted containing the cohort details minus the json
-and sqlCommand columns. {.table}
-
-“name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: \[ {
-“name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
-“ageMin”: 18, “ageMax”: 64 } \], “packageVersion”: “1.1.0”,
-“identifierExpression”: “targetId \* 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| NA\| NA\|
-NA\| \| 2001\|Diclofenac - age 18 to 64 Age 18 to 64 \| NA\| 2\| 1\| 1\|
-0\|{ “name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: \[ {
-“name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
-“ageMin”: 18, “ageMax”: 64 } \], “packageVersion”: “1.1.0”,
-“identifierExpression”: “targetId \* 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| NA\| NA\|
-NA\| \| 1002\|Celecoxib - first event with 365 prior obs first event
-with 365 prior obs \| NA\| 1\| 1\| 2\| 0\|{ “name”: “first event with
-365 prior obs”, “definitionId”: 2, “subsetOperators”: \[ { “name”:
-“first event with 365 prior obs”, “subsetType”: “LimitSubsetOperator”,
-“priorTime”: 365, “followUpTime”: 0, “minimumCohortDuration”: 0,
-“limitTo”: “firstEver” } \], “packageVersion”: “1.1.0”,
-“identifierExpression”: “targetId \* 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| NA\| NA\|
-NA\| \| 2002\|Diclofenac - first event with 365 prior obs first event
-with 365 prior obs \| NA\| 2\| 1\| 2\| 0\|{ “name”: “first event with
-365 prior obs”, “definitionId”: 2, “subsetOperators”: \[ { “name”:
-“first event with 365 prior obs”, “subsetType”: “LimitSubsetOperator”,
-“priorTime”: 365, “followUpTime”: 0, “minimumCohortDuration”: 0,
-“limitTo”: “firstEver” } \], “packageVersion”: “1.1.0”,
-“identifierExpression”: “targetId \* 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| NA\| NA\|
-NA\| \| 1003\|Celecoxib - age 18 to 64 and first event with 365 prior
-obs Age 18 to 64, first event with 365 prior obs \| NA\| 1\| 1\| 3\|
-0\|{ “name”: “age 18 to 64 and first event with 365 prior obs”,
-“definitionId”: 3, “subsetOperators”: \[ { “name”: “Age 18 to 64”,
-“subsetType”: “DemographicSubsetOperator”, “ageMin”: 18, “ageMax”: 64 },
-{ “name”: “first event with 365 prior obs”, “subsetType”:
-“LimitSubsetOperator”, “priorTime”: 365, “followUpTime”: 0,
-“minimumCohortDuration”: 0, “limitTo”: “firstEver” } \],
-“packageVersion”: “1.1.0”, “identifierExpression”: “targetId \* 1000 +
-definitionId”, “operatorNameConcatString”: “,”,
-“subsetCohortNameTemplate”: “@baseCohortName - @subsetDefinitionName
-@operatorNames” } \| NA\| NA\| NA\| \| 2003\|Diclofenac - age 18 to 64
-and first event with 365 prior obs Age 18 to 64, first event with 365
-prior obs \| NA\| 2\| 1\| 3\| 0\|{ “name”: “age 18 to 64 and first event
-with 365 prior obs”, “definitionId”: 3, “subsetOperators”: \[ { “name”:
-“Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”, “ageMin”: 18,
-“ageMax”: 64 }, { “name”: “first event with 365 prior obs”,
-“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
-0, “minimumCohortDuration”: 0, “limitTo”: “firstEver” } \],
-“packageVersion”: “1.1.0”, “identifierExpression”: “targetId \* 1000 +
-definitionId”, “operatorNameConcatString”: “,”,
-“subsetCohortNameTemplate”: “@baseCohortName - @subsetDefinitionName
-@operatorNames” } \| NA\| NA\| NA\|
+The data.frame extracted containing the cohort details minus JSON
+columns and sqlCommand. {.table}
 
 You can process the cohorts definitions to extract the parent cohorts
 and the children for each parent cohort.
@@ -152,47 +103,22 @@ knitr::kable(
   )
 
 knitr::kable(
-  x = processedCohorts$cohortList[[1]] %>% 
-    dplyr::select(-"json", -"sqlCommand"),
+  x = processedCohorts$cohortList[[1]] %>%
+    dropJsonColumns() %>%
+    dplyr::select(-dplyr::any_of(c("sqlCommand"))),
   caption = 'The children/subset cohorts for the first parent cohort.'
   )
 }
 ```
 
-| cohortDefinitionId | cohortName | description | subsetParent | isSubset | subsetDefinitionId | isTemplatedCohort | subsetDefinitionJson | templateName | templateSql | templateJson |
-|---:|:---|---:|---:|---:|---:|---:|:---|---:|---:|---:|
-| 1 | Celecoxib | NA | 1 | 0 | NA | 0 | NA | NA | NA | NA |
-| 1001 | Celecoxib - age 18 to 64 Age 18 to 64 | NA | 1 | 1 | 1 | 0 | { |  |  |  |
+| cohortDefinitionId | cohortName | description | subsetParent | isSubset | subsetDefinitionId | isTemplatedCohort | templateName | templateSql |
+|---:|:---|---:|---:|---:|---:|---:|---:|---:|
+| 1 | Celecoxib | NA | 1 | 0 | NA | 0 | NA | NA |
+| 1001 | Celecoxib - age 18 to 64 Age 18 to 64 | NA | 1 | 1 | 1 | 0 | NA | NA |
+| 1002 | Celecoxib - first event with 365 prior obs first event with 365 prior obs | NA | 1 | 1 | 2 | 0 | NA | NA |
+| 1003 | Celecoxib - age 18 to 64 and first event with 365 prior obs Age 18 to 64, first event with 365 prior obs | NA | 1 | 1 | 3 | 0 | NA | NA |
 
 The children/subset cohorts for the first parent cohort. {.table}
-
-“name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: \[ {
-“name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
-“ageMin”: 18, “ageMax”: 64 } \], “packageVersion”: “1.1.0”,
-“identifierExpression”: “targetId \* 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| NA\| NA\|
-NA\| \| 1002\|Celecoxib - first event with 365 prior obs first event
-with 365 prior obs \| NA\| 1\| 1\| 2\| 0\|{ “name”: “first event with
-365 prior obs”, “definitionId”: 2, “subsetOperators”: \[ { “name”:
-“first event with 365 prior obs”, “subsetType”: “LimitSubsetOperator”,
-“priorTime”: 365, “followUpTime”: 0, “minimumCohortDuration”: 0,
-“limitTo”: “firstEver” } \], “packageVersion”: “1.1.0”,
-“identifierExpression”: “targetId \* 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| NA\| NA\|
-NA\| \| 1003\|Celecoxib - age 18 to 64 and first event with 365 prior
-obs Age 18 to 64, first event with 365 prior obs \| NA\| 1\| 1\| 3\|
-0\|{ “name”: “age 18 to 64 and first event with 365 prior obs”,
-“definitionId”: 3, “subsetOperators”: \[ { “name”: “Age 18 to 64”,
-“subsetType”: “DemographicSubsetOperator”, “ageMin”: 18, “ageMax”: 64 },
-{ “name”: “first event with 365 prior obs”, “subsetType”:
-“LimitSubsetOperator”, “priorTime”: 365, “followUpTime”: 0,
-“minimumCohortDuration”: 0, “limitTo”: “firstEver” } \],
-“packageVersion”: “1.1.0”, “identifierExpression”: “targetId \* 1000 +
-definitionId”, “operatorNameConcatString”: “,”,
-“subsetCohortNameTemplate”: “@baseCohortName - @subsetDefinitionName
-@operatorNames” } \| NA\| NA\| NA\|
 
 For example, if you created a cohort corresponding to all patients
 exposed to drug A with an id of 1 and then created ‘children’ subset
@@ -214,40 +140,18 @@ subsets <- getCohortSubsetDefinitions(
 )
 
 knitr::kable(
-  x = subsets, 
+  x = subsets %>% dropJsonColumns(),
   caption = 'The subset cohort logic used in the analysis.'
   )
 ```
 
-| subsetDefinitionId | json |
-|-------------------:|:-----|
-|                  1 | {    |
+| subsetDefinitionId |
+|-------------------:|
+|                  1 |
+|                  2 |
+|                  3 |
 
 The subset cohort logic used in the analysis. {.table}
-
-“name”: “age 18 to 64”, “definitionId”: 1, “subsetOperators”: \[ {
-“name”: “Age 18 to 64”, “subsetType”: “DemographicSubsetOperator”,
-“ageMin”: 18, “ageMax”: 64 } \], “packageVersion”: “1.1.0”,
-“identifierExpression”: “targetId \* 1000 + definitionId”,
-“operatorNameConcatString”: “,”, “subsetCohortNameTemplate”:
-“@baseCohortName - @subsetDefinitionName @operatorNames” } \| \| 2\|{
-“name”: “first event with 365 prior obs”, “definitionId”: 2,
-“subsetOperators”: \[ { “name”: “first event with 365 prior obs”,
-“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
-0, “minimumCohortDuration”: 0, “limitTo”: “firstEver” } \],
-“packageVersion”: “1.1.0”, “identifierExpression”: “targetId \* 1000 +
-definitionId”, “operatorNameConcatString”: “,”,
-“subsetCohortNameTemplate”: “@baseCohortName - @subsetDefinitionName
-@operatorNames” } \| \| 3\|{ “name”: “age 18 to 64 and first event with
-365 prior obs”, “definitionId”: 3, “subsetOperators”: \[ { “name”: “Age
-18 to 64”, “subsetType”: “DemographicSubsetOperator”, “ageMin”: 18,
-“ageMax”: 64 }, { “name”: “first event with 365 prior obs”,
-“subsetType”: “LimitSubsetOperator”, “priorTime”: 365, “followUpTime”:
-0, “minimumCohortDuration”: 0, “limitTo”: “firstEver” } \],
-“packageVersion”: “1.1.0”, “identifierExpression”: “targetId \* 1000 +
-definitionId”, “operatorNameConcatString”: “,”,
-“subsetCohortNameTemplate”: “@baseCohortName - @subsetDefinitionName
-@operatorNames” } \|
 
 ### Extracting Characterization Results
 
@@ -270,18 +174,17 @@ knitr::kable(
   )
 ```
 
-| databaseName | databaseId | targetName | targetId | outcomeName | outcomeId | outcomeType | targetOutcomeType | timeToEvent | numEvents | timeScale |
-|:---|:---|:---|---:|:---|---:|:---|:---|---:|---:|:---|
-| Synthea | 388020256 | Celecoxib | 1 | GI bleed | 3 | first | After last target end | 365 | 327 | per 365-day |
-| Synthea | 388020256 | Celecoxib | 1 | GI bleed | 3 | first | Before first target start | 365 | 28 | per 365-day |
-| Synthea | 388020256 | Diclofenac | 2 | GI bleed | 3 | first | After last target end | 365 | 114 | per 365-day |
-| Synthea | 388020256 | Diclofenac | 2 | GI bleed | 3 | first | Before first target start | 365 | 10 | per 365-day |
-| Synthea | 388020256 | Celecoxib - age 18 to 64 Age 18 to 64 | 1001 | GI bleed | 3 | first | After last target end | 365 | 327 | per 365-day |
-| Synthea | 388020256 | Celecoxib - age 18 to 64 Age 18 to 64 | 1001 | GI bleed | 3 | first | Before first target start | 365 | 28 | per 365-day |
-| Synthea | 388020256 | Diclofenac - age 18 to 64 Age 18 to 64 | 2001 | GI bleed | 3 | first | After last target end | 365 | 114 | per 365-day |
-| Synthea | 388020256 | Diclofenac - age 18 to 64 Age 18 to 64 | 2001 | GI bleed | 3 | first | Before first target start | 365 | 10 | per 365-day |
+| databaseName | databaseId | characterizationTargetId | targetName | targetId | limitToFirstInNDays | minPriorObservation | nestingCohortId | nestingName | minAge | maxAge | studyStart | studyEnd | genderConceptIds | outcomeName | outcomeId | outcomeType | targetOutcomeType | timeToEvent | numEvents | timeScale |
+|:---|:---|---:|:---|---:|---:|---:|---:|:---|---:|---:|:---|:---|:---|:---|---:|:---|:---|---:|---:|:---|
+| Synthea | 388020256 | 10 | Celecoxib | 1 | 0 | 365 | 0 | NA | 0 | 9999 | 19960701.0 | 20180331.0 | NA | GI bleed | 3 | first | After last target end | 365 | 200 | per 365-day |
+| Synthea | 388020256 | 20 | Celecoxib | 1 | 0 | 365 | 0 | NA | 0 | 9999 | 20010101.0 | 20181231.0 | NA | GI bleed | 3 | first | After last target end | 365 | 162 | per 365-day |
+| Synthea | 388020256 | 50 | Diclofenac | 2 | 0 | 365 | 0 | NA | 0 | 9999 | 19960701.0 | 20180331.0 | NA | GI bleed | 3 | first | After last target end | 365 | 75 | per 365-day |
+| Synthea | 388020256 | 60 | Diclofenac | 2 | 0 | 365 | 0 | NA | 0 | 9999 | 20010101.0 | 20181231.0 | NA | GI bleed | 3 | first | After last target end | 365 | 64 | per 365-day |
+| Synthea | 388020256 | 110 | Acetaminophen | 4 | 0 | 365 | 0 | NA | 0 | 9999 | 19960701.0 | 20180331.0 | NA | GI bleed | 3 | first | After last target end | 365 | 275 | per 365-day |
+| Synthea | 388020256 | 120 | Acetaminophen | 4 | 0 | 365 | 0 | NA | 0 | 9999 | 20010101.0 | 20181231.0 | NA | GI bleed | 3 | first | After last target end | 365 | 226 | per 365-day |
 
-Example time-to-event results for the 365-day scale. {.table}
+Example time-to-event results for the 365-day scale. {.table
+style="width:100%;"}
 
 The dechallenge-rechallenge analysis shows you how often an outcome
 occurs during some target exposure and then how often the target
@@ -301,11 +204,11 @@ knitr::kable(
   )
 ```
 
-| databaseName | databaseId | targetName | targetId | outcomeName | outcomeId | dechallengeStopInterval | dechallengeEvaluationWindow | numExposureEras | numPersonsExposed | numCases | dechallengeAttempt | dechallengeFail | dechallengeSuccess | rechallengeAttempt | rechallengeFail | rechallengeSuccess | pctDechallengeAttempt | pctDechallengeFail | pctDechallengeSuccess | pctRechallengeAttempt | pctRechallengeFail | pctRechallengeSuccess |
-|:---|:---|:---|---:|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Synthea | 388020256 | Celecoxib | 1 | GI bleed | 3 | 30 | 30 | 100 | 80 | 20 | 15 | 10 | 5 | 5 | 1 | 4 | 0.75 | 0.67 | 0.33 | 1 | 0.2 | 0.8 |
+| databaseName | databaseId | characterizationTargetId | targetName | targetId | limitToFirstInNDays | minPriorObservation | nestingCohortId | nestingName | minAge | maxAge | studyStart | studyEnd | genderConceptIds | outcomeName | outcomeId | dechallengeStopInterval | dechallengeEvaluationWindow | numExposureEras | numPersonsExposed | numCases | dechallengeAttempt | dechallengeFail | dechallengeSuccess | rechallengeAttempt | rechallengeFail | rechallengeSuccess | pctDechallengeAttempt | pctDechallengeFail | pctDechallengeSuccess | pctRechallengeAttempt | pctRechallengeFail | pctRechallengeSuccess |
+|:---|:---|---:|:---|---:|---:|---:|---:|:---|---:|---:|:---|:---|:---|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Synthea | 388020256 | 10 | Celecoxib | 1 | 0 | 365 | 0 | NA | 0 | 9999 | 19960701.0 | 20180331.0 | NA | GI bleed | 3 | 30 | 30 | 100 | 80 | 20 | 15 | 10 | 5 | 5 | 1 | 4 | 0.75 | 0.67 | 0.33 | 1 | 0.2 | 0.8 |
 
-Example dechallenge-rechallenge results. {.table}
+Example dechallenge-rechallenge results. {.table style="width:100%;"}
 
 It is also possible to find the incidence rates (where we restrict to
 all ages, genders and start years):
@@ -337,17 +240,45 @@ knitr::kable(
 Example incidence rate results. {.table style="width:100%;"}
 
 Finally, it is possible to get risk factors (associations between
-features and the occurrence of the outcome during a time-at-risk) using
-`getBinaryRiskFactors` to identify the binary features:
+features and the occurrence of the outcome during a time-at-risk). The
+risk-factor functions now use characterization identifiers (for example
+`characterizationCaseId`) rather than only `targetId`/`outcomeId`:
 
 ``` r
+
+caseSettings <- getCharacterizationCaseSettings(
+  connectionHandler = ConnectionHandler,
+  schema = 'main',
+  targetIds = 1,
+  outcomeIds = 3
+)
+
+charCaseId <- caseSettings$characterizationCaseId[1]
 
 rf <- getBinaryRiskFactors(
     connectionHandler = ConnectionHandler,
     schema = 'main', 
-    targetId = 1, 
-    outcomeId = 3
+  characterizationCaseId = charCaseId
 )
+```
+
+    ## Warning: Parameter 'use_risk_window_start' not found in SQL
+
+    ## Warning: Parameter 'risk_window_start' not found in SQL
+
+    ## Warning: Parameter 'use_risk_window_end' not found in SQL
+
+    ## Warning: Parameter 'risk_window_end' not found in SQL
+
+    ## Warning: Parameter 'use_start_anchor' not found in SQL
+
+    ## Warning: Parameter 'start_anchor' not found in SQL
+
+    ## Warning: Parameter 'use_end_anchor' not found in SQL
+
+    ## Warning: Parameter 'end_anchor' not found in SQL
+
+``` r
 
 knitr::kable(
   x = rf, 
@@ -355,10 +286,8 @@ knitr::kable(
   )
 ```
 
-| databaseName | databaseId | targetName | targetCohortId | outcomeName | outcomeCohortId | minPriorObservation | limitToFirstInNDays | outcomeWashoutDays | riskWindowStart | startAnchor | riskWindowEnd | endAnchor | covariateId | covariateName | nonCaseCount | caseCount | nonCaseAverage | caseAverage | smd | absSmd |
-|:---|---:|:---|---:|:---|---:|---:|---:|---:|---:|:---|---:|:---|---:|:---|---:|---:|---:|:---|---:|---:|
-| Synthea | 388020256 | Celecoxib | 1 | GI bleed | 3 | 365 | 99999 | 365 | 1 | cohort_start | 365 | cohort_end | 6003 | age group: 30 - 34 | 171 | 35 | 0.1183391 | 0.09859155 | -0.0634826 | 0.0634826 |
-| Synthea | 388020256 | Celecoxib | 1 | GI bleed | 3 | 365 | 99999 | 365 | 1 | cohort_start | 365 | cohort_end | 7003 | age group: 35 - 39 | 685 | 177 | 0.4740484 | 0.49859155 | 0.0490762 | 0.0490762 |
+| databaseName | databaseId | targetName | targetCohortId | minPriorObservation | limitToFirstInNDays | nestingCohortId | nestingName | minAge | maxAge | studyStart | studyEnd | genderConceptIds | outcomeName | outcomeCohortId | outcomeWashoutDays | riskWindowStart | startAnchor | riskWindowEnd | endAnchor | covariateId | covariateName | nonCaseCount | caseCount | nonCaseAverage | caseAverage | smd | absSmd |
+|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
 
 Example risk factors for binary features results. {.table
 style="width:100%;"}
@@ -370,8 +299,7 @@ and `getContinuousRiskFactors` for the continuous features:
 rf <- getContinuousRiskFactors(
     connectionHandler = ConnectionHandler,
     schema = 'main', 
-    targetId = 1, 
-    outcomeId = 3
+  characterizationCaseId = charCaseId
 )
 
 knitr::kable(
@@ -380,13 +308,11 @@ knitr::kable(
   )
 ```
 
-| databaseName | databaseId | targetName | targetCohortId | outcomeName | outcomeCohortId | minPriorObservation | limitToFirstInNDays | outcomeWashoutDays | riskWindowStart | startAnchor | riskWindowEnd | endAnchor | covariateId | covariateName | targetCountValue | caseCountValue | targetMinValue | caseMinValue | targetMaxValue | caseMaxValue | targetAverageValue | caseAverageValue | targetMedianValue | caseMedianValue | targetP10Value | caseP10Value | targetP25Value | caseP25Value | targetP75Value | caseP75Value | targetP90Value | caseP90Value | targetStandardDeviation | caseStandardDeviation | smd | absSmd |
-|:---|---:|:---|---:|:---|---:|---:|---:|---:|---:|:---|---:|:---|---:|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Synthea | 388020256 | Celecoxib | 1 | GI bleed | 3 | 365 | 99999 | 365 | 1 | cohort_start | 365 | cohort_end | 1002 | age in years | 1445 | 355 | 31 | 32 | 47 | 46 | 38.61315 | 38.77465 | 39 | 39 | 34 | 35 | 36 | 36 | 41 | 41 | 43 | 43 | 3.33295 | 3.274612 | 0.0488812 | 0.0488812 |
-| Synthea | 388020256 | Celecoxib | 1 | GI bleed | 3 | 365 | 99999 | 365 | 1 | cohort_start | 365 | cohort_end | 1008 | observation time (days) prior to index | 1445 | 355 | 11369 | 11550 | 17044 | 16805 | 14103.58339 | 14159.86761 | 14100 | 14155 | 12525 | 12644 | 13155 | 13250 | 15015 | 15075 | 15714 | 15840 | 1200.48537 | 1176.652643 | 0.0473522 | 0.0473522 |
-| Synthea | 388020256 | Celecoxib | 1 | GI bleed | 3 | 365 | 99999 | 365 | 1 | cohort_start | 365 | cohort_end | 1009 | observation time (days) after index | 1445 | 355 | 13 | 10 | 28328 | 27390 | 7603.73287 | 7524.37465 | 6676 | 6708 | 1431 | 996 | 3482 | 3236 | 10685 | 10415 | 14808 | 14884 | 5288.67757 | 5611.529121 | -0.0145545 | 0.0145545 |
+| databaseName | databaseId | targetName | targetCohortId | minPriorObservation | limitToFirstInNDays | nestingCohortId | nestingName | minAge | maxAge | studyStart | studyEnd | genderConceptIds | outcomeName | outcomeCohortId | outcomeWashoutDays | riskWindowStart | startAnchor | riskWindowEnd | endAnchor | covariateId | covariateName | targetCountValue | caseCountValue | targetMinValue | caseMinValue | targetMaxValue | caseMaxValue | targetAverageValue | caseAverageValue | targetMedianValue | caseMedianValue | targetP10Value | caseP10Value | targetP25Value | caseP25Value | targetP75Value | caseP75Value | targetP90Value | caseP90Value | targetStandardDeviation | caseStandardDeviation | smd | absSmd |
+|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
 
-Example risk factors for continuous features results. {.table}
+Example risk factors for continuous features results. {.table
+style="width:100%;"}
 
 ### Extracting Prediction Results
 

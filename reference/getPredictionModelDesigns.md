@@ -117,6 +117,7 @@ conDet <- getExampleConnectionDetails()
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #> Connecting using SQLite driver
+#> Closing database connection
 
 modDesign <- getPredictionModelDesigns(
   connectionHandler = connectionHandler, 

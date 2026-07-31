@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OhdsiReportGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -163,6 +163,20 @@
 
       <dl><dt>
 
+          <code><a href="characterizationCompareBinary.html">characterizationCompareBinary()</a></code>
+
+        </dt>
+        <dd>A function to extract cohort aggregate binary feature characterization results</dd>
+
+        <dt>
+
+          <code><a href="characterizationCompareContinuous.html">characterizationCompareContinuous()</a></code>
+
+        </dt>
+        <dd>A function to extract cohort aggregate continuous feature characterization results</dd>
+
+        <dt>
+
           <code><a href="getBinaryCaseSeries.html">getBinaryCaseSeries()</a></code>
 
         </dt>
@@ -191,24 +205,10 @@
 
         <dt>
 
-          <code><a href="getCaseTargetCounts.html">getCaseTargetCounts()</a></code>
+          <code><a href="getCharacterizationCaseSettings.html">getCharacterizationCaseSettings()</a></code>
 
         </dt>
-        <dd>Extract the target cohort counts result</dd>
-
-        <dt>
-
-          <code><a href="getCharacterizationCohortBinary.html">getCharacterizationCohortBinary()</a></code>
-
-        </dt>
-        <dd>A function to extract cohort aggregate binary feature characterization results</dd>
-
-        <dt>
-
-          <code><a href="getCharacterizationCohortContinuous.html">getCharacterizationCohortContinuous()</a></code>
-
-        </dt>
-        <dd>A function to extract cohort aggregate continuous feature characterization results</dd>
+        <dd>A function to extract the case settings found in characterization</dd>
 
         <dt>
 
@@ -219,17 +219,10 @@
 
         <dt>
 
-          <code><a href="getCharacterizationOutcomes.html">getCharacterizationOutcomes()</a></code>
+          <code><a href="getCharacterizationTargetSettings.html">getCharacterizationTargetSettings()</a></code>
 
         </dt>
-        <dd>A function to extract the outcomes found in characterization</dd>
-
-        <dt>
-
-          <code><a href="getCharacterizationTargets.html">getCharacterizationTargets()</a></code>
-
-        </dt>
-        <dd>A function to extarct the targets found in characterization</dd>
+        <dd>A function to extarct the targets settings found in characterization</dd>
 
         <dt>
 
@@ -247,6 +240,13 @@
 
         <dt>
 
+          <code><a href="getContinuousTargetBaseline.html">getContinuousTargetBaseline()</a></code>
+
+        </dt>
+        <dd>Extract aggregate statistics of continuous feature analysis IDs of interest for targets</dd>
+
+        <dt>
+
           <code><a href="getDechallengeRechallenge.html">getDechallengeRechallenge()</a></code>
 
         </dt>
@@ -261,13 +261,6 @@
 
         <dt>
 
-          <code><a href="getIncidenceOutcomes.html">getIncidenceOutcomes()</a></code>
-
-        </dt>
-        <dd>A function to extract the outcomes found in incidence</dd>
-
-        <dt>
-
           <code><a href="getIncidenceRates.html">getIncidenceRates()</a></code>
 
         </dt>
@@ -275,24 +268,52 @@
 
         <dt>
 
-          <code><a href="getIncidenceTargets.html">getIncidenceTargets()</a></code>
+          <code><a href="getIncidenceTargetSettings.html">getIncidenceTargetSettings()</a></code>
+
+        </dt>
+        <dd>A function to extarct the cohort incidence targets</dd>
+
+        <dt>
+
+          <code><a href="getNonCaseCounts.html">getNonCaseCounts()</a></code>
+
+        </dt>
+        <dd>Extract the non-cases counts result</dd>
+
+        <dt>
+
+          <code><a href="getOutcomesUsedInCharacterization.html">getOutcomesUsedInCharacterization()</a></code>
+
+        </dt>
+        <dd>A function to extract the outcomes found in characterization</dd>
+
+        <dt>
+
+          <code><a href="getOutcomesUsedInIncidence.html">getOutcomesUsedInIncidence()</a></code>
+
+        </dt>
+        <dd>A function to extract the outcomes found in incidence</dd>
+
+        <dt>
+
+          <code><a href="getTargetCounts.html">getTargetCounts()</a></code>
+
+        </dt>
+        <dd>Extract the target cohort counts result</dd>
+
+        <dt>
+
+          <code><a href="getTargetsUsedInCharacterization.html">getTargetsUsedInCharacterization()</a></code>
+
+        </dt>
+        <dd>A function to extarct the targets found in characterization</dd>
+
+        <dt>
+
+          <code><a href="getTargetsUsedInIncidence.html">getTargetsUsedInIncidence()</a></code>
 
         </dt>
         <dd>A function to extract the targets found in incidence</dd>
-
-        <dt>
-
-          <code><a href="getTargetBinaryFeatures.html">getTargetBinaryFeatures()</a></code>
-
-        </dt>
-        <dd>Extract aggregate statistics of binary feature analysis IDs of interest for targets (ignoring excluding people with prior outcome)</dd>
-
-        <dt>
-
-          <code><a href="getTargetContinuousFeatures.html">getTargetContinuousFeatures()</a></code>
-
-        </dt>
-        <dd>Extract aggregate statistics of continuous feature analysis IDs of interest for targets</dd>
 
         <dt>
 
@@ -772,7 +793,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

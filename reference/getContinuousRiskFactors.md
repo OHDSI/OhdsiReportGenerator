@@ -12,8 +12,10 @@ getContinuousRiskFactors(
   cTablePrefix = "c_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
-  targetId = NULL,
+  characterizationTargetId = NULL,
+  characterizationCaseId = NULL,
   outcomeId = NULL,
+  outcomeWashout = NULL,
   analysisIds = NULL,
   databaseIds = NULL,
   riskWindowStart = NULL,
@@ -48,13 +50,21 @@ getContinuousRiskFactors(
   The name of the table with the database details (default
   'database_meta_data')
 
-- targetId:
+- characterizationTargetId:
 
-  An integer corresponding to the target cohort ID
+  The characterization target id
+
+- characterizationCaseId:
+
+  The characterization case id
 
 - outcomeId:
 
   Am integer corresponding to the outcome cohort ID
+
+- outcomeWashout:
+
+  (optional) the outcome washout to restrict to
 
 - analysisIds:
 
@@ -94,24 +104,27 @@ IDs
 ## See also
 
 Other Characterization:
+[`characterizationCompareBinary()`](characterizationCompareBinary.md),
+[`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
 [`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
 [`getCaseCounts()`](getCaseCounts.md),
-[`getCaseTargetCounts()`](getCaseTargetCounts.md),
-[`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
-[`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),
+[`getCharacterizationCaseSettings()`](getCharacterizationCaseSettings.md),
 [`getCharacterizationDemographics()`](getCharacterizationDemographics.md),
-[`getCharacterizationOutcomes()`](getCharacterizationOutcomes.md),
-[`getCharacterizationTargets()`](getCharacterizationTargets.md),
+[`getCharacterizationTargetSettings()`](getCharacterizationTargetSettings.md),
 [`getContinuousCaseSeries()`](getContinuousCaseSeries.md),
+[`getContinuousTargetBaseline()`](getContinuousTargetBaseline.md),
 [`getDechallengeRechallenge()`](getDechallengeRechallenge.md),
 [`getDechallengeRechallengeFails()`](getDechallengeRechallengeFails.md),
-[`getIncidenceOutcomes()`](getIncidenceOutcomes.md),
 [`getIncidenceRates()`](getIncidenceRates.md),
-[`getIncidenceTargets()`](getIncidenceTargets.md),
-[`getTargetBinaryFeatures()`](getTargetBinaryFeatures.md),
-[`getTargetContinuousFeatures()`](getTargetContinuousFeatures.md),
+[`getIncidenceTargetSettings()`](getIncidenceTargetSettings.md),
+[`getNonCaseCounts()`](getNonCaseCounts.md),
+[`getOutcomesUsedInCharacterization()`](getOutcomesUsedInCharacterization.md),
+[`getOutcomesUsedInIncidence()`](getOutcomesUsedInIncidence.md),
+[`getTargetCounts()`](getTargetCounts.md),
+[`getTargetsUsedInCharacterization()`](getTargetsUsedInCharacterization.md),
+[`getTargetsUsedInIncidence()`](getTargetsUsedInIncidence.md),
 [`getTimeToEvent()`](getTimeToEvent.md),
 [`plotAgeDistributions()`](plotAgeDistributions.md),
 [`plotSexDistributions()`](plotSexDistributions.md),
@@ -128,7 +141,7 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 rf <- getContinuousRiskFactors(
   connectionHandler = connectionHandler, 
   schema = 'main',
-  targetId = 1, 
+  characterizationTargetId = 1, 
   outcomeId = 3
 )
 ```

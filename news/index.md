@@ -1,5 +1,18 @@
 # Changelog
 
+## OhdsiReportGenerator v2.3.0
+
+- updated characterization extractions for new data model
+  (characterization v4) but also kept backwards compatibility.
+- some exported characterization extraction functions were renamed
+
+## OhdsiReportGenerator v2.2.0.9999
+
+- fixed bug in SMD formula for binary covariates
+- fixed bug in index breakdown when generating the full report
+- edited the estimation template in the full report to remove repeats of
+  the comparison cohort
+
 ## OhdsiReportGenerator v2.2.0
 
 CRAN release: 2026-05-16

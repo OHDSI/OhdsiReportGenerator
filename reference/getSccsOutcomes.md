@@ -80,5 +80,4 @@ outcomes <- getSccsOutcomes(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> Closing database connection
 ```
