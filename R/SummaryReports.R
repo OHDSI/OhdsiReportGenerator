@@ -64,6 +64,29 @@ generateSummaryPredictionReport <- function(
     overwrite = TRUE
   )
 
+  # Ensure Quarto writes caches under intermediates, not user HOME.
+  cacheDir <- file.path(intermediatesDir, "prediction-summary", "quarto-cache")
+  dir.create(cacheDir, recursive = TRUE, showWarnings = FALSE)
+  oldXdgCacheHome <- Sys.getenv("XDG_CACHE_HOME", unset = NA)
+  oldXdgStateHome <- Sys.getenv("XDG_STATE_HOME", unset = NA)
+  on.exit({
+    if (is.na(oldXdgCacheHome)) {
+      Sys.unsetenv("XDG_CACHE_HOME")
+    } else {
+      Sys.setenv(XDG_CACHE_HOME = oldXdgCacheHome)
+    }
+    if (is.na(oldXdgStateHome)) {
+      Sys.unsetenv("XDG_STATE_HOME")
+    } else {
+      Sys.setenv(XDG_STATE_HOME = oldXdgStateHome)
+    }
+    unlink(cacheDir, recursive = TRUE, force = TRUE)
+  }, add = TRUE)
+  Sys.setenv(
+    XDG_CACHE_HOME = cacheDir,
+    XDG_STATE_HOME = cacheDir
+  )
+
   quarto::quarto_render(
     input = file.path(intermediatesDir,'prediction-summary', 'prediction-summary.qmd'), 
     execute_params = list(
