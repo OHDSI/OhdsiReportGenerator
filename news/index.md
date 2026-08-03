@@ -1,5 +1,11 @@
 # Changelog
 
+## OhdsiReportGenerator v2.3.1
+
+- editing code that calls quarto to temporarily set environmental vars
+  for cache into the render intermediate folder so it does not persist
+  and cause a note.
+
 ## OhdsiReportGenerator v2.3.0
 
 - updated characterization extractions for new data model
