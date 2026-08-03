@@ -77,11 +77,9 @@ generateFullReport <- function(
     stop('Must enter location for outputLocation')
   }
   
-  # add code for gt?
-  test <- gt::gt
-  
   # add dummy code for CirceR as that is used in quarto
   # so needs to be in Description and used in the R folder
+  # TODO could use rlang::check_installed and add CirceR as a suggests
   CirceROptions <- CirceR::createGenerateOptions()
   
   templateLoc <- system.file(
@@ -107,6 +105,29 @@ generateFullReport <- function(
     to = file.path(file.path(intermediateDir, 'full-report'), filesOfInt)
   )
   
+  # Ensure Quarto writes caches under intermediates, not user HOME.
+  cacheDir <- file.path(intermediateDir, "full-report", "quarto-cache")
+  dir.create(cacheDir, recursive = TRUE, showWarnings = FALSE)
+  oldXdgCacheHome <- Sys.getenv("XDG_CACHE_HOME", unset = NA)
+  oldXdgStateHome <- Sys.getenv("XDG_STATE_HOME", unset = NA)
+  on.exit({
+    if (is.na(oldXdgCacheHome)) {
+      Sys.unsetenv("XDG_CACHE_HOME")
+    } else {
+      Sys.setenv(XDG_CACHE_HOME = oldXdgCacheHome)
+    }
+    if (is.na(oldXdgStateHome)) {
+      Sys.unsetenv("XDG_STATE_HOME")
+    } else {
+      Sys.setenv(XDG_STATE_HOME = oldXdgStateHome)
+    }
+    unlink(cacheDir, recursive = TRUE, force = TRUE)
+  }, add = TRUE)
+  Sys.setenv(
+    XDG_CACHE_HOME = cacheDir,
+    XDG_STATE_HOME = cacheDir
+  )
+
   quarto::quarto_render(
     input = file.path(intermediateDir, 'full-report', "main_template.qmd"), 
     execute_params = list(
