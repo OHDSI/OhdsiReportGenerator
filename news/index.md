@@ -2,6 +2,8 @@
 
 ## OhdsiReportGenerator v2.3.1
 
+CRAN release: 2026-08-03
+
 - editing code that calls quarto to temporarily set environmental vars
   for cache into the render intermediate folder so it does not persist
   and cause a note.
