@@ -1,5 +1,10 @@
 # Changelog
 
+## OhdsiReportGenerator v2.3.2
+
+- made an edit to v3 characterization risk factor SQL to let you filter
+  by characterization_case_id
+
 ## OhdsiReportGenerator v2.3.1
 
 CRAN release: 2026-08-03

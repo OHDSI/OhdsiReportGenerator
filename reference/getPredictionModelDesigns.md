@@ -122,4 +122,5 @@ modDesign <- getPredictionModelDesigns(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
+#> Closing database connection
 ```

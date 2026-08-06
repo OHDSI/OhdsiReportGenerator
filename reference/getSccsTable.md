@@ -119,4 +119,5 @@ sccsTable <- getSccsTable(
   schema = 'main',
   table = 'attrition'
 )
+#> Closing database connection
 ```
