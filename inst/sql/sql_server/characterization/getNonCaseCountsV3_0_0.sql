@@ -56,6 +56,7 @@ WHERE 1 = 1
 {@use_characterization_case}?{ AND cs.characterization_case_id IN (@characterization_case_id)}
 {@use_characterization_target}?{ AND ts.characterization_target_id IN (@characterization_target_id)}
 {@use_outcome}?{ AND cs.outcome_id IN (@outcome_id)}
+{@use_outcome_washout}?{AND cs.outcome_washout_days IN (@outcome_washout)}
 {@use_database}?{ AND a.database_id IN (@database_id)}
 {@use_risk_window_start}?{ AND cs.risk_window_start IN (@risk_window_start)}  
 {@use_risk_window_end}?{ AND cs.risk_window_end IN (@risk_window_end)}
