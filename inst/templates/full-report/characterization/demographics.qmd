@@ -24,6 +24,9 @@ charTargetSettings <- OhdsiReportGenerator::getCharacterizationTargetSettings(
   targetIds = unique(stats::na.omit(cohortIds))
 )
 
+charTargetSettings <- charTargetSettings %>% 
+  dplyr::filter(as.double(.data$cohortComparator) == 1.0)
+
 charTargetIds <- c()
 if(!is.null(charTargetSettings) && nrow(charTargetSettings) > 0){
   charTargetIds <- unique(charTargetSettings$characterizationTargetId)
@@ -45,9 +48,8 @@ if(length(charTargetIds) > 0){
     analysisIds = c(1,2,3,4,5)
   )
 
-  cat(paste0('\n\n#### ',headingName,' \n\n'))
   for(tId in 1:length(charTargetIds)){
-
+    
     currentSetting <- charTargetSettings %>%
       dplyr::filter(.data$characterizationTargetId == !!charTargetIds[tId]) %>%
       dplyr::slice(1)
@@ -69,19 +71,15 @@ if(length(charTargetIds) > 0){
     }
 
 # fill in the rest of the settings like in 
- boxName <- paste0(targetFriendlyName, 
+ sectionName <- paste0(targetFriendlyName, 
             ' - ' , 
             targetSubsetText, 
-
-   ' first exposure in ', currentSetting$limitToFirstInNDays[1], ' days ',
-  'and >= ', currentSetting$minPriorObservation[1], ' days observation at index ',
-  ' in nesting cohort ', currentSetting$nestingName[1], ' at index ',
-  ' aged between ', currentSetting$minAge[1], ' - ', currentSetting$maxAge[1], ' at index ',
-  ' study index between ', currentSetting$studyStart[1], ' to ', currentSetting$studyEnd[1], ' ',
-  ' gender in ', currentSetting$genderConceptIds[1]
-
+            OhdsiReportGenerator::formatTargetPopulation(currentSetting[1,])
  )
-    
+ 
+   cat(paste0('\n\n#### ',headingName,': ', sectionName ,' \n\n'))
+
+    boxName <- 'Click to open demographics'
 
     # add the target age/sex/race/ethnicity
     dataC <- targetContinuousOfInterest %>% 

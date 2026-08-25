@@ -2055,6 +2055,253 @@ getContinuousRiskFactors <- function(
   return(result)
 }
 
+
+
+# get risk factors aggregated across all databases
+
+#' A function to extract binary risk factor across databases
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target/outcome cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @param characterizationTargetId the characterization target id
+#' @param characterizationCaseId the characterization case id
+#' @template outcomeId
+#' @param outcomeWashout (optional) restrict to outcome washout
+#' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
+#' @param riskWindowStart (optional) A vector of time-at-risk risk window starts to restrict to
+#' @param riskWindowEnd (optional) A vector of time-at-risk risk window ends to restrict to
+#' @param startAnchor (optional) A vector of time-at-risk start anchors to restrict to
+#' @param endAnchor (optional) A vector of time-at-risk end anchors to restrict to
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the aggregate binary risk factors 
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' rf <- getAggregateBinaryRiskFactors(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   characterizationTargetId = 1, 
+#'   outcomeId = 3
+#' )
+#' 
+getAggregateBinaryRiskFactors <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    characterizationTargetId = NULL,
+    characterizationCaseId = NULL,
+    outcomeId = NULL,
+    outcomeWashout = NULL,
+    analysisIds = c(3), # TODO enable this to be NULL?
+    riskWindowStart = NULL,
+    riskWindowEnd = NULL,
+    startAnchor = NULL,
+    endAnchor = NULL
+){
+  
+  if(is.null(characterizationCaseId)){
+    if(is.null(characterizationTargetId)){
+      stop('characterizationTargetId must be entered')
+    }
+    if(is.null(outcomeId)){
+      stop('outcomeId must be entered')
+    }
+    if(length(characterizationTargetId) > 1){
+      stop('Must be single characterizationTargetId')
+    }
+    if(length(outcomeId) > 1){
+      stop('Must be single outcomeId')
+    } } else{
+      if(length(characterizationCaseId) > 1){
+        stop('Must be single characterizationCaseId')
+      }
+    }
+  
+  
+  cVersion <- .getCVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = cTablePrefix
+  )
+  
+  if(cVersion != '4_0_0'){
+    warning('Function only available for characterization results version 4.0.0 or higher')
+    return(NULL)
+  } 
+  
+  
+  sql <- SqlRender::readSql(system.file(
+    paste0("sql/sql_server/characterization/getAggregateBinaryRiskFactorsV", cVersion, ".sql"),
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
+  
+  # restrict by restrictToFirstInNDays, minPriorObseration, outcomeWashoutDays and TAR?
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    characterization_target_id = paste0(characterizationTargetId, collapse = ','),
+    use_characterization_target = !is.null(characterizationTargetId),
+    characterization_case_id = paste0(characterizationCaseId, collapse = ','),
+    use_characterization_case = !is.null(characterizationCaseId),
+    outcome_id = paste0(outcomeId, collapse = ','),
+    use_outcome = !is.null(outcomeId),
+    c_table_prefix = cTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    use_analysis = !is.null(analysisIds),
+    analysis_ids = paste0(analysisIds, collapse = ','),
+    
+    use_risk_window_start = !is.null(riskWindowStart),
+    risk_window_start = riskWindowStart,
+    use_risk_window_end = !is.null(riskWindowEnd),
+    risk_window_end = riskWindowEnd,
+    use_start_anchor = !is.null(startAnchor),
+    start_anchor = startAnchor,
+    use_end_anchor = !is.null(endAnchor),
+    end_anchor = endAnchor,
+    
+    use_outcome_washout = !is.null(outcomeWashout),
+    outcome_washout = outcomeWashout
+  )
+  
+  return(result)
+}
+
+#' A function to extract risk factors across add databases in results
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target/outcome cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param characterizationTargetId The characterization target id
+#' @param characterizationCaseId The characterization case id
+#' @template outcomeId
+#' @param outcomeWashout (optional) the outcome washout to restrict to
+#' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
+#' @param riskWindowStart (optional) A vector of time-at-risk risk window starts to restrict to
+#' @param riskWindowEnd (optional) A vector of time-at-risk risk window ends to restrict to
+#' @param startAnchor (optional) A vector of time-at-risk start anchors to restrict to
+#' @param endAnchor (optional) A vector of time-at-risk end anchors to restrict to
+#'
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the risk factors
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' rf <- getAggregateContinuousRiskFactors(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   characterizationTargetId = 1, 
+#'   outcomeId = 3
+#' )
+#' 
+getAggregateContinuousRiskFactors <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    characterizationTargetId = NULL,
+    characterizationCaseId = NULL,
+    outcomeId = NULL,
+    outcomeWashout = NULL,
+    analysisIds = NULL,
+    riskWindowStart = NULL,
+    riskWindowEnd = NULL,
+    startAnchor = NULL,
+    endAnchor = NULL
+){
+  
+  if(is.null(characterizationCaseId)){
+    if(is.null(characterizationTargetId)){
+      stop('characterizationTargetId must be entered')
+    }
+    if(is.null(outcomeId)){
+      stop('outcomeId must be entered')
+    }
+    if(length(characterizationTargetId) > 1){
+      stop('Must be single characterizationTargetId')
+    }
+    if(length(outcomeId) > 1){
+      stop('Must be single outcomeId')
+    } } else{
+      if(length(characterizationCaseId) > 1){
+        stop('Must be single characterizationCaseId')
+      }
+    }
+  
+  cVersion <- .getCVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = cTablePrefix
+  )
+  
+  if(cVersion != '4_0_0'){
+    warning('Function only available for characterization results version 4.0.0 or higher')
+    return(NULL)
+  } 
+  
+  sql <- SqlRender::readSql(system.file(
+    paste0("sql/sql_server/characterization/getAggregateContRiskFactorsV", cVersion, ".sql"),
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
+  
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    characterization_target_id = paste0(characterizationTargetId, collapse = ','),
+    use_characterization_target = !is.null(characterizationTargetId),
+    characterization_case_id = paste0(characterizationCaseId, collapse = ','),
+    use_characterization_case = !is.null(characterizationCaseId),
+    outcome_id = paste0(outcomeId, collapse = ','),
+    use_outcome = !is.null(outcomeId),
+    c_table_prefix = cTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    use_analysis = !is.null(analysisIds),
+    analysis_ids = paste0(analysisIds, collapse = ','),
+    
+    use_risk_window_start = !is.null(riskWindowStart),
+    risk_window_start = paste0(riskWindowStart, collapse = ','),
+    use_risk_window_end = !is.null(riskWindowEnd),
+    risk_window_end = paste0(riskWindowEnd, collapse = ','),
+    use_start_anchor = !is.null(startAnchor),
+    start_anchor = paste0("'",startAnchor,"'", collapse = ","),
+    use_end_anchor = !is.null(endAnchor),
+    end_anchor = paste0("'",endAnchor,"'", collapse = ","),
+    
+    use_outcome_washout = !is.null(outcomeWashout),
+    outcome_washout = outcomeWashout
+  )
+  
+  
+  return(result)
+}
+
 #===========================================
 # CASE SERIES FUNCTIONS
 #===========================================

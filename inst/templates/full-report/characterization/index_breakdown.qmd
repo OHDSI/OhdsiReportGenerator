@@ -1,4 +1,4 @@
-### Index breakdown
+### Case index outcome breakdown
 
 ```{r}
 #| label: characterization_index_target
@@ -68,7 +68,7 @@ for(i in 1:length(params$outcomeIds)){
   # also run getCaseCounts using the caseSettingId 
 
   caseSettings <-  caseSettings %>%
-               dplyr::filter(.data$caseSeriesSettings == 1)
+               dplyr::filter(as.double(.data$caseSeriesSettings) == 1.0)
 
 if(!is.null(caseSettings) && nrow(caseSettings) > 0){
   for(j in 1:nrow(caseSettings)){
@@ -93,7 +93,8 @@ if(!is.null(caseSettings) && nrow(caseSettings) > 0){
       outcomeIds = params$outcomeIds[i] 
     ) 
     counts <- counts %>%
-      dplyr::select("databaseName","characterizationCaseId", "nPeople")
+      dplyr::select("databaseName","characterizationCaseId", "personCount") %>%
+      dplyr::rename(nPeople = "personCount")
     
     index <- res %>% 
       dplyr::select("databaseName", "characterizationCaseId",
@@ -132,20 +133,17 @@ if(!is.null(caseSettings) && nrow(caseSettings) > 0){
       )
     
 ibOutcome <- unique(index$friendlyNameOutcome)
-ibTar <- paste0(
-  "(", caseSettings$startAnchor[j], " + ",
-  caseSettings$riskWindowStart[j], ")-(",
-  caseSettings$endAnchor[j], " + ",
-  caseSettings$riskWindowEnd[j], ")"
+ibTar <-  OhdsiReportGenerator::getTarText(
+  list(
+    startAnchor = caseSettings$startAnchor[j],
+    riskWindowStart = caseSettings$riskWindowStart[j],
+    endAnchor = caseSettings$endAnchor[j],
+    riskWindowEnd = caseSettings$riskWindowEnd[j]
   )
-restriction <- paste0(
-  ' first exposure in ', caseSettings$limitToFirstInNDays[j], ' days ',
-  'and >= ', caseSettings$minPriorObservation[j], ' days observation at index ',
-  ' in nesting cohort ', caseSettings$nestingName[j], ' at index ',
-  ' aged between ', caseSettings$minAge[j], ' - ', caseSettings$maxAge[j], ' at index ',
-  ' study index between ', caseSettings$studyStart[j], ' to ', caseSettings$studyEnd[j], ' ',
-  ' gender in ', caseSettings$genderConceptIds[j]
 )
+  
+restriction <- OhdsiReportGenerator::formatTargetPopulation(caseSettings[j,])
+
 
 # now we add the N to the databaseName we need to loop over TAR
 
@@ -163,16 +161,20 @@ indexClean <- tidyr::pivot_wider(
   values_from = c("averageValueDuring"), 
   id_cols = c("covariateName","friendlyNameTarget","subsetTextTarget")
 ) %>%
-    dplyr::arrange(-1*.data$`all (N = 0)`) %>%
-  dplyr::select(-"all (N = 0)") %>%
+    dplyr::arrange(-1*dplyr::across(dplyr::starts_with('all (N'))) %>%
+  dplyr::select(-dplyr::starts_with('all (N')) %>%
   dplyr::group_by(
     .data$friendlyNameTarget,.data$subsetTextTarget
   )
 
 # display - include the target settings and TAR/outcomeWashout
 
-boxName <- paste0('Frequency of ',ibOutcome,' concept codes when the patient exposed to ', indexClean$friendlyNameTarget[1], ' ', indexClean$subsetTextTarget[1],' restriction: ',restriction,' has the outcome (washout ',caseSettings$outcomeWashoutDays[j],') during ', ibTar)
+sectionName <- paste0('Cases: ', indexClean$friendlyNameTarget[1], ' ', indexClean$subsetTextTarget[1],' ',restriction,' with ',ibOutcome,' (washout ',caseSettings$outcomeWashoutDays[j], ') ', ibTar)
 
+boxName <- paste0('Click to open case frequency of ',ibOutcome,' concept codes at outcome index')
+
+  cat(paste0("\n\n#### ", sectionName, "\n\n"))
+  
   cat('\n\n::: {.callout-note collapse="true"}')
   cat(paste0("\n# ",boxName, '\n\n'))
       

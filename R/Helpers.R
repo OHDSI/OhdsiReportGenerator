@@ -346,5 +346,181 @@ kableDark <- function(data, caption = NULL, position = NULL){
 }
 
 
+#' output a string summarizing the target population
+#'
+#' @description
+#' This returns a character that describes the target population 
+#'
+#' @details
+#' Input the target population setting list 
+#' 
+#' @param popSetting the target population setting 
+#' 
+#' @return
+#' An object of class `knitr_kable` that will show the data via a nice html table
+#'
+#' @family helper
+#'
+#' @export
+#' @examples 
+#' targetText <- formatTargetPopulation(
+#' list(
+#' limitToFirstInNDays = 365,
+#' minPriorObservation = 365,
+#' nestingName = 'Indication',
+#' minAge = 12, maxAge = 9999,
+#' studyEnd = 'Mar 2012', studyStart = NA,
+#' genderConceptIds = NA
+#' )
+#' )
+#' 
+formatTargetPopulation <- function(popSetting){
+
+ popText <- ""
+ 
+ if(popSetting$limitToFirstInNDays > 0){
+   popText <- paste0(popText, 'first exposure in ', popSetting$limitToFirstInNDays, ' days ')
+ }
+ 
+ if(popSetting$minPriorObservation > 0){
+   popText <- paste0(popText, 'and >= ', popSetting$minPriorObservation, ' days observation at index ')
+ }
+
+ if(!is.null(popSetting$nestingName)){
+   if(!is.na(popSetting$nestingName)){
+     popText <- paste0(popText ,' in nesting cohort ', popSetting$nestingName, ' at index')
+   }
+ }
+ 
+ if(popSetting$minAge != 0 & popSetting$maxAge != 9999){
+     popText <- paste0(popText ,' aged between ', popSetting$minAge, ' - ', popSetting$maxAge, ' at index')
+ }
+ 
+ if(popSetting$minAge == 0 & popSetting$maxAge != 9999){
+   popText <- paste0(popText ,' aged <= ', popSetting$maxAge, ' at index')
+ }
+ 
+ if(popSetting$minAge != 0 & popSetting$maxAge == 9999){
+   popText <- paste0(popText ,' aged >= ', popSetting$minAge, ' at index')
+ }
+ 
+   if(!is.na(popSetting$studyStart) & !is.na(popSetting$studyEnd)){
+     popText <- paste0(popText ,' study index between ', round(as.double(popSetting$studyStart)), ' to ', round(as.double(popSetting$studyEnd)))
+   }
+ 
+ if(is.na(popSetting$studyStart) & !is.na(popSetting$studyEnd)){
+   popText <- paste0(popText ,' study index before ', round(as.double(popSetting$studyEnd)))
+ }
+ 
+ if(!is.na(popSetting$studyStart) & is.na(popSetting$studyEnd)){
+   popText <- paste0(popText ,' study index after ', round(as.double(popSetting$studyStart)))
+ }
+  
+  if(!is.null(popSetting$genderConceptIds)){
+    if(!is.na(popSetting$genderConceptIds)){
+      popText <- paste0(popText ,' gender in ', popSetting$genderConceptIds)
+    }
+  }
+ 
+ return(popText)
+  
+}
 
 
+#' output a string summarizing the time at risk
+#'
+#' @description
+#' This returns a character that describes the time at risk
+#'
+#' @details
+#' Input the tar settings
+#' 
+#' @param tar a list containing the four tar setting 
+#' 
+#' @return
+#' An character string describing the tar
+#'
+#' @family helper
+#'
+#' @export
+#' @examples 
+#' targetText <- getTarText(
+#' list(
+#' startAnchor = 'cohort_start',
+#' riskWindowStart = 1,
+#' endAnchor = 'cohort_end',
+#' riskWindowEnd = 0
+#' )
+#' )
+#' 
+getTarText <- function(tar){
+  
+  riskWindowStart <- tar$riskWindowStart
+  riskWindowEnd <- tar$riskWindowEnd
+  startAnchor <- tar$startAnchor
+  endAnchor <- tar$endAnchor
+  
+  tarText <- "tar error"
+  
+  # test while exposed
+  if(riskWindowStart == 0 &
+     startAnchor == 'cohort_start' & 
+     riskWindowEnd == 0 &
+     endAnchor == 'cohort_end' 
+  ){
+    tarText <- 'while exposed (inc day 0)'
+  }
+  
+  if(riskWindowStart == 1 &
+     startAnchor == 'cohort_start' & 
+     riskWindowEnd == 0 &
+     endAnchor == 'cohort_end' 
+  ){
+    tarText <- 'while exposed (exc day 0)'
+  } else if(riskWindowStart == 1 &
+     startAnchor == 'cohort_start' & 
+     riskWindowEnd == 30 &
+     endAnchor == 'cohort_start' 
+  ){
+    tarText <- 'during fixed 30-day after index (exc day 0)'
+  } else if(riskWindowStart == 0 &
+            startAnchor == 'cohort_start' & 
+            riskWindowEnd == 30 &
+            endAnchor == 'cohort_start' 
+  ){
+    tarText <- 'during fixed 30-day after index (inc day 0)'
+  } else if(riskWindowStart == 1 &
+            startAnchor == 'cohort_start' & 
+            riskWindowEnd == 365 &
+            endAnchor == 'cohort_start' 
+  ){
+    tarText <- 'during fixed 365-day after index (exc day 0)'
+  } else if(riskWindowStart == 0 &
+            startAnchor == 'cohort_start' & 
+            riskWindowEnd == 365 &
+            endAnchor == 'cohort_start' 
+  ){
+    tarText <- 'during fixed 365-day after index (inc day 0)'
+  } else if(riskWindowStart == 1 &
+            startAnchor == 'cohort_start' & 
+            riskWindowEnd == 99999 &
+            endAnchor == 'cohort_start' 
+  ){
+    tarText <- 'during all time post index (exc day 0)'
+  } else if(riskWindowStart == 0 &
+            startAnchor == 'cohort_start' & 
+            riskWindowEnd == 99999 &
+            endAnchor == 'cohort_start' 
+  ){
+    tarText <- 'dring all time post index (inc day 0)'
+  } else{
+    tarText <- paste0(
+      "during (", startAnchor, " + ",
+      riskWindowStart, ")-(",
+      endAnchor, " + ",
+      riskWindowEnd, ")"
+    )
+  }
+  
+  return(tarText)
+}

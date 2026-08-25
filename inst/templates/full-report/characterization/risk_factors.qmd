@@ -25,9 +25,17 @@ if(!is.null(caseIds) && nrow(caseIds) > 0){
   caseIds <- caseIds %>% 
     dplyr::rowwise() %>%
     dplyr::mutate(
-      tar = paste0("(", .data$startAnchor, " + ", .data$riskWindowStart, ") - (",
-      .data$endAnchor, " + ", .data$riskWindowEnd, ")")
+      tar =   OhdsiReportGenerator::getTarText(
+  list(
+    startAnchor = .data$startAnchor,
+    riskWindowStart = .data$riskWindowStart,
+    endAnchor = .data$endAnchor,
+    riskWindowEnd = .data$riskWindowEnd
+  )
+)
     )
+  
+
 
   
   for(ind in 1:nrow(caseIds)){
@@ -79,23 +87,33 @@ if(!is.null(caseIds) && nrow(caseIds) > 0){
       tar <- caseIds[ind,]$tar
       
       #TODO: add the other target settings in the text
-      boxTitle <- paste0(
-          'Risk Factors for ', 
+      sectionName <- paste0(
           cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == caseIds$outcomeId[ind]],
-          ' occuring for the first time in ',
+          ' (washout ',
           outcomeWashoutDays,
-          ' days during ',
+          ' days) ',
           tar,
-          ' for patients exposed to ',
+          ' in patients exposed to ',
           cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == caseIds$targetId[ind]], ' ' 
           , cohortDefinitions$subsetText[cohortDefinitions$cohortDefinitionId == caseIds$targetId[ind]],
-          ' nested in cohort ', nestingName, 
-          ' exposed for the first time in ',  limitToFirstInNDays , ' days',
-          ' with >= ', minPriorObservation, ' days prior observation',
-          ' aged between ', minAge, ' - ', maxAge,
-          ' index starting between ', studyStart , ' and ', studyEnd,
-          ' with gender conceptIds restricted to ', genderConceptIds
+          
+          
+          OhdsiReportGenerator::formatTargetPopulation(list(
+            limitToFirstInNDays =  limitToFirstInNDays,
+            minPriorObservation = minPriorObservation,
+            nestingName = nestingName,
+            minAge = minAge,
+            maxAge = maxAge,
+            studyStart = studyStart,
+            studyEnd = studyEnd,
+            genderConceptIds = genderConceptIds
+          ))
+          
         )
+      
+      cat(paste0('\n\n#### ', sectionName ,' \n\n'))
+      
+      boxTitle <- 'Click to open risk factors across databases'
       
       # print the binary risk factors in a collapseable box
       writeLines("")

@@ -28,7 +28,9 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 Other helper:
 \code{\link[=addTarColumn]{addTarColumn()}},
 \code{\link[=formatBinaryCovariateName]{formatBinaryCovariateName()}},
+\code{\link[=formatTargetPopulation]{formatTargetPopulation()}},
 \code{\link[=getOutcomeTable]{getOutcomeTable()}},
+\code{\link[=getTarText]{getTarText()}},
 \code{\link[=getTargetTable]{getTargetTable()}},
 \code{\link[=kableDark]{kableDark()}},
 \code{\link[=removeSpaces]{removeSpaces()}}
