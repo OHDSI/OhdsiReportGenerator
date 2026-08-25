@@ -1,5 +1,24 @@
 # Changelog
 
+## OhdsiReportGenerator v2.3.2
+
+- made an edit to v3 characterization risk factor SQL to let you filter
+  by characterization_case_id
+
+## OhdsiReportGenerator v2.3.1
+
+CRAN release: 2026-08-03
+
+- editing code that calls quarto to temporarily set environmental vars
+  for cache into the render intermediate folder so it does not persist
+  and cause a note.
+
+## OhdsiReportGenerator v2.3.0
+
+- updated characterization extractions for new data model
+  (characterization v4) but also kept backwards compatibility.
+- some exported characterization extraction functions were renamed
+
 ## OhdsiReportGenerator v2.2.0.9999
 
 - fixed bug in SMD formula for binary covariates

@@ -12,11 +12,13 @@ getBinaryTargetBaseline(
   cTablePrefix = "c_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
-  targetIds = NULL,
+  characterizationTargetIds = NULL,
   analysisIds = NULL,
   covariateIds = NULL,
   conceptIds = NULL,
-  databaseIds = NULL
+  databaseIds = NULL,
+  includeNames = TRUE,
+  minThreshold = NULL
 )
 ```
 
@@ -45,9 +47,9 @@ getBinaryTargetBaseline(
   The name of the table with the database details (default
   'database_meta_data')
 
-- targetIds:
+- characterizationTargetIds:
 
-  A vector of integers corresponding to the target cohort IDs
+  The characterization target cohort ids of interest
 
 - analysisIds:
 
@@ -64,6 +66,15 @@ getBinaryTargetBaseline(
 - databaseIds:
 
   The databaseIds of the covariate to restrict results to
+
+- includeNames:
+
+  Whether to add database and cohort names (setting to FALSE will make
+  extraction quicker)
+
+- minThreshold:
+
+  (optional) The minimum average value for results to be returned
 
 ## Value
 
@@ -98,24 +109,29 @@ Specify the connectionHandler, the schema and the target cohort IDs
 ## See also
 
 Other Characterization:
+[`characterizationCompareBinary()`](characterizationCompareBinary.md),
+[`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
+[`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md),
+[`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md),
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
 [`getCaseCounts()`](getCaseCounts.md),
-[`getCaseTargetCounts()`](getCaseTargetCounts.md),
-[`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
-[`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),
+[`getCharacterizationCaseSettings()`](getCharacterizationCaseSettings.md),
 [`getCharacterizationDemographics()`](getCharacterizationDemographics.md),
-[`getCharacterizationOutcomes()`](getCharacterizationOutcomes.md),
-[`getCharacterizationTargets()`](getCharacterizationTargets.md),
+[`getCharacterizationTargetSettings()`](getCharacterizationTargetSettings.md),
 [`getContinuousCaseSeries()`](getContinuousCaseSeries.md),
 [`getContinuousRiskFactors()`](getContinuousRiskFactors.md),
+[`getContinuousTargetBaseline()`](getContinuousTargetBaseline.md),
 [`getDechallengeRechallenge()`](getDechallengeRechallenge.md),
 [`getDechallengeRechallengeFails()`](getDechallengeRechallengeFails.md),
-[`getIncidenceOutcomes()`](getIncidenceOutcomes.md),
 [`getIncidenceRates()`](getIncidenceRates.md),
-[`getIncidenceTargets()`](getIncidenceTargets.md),
-[`getTargetBinaryFeatures()`](getTargetBinaryFeatures.md),
-[`getTargetContinuousFeatures()`](getTargetContinuousFeatures.md),
+[`getIncidenceTargetSettings()`](getIncidenceTargetSettings.md),
+[`getNonCaseCounts()`](getNonCaseCounts.md),
+[`getOutcomesUsedInCharacterization()`](getOutcomesUsedInCharacterization.md),
+[`getOutcomesUsedInIncidence()`](getOutcomesUsedInIncidence.md),
+[`getTargetCounts()`](getTargetCounts.md),
+[`getTargetsUsedInCharacterization()`](getTargetsUsedInCharacterization.md),
+[`getTargetsUsedInIncidence()`](getTargetsUsedInIncidence.md),
 [`getTimeToEvent()`](getTimeToEvent.md),
 [`plotAgeDistributions()`](plotAgeDistributions.md),
 [`plotSexDistributions()`](plotSexDistributions.md),
@@ -130,9 +146,9 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #> Connecting using SQLite driver
 
 btb <- getBinaryTargetBaseline(
-connectionHandler = connectionHandler, 
-schema = 'main', 
-targetIds = 1
+ connectionHandler = connectionHandler, 
+ schema = 'main', 
+ characterizationTargetIds = 1
 )
  
 ```

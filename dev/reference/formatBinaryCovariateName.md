@@ -26,8 +26,10 @@ Makes the covariateName more friendly and shorter
 ## See also
 
 Other helper: [`addTarColumn()`](addTarColumn.md),
+[`formatTargetPopulation()`](formatTargetPopulation.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
 [`getOutcomeTable()`](getOutcomeTable.md),
+[`getTarText()`](getTarText.md),
 [`getTargetTable()`](getTargetTable.md), [`kableDark()`](kableDark.md),
 [`removeSpaces()`](removeSpaces.md)
 

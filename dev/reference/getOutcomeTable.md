@@ -152,7 +152,9 @@ Specify the connectionHandler, the schema and the table prefixes
 
 Other helper: [`addTarColumn()`](addTarColumn.md),
 [`formatBinaryCovariateName()`](formatBinaryCovariateName.md),
+[`formatTargetPopulation()`](formatTargetPopulation.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
+[`getTarText()`](getTarText.md),
 [`getTargetTable()`](getTargetTable.md), [`kableDark()`](kableDark.md),
 [`removeSpaces()`](removeSpaces.md)
 
@@ -168,6 +170,10 @@ outcomeTable <- getOutcomeTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "Extracting characterization outcomes took: 0.103924512863159 secs"
-#> [1] "-- Total time for extarcting outcome table: 0.32037353515625 secs"
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> [1] "-- Total time for extarcting outcome table: 0.327195882797241 secs"
 ```

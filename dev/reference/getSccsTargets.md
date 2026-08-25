@@ -68,6 +68,9 @@ Other Estimation: [`.getCmVersion()`](dot-getCmVersion.md),
 
 ``` r
 conDet <- getExampleConnectionDetails()
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 #> Connecting using SQLite driver

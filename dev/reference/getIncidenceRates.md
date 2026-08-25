@@ -13,6 +13,7 @@ getIncidenceRates(
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
   targetIds = NULL,
+  parentIds = NULL,
   outcomeIds = NULL
 )
 ```
@@ -45,6 +46,10 @@ getIncidenceRates(
 - targetIds:
 
   A vector of integers corresponding to the target cohort IDs
+
+- parentIds:
+
+  The parent cohort ids to restrict to
 
 - outcomeIds:
 
@@ -114,24 +119,29 @@ IDs
 ## See also
 
 Other Characterization:
+[`characterizationCompareBinary()`](characterizationCompareBinary.md),
+[`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
+[`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md),
+[`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md),
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
 [`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
 [`getCaseCounts()`](getCaseCounts.md),
-[`getCaseTargetCounts()`](getCaseTargetCounts.md),
-[`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
-[`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),
+[`getCharacterizationCaseSettings()`](getCharacterizationCaseSettings.md),
 [`getCharacterizationDemographics()`](getCharacterizationDemographics.md),
-[`getCharacterizationOutcomes()`](getCharacterizationOutcomes.md),
-[`getCharacterizationTargets()`](getCharacterizationTargets.md),
+[`getCharacterizationTargetSettings()`](getCharacterizationTargetSettings.md),
 [`getContinuousCaseSeries()`](getContinuousCaseSeries.md),
 [`getContinuousRiskFactors()`](getContinuousRiskFactors.md),
+[`getContinuousTargetBaseline()`](getContinuousTargetBaseline.md),
 [`getDechallengeRechallenge()`](getDechallengeRechallenge.md),
 [`getDechallengeRechallengeFails()`](getDechallengeRechallengeFails.md),
-[`getIncidenceOutcomes()`](getIncidenceOutcomes.md),
-[`getIncidenceTargets()`](getIncidenceTargets.md),
-[`getTargetBinaryFeatures()`](getTargetBinaryFeatures.md),
-[`getTargetContinuousFeatures()`](getTargetContinuousFeatures.md),
+[`getIncidenceTargetSettings()`](getIncidenceTargetSettings.md),
+[`getNonCaseCounts()`](getNonCaseCounts.md),
+[`getOutcomesUsedInCharacterization()`](getOutcomesUsedInCharacterization.md),
+[`getOutcomesUsedInIncidence()`](getOutcomesUsedInIncidence.md),
+[`getTargetCounts()`](getTargetCounts.md),
+[`getTargetsUsedInCharacterization()`](getTargetsUsedInCharacterization.md),
+[`getTargetsUsedInIncidence()`](getTargetsUsedInIncidence.md),
 [`getTimeToEvent()`](getTimeToEvent.md),
 [`plotAgeDistributions()`](plotAgeDistributions.md),
 [`plotSexDistributions()`](plotSexDistributions.md),

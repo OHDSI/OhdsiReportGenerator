@@ -26,8 +26,10 @@ Removes spaces and replaces with under scroll
 
 Other helper: [`addTarColumn()`](addTarColumn.md),
 [`formatBinaryCovariateName()`](formatBinaryCovariateName.md),
+[`formatTargetPopulation()`](formatTargetPopulation.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
 [`getOutcomeTable()`](getOutcomeTable.md),
+[`getTarText()`](getTarText.md),
 [`getTargetTable()`](getTargetTable.md), [`kableDark()`](kableDark.md)
 
 ## Examples

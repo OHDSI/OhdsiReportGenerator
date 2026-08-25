@@ -12,7 +12,7 @@ getCharacterizationDemographics(
   cTablePrefix = "c_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
-  targetId = NULL,
+  characterizationTargetId = NULL,
   outcomeId = NULL,
   type = "age"
 )
@@ -43,9 +43,9 @@ getCharacterizationDemographics(
   The name of the table with the database details (default
   'database_meta_data')
 
-- targetId:
+- characterizationTargetId:
 
-  An integer corresponding to the target cohort ID
+  the characterization target id
 
 - outcomeId:
 
@@ -103,24 +103,29 @@ IDs
 ## See also
 
 Other Characterization:
+[`characterizationCompareBinary()`](characterizationCompareBinary.md),
+[`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
+[`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md),
+[`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md),
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
 [`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
 [`getCaseCounts()`](getCaseCounts.md),
-[`getCaseTargetCounts()`](getCaseTargetCounts.md),
-[`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
-[`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),
-[`getCharacterizationOutcomes()`](getCharacterizationOutcomes.md),
-[`getCharacterizationTargets()`](getCharacterizationTargets.md),
+[`getCharacterizationCaseSettings()`](getCharacterizationCaseSettings.md),
+[`getCharacterizationTargetSettings()`](getCharacterizationTargetSettings.md),
 [`getContinuousCaseSeries()`](getContinuousCaseSeries.md),
 [`getContinuousRiskFactors()`](getContinuousRiskFactors.md),
+[`getContinuousTargetBaseline()`](getContinuousTargetBaseline.md),
 [`getDechallengeRechallenge()`](getDechallengeRechallenge.md),
 [`getDechallengeRechallengeFails()`](getDechallengeRechallengeFails.md),
-[`getIncidenceOutcomes()`](getIncidenceOutcomes.md),
 [`getIncidenceRates()`](getIncidenceRates.md),
-[`getIncidenceTargets()`](getIncidenceTargets.md),
-[`getTargetBinaryFeatures()`](getTargetBinaryFeatures.md),
-[`getTargetContinuousFeatures()`](getTargetContinuousFeatures.md),
+[`getIncidenceTargetSettings()`](getIncidenceTargetSettings.md),
+[`getNonCaseCounts()`](getNonCaseCounts.md),
+[`getOutcomesUsedInCharacterization()`](getOutcomesUsedInCharacterization.md),
+[`getOutcomesUsedInIncidence()`](getOutcomesUsedInIncidence.md),
+[`getTargetCounts()`](getTargetCounts.md),
+[`getTargetsUsedInCharacterization()`](getTargetsUsedInCharacterization.md),
+[`getTargetsUsedInIncidence()`](getTargetsUsedInIncidence.md),
 [`getTimeToEvent()`](getTimeToEvent.md),
 [`plotAgeDistributions()`](plotAgeDistributions.md),
 [`plotSexDistributions()`](plotSexDistributions.md),

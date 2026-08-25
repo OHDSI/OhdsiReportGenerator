@@ -12,13 +12,16 @@ getCaseCounts(
   cTablePrefix = "c_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
-  targetIds = NULL,
+  characterizationTargetIds = NULL,
+  characterizationCaseIds = NULL,
   outcomeIds = NULL,
   databaseIds = NULL,
   riskWindowStart = NULL,
   riskWindowEnd = NULL,
   startAnchor = NULL,
-  endAnchor = NULL
+  endAnchor = NULL,
+  includeNames = TRUE,
+  outcomeWashout = NULL
 )
 ```
 
@@ -47,9 +50,13 @@ getCaseCounts(
   The name of the table with the database details (default
   'database_meta_data')
 
-- targetIds:
+- characterizationTargetIds:
 
-  A vector of integers corresponding to the target cohort IDs
+  The characterization target cohort ids of interest
+
+- characterizationCaseIds:
+
+  The characterization case ids of interest
 
 - outcomeIds:
 
@@ -75,6 +82,14 @@ getCaseCounts(
 
   (optional) A vector of time-at-risk end anchors to restrict to
 
+- includeNames:
+
+  whether to add the database names and cohort names
+
+- outcomeWashout:
+
+  (option) whether to restrict to outcomeWashout
+
 ## Value
 
 Returns a data.frame with the columns:
@@ -82,6 +97,9 @@ Returns a data.frame with the columns:
 - databaseName the name of the database
 
 - databaseId the unique identifier of the database
+
+- characterizationCaseId the unique identifier of target, outcome and
+  TAR combination
 
 - targetName the target cohort name
 
@@ -121,24 +139,29 @@ IDs
 ## See also
 
 Other Characterization:
+[`characterizationCompareBinary()`](characterizationCompareBinary.md),
+[`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
+[`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md),
+[`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md),
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
 [`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
-[`getCaseTargetCounts()`](getCaseTargetCounts.md),
-[`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
-[`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),
+[`getCharacterizationCaseSettings()`](getCharacterizationCaseSettings.md),
 [`getCharacterizationDemographics()`](getCharacterizationDemographics.md),
-[`getCharacterizationOutcomes()`](getCharacterizationOutcomes.md),
-[`getCharacterizationTargets()`](getCharacterizationTargets.md),
+[`getCharacterizationTargetSettings()`](getCharacterizationTargetSettings.md),
 [`getContinuousCaseSeries()`](getContinuousCaseSeries.md),
 [`getContinuousRiskFactors()`](getContinuousRiskFactors.md),
+[`getContinuousTargetBaseline()`](getContinuousTargetBaseline.md),
 [`getDechallengeRechallenge()`](getDechallengeRechallenge.md),
 [`getDechallengeRechallengeFails()`](getDechallengeRechallengeFails.md),
-[`getIncidenceOutcomes()`](getIncidenceOutcomes.md),
 [`getIncidenceRates()`](getIncidenceRates.md),
-[`getIncidenceTargets()`](getIncidenceTargets.md),
-[`getTargetBinaryFeatures()`](getTargetBinaryFeatures.md),
-[`getTargetContinuousFeatures()`](getTargetContinuousFeatures.md),
+[`getIncidenceTargetSettings()`](getIncidenceTargetSettings.md),
+[`getNonCaseCounts()`](getNonCaseCounts.md),
+[`getOutcomesUsedInCharacterization()`](getOutcomesUsedInCharacterization.md),
+[`getOutcomesUsedInIncidence()`](getOutcomesUsedInIncidence.md),
+[`getTargetCounts()`](getTargetCounts.md),
+[`getTargetsUsedInCharacterization()`](getTargetsUsedInCharacterization.md),
+[`getTargetsUsedInIncidence()`](getTargetsUsedInIncidence.md),
 [`getTimeToEvent()`](getTimeToEvent.md),
 [`plotAgeDistributions()`](plotAgeDistributions.md),
 [`plotSexDistributions()`](plotSexDistributions.md),

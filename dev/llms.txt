@@ -123,6 +123,16 @@ These functions can be used to extract analyses cohort details.
 These functions can be used to extract results from characterization and
 cohort incidence analyses and plot results.
 
+- [`characterizationCompareBinary()`](characterizationCompareBinary.md)
+  : A function to extract cohort aggregate binary feature
+  characterization results
+- [`characterizationCompareContinuous()`](characterizationCompareContinuous.md)
+  : A function to extract cohort aggregate continuous feature
+  characterization results
+- [`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md)
+  : A function to extract binary risk factor across databases
+- [`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md)
+  : A function to extract risk factors across add databases in results
 - [`getBinaryCaseSeries()`](getBinaryCaseSeries.md) : A function to
   extract case series characterization results
 - [`getBinaryRiskFactors()`](getBinaryRiskFactors.md) : A function to
@@ -131,41 +141,40 @@ cohort incidence analyses and plot results.
   the aggregate covariates for the target ids of interest
 - [`getCaseCounts()`](getCaseCounts.md) : Extract the outcome cohort
   counts result
-- [`getCaseTargetCounts()`](getCaseTargetCounts.md) : Extract the target
-  cohort counts result
-- [`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md)
-  : A function to extract cohort aggregate binary feature
-  characterization results
-- [`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md)
-  : A function to extract cohort aggregate continuous feature
-  characterization results
+- [`getCharacterizationCaseSettings()`](getCharacterizationCaseSettings.md)
+  : A function to extract the case settings found in characterization
 - [`getCharacterizationDemographics()`](getCharacterizationDemographics.md)
   : Extract the binary age groups for the cases and targets
-- [`getCharacterizationOutcomes()`](getCharacterizationOutcomes.md) : A
-  function to extract the outcomes found in characterization
-- [`getCharacterizationTargets()`](getCharacterizationTargets.md) : A
-  function to extarct the targets found in characterization
+- [`getCharacterizationTargetSettings()`](getCharacterizationTargetSettings.md)
+  : A function to extarct the targets settings found in characterization
 - [`getContinuousCaseSeries()`](getContinuousCaseSeries.md) : A function
   to extract case series continuous feature characterization results
 - [`getContinuousRiskFactors()`](getContinuousRiskFactors.md) : A
   function to extract non-case and case continuous characterization
   results
+- [`getContinuousTargetBaseline()`](getContinuousTargetBaseline.md) :
+  Extract aggregate statistics of continuous feature analysis IDs of
+  interest for targets
 - [`getDechallengeRechallenge()`](getDechallengeRechallenge.md) :
   Extract the dechallenge rechallenge results
 - [`getDechallengeRechallengeFails()`](getDechallengeRechallengeFails.md)
   : A function to extract the failed dechallenge-rechallenge cases
-- [`getIncidenceOutcomes()`](getIncidenceOutcomes.md) : A function to
-  extract the outcomes found in incidence
 - [`getIncidenceRates()`](getIncidenceRates.md) : Extract the cohort
   incidence result
-- [`getIncidenceTargets()`](getIncidenceTargets.md) : A function to
-  extract the targets found in incidence
-- [`getTargetBinaryFeatures()`](getTargetBinaryFeatures.md) : Extract
-  aggregate statistics of binary feature analysis IDs of interest for
-  targets (ignoring excluding people with prior outcome)
-- [`getTargetContinuousFeatures()`](getTargetContinuousFeatures.md) :
-  Extract aggregate statistics of continuous feature analysis IDs of
-  interest for targets
+- [`getIncidenceTargetSettings()`](getIncidenceTargetSettings.md) : A
+  function to extarct the cohort incidence targets
+- [`getNonCaseCounts()`](getNonCaseCounts.md) : Extract the non-cases
+  counts result
+- [`getOutcomesUsedInCharacterization()`](getOutcomesUsedInCharacterization.md)
+  : A function to extract the outcomes found in characterization
+- [`getOutcomesUsedInIncidence()`](getOutcomesUsedInIncidence.md) : A
+  function to extract the outcomes found in incidence
+- [`getTargetCounts()`](getTargetCounts.md) : Extract the target cohort
+  counts result
+- [`getTargetsUsedInCharacterization()`](getTargetsUsedInCharacterization.md)
+  : A function to extarct the targets found in characterization
+- [`getTargetsUsedInIncidence()`](getTargetsUsedInIncidence.md) : A
+  function to extract the targets found in incidence
 - [`getTimeToEvent()`](getTimeToEvent.md) : Extract the time to event
   result
 - [`plotAgeDistributions()`](plotAgeDistributions.md) : Plots the age
@@ -285,10 +294,14 @@ These functions are used to help result extraction.
 - [`addTarColumn()`](addTarColumn.md) : addTarColumn
 - [`formatBinaryCovariateName()`](formatBinaryCovariateName.md) :
   formatBinaryCovariateName
+- [`formatTargetPopulation()`](formatTargetPopulation.md) : output a
+  string summarizing the target population
 - [`getExampleConnectionDetails()`](getExampleConnectionDetails.md) :
   create a connection detail for an example OHDSI results database
 - [`getOutcomeTable()`](getOutcomeTable.md) : Extract the outcome
   cohorts and where they are used in the analyses.
+- [`getTarText()`](getTarText.md) : output a string summarizing the time
+  at risk
 - [`getTargetTable()`](getTargetTable.md) : Extract the target cohorts
   and where they are used in the analyses.
 - [`kableDark()`](kableDark.md) : output a nicely formatted html table

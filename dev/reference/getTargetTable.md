@@ -151,9 +151,11 @@ Specify the connectionHandler, the schema and the table prefixes
 
 Other helper: [`addTarColumn()`](addTarColumn.md),
 [`formatBinaryCovariateName()`](formatBinaryCovariateName.md),
+[`formatTargetPopulation()`](formatTargetPopulation.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
 [`getOutcomeTable()`](getOutcomeTable.md),
-[`kableDark()`](kableDark.md), [`removeSpaces()`](removeSpaces.md)
+[`getTarText()`](getTarText.md), [`kableDark()`](kableDark.md),
+[`removeSpaces()`](removeSpaces.md)
 
 ## Examples
 
@@ -167,6 +169,5 @@ targetTable <- getTargetTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "-- all extracting characterization targets took: 0.0994777679443359 secs"
-#> [1] "-- Total time for extarcting target table: 0.282327175140381 secs"
+#> [1] "-- Total time for extarcting target table: 0.195700645446777 secs"
 ```

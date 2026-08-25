@@ -18,4 +18,6 @@ Useful links:
 
 Authors:
 
+- Jenna Reps <jreps@its.jnj.com>
+
 - Anthony Sena <sena@ohdsi.org>

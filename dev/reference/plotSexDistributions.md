@@ -1,17 +1,11 @@
 # Plots the sex distributions using the sex features
 
-Creates bar charts for the target and case sex.
+Creates bar charts for the target.
 
 ## Usage
 
 ``` r
-plotSexDistributions(
-  sexData,
-  riskWindowStart = "1",
-  riskWindowEnd = "365",
-  startAnchor = "cohort start",
-  endAnchor = "cohort start"
-)
+plotSexDistributions(sexData)
 ```
 
 ## Arguments
@@ -21,22 +15,6 @@ plotSexDistributions(
   The sex data extracted using 'getCharacterizationDemographics(type =
   'sex')'
 
-- riskWindowStart:
-
-  The time at risk window start
-
-- riskWindowEnd:
-
-  The time at risk window end
-
-- startAnchor:
-
-  The anchor for the time at risk start
-
-- endAnchor:
-
-  The anchor for the time at risk end
-
 ## Value
 
 Returns a ggplot with the distributions
@@ -44,30 +22,35 @@ Returns a ggplot with the distributions
 ## Details
 
 Input the data returned from 'getCharacterizationDemographics(type =
-'sex')' and the time-at-risk
+'sex')'
 
 ## See also
 
 Other Characterization:
+[`characterizationCompareBinary()`](characterizationCompareBinary.md),
+[`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
+[`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md),
+[`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md),
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
 [`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
 [`getCaseCounts()`](getCaseCounts.md),
-[`getCaseTargetCounts()`](getCaseTargetCounts.md),
-[`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
-[`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),
+[`getCharacterizationCaseSettings()`](getCharacterizationCaseSettings.md),
 [`getCharacterizationDemographics()`](getCharacterizationDemographics.md),
-[`getCharacterizationOutcomes()`](getCharacterizationOutcomes.md),
-[`getCharacterizationTargets()`](getCharacterizationTargets.md),
+[`getCharacterizationTargetSettings()`](getCharacterizationTargetSettings.md),
 [`getContinuousCaseSeries()`](getContinuousCaseSeries.md),
 [`getContinuousRiskFactors()`](getContinuousRiskFactors.md),
+[`getContinuousTargetBaseline()`](getContinuousTargetBaseline.md),
 [`getDechallengeRechallenge()`](getDechallengeRechallenge.md),
 [`getDechallengeRechallengeFails()`](getDechallengeRechallengeFails.md),
-[`getIncidenceOutcomes()`](getIncidenceOutcomes.md),
 [`getIncidenceRates()`](getIncidenceRates.md),
-[`getIncidenceTargets()`](getIncidenceTargets.md),
-[`getTargetBinaryFeatures()`](getTargetBinaryFeatures.md),
-[`getTargetContinuousFeatures()`](getTargetContinuousFeatures.md),
+[`getIncidenceTargetSettings()`](getIncidenceTargetSettings.md),
+[`getNonCaseCounts()`](getNonCaseCounts.md),
+[`getOutcomesUsedInCharacterization()`](getOutcomesUsedInCharacterization.md),
+[`getOutcomesUsedInIncidence()`](getOutcomesUsedInIncidence.md),
+[`getTargetCounts()`](getTargetCounts.md),
+[`getTargetsUsedInCharacterization()`](getTargetsUsedInCharacterization.md),
+[`getTargetsUsedInIncidence()`](getTargetsUsedInIncidence.md),
 [`getTimeToEvent()`](getTimeToEvent.md),
 [`plotAgeDistributions()`](plotAgeDistributions.md),
 [`viewIncidenceRate()`](viewIncidenceRate.md)
@@ -83,14 +66,10 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 sexData <- getCharacterizationDemographics(
   connectionHandler = connectionHandler, 
   schema = 'main',
-  targetId = 1, 
+  characterizationTargetId = 10, 
   outcomeId = 3, 
   type = 'sex'
 )
 plotSexDistributions(sexData = sexData)
-
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
+#> NULL
 ```

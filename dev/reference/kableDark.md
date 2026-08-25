@@ -40,8 +40,10 @@ Input the data that you want to be shown via a dark html table
 
 Other helper: [`addTarColumn()`](addTarColumn.md),
 [`formatBinaryCovariateName()`](formatBinaryCovariateName.md),
+[`formatTargetPopulation()`](formatTargetPopulation.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
 [`getOutcomeTable()`](getOutcomeTable.md),
+[`getTarText()`](getTarText.md),
 [`getTargetTable()`](getTargetTable.md),
 [`removeSpaces()`](removeSpaces.md)
 

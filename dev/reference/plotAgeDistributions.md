@@ -1,17 +1,11 @@
 # Plots the age distributions using the binary age groups
 
-Creates bar charts for the target and case age groups.
+Creates bar charts for the target.
 
 ## Usage
 
 ``` r
-plotAgeDistributions(
-  ageData,
-  riskWindowStart = "1",
-  riskWindowEnd = "365",
-  startAnchor = "cohort start",
-  endAnchor = "cohort start"
-)
+plotAgeDistributions(ageData)
 ```
 
 ## Arguments
@@ -21,22 +15,6 @@ plotAgeDistributions(
   The age data extracted using 'getCharacterizationDemographics(type =
   'age')'
 
-- riskWindowStart:
-
-  The time at risk window start
-
-- riskWindowEnd:
-
-  The time at risk window end
-
-- startAnchor:
-
-  The anchor for the time at risk start
-
-- endAnchor:
-
-  The anchor for the time at risk end
-
 ## Value
 
 Returns a ggplot with the distributions
@@ -44,30 +22,35 @@ Returns a ggplot with the distributions
 ## Details
 
 Input the data returned from 'getCharacterizationDemographics(type =
-'age')' and the time-at-risk
+'age')'
 
 ## See also
 
 Other Characterization:
+[`characterizationCompareBinary()`](characterizationCompareBinary.md),
+[`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
+[`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md),
+[`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md),
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
 [`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
 [`getCaseCounts()`](getCaseCounts.md),
-[`getCaseTargetCounts()`](getCaseTargetCounts.md),
-[`getCharacterizationCohortBinary()`](getCharacterizationCohortBinary.md),
-[`getCharacterizationCohortContinuous()`](getCharacterizationCohortContinuous.md),
+[`getCharacterizationCaseSettings()`](getCharacterizationCaseSettings.md),
 [`getCharacterizationDemographics()`](getCharacterizationDemographics.md),
-[`getCharacterizationOutcomes()`](getCharacterizationOutcomes.md),
-[`getCharacterizationTargets()`](getCharacterizationTargets.md),
+[`getCharacterizationTargetSettings()`](getCharacterizationTargetSettings.md),
 [`getContinuousCaseSeries()`](getContinuousCaseSeries.md),
 [`getContinuousRiskFactors()`](getContinuousRiskFactors.md),
+[`getContinuousTargetBaseline()`](getContinuousTargetBaseline.md),
 [`getDechallengeRechallenge()`](getDechallengeRechallenge.md),
 [`getDechallengeRechallengeFails()`](getDechallengeRechallengeFails.md),
-[`getIncidenceOutcomes()`](getIncidenceOutcomes.md),
 [`getIncidenceRates()`](getIncidenceRates.md),
-[`getIncidenceTargets()`](getIncidenceTargets.md),
-[`getTargetBinaryFeatures()`](getTargetBinaryFeatures.md),
-[`getTargetContinuousFeatures()`](getTargetContinuousFeatures.md),
+[`getIncidenceTargetSettings()`](getIncidenceTargetSettings.md),
+[`getNonCaseCounts()`](getNonCaseCounts.md),
+[`getOutcomesUsedInCharacterization()`](getOutcomesUsedInCharacterization.md),
+[`getOutcomesUsedInIncidence()`](getOutcomesUsedInIncidence.md),
+[`getTargetCounts()`](getTargetCounts.md),
+[`getTargetsUsedInCharacterization()`](getTargetsUsedInCharacterization.md),
+[`getTargetsUsedInIncidence()`](getTargetsUsedInIncidence.md),
 [`getTimeToEvent()`](getTimeToEvent.md),
 [`plotSexDistributions()`](plotSexDistributions.md),
 [`viewIncidenceRate()`](viewIncidenceRate.md)
@@ -83,11 +66,10 @@ connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
 ageData <- getCharacterizationDemographics(
 connectionHandler = connectionHandler, 
 schema = 'main',
-targetId = 1, 
-outcomeId = 3, 
+characterizationTargetId = 10, 
 type = 'age'
 )
 
 plotAgeDistributions(ageData = ageData)
-
+#> NULL
 ```
