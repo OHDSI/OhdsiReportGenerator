@@ -15,7 +15,8 @@ if(includeCohortMethod){
     schema = params$schema, 
     targetIds = unique(c(targetIdsOfInterest, indicationIdsOfInterest)),
     outcomeIds = outcomeIdsOfInterest
-  )
+  ) %>%
+    dplyr::distinct()
   
   if(nrow(cohortMethodDiagnostics) > 0){
     if(!is.null(params$comparatorIds)){
@@ -57,7 +58,8 @@ cohortMethodDiagnostics <- merge(cohortMethodDiagnostics,
     schema = params$schema, 
     targetIds = unique(c(targetIdsOfInterest, indicationIdsOfInterest)),
     outcomeIds = outcomeIdsOfInterest
-  )
+  ) %>%
+    dplyr::distinct()
   
     if(nrow(cmResults) > 0){
     if(!is.null(params$comparatorIds)){
@@ -132,7 +134,8 @@ if(includeSccs){
     schema = params$schema,
     targetIds = unique(c(params$targetId, comparatorIds)), 
     outcomeIds = outcomeIdsOfInterest
-  ) 
+  ) %>%
+    dplyr::distinct()
   
   if(nrow(sccsDiagnostics) > 0){
     sccsDiagnostics <- sccsDiagnostics %>%
@@ -175,7 +178,8 @@ sccsDiagnostics <- merge(sccsDiagnostics,
     schema = params$schema,
     targetIds = unique(c(params$targetId, comparatorIds)), 
     outcomeIds = outcomeIdsOfInterest
-  )
+  ) %>%
+    dplyr::distinct()
   
     if(nrow(sccsResults) > 0){
     sccsResults <- sccsResults %>%
@@ -353,19 +357,21 @@ for(description in descriptions){
   cat(paste0('\n\n#### ',description,'\n\n'))
   
   # filter to get results for specific analysis
-  cohortMethodDiagnosticsTemp <- cohortMethodDiagnostics %>% 
+  outcomesInDesc <- cohortMethodDiagnostics %>% 
     dplyr::filter(.data$description == !!description)
   
-  outcomes <- unique(cohortMethodDiagnosticsTemp$outcomeId)
+  outcomes <- unique(outcomesInDesc$outcomeId)
   
   for(outId in outcomes){
-    outName <- cohortMethodDiagnosticsTemp$outcomeName[cohortMethodDiagnosticsTemp$outcomeId == outId][1]
+    outName <- outcomesInDesc$outcomeName[outcomesInDesc$outcomeId == outId][1]
     cat(paste0('\n\n##### Outcome: ',outName,'\n\n'))
     
-    cohortMethodDiagnosticsTemp <- cohortMethodDiagnosticsTemp %>% 
-    dplyr::filter(.data$outcomeId == !!outId)
+    cohortMethodDiagnosticsTemp <- cohortMethodDiagnostics %>% 
+      dplyr::filter(.data$description == !!description) %>%
+      dplyr::filter(.data$outcomeId == !!outId)
   
     tciIds <- unique(cohortMethodDiagnosticsTemp[,c('targetId', 'comparatorId','indicationId')])
+    
   
   for(tciId in 1:nrow(tciIds)){
     
@@ -374,14 +380,16 @@ for(description in descriptions){
                            dplyr::filter(.data$outcomeId == !!outId) %>%
                            dplyr::filter(.data$targetId == !!tciIds$targetId[tciId]) %>%
                            dplyr::filter(.data$indicationId == !!tciIds$indicationId[tciId]) %>%
-                           dplyr::filter(.data$comparatorId == !!tciIds$comparatorId[tciId]) 
+                           dplyr::filter(.data$comparatorId == !!tciIds$comparatorId[tciId]) %>%
+    dplyr::distinct() 
     
     cmResultTable <- cohortMethodCombined %>% 
                               dplyr::filter(.data$description == !!description) %>%
                               dplyr::filter(.data$outcomeId == !!outId) %>%
                               dplyr::filter(.data$targetId == !!tciIds$targetId[tciId]) %>%
                               dplyr::filter(.data$indicationId == !!tciIds$indicationId[tciId]) %>%
-                              dplyr::filter(.data$comparatorId == !!tciIds$comparatorId[tciId]) 
+                              dplyr::filter(.data$comparatorId == !!tciIds$comparatorId[tciId]) %>%
+    dplyr::distinct()
     
     if(!is.null(cohortMethodES)){
       cmMetaTable <- cohortMethodES %>% 
@@ -389,7 +397,8 @@ for(description in descriptions){
                               dplyr::filter(.data$outcomeId == !!outId) %>%
                               dplyr::filter(.data$targetId == !!tciIds$targetId[tciId]) %>%
                               dplyr::filter(.data$indicationId == !!tciIds$indicationId[tciId]) %>%
-                              dplyr::filter(.data$comparatorId == !!tciIds$comparatorId[tciId]) 
+                              dplyr::filter(.data$comparatorId == !!tciIds$comparatorId[tciId]) %>%
+    dplyr::distinct() 
     } else{
       cmMetaTable <- NULL
     }
@@ -406,7 +415,7 @@ for(description in descriptions){
       }
     }
     boxName <- paste0(cmDiagnosticTable$friendlyNameTarget[1], ' vs ', cmDiagnosticTable$friendlyNameComp[1], 
-                      ' for indication ', indicationNameTemp)
+                      ' for nesting ', indicationNameTemp)
     
       cat('\n\n::: {.callout-note collapse="true"}\n')
       cat(paste0('## ', boxName, '\n\n'))
@@ -434,6 +443,7 @@ for(description in descriptions){
                                          "mdrrDiagnostic", "attritionDiagnostic", "easeDiagnostic",
                                          'unblindForEvidenceSynthesis',
                                          'unblind') %>%
+    dplyr::distinct() %>%
                            dplyr::group_by(
                              .data$friendlyNameComp,
                              .data$subsetTextTarget,
@@ -487,6 +497,7 @@ for(description in descriptions){
                                          "targetOutcomes", "comparatorOutcomes",
                                          "calibratedRr", "calibratedCi95Lb",
                                          "calibratedP","calibratedOneSidedP") %>%
+    dplyr::distinct() %>%
                            dplyr::group_by(
                              .data$friendlyNameComp,
                              .data$subsetTextTarget,
@@ -578,17 +589,18 @@ for(description in descriptions){
   cat(paste0('\n\n#### ',description,'\n\n'))
   
   # filter to get results for specific analysis
-  sccsDiagnosticsTemp <- sccsDiagnostics %>% 
+  outcomesInDesc <- sccsDiagnostics %>% 
     dplyr::filter(.data$description == !!description)
   
-  outcomes <- unique(sccsDiagnosticsTemp$outcomeId)
+  outcomes <- unique(outcomesInDesc$outcomeId)
   
   for(outId in outcomes){
-    outName <- sccsDiagnosticsTemp$outcomeName[sccsDiagnosticsTemp$outcomeId == outId][1]
+    outName <- outcomesInDesc$outcomeName[outcomesInDesc$outcomeId == outId][1]
     cat(paste0('\n\n##### ',outName,'\n\n'))
     
-    sccsDiagnosticsTemp <- sccsDiagnosticsTemp %>% 
-    dplyr::filter(.data$outcomeId == !!outId)
+    sccsDiagnosticsTemp <- sccsDiagnostics %>% 
+      dplyr::filter(.data$description == !!description) %>%
+      dplyr::filter(.data$outcomeId == !!outId)
   
     tiIds <- unique(sccsDiagnosticsTemp[,c('targetId', 'indicationId')])
   
@@ -618,7 +630,7 @@ for(description in descriptions){
     
     # add a box with title: target vs comp for indication
     boxName <- paste0(sccsDiagnosticTable$friendlyNameTarget[1],
-                      ' for indication ', sccsDiagnosticTable$indicationName[1])
+                      ' for nesting ', sccsDiagnosticTable$indicationName[1])
     
       cat('\n\n::: {.callout-note collapse="true"}\n')
       cat(paste0('## ', boxName, '\n\n'))
@@ -646,6 +658,7 @@ for(description in descriptions){
                                        "unblindForEvidenceSynthesis",
                                        'unblind'
                          ) %>%
+                         dplyr::distinct() %>%
                          gt::gt() %>%
                          gt::cols_label(
                            databaseName = 'Database',
@@ -688,6 +701,7 @@ for(description in descriptions){
                                        "outcomeEvents", "covariateOutcomes",
                                        "calibratedRr", "calibratedCi95Lb", 
                                        "calibratedP","calibratedOneSidedP") %>%
+                         dplyr::distinct() %>%
                          gt::gt() %>%
                          gt::cols_label(
                            databaseName = 'Database',
