@@ -29,6 +29,7 @@ test_that("getSccEstimation returns per database results", {
   result <- OhdsiReportGenerator::getSccEstimation(
     connectionHandler = connectionHandler,
     schema = schema,
+    analysisIds = 1,
     targetIds = 9,
     outcomeIds = 11
   )
@@ -92,6 +93,7 @@ test_that("getSccSummaryStats returns boxplot statistics", {
     connectionHandler = connectionHandler,
     schema = schema,
     statTypes = "time_exposed",
+    analysisIds = 1,
     targetIds = 9,
     outcomeIds = 11
   )

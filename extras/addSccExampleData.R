@@ -9,6 +9,10 @@
 # (es_scc_*) tables together with a couple of additional simulated databases
 # so the multi database discovery view and meta analysis can be explored.
 #
+# Multiple SCC analysis settings are simulated (two analyses with different
+# time at risk windows) so the effect of the study parameter settings on the
+# estimates can be explored.
+#
 # The scc results are simulated (i.e. they are NOT the output of the
 # SelfControlledCohort R package) but are consistent with the cohort
 # definitions that already exist in the example database (Doxylamine,
@@ -67,11 +71,15 @@ addDatabase <- function(databaseId, name) {
 
 # --------------------------------------------------------------------------
 # add two additional databases (so per database counts / meta analysis are
-# meaningful) while keeping the original Eunomia database
+# meaningful) while keeping the original Eunomia database.  Any previously
+# added synthetic databases are removed first so the script is idempotent
 # --------------------------------------------------------------------------
 dbMeta <- DatabaseConnector::querySql(
   connection = connection,
-  sql = 'SELECT * FROM main.database_meta_data;'
+  sql = paste0(
+    "SELECT * FROM main.database_meta_data ",
+    "WHERE database_id NOT IN ('eunomia_2', 'eunomia_3');"
+  )
 )
 dbMeta <- rbind(
   dbMeta,
@@ -107,7 +115,6 @@ DatabaseConnector::executeSql(
 # the simulated exposure - outcome pairs
 # --------------------------------------------------------------------------
 databaseIds <- c('388020256', 'eunomia_2', 'eunomia_3')
-analysisId <- 1
 
 # outcome / exposure pairs of interest (true_effect_size is NULL)
 interestPairs <- list(
@@ -130,15 +137,45 @@ controlPairs <- list(
 )
 
 # --------------------------------------------------------------------------
-# create the scc_result rows
+# the study parameter settings (SCC analysis settings) to simulate
 # --------------------------------------------------------------------------
-createResultRow <- function(databaseId, targetId, outcomeId, rr, se) {
+analyses <- list(
+  list(
+    analysisId = 1,
+    description = 'Self controlled cohort',
+    settings = '{"riskWindowStart":0,"riskWindowEnd":30}',
+    logFactor = 1.0,
+    timeScale = 1.0,
+    mdrr = 1.3,
+    ease = 0.05
+  ),
+  list(
+    analysisId = 2,
+    description = 'Self controlled cohort - extended risk window',
+    settings = '{"riskWindowStart":0,"riskWindowEnd":60}',
+    logFactor = 1.18,
+    timeScale = 0.85,
+    mdrr = 1.5,
+    ease = 0.08
+  )
+)
+
+# the rr / se used by an analysis is the base value with the log relative risk
+# scaled by the analysis logFactor
+pairRrForAnalysis <- function(pair, logFactor) {
+  return(exp(log(pair$rr) * logFactor))
+}
+
+# --------------------------------------------------------------------------
+# scc_result rows for one analysis
+# --------------------------------------------------------------------------
+createResultRow <- function(databaseId, analysis, targetId, outcomeId, rr, se) {
   logRr <- log(rr)
   z <- logRr / se
   pValue <- 2 * stats::pnorm(-abs(z))
   data.frame(
     database_id = databaseId,
-    analysis_id = analysisId,
+    analysis_id = analysis$analysisId,
     outcome_cohort_id = outcomeId,
     target_cohort_id = targetId,
     rr = rr,
@@ -154,9 +191,9 @@ createResultRow <- function(databaseId, targetId, outcomeId, rr, se) {
     calibrated_ub_95 = exp(logRr + 1.96 * se),
     calibrated_p_value = pValue,
     num_persons = 1000,
-    time_at_risk_exposed = 90000,
+    time_at_risk_exposed = round(90000 * analysis$timeScale),
     time_at_risk_unexposed = 500000,
-    num_outcomes_exposed = round(30 * rr),
+    num_outcomes_exposed = max(1, round(30 * rr)),
     num_outcomes_unexposed = 30,
     num_exposures = 1000,
     i2 = NA,
@@ -164,20 +201,157 @@ createResultRow <- function(databaseId, targetId, outcomeId, rr, se) {
   )
 }
 
-sccResult <- do.call(rbind, lapply(seq_along(databaseIds), function(i) {
-  db <- databaseIds[i]
-  interest <- do.call(rbind, lapply(interestPairs, function(p) {
-    createResultRow(db, p$targetId, p$outcomeId, p$rr[i], p$se[i])
+buildSccResultRows <- function(analysis) {
+  interest <- do.call(rbind, lapply(seq_along(databaseIds), function(i) {
+    db <- databaseIds[i]
+    do.call(rbind, lapply(interestPairs, function(p) {
+      rr <- pairRrForAnalysis(p, analysis$logFactor)
+      createResultRow(db, analysis, p$targetId, p$outcomeId, rr[i], p$se[i])
+    }))
   }))
-  controls <- do.call(rbind, lapply(controlPairs, function(p) {
-    createResultRow(db, p$targetId, p$outcomeId, p$rr[i], p$se[i])
+  controls <- do.call(rbind, lapply(seq_along(databaseIds), function(i) {
+    db <- databaseIds[i]
+    do.call(rbind, lapply(controlPairs, function(p) {
+      rr <- pairRrForAnalysis(p, analysis$logFactor)
+      createResultRow(db, analysis, p$targetId, p$outcomeId, rr[i], p$se[i])
+    }))
   }))
   return(rbind(interest, controls))
-}))
-insertTable(sccResult, 'scc_result')
+}
 
 # --------------------------------------------------------------------------
-# the exposure-outcome reference table (interest + negative controls)
+# scc_stat rows for one analysis
+# --------------------------------------------------------------------------
+createStatRows <- function(databaseId, analysis, targetId, outcomeId, statType, timeScale) {
+  baseTimeExposed <- c(mean = 84, sd = 18, min = 7, p10 = 60, p25 = 75, median = 88, p75 = 96, p90 = 100, max = 120)
+  baseTimeToOutcome <- c(mean = 150, sd = 60, min = 2, p10 = 20, p25 = 60, median = 140, p75 = 210, p90 = 280, max = 365)
+
+  values <- if (statType == 'time_exposed') baseTimeExposed else baseTimeToOutcome
+  # scale the central / extreme values by the analysis timeScale and add a
+  # little database variation
+  values[c('mean', 'sd', 'min', 'p10', 'p25', 'median', 'p75', 'p90', 'max')] <-
+    values[c('mean', 'sd', 'min', 'p10', 'p25', 'median', 'p75', 'p90', 'max')] * timeScale
+
+  dbScale <- switch(databaseId, '388020256' = 1, 'eunomia_2' = 0.9, 'eunomia_3' = 1.1)
+  values['mean'] <- values['mean'] * dbScale
+
+  data.frame(
+    database_id = databaseId,
+    analysis_id = analysis$analysisId,
+    outcome_cohort_id = outcomeId,
+    target_cohort_id = targetId,
+    stat_type = statType,
+    mean = values['mean'],
+    sd = values['sd'],
+    minimum = values['min'],
+    p10 = values['p10'],
+    p25 = values['p25'],
+    median = values['median'],
+    p75 = values['p75'],
+    p90 = values['p90'],
+    maximum = values['max'],
+    total = 1000,
+    stringsAsFactors = FALSE
+  )
+}
+
+buildSccStatRows <- function(analysis) {
+  do.call(rbind, lapply(databaseIds, function(db) {
+    do.call(rbind, lapply(interestPairs, function(p) {
+      rbind(
+        createStatRows(db, analysis, p$targetId, p$outcomeId, 'time_exposed', analysis$timeScale),
+        createStatRows(db, analysis, p$targetId, p$outcomeId, 'time_to_outcome', analysis$timeScale)
+      )
+    }))
+  }))
+}
+
+# --------------------------------------------------------------------------
+# scc_diagnostics_summary rows for one analysis
+# --------------------------------------------------------------------------
+buildSccDiagRows <- function(analysis) {
+  do.call(rbind, lapply(databaseIds, function(db) {
+    do.call(rbind, lapply(interestPairs, function(p) {
+      data.frame(
+        database_id = db,
+        analysis_id = analysis$analysisId,
+        outcome_cohort_id = p$outcomeId,
+        target_cohort_id = p$targetId,
+        diagnostic_name = c('MDRR', 'EASE', 'PRE_EXPOSURE_P_VALUE', 'UNBLIND'),
+        diagnostic_value = c(analysis$mdrr, analysis$ease, 0.4, 1),
+        pass = c(1, 1, 1, 1),
+        stringsAsFactors = FALSE
+      )
+    }))
+  }))
+}
+
+# --------------------------------------------------------------------------
+# evidence synthesis rows for one analysis
+# --------------------------------------------------------------------------
+buildEsResultRows <- function(analysis) {
+  do.call(rbind, lapply(interestPairs, function(p) {
+    rrDb <- pairRrForAnalysis(p, analysis$logFactor)
+    rr <- exp(mean(log(rrDb)))
+    se <- mean(p$se) / sqrt(length(databaseIds))
+    logRr <- log(rr)
+    z <- logRr / se
+    pValue <- 2 * stats::pnorm(-abs(z))
+    data.frame(
+      target_cohort_id = p$targetId,
+      outcome_cohort_id = p$outcomeId,
+      analysis_id = analysis$analysisId,
+      evidence_synthesis_analysis_id = 3,
+      rr = rr,
+      ci_95_lb = exp(logRr - 1.96 * se),
+      ci_95_ub = exp(logRr + 1.96 * se),
+      p = pValue,
+      one_sided_p = pValue / 2,
+      log_rr = logRr,
+      se_log_rr = se,
+      num_persons = 3000,
+      time_at_risk_exposed = round(270000 * analysis$timeScale),
+      time_at_risk_unexposed = 1500000,
+      num_outcomes_exposed = 90,
+      num_outcomes_unexposed = 90,
+      num_exposures = 3000,
+      n_databases = length(databaseIds),
+      calibrated_rr = rr,
+      calibrated_ci_95_lb = exp(logRr - 1.96 * se),
+      calibrated_ci_95_ub = exp(logRr + 1.96 * se),
+      calibrated_p = pValue,
+      calibrated_one_sided_p = pValue / 2,
+      calibrated_log_rr = logRr,
+      calibrated_se_log_rr = se,
+      stringsAsFactors = FALSE
+    )
+  }))
+}
+
+buildEsDiagRows <- function(analysis) {
+  do.call(rbind, lapply(interestPairs, function(p) {
+    data.frame(
+      target_cohort_id = p$targetId,
+      outcome_cohort_id = p$outcomeId,
+      analysis_id = analysis$analysisId,
+      evidence_synthesis_analysis_id = 3,
+      mdrr = analysis$mdrr,
+      i_2 = 10,
+      tau = 0.05,
+      ease = analysis$ease,
+      mdrr_diagnostic = 'PASS',
+      i_2_diagnostic = 'PASS',
+      tau_diagnostic = 'PASS',
+      ease_diagnostic = 'PASS',
+      unblind = 1,
+      stringsAsFactors = FALSE
+    )
+  }))
+}
+
+# --------------------------------------------------------------------------
+# the exposure-outcome reference table (interest + negative controls) is
+# independent of the analysis settings
 # --------------------------------------------------------------------------
 oexInterest <- do.call(rbind, lapply(interestPairs, function(p) {
   data.frame(
@@ -198,78 +372,39 @@ oexControls <- do.call(rbind, lapply(controlPairs, function(p) {
 insertTable(rbind(oexInterest, oexControls), 'scc_outcome_exposure')
 
 # --------------------------------------------------------------------------
-# the analysis setting reference table
+# the analysis settings
 # --------------------------------------------------------------------------
 insertTable(
-  data.frame(
-    analysis_id = analysisId,
-    description = 'Self controlled cohort',
-    settings = '{"riskWindowStart":0,"riskWindowEnd":30}',
-    stringsAsFactors = FALSE
-  ),
+  do.call(rbind, lapply(analyses, function(a) {
+    data.frame(
+      analysis_id = a$analysisId,
+      description = a$description,
+      settings = a$settings,
+      stringsAsFactors = FALSE
+    )
+  })),
   'scc_analysis_setting'
 )
 
 # --------------------------------------------------------------------------
-# summary statistics (scc_stat) for the boxplots
+# the per analysis result tables
 # --------------------------------------------------------------------------
-createStatRows <- function(databaseId, targetId, outcomeId, statType, values) {
-  data.frame(
-    database_id = databaseId,
-    analysis_id = analysisId,
-    outcome_cohort_id = outcomeId,
-    target_cohort_id = targetId,
-    stat_type = statType,
-    mean = values['mean'],
-    sd = values['sd'],
-    minimum = values['min'],
-    p10 = values['p10'],
-    p25 = values['p25'],
-    median = values['median'],
-    p75 = values['p75'],
-    p90 = values['p90'],
-    maximum = values['max'],
-    total = 1000,
-    stringsAsFactors = FALSE
-  )
-}
-
-timeExposedStats <- c(mean = 84, sd = 18, min = 7, p10 = 60, p25 = 75, median = 88, p75 = 96, p90 = 100, max = 120)
-timeToOutcomeStats <- c(mean = 150, sd = 60, min = 2, p10 = 20, p25 = 60, median = 140, p75 = 210, p90 = 280, max = 365)
-
-sccStat <- do.call(rbind, lapply(databaseIds, function(db) {
-  do.call(rbind, lapply(interestPairs, function(p) {
-    # add a small amount of deterministic variation between databases
-    mult <- switch(db, '388020256' = 1, 'eunomia_2' = 0.9, 'eunomia_3' = 1.1)
-    rbind(
-      createStatRows(db, p$targetId, p$outcomeId, 'time_exposed', timeExposedStats * c(mult, rep(1, length(timeExposedStats) - 1))),
-      createStatRows(db, p$targetId, p$outcomeId, 'time_to_outcome', timeToOutcomeStats * c(mult, rep(1, length(timeToOutcomeStats) - 1)))
-    )
-  }))
-}))
-insertTable(sccStat, 'scc_stat')
+insertTable(
+  do.call(rbind, lapply(analyses, buildSccResultRows)),
+  'scc_result'
+)
+insertTable(
+  do.call(rbind, lapply(analyses, buildSccStatRows)),
+  'scc_stat'
+)
+insertTable(
+  do.call(rbind, lapply(analyses, buildSccDiagRows)),
+  'scc_diagnostics_summary'
+)
 
 # --------------------------------------------------------------------------
-# diagnostics (scc_diagnostics_summary)
-# --------------------------------------------------------------------------
-sccDiag <- do.call(rbind, lapply(databaseIds, function(db) {
-  do.call(rbind, lapply(interestPairs, function(p) {
-    data.frame(
-      database_id = db,
-      analysis_id = analysisId,
-      outcome_cohort_id = p$outcomeId,
-      target_cohort_id = p$targetId,
-      diagnostic_name = c('MDRR', 'EASE', 'PRE_EXPOSURE_P_VALUE', 'UNBLIND'),
-      diagnostic_value = c(1.3, 0.05, 0.4, 1),
-      pass = c(1, 1, 1, 1),
-      stringsAsFactors = FALSE
-    )
-  }))
-}))
-insertTable(sccDiag, 'scc_diagnostics_summary')
-
-# --------------------------------------------------------------------------
-# evidence synthesis (es_scc) - a single meta analysis across the 3 databases
+# evidence synthesis - a single ES analysis (id 3) covering each SCC analysis
+# setting
 # --------------------------------------------------------------------------
 DatabaseConnector::executeSql(
   connection = connection,
@@ -285,64 +420,14 @@ DatabaseConnector::executeSql(
   )
 )
 
-esResult <- do.call(rbind, lapply(interestPairs, function(p) {
-  # pooled meta estimate is roughly the geometric mean of the per database rr
-  rr <- exp(mean(log(p$rr)))
-  se <- mean(p$se) / sqrt(length(databaseIds))
-  logRr <- log(rr)
-  z <- logRr / se
-  pValue <- 2 * stats::pnorm(-abs(z))
-  data.frame(
-    target_cohort_id = p$targetId,
-    outcome_cohort_id = p$outcomeId,
-    analysis_id = analysisId,
-    evidence_synthesis_analysis_id = 3,
-    rr = rr,
-    ci_95_lb = exp(logRr - 1.96 * se),
-    ci_95_ub = exp(logRr + 1.96 * se),
-    p = pValue,
-    one_sided_p = pValue / 2,
-    log_rr = logRr,
-    se_log_rr = se,
-    num_persons = 3000,
-    time_at_risk_exposed = 270000,
-    time_at_risk_unexposed = 1500000,
-    num_outcomes_exposed = 90,
-    num_outcomes_unexposed = 90,
-    num_exposures = 3000,
-    n_databases = length(databaseIds),
-    calibrated_rr = rr,
-    calibrated_ci_95_lb = exp(logRr - 1.96 * se),
-    calibrated_ci_95_ub = exp(logRr + 1.96 * se),
-    calibrated_p = pValue,
-    calibrated_one_sided_p = pValue / 2,
-    calibrated_log_rr = logRr,
-    calibrated_se_log_rr = se,
-    stringsAsFactors = FALSE
-  )
-}))
-
-esDiagnostics <- do.call(rbind, lapply(interestPairs, function(p) {
-  data.frame(
-    target_cohort_id = p$targetId,
-    outcome_cohort_id = p$outcomeId,
-    analysis_id = analysisId,
-    evidence_synthesis_analysis_id = 3,
-    mdrr = 1.3,
-    i_2 = 10,
-    tau = 0.05,
-    ease = 0.05,
-    mdrr_diagnostic = 'PASS',
-    i_2_diagnostic = 'PASS',
-    tau_diagnostic = 'PASS',
-    ease_diagnostic = 'PASS',
-    unblind = 1,
-    stringsAsFactors = FALSE
-  )
-}))
-
-insertTable(esResult, 'es_scc_result')
-insertTable(esDiagnostics, 'es_scc_diagnostics_summary')
+insertTable(
+  do.call(rbind, lapply(analyses, buildEsResultRows)),
+  'es_scc_result'
+)
+insertTable(
+  do.call(rbind, lapply(analyses, buildEsDiagRows)),
+  'es_scc_diagnostics_summary'
+)
 
 DatabaseConnector::disconnect(connection)
 
