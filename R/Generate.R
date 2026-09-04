@@ -23,6 +23,7 @@
 #' @param includeCharacterization Whether to include the characterization slides
 #' @param includeCohortMethod Whether to include the cohort method slides
 #' @param includeSccs Whether to include the self controlled case series slides
+#' @param includeScc Whether to include the self controlled cohort slides
 #' @param includePrediction Whether to include the patient level prediction slides
 #' @param webAPI The ATLAS web API to use for the characterization index breakdown (set to NULL to not include)
 #' @param authMethod The authorization method for the webAPI
@@ -57,6 +58,7 @@ generateFullReport <- function(
     includeCharacterization = TRUE,
     includeCohortMethod = TRUE,
     includeSccs = TRUE,
+    includeScc = TRUE,
     includePrediction = TRUE,
     webAPI = NULL,
     authMethod = NULL,
@@ -147,6 +149,7 @@ generateFullReport <- function(
       includeCharacterization = includeCharacterization,
       includeCohortMethod = includeCohortMethod,
       includeSccs = includeSccs,
+      includeScc = includeScc,
       includePrediction = includePrediction,
       webAPI = webAPI,
       authMethod = authMethod,
