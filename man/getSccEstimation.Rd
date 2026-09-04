@@ -52,6 +52,7 @@ Other SelfControlledCohort:
 \code{\link{getSccAnalysisSettings}()},
 \code{\link{getSccDiagnosticsData}()},
 \code{\link{getSccMetaEstimation}()},
+\code{\link{getSccMetaExploration}()},
 \code{\link{getSccNegativeControlEstimates}()},
 \code{\link{getSccOutcomes}()},
 \code{\link{getSccSignals}()},

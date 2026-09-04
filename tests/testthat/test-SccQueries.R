@@ -174,3 +174,19 @@ test_that("the full report template includes the self controlled cohort section"
   templateText <- readLines(templateFile)
   expect_true(any(grepl("includeScc", templateText)))
 })
+
+test_that("getSccMetaExploration returns counts, diagnostics and masked estimates", {
+  result <- OhdsiReportGenerator::getSccMetaExploration(
+    connectionHandler = connectionHandler,
+    schema = schema
+  )
+  expect_true(nrow(result) > 0)
+  expect_true(all(c(
+    "targetName", "outcomeName", "overallStatus", "mdrr", "ease",
+    "numOutcomesExposed", "numOutcomesUnexposed", "numExposures",
+    "calibratedRr", "unblind"
+  ) %in% colnames(result)))
+  # the example data passes all study diagnostics so the estimates are shown
+  expect_true(all(result$overallStatus == "Pass"))
+  expect_true(all(!is.na(result$calibratedRr)))
+})

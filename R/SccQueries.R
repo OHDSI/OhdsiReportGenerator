@@ -1072,3 +1072,157 @@ getSccSignals <- function(
 
   return(result)
 }
+
+#' Extract the meta analytic target-outcome pair exploration results
+#'
+#' @description
+#' Returns a table of all exposure (target) - outcome pairs at the meta
+#' analytic (evidence synthesis) level together with the counts, descriptive
+#' statistics and study diagnostics.  Descriptive statistics (number of
+#' outcomes / exposures etc) are returned for every pair regardless of whether
+#' it passed the study diagnostics.  Pairs (evidence synthesis analyses) that
+#' failed a study diagnostic are treated as blinded - their effect estimates
+#' are returned as NA
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the optional target/outcome/analysis
+#' cohort identifiers to restrict the results
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template sccTablePrefix
+#' @template cgTablePrefix
+#' @template esTablePrefix
+#' @param analysisIds A vector of analysis ids to restrict the results to
+#' @param targetIds A vector of target cohort ids to restrict the results to
+#' @param outcomeIds A vector of outcome cohort ids to restrict the results to
+#' @param evidenceSynthesisAnalysisIds A vector of evidence synthesis analysis ids to restrict the results to
+#' @family SelfControlledCohort
+#' @return
+#' Returns a data.frame with the meta analytic estimates, counts, descriptive
+#' statistics and study diagnostics.  Effect estimate columns are NA for any
+#' evidence synthesis analysis that failed a study diagnostic
+#' @export
+getSccMetaExploration <- function(
+    connectionHandler,
+    schema,
+    sccTablePrefix = 'scc_',
+    cgTablePrefix = 'cg_',
+    esTablePrefix = 'es_',
+    analysisIds = NULL,
+    targetIds = NULL,
+    outcomeIds = NULL,
+    evidenceSynthesisAnalysisIds = NULL
+) {
+  sql <- "
+  SELECT
+    ev.evidence_synthesis_description as database_name,
+    esr.evidence_synthesis_analysis_id,
+    esr.analysis_id,
+    a.description,
+    esr.target_cohort_id as target_id,
+    cgt.cohort_name as target_name,
+    esr.outcome_cohort_id as outcome_id,
+    cgo.cohort_name as outcome_name,
+
+    esr.num_persons,
+    esr.time_at_risk_exposed,
+    esr.time_at_risk_unexposed,
+    esr.num_outcomes_exposed,
+    esr.num_outcomes_unexposed,
+    esr.num_exposures,
+    esr.n_databases,
+
+    esds.mdrr,
+    esds.i_2 as i2,
+    esds.tau,
+    esds.ease,
+    esds.mdrr_diagnostic,
+    esds.i_2_diagnostic as i2_diagnostic,
+    esds.tau_diagnostic,
+    esds.ease_diagnostic,
+    esds.unblind,
+
+    esr.rr,
+    esr.ci_95_lb,
+    esr.ci_95_ub,
+    esr.p,
+    esr.calibrated_rr,
+    esr.calibrated_ci_95_lb,
+    esr.calibrated_ci_95_ub,
+    esr.calibrated_p
+
+  FROM @schema.@es_table_prefixscc_result esr
+  INNER JOIN @schema.@es_table_prefixscc_diagnostics_summary esds ON (
+    esds.target_cohort_id = esr.target_cohort_id AND
+    esds.outcome_cohort_id = esr.outcome_cohort_id AND
+    esds.analysis_id = esr.analysis_id AND
+    esds.evidence_synthesis_analysis_id = esr.evidence_synthesis_analysis_id
+  )
+  INNER JOIN @schema.@es_table_prefixanalysis ev
+    ON ev.evidence_synthesis_analysis_id = esr.evidence_synthesis_analysis_id
+  INNER JOIN @schema.@cg_table_prefixcohort_definition cgt
+    ON cgt.cohort_definition_id = esr.target_cohort_id
+  INNER JOIN @schema.@cg_table_prefixcohort_definition cgo
+    ON cgo.cohort_definition_id = esr.outcome_cohort_id
+  INNER JOIN @schema.@scc_table_prefixanalysis_setting a
+    ON a.analysis_id = esr.analysis_id
+
+  WHERE 1 = 1
+  {@restrict_analysis}?{ AND esr.analysis_id IN (@analysis_ids)}
+  {@restrict_target}?{ AND esr.target_cohort_id IN (@target_ids)}
+  {@restrict_outcome}?{ AND esr.outcome_cohort_id IN (@outcome_ids)}
+  {@restrict_es}?{ AND esr.evidence_synthesis_analysis_id IN (@es_ids)}
+  ;
+  "
+
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    scc_table_prefix = sccTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    es_table_prefix = esTablePrefix,
+    analysis_ids = ifelse(is.null(analysisIds), "", paste(analysisIds, collapse = ",")),
+    restrict_analysis = !is.null(analysisIds),
+    target_ids = ifelse(is.null(targetIds), "", paste(targetIds, collapse = ",")),
+    restrict_target = !is.null(targetIds),
+    outcome_ids = ifelse(is.null(outcomeIds), "", paste(outcomeIds, collapse = ",")),
+    restrict_outcome = !is.null(outcomeIds),
+    es_ids = ifelse(is.null(evidenceSynthesisAnalysisIds), "", paste(evidenceSynthesisAnalysisIds, collapse = ",")),
+    restrict_es = !is.null(evidenceSynthesisAnalysisIds)
+  )
+
+  if (nrow(result) == 0) {
+    return(result)
+  }
+
+  # determine the overall pass/fail status from the study diagnostics and
+  # blind (mask) the effect estimates of any failed evidence synthesis
+  # analysis
+  statusCols <- c("mdrrDiagnostic", "i2Diagnostic", "tauDiagnostic", "easeDiagnostic")
+  failed <- rep(FALSE, nrow(result))
+  for (col in statusCols) {
+    if (col %in% colnames(result)) {
+      colFail <- !is.na(result[[col]]) &
+        tolower(as.character(result[[col]])) == "fail"
+      failed <- failed | colFail
+    }
+  }
+  result$overallStatus <- ifelse(failed, "Fail", "Pass")
+  result$unblind <- as.numeric(result$unblind)
+
+  unblinded <- !is.na(result$unblind) & result$unblind == 1
+  showEffect <- unblinded & !failed
+
+  maskCols <- c(
+    "rr", "ci95Lb", "ci95Ub", "p",
+    "calibratedRr", "calibratedCi95Lb", "calibratedCi95Ub", "calibratedP"
+  )
+  for (col in maskCols) {
+    if (col %in% colnames(result)) {
+      result[[col]][!showEffect] <- NA
+    }
+  }
+
+  return(result)
+}
