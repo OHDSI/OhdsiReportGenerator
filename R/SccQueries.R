@@ -176,7 +176,10 @@ getSccOutcomes <- function(
 #'
 #' @description
 #' Returns the per database incidence rate ratio estimates for the selected
-#' exposure (target) and outcome cohort pairs
+#' exposure (target) and outcome cohort pairs.  Effect estimates are only
+#' returned for exposure-outcome pairs that have been unblinded - the blinding
+#' status is taken from the UNBLIND diagnostic stored in the
+#' scc_diagnostics_summary table
 #'
 #' @details
 #' Specify the connectionHandler, the schema and the optional target/outcome/analysis
@@ -219,6 +222,8 @@ getSccOutcomes <- function(
 #'  \item{numOutcomesUnexposed the number of outcomes while unexposed}
 #'  \item{numExposures the number of exposures}
 #'  \item{i2 the I squared heterogeneity statistic}
+#'  \item{unblind whether the exposure-outcome pair has been unblinded in the
+#'    database (effect estimates are returned as NA while blinded)}
 #'  }
 #' @export
 getSccEstimation <- function(
@@ -242,16 +247,17 @@ getSccEstimation <- function(
     sr.outcome_cohort_id as outcome_id,
     cgo.cohort_name as outcome_name,
 
-    sr.rr,
-    sr.se_log_rr,
-    sr.lb_95,
-    sr.ub_95,
-    sr.p_value,
-    sr.calibrated_rr,
-    sr.calibrated_se_log_rr,
-    sr.calibrated_lb_95,
-    sr.calibrated_ub_95,
-    sr.calibrated_p_value,
+    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.rr end rr,
+    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.se_log_rr end se_log_rr,
+    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.lb_95 end lb_95,
+    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.ub_95 end ub_95,
+    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.p_value end p_value,
+    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.calibrated_rr end calibrated_rr,
+    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.calibrated_se_log_rr end calibrated_se_log_rr,
+    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.calibrated_lb_95 end calibrated_lb_95,
+    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.calibrated_ub_95 end calibrated_ub_95,
+    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.calibrated_p_value end calibrated_p_value,
+    sdun.diagnostic_value as unblind,
     sr.num_persons,
     sr.time_at_risk_exposed,
     sr.time_at_risk_unexposed,
@@ -269,6 +275,13 @@ getSccEstimation <- function(
     ON cgo.cohort_definition_id = sr.outcome_cohort_id
   INNER JOIN @schema.@scc_table_prefixanalysis_setting a
     ON a.analysis_id = sr.analysis_id
+  LEFT JOIN @schema.@scc_table_prefixdiagnostics_summary sdun ON (
+    sdun.database_id = sr.database_id AND
+    sdun.analysis_id = sr.analysis_id AND
+    sdun.target_cohort_id = sr.target_cohort_id AND
+    sdun.outcome_cohort_id = sr.outcome_cohort_id AND
+    sdun.diagnostic_name = 'UNBLIND'
+  )
 
   WHERE 1 = 1
   {@restrict_analysis}?{ AND sr.analysis_id IN (@analysis_ids)}
@@ -899,9 +912,18 @@ getSccSignals <- function(
       sr.target_cohort_id,
       sr.outcome_cohort_id,
       sr.database_id,
-      {@cal}?{sr.calibrated_rr}:{sr.rr} AS measure_rr,
-      {@cal}?{sr.calibrated_p_value}:{sr.p_value} AS measure_p
+      case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL
+           else {@cal}?{sr.calibrated_rr}:{sr.rr} end AS measure_rr,
+      case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL
+           else {@cal}?{sr.calibrated_p_value}:{sr.p_value} end AS measure_p
     FROM @schema.@scc_table_prefixresult sr
+    LEFT JOIN @schema.@scc_table_prefixdiagnostics_summary sdun ON (
+      sdun.database_id = sr.database_id AND
+      sdun.analysis_id = sr.analysis_id AND
+      sdun.target_cohort_id = sr.target_cohort_id AND
+      sdun.outcome_cohort_id = sr.outcome_cohort_id AND
+      sdun.diagnostic_name = 'UNBLIND'
+    )
     WHERE 1 = 1
     {@restrict_analysis}?{ AND sr.analysis_id IN (@analysis_ids)}
   ),

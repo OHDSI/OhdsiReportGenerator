@@ -35,9 +35,11 @@ test_that("getSccEstimation returns per database results", {
   expect_equal(nrow(result), 3)
   expect_true(all(c(
     "databaseName", "targetName", "outcomeName", "rr", "calibratedRr",
-    "calibratedLb95", "calibratedUb95", "calibratedPValue"
+    "calibratedLb95", "calibratedUb95", "calibratedPValue", "unblind"
   ) %in% colnames(result)))
   expect_true(all(result$rr < 1))
+  # in the example data all pairs are unblinded
+  expect_true(all(result$unblind == 1))
 })
 
 test_that("getSccMetaEstimation returns evidence synthesis results", {

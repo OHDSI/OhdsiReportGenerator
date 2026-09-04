@@ -37,7 +37,10 @@ getSccEstimation(
 }
 \description{
 Returns the per database incidence rate ratio estimates for the selected
-exposure (target) and outcome cohort pairs
+exposure (target) and outcome cohort pairs.  Effect estimates are only
+returned for exposure-outcome pairs that have been unblinded - the blinding
+status is taken from the UNBLIND diagnostic stored in the
+scc_diagnostics_summary table
 }
 \details{
 Specify the connectionHandler, the schema and the optional target/outcome/analysis
