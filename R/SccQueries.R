@@ -913,8 +913,26 @@ getSccSignals <- function(
       sr.outcome_cohort_id,
       sr.database_id,
       case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL
+           when exists (
+             select 1 from @schema.@scc_table_prefixdiagnostics_summary fdg
+             where fdg.database_id = sr.database_id
+               and fdg.analysis_id = sr.analysis_id
+               and fdg.target_cohort_id = sr.target_cohort_id
+               and fdg.outcome_cohort_id = sr.outcome_cohort_id
+               and fdg.diagnostic_name not in ('UNBLIND', 'UNBLIND_FOR_CALIBRATION')
+               and COALESCE(fdg.pass, 0) = 0
+           ) then NULL
            else {@cal}?{sr.calibrated_rr}:{sr.rr} end AS measure_rr,
       case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL
+           when exists (
+             select 1 from @schema.@scc_table_prefixdiagnostics_summary fdg
+             where fdg.database_id = sr.database_id
+               and fdg.analysis_id = sr.analysis_id
+               and fdg.target_cohort_id = sr.target_cohort_id
+               and fdg.outcome_cohort_id = sr.outcome_cohort_id
+               and fdg.diagnostic_name not in ('UNBLIND', 'UNBLIND_FOR_CALIBRATION')
+               and COALESCE(fdg.pass, 0) = 0
+           ) then NULL
            else {@cal}?{sr.calibrated_p_value}:{sr.p_value} end AS measure_p
     FROM @schema.@scc_table_prefixresult sr
     LEFT JOIN @schema.@scc_table_prefixdiagnostics_summary sdun ON (
@@ -1000,9 +1018,19 @@ getSccSignals <- function(
     SELECT
       esr.target_cohort_id,
       esr.outcome_cohort_id,
-      CASE WHEN COALESCE(esds.unblind, 0) = 0 THEN NULL
+      CASE WHEN COALESCE(esds.unblind, 0) = 0
+                OR esds.mdrr_diagnostic = 'FAIL'
+                OR esds.i_2_diagnostic = 'FAIL'
+                OR esds.tau_diagnostic = 'FAIL'
+                OR esds.ease_diagnostic = 'FAIL'
+           THEN NULL
            ELSE {@cal}?{esr.calibrated_rr}:{esr.rr} END AS meta_rr,
-      CASE WHEN COALESCE(esds.unblind, 0) = 0 THEN NULL
+      CASE WHEN COALESCE(esds.unblind, 0) = 0
+                OR esds.mdrr_diagnostic = 'FAIL'
+                OR esds.i_2_diagnostic = 'FAIL'
+                OR esds.tau_diagnostic = 'FAIL'
+                OR esds.ease_diagnostic = 'FAIL'
+           THEN NULL
            ELSE {@cal}?{esr.calibrated_p}:{esr.p} END AS meta_p,
       esds.i_2 AS i2,
       esr.n_databases
@@ -1021,6 +1049,7 @@ getSccSignals <- function(
     mr.outcome_cohort_id = fr.outcome_cohort_id
 
   WHERE 1 = 1
+  AND mr.meta_rr IS NOT NULL
   {@restrict_target}?{ AND cgt.cohort_definition_id IN (@target_cohorts)}
   {@restrict_outcome}?{ AND cgo.cohort_definition_id IN (@outcome_cohorts)}
   {@filter_meta}?{
