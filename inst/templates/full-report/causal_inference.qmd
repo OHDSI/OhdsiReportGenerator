@@ -90,7 +90,9 @@ cohortMethodDiagnostics <- merge(cohortMethodDiagnostics,
   cohortMethodCombined <- cmResults
   # add Evidence synth if the results exist
   if(!is.null(cohortMethodES)){
-    cohortMethodCombined <- dplyr::bind_rows(cmResults, cohortMethodES)
+    if(nrow(cohortMethodES) > 0){
+      cohortMethodCombined <- dplyr::bind_rows(cmResults, cohortMethodES)
+    }
   }
   
   if( nrow(cohortMethodCombined) > 0){
@@ -220,7 +222,11 @@ sccsDiagnostics <- merge(sccsDiagnostics,
   }
   
    if(!is.null(sccsES)){
-    sccsCombined <- dplyr::bind_rows(sccsResults, sccsES)
+    if(nrow(sccsES) > 0){
+      sccsCombined <- dplyr::bind_rows(sccsResults, sccsES)
+    } else {
+      sccsCombined <- sccsResults
+    }
   } else{
     sccsCombined <- sccsResults
   }
