@@ -1,0 +1,150 @@
+# Self Controlled Cohort Analysis
+
+## Methods
+
+The self-controlled cohort method estimates the association between an exposure
+(drug) and an outcome by comparing the outcome rate while a person is exposed
+to the outcome rate while that same person is unexposed (self controlled).  For
+each database the exposure - outcome pairs produce an incidence rate ratio.
+Where multiple databases contribute results an evidence synthesis (meta
+analysis) is performed across the databases.  The estimates shown below have
+been empirically calibrated using negative control exposure-outcome pairs where
+possible.
+
+## Results
+
+```{r}
+#| label: scc_extract
+#| echo: false
+#| include: false
+
+sccSchema <- params$schema
+
+sccSignals <- tryCatch(
+  OhdsiReportGenerator::getSccSignals(
+    connectionHandler = connectionHandler,
+    schema = sccSchema,
+    minBenefitSources = 0,
+    maxRiskSources = 999
+  ),
+  error = function(e) {
+    return(data.frame())
+  }
+)
+
+sccEstimation <- tryCatch(
+  OhdsiReportGenerator::getSccEstimation(
+    connectionHandler = connectionHandler,
+    schema = sccSchema
+  ),
+  error = function(e) data.frame()
+)
+
+sccMeta <- tryCatch(
+  OhdsiReportGenerator::getSccMetaEstimation(
+    connectionHandler = connectionHandler,
+    schema = sccSchema
+  ),
+  error = function(e) data.frame()
+)
+
+sccDiagnostics <- tryCatch(
+  OhdsiReportGenerator::getSccDiagnosticsData(
+    connectionHandler = connectionHandler,
+    schema = sccSchema
+  ),
+  error = function(e) data.frame()
+)
+
+sccStats <- tryCatch(
+  OhdsiReportGenerator::getSccSummaryStats(
+    connectionHandler = connectionHandler,
+    schema = sccSchema
+  ),
+  error = function(e) data.frame()
+)
+
+if (nrow(sccEstimation) > 0) {
+  sccEstimation$meta <- 0
+}
+if (nrow(sccMeta) > 0) {
+  sccMeta$meta <- 1
+}
+sccParts <- list()
+if (nrow(sccEstimation) > 0) {
+  sccParts[[length(sccParts) + 1]] <- sccEstimation
+}
+if (nrow(sccMeta) > 0) {
+  sccParts[[length(sccParts) + 1]] <- sccMeta
+}
+sccCombined <- if (length(sccParts) > 0) {
+  dplyr::bind_rows(sccParts)
+} else {
+  data.frame()
+}
+
+if (nrow(sccSignals) == 0 || nrow(sccCombined) == 0) {
+  includeSccResults <- FALSE
+} else {
+  includeSccResults <- TRUE
+}
+```
+
+```{r}
+#| label: scc_results
+#| echo: false
+#| results: 'asis'
+
+if (includeSccResults) {
+  cat("\n\n### Discovery results\n\n")
+  signalTable <- OhdsiReportGenerator::createSccSignalsTable(sccSignals)
+  if (!is.null(signalTable)) {
+    print(signalTable)
+  }
+
+  cat("\n\n### Pair level results\n\n")
+  for (i in seq_len(nrow(sccSignals))) {
+    row <- sccSignals[i, ]
+    pairData <- sccCombined[sccCombined$targetId == row$targetId &
+                              sccCombined$outcomeId == row$outcomeId, , drop = FALSE]
+    if (nrow(pairData) == 0) {
+      next
+    }
+
+    title <- paste0(row$targetName, " - ", row$outcomeName)
+    cat(paste0("\n::: {.callout-note collapse='true'}\n### ", title, "\n\n"))
+
+    cat("The forest plot shows the per database incidence rate ratios with the
+    meta analytic result shown as a diamond.\n\n")
+
+    plot <- OhdsiReportGenerator::plotSccForest(pairData, calibrated = TRUE)
+    if (!is.null(plot)) {
+      print(plot)
+    }
+
+    pairStats <- sccStats[sccStats$targetId == row$targetId &
+                            sccStats$outcomeId == row$outcomeId, , drop = FALSE]
+    if (nrow(pairStats) > 0) {
+      boxPlot <- OhdsiReportGenerator::plotSccBoxPlot(pairStats)
+      if (!is.null(boxPlot)) {
+        print(boxPlot)
+      }
+    }
+
+    pairDiag <- sccDiagnostics[sccDiagnostics$targetId == row$targetId &
+                                 sccDiagnostics$outcomeId == row$outcomeId, , drop = FALSE]
+    if (nrow(pairDiag) > 0) {
+      diagSummary <- pairDiag |>
+        dplyr::select(
+          "databaseName", dplyr::any_of(
+            c("mdrr", "ease", "preExposurePValue", "summaryValue")
+          )
+        ) |>
+        gt::gt()
+      print(diagSummary)
+    }
+
+    cat("\n:::\n")
+  }
+}
+```

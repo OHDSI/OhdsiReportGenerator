@@ -33,6 +33,7 @@ params:
   includeCharacterization: true
   includeCohortMethod: true
   includeSccs: true
+  includeScc: true
   includePrediction: true
   numberPredictors: 25
   excludeText: NULL
@@ -93,6 +94,7 @@ includeCI <- 'ci' %in% prefixes & params$includeCI
 includeCharacterization <- 'c' %in% prefixes & params$includeCharacterization
 includeCohortMethod <- 'cm' %in% prefixes & params$includeCohortMethod 
 includeSccs <- 'sccs' %in% prefixes & params$includeSccs 
+includeScc <- 'scc' %in% prefixes & params$includeScc
 includePrediction <- 'plp' %in% prefixes & params$includePrediction 
 #====================================
 
@@ -252,6 +254,17 @@ cat(result, sep = '\n')
 
 if(includeSccs || includeCohortMethod){
 result <- knitr::knit_child(text = knitr::knit_expand("causal_inference.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
+cat(result, sep = '\n')
+}
+```
+
+```{r}
+#| label: self_controlled_cohort
+#| echo: false
+#| results: 'asis'
+
+if(includeScc){
+result <- knitr::knit_child(text = knitr::knit_expand("self_controlled_cohort.qmd", quiet = TRUE, envir = environment()), quiet = TRUE)
 cat(result, sep = '\n')
 }
 ```
