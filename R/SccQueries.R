@@ -386,16 +386,16 @@ getSccMetaEstimation <- function(
     cgo.cohort_name as outcome_name,
     esr.evidence_synthesis_analysis_id,
 
-    case when COALESCE(esds.unblind, 0) = 0 then NULL else esr.rr end rr,
-    case when COALESCE(esds.unblind, 0) = 0 then NULL else esr.se_log_rr end se_log_rr,
-    case when COALESCE(esds.unblind, 0) = 0 then NULL else esr.ci_95_lb end ci_95_lb,
-    case when COALESCE(esds.unblind, 0) = 0 then NULL else esr.ci_95_ub end ci_95_ub,
-    case when COALESCE(esds.unblind, 0) = 0 then NULL else esr.p end p,
-    case when COALESCE(esds.unblind, 0) = 0 then NULL else esr.calibrated_rr end calibrated_rr,
-    case when COALESCE(esds.unblind, 0) = 0 then NULL else esr.calibrated_se_log_rr end calibrated_se_log_rr,
-    case when COALESCE(esds.unblind, 0) = 0 then NULL else esr.calibrated_ci_95_lb end calibrated_ci_95_lb,
-    case when COALESCE(esds.unblind, 0) = 0 then NULL else esr.calibrated_ci_95_ub end calibrated_ci_95_ub,
-    case when COALESCE(esds.unblind, 0) = 0 then NULL else esr.calibrated_p end calibrated_p,
+    case when esds.mdrr_diagnostic = 'FAIL' OR esds.i_2_diagnostic = 'FAIL' OR esds.tau_diagnostic = 'FAIL' OR esds.ease_diagnostic = 'FAIL' then NULL else esr.rr end rr,
+    case when esds.mdrr_diagnostic = 'FAIL' OR esds.i_2_diagnostic = 'FAIL' OR esds.tau_diagnostic = 'FAIL' OR esds.ease_diagnostic = 'FAIL' then NULL else esr.se_log_rr end se_log_rr,
+    case when esds.mdrr_diagnostic = 'FAIL' OR esds.i_2_diagnostic = 'FAIL' OR esds.tau_diagnostic = 'FAIL' OR esds.ease_diagnostic = 'FAIL' then NULL else esr.ci_95_lb end ci_95_lb,
+    case when esds.mdrr_diagnostic = 'FAIL' OR esds.i_2_diagnostic = 'FAIL' OR esds.tau_diagnostic = 'FAIL' OR esds.ease_diagnostic = 'FAIL' then NULL else esr.ci_95_ub end ci_95_ub,
+    case when esds.mdrr_diagnostic = 'FAIL' OR esds.i_2_diagnostic = 'FAIL' OR esds.tau_diagnostic = 'FAIL' OR esds.ease_diagnostic = 'FAIL' then NULL else esr.p end p,
+    case when esds.mdrr_diagnostic = 'FAIL' OR esds.i_2_diagnostic = 'FAIL' OR esds.tau_diagnostic = 'FAIL' OR esds.ease_diagnostic = 'FAIL' then NULL else esr.calibrated_rr end calibrated_rr,
+    case when esds.mdrr_diagnostic = 'FAIL' OR esds.i_2_diagnostic = 'FAIL' OR esds.tau_diagnostic = 'FAIL' OR esds.ease_diagnostic = 'FAIL' then NULL else esr.calibrated_se_log_rr end calibrated_se_log_rr,
+    case when esds.mdrr_diagnostic = 'FAIL' OR esds.i_2_diagnostic = 'FAIL' OR esds.tau_diagnostic = 'FAIL' OR esds.ease_diagnostic = 'FAIL' then NULL else esr.calibrated_ci_95_lb end calibrated_ci_95_lb,
+    case when esds.mdrr_diagnostic = 'FAIL' OR esds.i_2_diagnostic = 'FAIL' OR esds.tau_diagnostic = 'FAIL' OR esds.ease_diagnostic = 'FAIL' then NULL else esr.calibrated_ci_95_ub end calibrated_ci_95_ub,
+    case when esds.mdrr_diagnostic = 'FAIL' OR esds.i_2_diagnostic = 'FAIL' OR esds.tau_diagnostic = 'FAIL' OR esds.ease_diagnostic = 'FAIL' then NULL else esr.calibrated_p end calibrated_p,
 
     esr.num_persons,
     esr.time_at_risk_exposed,
@@ -1047,15 +1047,13 @@ getSccSignals <- function(
     SELECT
       esr.target_cohort_id,
       esr.outcome_cohort_id,
-      CASE WHEN COALESCE(esds.unblind, 0) = 0
-                OR esds.mdrr_diagnostic = 'FAIL'
+      CASE WHEN esds.mdrr_diagnostic = 'FAIL'
                 OR esds.i_2_diagnostic = 'FAIL'
                 OR esds.tau_diagnostic = 'FAIL'
                 OR esds.ease_diagnostic = 'FAIL'
            THEN NULL
            ELSE {@cal}?{esr.calibrated_rr}:{esr.rr} END AS meta_rr,
-      CASE WHEN COALESCE(esds.unblind, 0) = 0
-                OR esds.mdrr_diagnostic = 'FAIL'
+      CASE WHEN esds.mdrr_diagnostic = 'FAIL'
                 OR esds.i_2_diagnostic = 'FAIL'
                 OR esds.tau_diagnostic = 'FAIL'
                 OR esds.ease_diagnostic = 'FAIL'
@@ -1269,8 +1267,10 @@ getSccMetaExploration <- function(
   result$overallStatus <- ifelse(failed, "Fail", "Pass")
   result$unblind <- as.numeric(result$unblind)
 
-  unblinded <- !is.na(result$unblind) & result$unblind == 1
-  showEffect <- unblinded & !failed
+  # effect estimates are shown when the evidence synthesis analysis passed its
+  # diagnostics (the es unblind column is not used as it can disagree with the
+  # diagnostic statuses)
+  showEffect <- !failed
 
   maskCols <- c(
     "rr", "ci95Lb", "ci95Ub", "p",
