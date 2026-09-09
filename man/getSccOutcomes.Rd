@@ -10,7 +10,8 @@ getSccOutcomes(
   sccTablePrefix = "scc_",
   cgTablePrefix = "cg_",
   analysisIds = NULL,
-  targetIds = NULL
+  targetIds = NULL,
+  restrictToInterest = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,10 @@ getSccOutcomes(
 \item{analysisIds}{A vector of analysis ids to restrict the outcomes to}
 
 \item{targetIds}{A vector of target cohort ids to restrict the outcomes to}
+
+\item{restrictToInterest}{Whether to only return outcome cohorts that are
+part of exposure-outcome pairs of interest (defaults to TRUE).  Set to
+FALSE to fall back to any outcome cohort with results for the analysis}
 }
 \value{
 A data.frame with the columns cohortDefinitionId and cohortName
@@ -44,6 +49,7 @@ Other SelfControlledCohort:
 \code{\link{getSccDiagnosticsData}()},
 \code{\link{getSccEstimation}()},
 \code{\link{getSccMetaEstimation}()},
+\code{\link{getSccMetaExploration}()},
 \code{\link{getSccNegativeControlEstimates}()},
 \code{\link{getSccSignals}()},
 \code{\link{getSccSummaryStats}()},

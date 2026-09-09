@@ -73,6 +73,9 @@ getSccAnalysisSettings <- function(
 #' @template sccTablePrefix
 #' @template cgTablePrefix
 #' @param analysisIds A vector of analysis ids to restrict the targets to
+#' @param restrictToInterest Whether to only return exposure cohorts that are
+#'   part of exposure-outcome pairs of interest (defaults to TRUE).  Set to
+#'   FALSE to fall back to any exposure cohort with results for the analysis
 #' @family SelfControlledCohort
 #' @return
 #' A data.frame with the columns cohortDefinitionId and cohortName
@@ -82,9 +85,11 @@ getSccTargets <- function(
     schema,
     sccTablePrefix = 'scc_',
     cgTablePrefix = 'cg_',
-    analysisIds = NULL
+    analysisIds = NULL,
+    restrictToInterest = TRUE
 ) {
-  sql <- "
+  if (isTRUE(restrictToInterest)) {
+    sql <- "
     SELECT DISTINCT
       cg.cohort_definition_id,
       cg.cohort_name
@@ -102,7 +107,22 @@ getSccTargets <- function(
     }
     ORDER BY cg.cohort_name
     ;
-  "
+    "
+  } else {
+    # fall back to the targets that actually have results for the analysis
+    sql <- "
+    SELECT DISTINCT
+      cg.cohort_definition_id,
+      cg.cohort_name
+    FROM @schema.@scc_table_prefixresult sr
+    INNER JOIN @schema.@cg_table_prefixcohort_definition cg
+      ON cg.cohort_definition_id = sr.target_cohort_id
+    WHERE 1 = 1
+    {@restrict_analysis}?{ AND sr.analysis_id IN (@analysis_ids)}
+    ORDER BY cg.cohort_name
+    ;
+    "
+  }
   result <- connectionHandler$queryDb(
     sql = sql,
     schema = schema,
@@ -127,6 +147,9 @@ getSccTargets <- function(
 #' @template cgTablePrefix
 #' @param analysisIds A vector of analysis ids to restrict the outcomes to
 #' @param targetIds A vector of target cohort ids to restrict the outcomes to
+#' @param restrictToInterest Whether to only return outcome cohorts that are
+#'   part of exposure-outcome pairs of interest (defaults to TRUE).  Set to
+#'   FALSE to fall back to any outcome cohort with results for the analysis
 #' @family SelfControlledCohort
 #' @return
 #' A data.frame with the columns cohortDefinitionId and cohortName
@@ -137,9 +160,11 @@ getSccOutcomes <- function(
     sccTablePrefix = 'scc_',
     cgTablePrefix = 'cg_',
     analysisIds = NULL,
-    targetIds = NULL
+    targetIds = NULL,
+    restrictToInterest = TRUE
 ) {
-  sql <- "
+  if (isTRUE(restrictToInterest)) {
+    sql <- "
     SELECT DISTINCT
       cg.cohort_definition_id,
       cg.cohort_name
@@ -158,7 +183,23 @@ getSccOutcomes <- function(
     }
     ORDER BY cg.cohort_name
     ;
-  "
+    "
+  } else {
+    # fall back to the outcomes that actually have results for the analysis
+    sql <- "
+    SELECT DISTINCT
+      cg.cohort_definition_id,
+      cg.cohort_name
+    FROM @schema.@scc_table_prefixresult sr
+    INNER JOIN @schema.@cg_table_prefixcohort_definition cg
+      ON cg.cohort_definition_id = sr.outcome_cohort_id
+    WHERE 1 = 1
+    {@restrict_target}?{ AND sr.target_cohort_id IN (@target_ids)}
+    {@restrict_analysis}?{ AND sr.analysis_id IN (@analysis_ids)}
+    ORDER BY cg.cohort_name
+    ;
+    "
+  }
   result <- connectionHandler$queryDb(
     sql = sql,
     schema = schema,
