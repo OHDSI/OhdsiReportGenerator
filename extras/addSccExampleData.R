@@ -278,7 +278,7 @@ buildSccDiagRows <- function(analysis) {
         outcome_cohort_id = p$outcomeId,
         target_cohort_id = p$targetId,
         diagnostic_name = c('MDRR', 'EASE', 'PRE_EXPOSURE_P_VALUE', 'UNBLIND'),
-        diagnostic_value = c(analysis$mdrr, analysis$ease, 0.4, 1),
+        diagnostic_value = c(analysis$mdrr, analysis$ease, 0.4, NA_real_),
         pass = c(1, 1, 1, 1),
         stringsAsFactors = FALSE
       )

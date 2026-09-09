@@ -247,17 +247,17 @@ getSccEstimation <- function(
     sr.outcome_cohort_id as outcome_id,
     cgo.cohort_name as outcome_name,
 
-    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.rr end rr,
-    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.se_log_rr end se_log_rr,
-    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.lb_95 end lb_95,
-    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.ub_95 end ub_95,
-    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.p_value end p_value,
-    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.calibrated_rr end calibrated_rr,
-    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.calibrated_se_log_rr end calibrated_se_log_rr,
-    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.calibrated_lb_95 end calibrated_lb_95,
-    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.calibrated_ub_95 end calibrated_ub_95,
-    case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL else sr.calibrated_p_value end calibrated_p_value,
-    sdun.diagnostic_value as unblind,
+    case when COALESCE(sdun.pass, 0) = 0 then NULL else sr.rr end rr,
+    case when COALESCE(sdun.pass, 0) = 0 then NULL else sr.se_log_rr end se_log_rr,
+    case when COALESCE(sdun.pass, 0) = 0 then NULL else sr.lb_95 end lb_95,
+    case when COALESCE(sdun.pass, 0) = 0 then NULL else sr.ub_95 end ub_95,
+    case when COALESCE(sdun.pass, 0) = 0 then NULL else sr.p_value end p_value,
+    case when COALESCE(sdun.pass, 0) = 0 then NULL else sr.calibrated_rr end calibrated_rr,
+    case when COALESCE(sdun.pass, 0) = 0 then NULL else sr.calibrated_se_log_rr end calibrated_se_log_rr,
+    case when COALESCE(sdun.pass, 0) = 0 then NULL else sr.calibrated_lb_95 end calibrated_lb_95,
+    case when COALESCE(sdun.pass, 0) = 0 then NULL else sr.calibrated_ub_95 end calibrated_ub_95,
+    case when COALESCE(sdun.pass, 0) = 0 then NULL else sr.calibrated_p_value end calibrated_p_value,
+    sdun.pass as unblind,
     sr.num_persons,
     sr.time_at_risk_exposed,
     sr.time_at_risk_unexposed,
@@ -547,36 +547,65 @@ getSccDiagnosticsData <- function(
     return(result)
   }
 
-  # pivots the long diagnostic rows into wide columns while retaining the
-  # pass/fail information for each diagnostic
-  colLookup <- .getSccDiagnosticColLookup()
+  # pivots the long diagnostic rows into wide columns.  The diagnostic values
+  # (e.g. MDRR, EASE) are pivoted from diagnostic_value while the blinding
+  # status (UNBLIND / UNBLIND_FOR_CALIBRATION) is stored in the pass column
+  # (the diagnostic_value is NA for these rows)
+  idCols <- c(
+    "databaseId", "databaseName", "analysisId", "description",
+    "targetId", "targetName", "outcomeId", "outcomeName"
+  )
+
+  valueLookup <- .getSccDiagnosticColLookup()
+  valueLookup <- valueLookup[!names(valueLookup) %in%
+                               c("UNBLIND", "UNBLIND_FOR_CALIBRATION")]
+
+  valueRows <- result |>
+    dplyr::filter(!.data$diagnosticName %in%
+                    c("UNBLIND", "UNBLIND_FOR_CALIBRATION"))
+  blindRows <- result |>
+    dplyr::filter(.data$diagnosticName %in%
+                    c("UNBLIND", "UNBLIND_FOR_CALIBRATION"))
 
   wide <- result |>
-    dplyr::group_by(
-      .data$databaseId, .data$databaseName, .data$analysisId,
-      .data$description, .data$targetId, .data$targetName,
-      .data$outcomeId, .data$outcomeName
-    ) |>
-    dplyr::reframe(
-      value = .data$diagnosticName,
-      diagnosticValue = .data$diagnosticValue,
-      passValue = .data$pass
-    ) |>
-    tidyr::pivot_wider(
-      id_cols = c(
-        "databaseId", "databaseName", "analysisId", "description",
-        "targetId", "targetName", "outcomeId", "outcomeName"
-      ),
-      names_from = "value",
-      values_from = "diagnosticValue"
-    )
+    dplyr::select(dplyr::all_of(idCols)) |>
+    dplyr::distinct()
 
-  for (nm in names(colLookup)) {
-    if (nm %in% colnames(wide)) {
-      newName <- colLookup[[nm]]
-      wide <- wide |>
-        dplyr::rename(!!rlang::sym(newName) := dplyr::all_of(nm))
+  if (nrow(valueRows) > 0) {
+    valueWide <- valueRows |>
+      dplyr::select(dplyr::all_of(idCols), "diagnosticName", "diagnosticValue") |>
+      tidyr::pivot_wider(
+        id_cols = dplyr::all_of(idCols),
+        names_from = "diagnosticName",
+        values_from = "diagnosticValue"
+      )
+    for (nm in names(valueLookup)) {
+      if (nm %in% colnames(valueWide)) {
+        valueWide <- valueWide |>
+          dplyr::rename(!!rlang::sym(valueLookup[[nm]]) := dplyr::all_of(nm))
+      }
     }
+    wide <- wide |>
+      dplyr::left_join(valueWide, by = idCols)
+  }
+
+  if (nrow(blindRows) > 0) {
+    blindWide <- blindRows |>
+      dplyr::select(dplyr::all_of(idCols), "diagnosticName", "pass") |>
+      tidyr::pivot_wider(
+        id_cols = dplyr::all_of(idCols),
+        names_from = "diagnosticName",
+        values_from = "pass"
+      )
+    blindRename <- c("UNBLIND" = "unblind", "UNBLIND_FOR_CALIBRATION" = "unblindForCalibration")
+    for (nm in names(blindRename)) {
+      if (nm %in% colnames(blindWide)) {
+        blindWide <- blindWide |>
+          dplyr::rename(!!rlang::sym(blindRename[[nm]]) := dplyr::all_of(nm))
+      }
+    }
+    wide <- wide |>
+      dplyr::left_join(blindWide, by = idCols)
   }
 
   passTable <- result |>
@@ -912,7 +941,7 @@ getSccSignals <- function(
       sr.target_cohort_id,
       sr.outcome_cohort_id,
       sr.database_id,
-      case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL
+      case when COALESCE(sdun.pass, 0) = 0 then NULL
            when exists (
              select 1 from @schema.@scc_table_prefixdiagnostics_summary fdg
              where fdg.database_id = sr.database_id
@@ -923,7 +952,7 @@ getSccSignals <- function(
                and COALESCE(fdg.pass, 0) = 0
            ) then NULL
            else {@cal}?{sr.calibrated_rr}:{sr.rr} end AS measure_rr,
-      case when COALESCE(sdun.diagnostic_value, 0) = 0 then NULL
+      case when COALESCE(sdun.pass, 0) = 0 then NULL
            when exists (
              select 1 from @schema.@scc_table_prefixdiagnostics_summary fdg
              where fdg.database_id = sr.database_id
