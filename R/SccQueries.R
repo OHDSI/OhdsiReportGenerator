@@ -1060,13 +1060,15 @@ getSccSignals <- function(
   FROM (
     SELECT DISTINCT rs.target_cohort_id, rs.outcome_cohort_id
     FROM @schema.@scc_table_prefixresult rs
-    {@exclude_controls}?{
-    INNER JOIN @schema.@scc_table_prefixoutcome_exposure oex
-      ON oex.target_cohort_id = rs.target_cohort_id AND
-         oex.outcome_cohort_id = rs.outcome_cohort_id
-    }
     WHERE 1 = 1
-    {@exclude_controls}?{ AND oex.true_effect_size IS NULL}
+    {@exclude_controls}?{
+      AND NOT EXISTS (
+        SELECT 1 FROM @schema.@scc_table_prefixoutcome_exposure c
+        WHERE c.target_cohort_id = rs.target_cohort_id
+          AND c.outcome_cohort_id = rs.outcome_cohort_id
+          AND c.true_effect_size IS NOT NULL
+      )
+    }
     {@restrict_analysis}?{ AND rs.analysis_id IN (@analysis_ids)}
   ) fr
   INNER JOIN @schema.@cg_table_prefixcohort_definition cgt
@@ -1117,7 +1119,6 @@ getSccSignals <- function(
     mr.outcome_cohort_id = fr.outcome_cohort_id
 
   WHERE 1 = 1
-  AND mr.meta_rr IS NOT NULL
   {@restrict_target}?{ AND cgt.cohort_definition_id IN (@target_cohorts)}
   {@restrict_outcome}?{ AND cgo.cohort_definition_id IN (@outcome_cohorts)}
   {@filter_meta}?{
