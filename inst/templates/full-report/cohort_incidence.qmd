@@ -83,8 +83,6 @@ cat(paste0("\n\n### Incidence rates for ", cohortDefinitions$friendlyName[cohort
   gt::fmt(
     columns = c("personOutcomes","incidenceProportionP100p", "incidenceRateP100py"),
     fns = function(x){ 
-      if(anyNA(x)){return(x)} 
-      if(is.null(x[1])){return(x)}
       x <- round(x, digits = 4)
       if(sum(x < 0) > 0){ 
         x[x < 0] <- paste('<', abs(x[x < 0]))
