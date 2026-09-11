@@ -138,8 +138,8 @@ Other Prediction:
 conDet <- getExampleConnectionDetails()
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
-#> Connecting using SQLite driver
 #> Closing database connection
+#> Connecting using SQLite driver
 
 topPreds <- getPredictionTopPredictors(
   connectionHandler = connectionHandler, 
