@@ -94,5 +94,4 @@ outcomes <- getOutcomesUsedInIncidence(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> Closing database connection
 ```

@@ -92,11 +92,6 @@ incidenceData <- getIncidenceRates(
   connectionHandler = connectionHandler , 
   schema = schema
   )
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
   
   # incidence data does not have rate values to imputing them
   incidenceData$incidenceRateP100py <- 1 +
@@ -121,6 +116,10 @@ viewIncidenceRate(
   ageData = ageData,
   genderData = genderData
   )
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
 #> Closing database connection
 
 

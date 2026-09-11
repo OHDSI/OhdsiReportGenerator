@@ -97,5 +97,4 @@ attrition <- getPredictionPerformanceTable(
   schema = 'main',
   table = 'attrition'
 )
-#> Closing database connection
 ```

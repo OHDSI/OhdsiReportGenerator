@@ -170,10 +170,5 @@ outcomeTable <- getOutcomeTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> [1] "-- Total time for extarcting outcome table: 0.327195882797241 secs"
+#> [1] "-- Total time for extarcting outcome table: 0.214258193969727 secs"
 ```

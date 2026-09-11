@@ -92,7 +92,7 @@ plotCmEstimates(
 )
 #> refline_col will be deprecated, use refline_gp instead.
 #> footnote_col will be deprecated, use footnote_gp instead.
-#> $`Celecoxib - first event with 365 prior obs first event with 365 prior obs-GI bleed-NA`
+#> $`Celecoxib - first event with 365 prior obs first event with 365 prior obs-GI bleed-none`
 
 #> 
 ```

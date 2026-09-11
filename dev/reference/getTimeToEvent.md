@@ -145,5 +145,6 @@ tte <- getTimeToEvent(
 connectionHandler = connectionHandler, 
 schema = 'main'
 )
+#> Closing database connection
  
 ```
