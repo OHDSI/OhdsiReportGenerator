@@ -73,29 +73,31 @@ for(i in 1:length(params$outcomeIds)){
 if(!is.null(caseSettings) && nrow(caseSettings) > 0){
   for(j in 1:nrow(caseSettings)){
     
-    res <- OhdsiReportGenerator::getBinaryCaseSeries(
-      connectionHandler = connectionHandler, 
-      schema = params$schema, 
-      characterizationCaseId = caseSettings$characterizationCaseId[j], 
-      conceptIds = unique(conceptsInOutcome),
-      minVal = 0.01
-    )
+    if(caseSettings$characterizationCaseId[j] != 0){
+      res <- OhdsiReportGenerator::getBinaryCaseSeries(
+        connectionHandler = connectionHandler, 
+        schema = params$schema, 
+        characterizationCaseId = caseSettings$characterizationCaseId[j], 
+        conceptIds = unique(conceptsInOutcome),
+        minVal = 0.01
+      )
 
         if(!is.null(res) && nrow(res) > 0){
  
     # make the covariateName nicer
     res <- OhdsiReportGenerator::formatBinaryCovariateName(res)
     
-    counts <- OhdsiReportGenerator::getCaseCounts(
-      connectionHandler = connectionHandler, 
-      schema = params$schema, 
-      characterizationCaseIds = caseSettings$characterizationCaseId[j], 
-      outcomeIds = params$outcomeIds[i] 
-    ) 
-    counts <- counts %>%
-      dplyr::select("databaseName","characterizationCaseId", "personCount") %>%
-      dplyr::rename(nPeople = "personCount")
-    
+    # add aggregate across databases
+      counts <- OhdsiReportGenerator::getCaseCounts(
+          connectionHandler = connectionHandler, 
+          schema = params$schema, 
+          characterizationCaseIds = caseSettings$characterizationCaseId[j], 
+          outcomeIds = params$outcomeIds[i] 
+        ) 
+      counts <- counts %>%
+        dplyr::select("databaseName","characterizationCaseId", "personCount") %>%
+        dplyr::rename(nPeople = "personCount")
+      
     index <- res %>% 
       dplyr::select("databaseName", "characterizationCaseId",
                     "covariateName", 
@@ -111,9 +113,10 @@ if(!is.null(caseSettings) && nrow(caseSettings) > 0){
       dplyr::mutate(
         databaseName = 'all'
       )
-    
+      
     # add the combined that will be used to order table
-    index <- dplyr::bind_rows(index, aggreggateIndex)
+    index <- dplyr::bind_rows(index, aggreggateIndex)  
+    
 
     targetFriendlyName <- cohortDefinitions$friendlyName[
       cohortDefinitions$cohortDefinitionId == caseSettings$targetId[j]
@@ -212,8 +215,10 @@ print(htmltools::tagList(
 
 cat('\n\n:::\n\n')
 
-  
     } # if res has results
+      
+  } # newer char
+
   
   }
 } # if > 0 rows
