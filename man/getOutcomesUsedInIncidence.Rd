@@ -9,6 +9,7 @@ getOutcomesUsedInIncidence(
   schema,
   ciTablePrefix = "ci_",
   cgTablePrefix = "cg_",
+  characterizationTargetId = NULL,
   targetId = NULL,
   parentId = NULL
 )
@@ -21,6 +22,8 @@ getOutcomesUsedInIncidence(
 \item{ciTablePrefix}{The prefix used for the cohort incidence results tables}
 
 \item{cgTablePrefix}{The prefix used for the cohort generator results tables}
+
+\item{characterizationTargetId}{The characterization identifier for the target}
 
 \item{targetId}{An integer corresponding to the target cohort ID}
 

@@ -9,6 +9,7 @@ getIncidenceTargetSettings(
   schema,
   ciTablePrefix = "ci_",
   cgTablePrefix = "cg_",
+  characterizationTargetIds = NULL,
   targetIds = NULL
 )
 }
@@ -20,6 +21,8 @@ getIncidenceTargetSettings(
 \item{ciTablePrefix}{The prefix used for the cohort incidence results tables}
 
 \item{cgTablePrefix}{The prefix used for the cohort generator results tables}
+
+\item{characterizationTargetIds}{optional vector of characterizationTargetIds to restrict to}
 
 \item{targetIds}{optional vector of targetIds to restrict to}
 }

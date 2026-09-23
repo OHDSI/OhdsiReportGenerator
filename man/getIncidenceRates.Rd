@@ -10,6 +10,7 @@ getIncidenceRates(
   ciTablePrefix = "ci_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
+  characterizationTargetIds = NULL,
   targetIds = NULL,
   parentIds = NULL,
   outcomeIds = NULL
@@ -25,6 +26,8 @@ getIncidenceRates(
 \item{cgTablePrefix}{The prefix used for the cohort generator results tables}
 
 \item{databaseTable}{The name of the table with the database details (default 'database_meta_data')}
+
+\item{characterizationTargetIds}{The characterization identifier for the target}
 
 \item{targetIds}{A vector of integers corresponding to the target cohort IDs}
 

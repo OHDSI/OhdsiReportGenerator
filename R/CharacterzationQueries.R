@@ -49,29 +49,18 @@
     schema,
     ciTablePrefix = 'ci_'
 ){
-  version <- 0 
+  version <- paste0(ciTablePrefix,0) 
   
-  tryCatch(
-    {
-      sql <- "SELECT version_number from @schema.@ci_table_prefixpackage_version;"
-      
-      pkversion <- connectionHandler$queryDb(
-        sql = sql,
-        schema = schema,
-        ci_table_prefix = ciTablePrefix
-      ) %>%
-        dplyr::pull(.data$versionNumber) %>%
-        dplyr::first()
-      
-      majorVersion = strsplit(x = pkversion, split = '\\.')[[1]][1]
-      minorVersion = strsplit(x = pkversion, split = '\\.')[[1]][2]
-      
-    },
-    error = function(e) {
-      # Do nothing - most likely the migration table does not exist so assume
-      # v0
-    }
-  )
+  # check whether results are in char
+  if(ciTablePrefix == 'c_'){
+
+    cVersion <- .getCVersion(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cTablePrefix = ciTablePrefix
+    )
+    version <- paste0('c_',cVersion)
+  }
   
   return(version)
 }
@@ -209,6 +198,7 @@ getCharacterizationTargetSettings <- function(
 #' @template schema
 #' @template ciTablePrefix
 #' @template cgTablePrefix
+#' @param characterizationTargetIds optional vector of characterizationTargetIds to restrict to
 #' @param targetIds optional vector of targetIds to restrict to
 #'
 #' @family Characterization
@@ -233,11 +223,18 @@ getIncidenceTargetSettings <- function(
     schema,
     ciTablePrefix = 'ci_',
     cgTablePrefix = 'cg_',
+    characterizationTargetIds = NULL,
     targetIds = NULL
 ){
   
+  ciVersion <- .getCIVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    ciTablePrefix = ciTablePrefix
+  )
+  
   sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getIncidenceTargetSettings.sql"),
+    paste0("sql/sql_server/characterization/getIncidenceTargetSettingsV",ciVersion,".sql"),
     package = "OhdsiReportGenerator",
     mustWork = TRUE
   ))
@@ -247,6 +244,8 @@ getIncidenceTargetSettings <- function(
     schema = schema,
     cg_table_prefix = cgTablePrefix,
     ci_table_prefix = ciTablePrefix,
+    use_characterization_target = !is.null(characterizationTargetIds),
+    characterization_target_id = paste0(characterizationTargetIds, collapse = ','),
     use_target = !is.null(targetIds),
     target_id = paste0(targetIds, collapse = ',')
   )}, error = function(e){warning(e); return(NULL)})
@@ -986,9 +985,10 @@ getTargetsUsedInIncidence <- function(
 ){
   
   ciVersion <- .getCIVersion(
-      connectionHandler = connectionHandler,
-      ciTablePrefix = ciTablePrefix
-      )
+    connectionHandler = connectionHandler,
+    schema = schema,
+    ciTablePrefix = ciTablePrefix
+  )
   
   sql <- SqlRender::readSql(system.file(
     paste0("sql/sql_server/characterization/getIncidenceTargetsV", ciVersion, ".sql"),
@@ -1022,6 +1022,7 @@ getTargetsUsedInIncidence <- function(
 #' @template schema
 #' @template ciTablePrefix
 #' @template cgTablePrefix
+#' @param characterizationTargetId The characterization identifier for the target
 #' @template targetId
 #' @param parentId the parent target cohort Id to extract outcomes for 
 #' @family Characterization
@@ -1046,6 +1047,7 @@ getOutcomesUsedInIncidence <- function(
     schema,
     ciTablePrefix = 'ci_',
     cgTablePrefix = 'cg_',
+    characterizationTargetId = NULL,
     targetId = NULL,
     parentId = NULL
 ){
@@ -1057,6 +1059,7 @@ getOutcomesUsedInIncidence <- function(
   
   ciVersion <- .getCIVersion(
     connectionHandler = connectionHandler,
+    schema = schema,
     ciTablePrefix = ciTablePrefix
   )
   
@@ -1071,6 +1074,8 @@ getOutcomesUsedInIncidence <- function(
     schema = schema,
     cg_table_prefix = cgTablePrefix,
     ci_table_prefix = ciTablePrefix,
+    use_characterization_target = !is.null(characterizationTargetId),
+    characterization_target_id = paste0(characterizationTargetId, collapse = ','),
     use_target = !is.null(targetId),
     target_id = paste0(targetId, collapse = ','),
     use_parent = !is.null(parentId),
@@ -1098,6 +1103,7 @@ getOutcomesUsedInIncidence <- function(
 #' @template ciTablePrefix
 #' @template cgTablePrefix
 #' @template databaseTable
+#' @param characterizationTargetIds The characterization identifier for the target
 #' @template targetIds
 #' @param parentIds The parent cohort ids to restrict to
 #' @template outcomeIds
@@ -1151,6 +1157,7 @@ getIncidenceRates <- function(
     ciTablePrefix = 'ci_',
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
+    characterizationTargetIds = NULL,
     targetIds = NULL,
     parentIds = NULL,
     outcomeIds = NULL
@@ -1158,6 +1165,7 @@ getIncidenceRates <- function(
   
   ciVersion <- .getCIVersion(
     connectionHandler = connectionHandler,
+    schema = schema,
     ciTablePrefix = ciTablePrefix
   )
   
@@ -1172,6 +1180,8 @@ getIncidenceRates <- function(
     schema = schema,
     ci_table_prefix = ciTablePrefix,
     cg_table_prefix = cgTablePrefix,
+    use_characterization_target = !is.null(characterizationTargetIds),
+    characterization_target_id = paste0(characterizationTargetIds, collapse = ','),
     target_id = paste0(targetIds, collapse = ','),
     use_target = !is.null(targetIds),
     parent_id = paste0(parentIds, collapse = ','),
