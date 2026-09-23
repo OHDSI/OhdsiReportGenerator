@@ -10,6 +10,7 @@ getOutcomesUsedInIncidence(
   schema,
   ciTablePrefix = "ci_",
   cgTablePrefix = "cg_",
+  characterizationTargetId = NULL,
   targetId = NULL,
   parentId = NULL
 )
@@ -34,6 +35,10 @@ getOutcomesUsedInIncidence(
 - cgTablePrefix:
 
   The prefix used for the cohort generator results tables
+
+- characterizationTargetId:
+
+  The characterization identifier for the target
 
 - targetId:
 
@@ -94,4 +99,6 @@ outcomes <- getOutcomesUsedInIncidence(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
+#> Warning: Parameter 'use_characterization_target' not found in SQL
+#> Warning: Parameter 'characterization_target_id' not found in SQL
 ```

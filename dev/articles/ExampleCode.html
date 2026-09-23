@@ -60,7 +60,7 @@
                         <h4 data-toc-skip class="author">Jenna Reps,
 Anthony Sena</h4>
             
-            <h4 data-toc-skip class="date">2026-09-14</h4>
+            <h4 data-toc-skip class="date">2026-09-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/OHDSI/OhdsiReportGenerator/blob/develop/vignettes/ExampleCode.Rmd" class="external-link"><code>vignettes/ExampleCode.Rmd</code></a></small>
       <div class="d-none name"><code>ExampleCode.Rmd</code></div>
@@ -807,9 +807,11 @@ all ages, genders and start years):</p>
 <span>    connectionHandler <span class="op">=</span> <span class="va">ConnectionHandler</span>,</span>
 <span>    schema <span class="op">=</span> <span class="st">'main'</span>, </span>
 <span>    targetIds <span class="op">=</span> <span class="fl">1</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning: Parameter 'use_characterization_target' not found in SQL</span></span></code></pre>
+<pre><code><span><span class="co">## Warning: Parameter 'characterization_target_id' not found in SQL</span></span></code></pre>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="va">ir</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
 <span>    <span class="va">subgroupName</span> <span class="op">==</span> <span class="st">'All'</span> <span class="op">&amp;</span></span>
 <span>    <span class="va">ageGroupName</span> <span class="op">==</span> <span class="st">'Any'</span> <span class="op">&amp;</span> </span>
@@ -940,7 +942,7 @@ features and the occurrence of the outcome during a time-at-risk). The
 risk-factor functions now use characterization identifiers (for example
 <code>characterizationCaseId</code>) rather than only
 <code>targetId</code>/<code>outcomeId</code>:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">caseSettings</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCharacterizationCaseSettings.html">getCharacterizationCaseSettings</a></span><span class="op">(</span></span>
 <span>  connectionHandler <span class="op">=</span> <span class="va">ConnectionHandler</span>,</span>
 <span>  schema <span class="op">=</span> <span class="st">'main'</span>,</span>
@@ -963,7 +965,7 @@ risk-factor functions now use characterization identifiers (for example
 <pre><code><span><span class="co">## Warning: Parameter 'start_anchor' not found in SQL</span></span></code></pre>
 <pre><code><span><span class="co">## Warning: Parameter 'use_end_anchor' not found in SQL</span></span></code></pre>
 <pre><code><span><span class="co">## Warning: Parameter 'end_anchor' not found in SQL</span></span></code></pre>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="va">rf</span>, </span>
 <span>  caption <span class="op">=</span> <span class="st">'Example risk factors for binary features results.'</span></span>
@@ -1034,7 +1036,7 @@ risk-factor functions now use characterization identifiers (for example
 </table>
 <p>and <code>getContinuousRiskFactors</code> for the continuous
 features:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getContinuousRiskFactors.html">getContinuousRiskFactors</a></span><span class="op">(</span></span>
 <span>    connectionHandler <span class="op">=</span> <span class="va">ConnectionHandler</span>,</span>
 <span>    schema <span class="op">=</span> <span class="st">'main'</span>, </span>
@@ -1147,7 +1149,7 @@ features:</p>
 </h3>
 <p>The model designs used to develop prediction models in an analysis
 can be extracted using <code>getPredictionModelDesigns</code>:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">modelDesigns</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getPredictionModelDesigns.html">getPredictionModelDesigns</a></span><span class="op">(</span></span>
 <span>    connectionHandler <span class="op">=</span> <span class="va">ConnectionHandler</span>,</span>
 <span>    schema <span class="op">=</span> <span class="st">'main'</span>, </span>
@@ -1201,7 +1203,7 @@ with 365 prior obs</td>
 </table>
 <p>Once you know the modelDesignId of interest, you can then extract the
 model performance:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">perform</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getFullPredictionPerformances.html">getFullPredictionPerformances</a></span><span class="op">(</span></span>
 <span>    connectionHandler <span class="op">=</span> <span class="va">ConnectionHandler</span>,</span>
 <span>    schema <span class="op">=</span> <span class="st">'main'</span>, </span>
@@ -1465,7 +1467,7 @@ with 365 prior obs</td>
 </table>
 <p>As well as the top predictors, in this case we will return the top
 5:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getPredictionTopPredictors.html">getPredictionTopPredictors</a></span><span class="op">(</span></span>
 <span>    connectionHandler <span class="op">=</span> <span class="va">ConnectionHandler</span>,</span>
 <span>    schema <span class="op">=</span> <span class="st">'main'</span>, </span>
@@ -1647,7 +1649,7 @@ day -30 through 0 days relative to index: Polyp of colon</td>
 </tbody>
 </table>
 <p>You can also select certain results such as the attrition:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">attrition</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getPredictionPerformanceTable.html">getPredictionPerformanceTable</a></span><span class="op">(</span></span>
 <span>    connectionHandler <span class="op">=</span> <span class="va">ConnectionHandler</span>,</span>
 <span>    schema <span class="op">=</span> <span class="st">'main'</span>, </span>
@@ -1769,7 +1771,7 @@ risk (if any)</td>
 series results and make nice plots.</p>
 <p>To extract all the cohort method estimations for target id 1002 and
 outcome 3:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cmEst</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCMEstimation.html">getCMEstimation</a></span><span class="op">(</span></span>
 <span>    connectionHandler <span class="op">=</span> <span class="va">ConnectionHandler</span>,</span>
 <span>    schema <span class="op">=</span> <span class="st">'main'</span>, </span>
@@ -1917,7 +1919,7 @@ with 365 prior obs</td>
 </table>
 <p>You can also extract any meta-analysis estimate for cohort
 method:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cmMe</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCmMetaEstimation.html">getCmMetaEstimation</a></span><span class="op">(</span></span>
 <span>    connectionHandler <span class="op">=</span> <span class="va">ConnectionHandler</span>,</span>
 <span>    schema <span class="op">=</span> <span class="st">'main'</span></span>
@@ -2001,7 +2003,7 @@ results.</caption>
 <tbody></tbody>
 </table>
 <p>and you can create a nice plot to show the results:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotCmEstimates.html">plotCmEstimates</a></span><span class="op">(</span></span>
 <span>  cmData <span class="op">=</span> <span class="va">cmEst</span>, </span>
 <span>  cmMeta <span class="op">=</span> <span class="cn">NULL</span>,</span>

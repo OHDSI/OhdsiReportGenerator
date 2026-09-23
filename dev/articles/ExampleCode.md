@@ -220,6 +220,13 @@ ir <- getIncidenceRates(
     schema = 'main', 
     targetIds = 1
 )
+```
+
+    ## Warning: Parameter 'use_characterization_target' not found in SQL
+
+    ## Warning: Parameter 'characterization_target_id' not found in SQL
+
+``` r
 
 knitr::kable(
   x = ir %>% dplyr::filter(

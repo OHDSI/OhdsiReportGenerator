@@ -170,5 +170,7 @@ outcomeTable <- getOutcomeTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "-- Total time for extarcting outcome table: 0.204315900802612 secs"
+#> Warning: Parameter 'use_characterization_target' not found in SQL
+#> Warning: Parameter 'characterization_target_id' not found in SQL
+#> [1] "-- Total time for extarcting outcome table: 0.223268747329712 secs"
 ```

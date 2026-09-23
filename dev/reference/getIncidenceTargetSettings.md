@@ -10,6 +10,7 @@ getIncidenceTargetSettings(
   schema,
   ciTablePrefix = "ci_",
   cgTablePrefix = "cg_",
+  characterizationTargetIds = NULL,
   targetIds = NULL
 )
 ```
@@ -33,6 +34,10 @@ getIncidenceTargetSettings(
 - cgTablePrefix:
 
   The prefix used for the cohort generator results tables
+
+- characterizationTargetIds:
+
+  optional vector of characterizationTargetIds to restrict to
 
 - targetIds:
 
@@ -90,4 +95,6 @@ targetCohorts <- getIncidenceTargetSettings(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
+#> Warning: Parameter 'use_characterization_target' not found in SQL
+#> Warning: Parameter 'characterization_target_id' not found in SQL
 ```
