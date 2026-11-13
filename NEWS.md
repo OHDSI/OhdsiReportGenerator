@@ -1,6 +1,9 @@
 OhdsiReportGenerator v2.3.2
 ======================
 - made an edit to v3 characterization risk factor SQL to let you filter by characterization_case_id
+- cleaned the full report code 
+- made edits for incidence now being in characterization or cohort incidence (the code uses the incidence_prefix to figure it out)
+- added aggregate risk factors functions that summarizes risk factors across databases 
 
 OhdsiReportGenerator v2.3.1
 ======================
