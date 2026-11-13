@@ -39,7 +39,7 @@ Other helper: [`addTarColumn()`](addTarColumn.md),
 formatBinaryCovariateName(data.frame(
 covariateName = c("fdfgfgf: dgdgff","made up test")
 ))
-#>       covariateName
-#> 1            dgdgff
-#> 2 Unknown covariate
+#>   covariateName
+#> 1        dgdgff
+#> 2  made up test
 ```

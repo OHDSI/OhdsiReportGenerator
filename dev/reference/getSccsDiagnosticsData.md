@@ -180,5 +180,4 @@ sccsDiag <- getSccsDiagnosticsData(
   targetIds = 1,
   outcomeIds = 3
 )
-#> Closing database connection
 ```

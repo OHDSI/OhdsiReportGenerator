@@ -506,6 +506,14 @@ plotCmEstimates(
 
     ## footnote_col will be deprecated, use footnote_gp instead.
 
+    ## x_trans, xlim, vert_line, ticks_at will be deprecated, use set_xaxis() instead.
+
+    ## arrow_lab, footnote will be deprecated, use set_labs() instead.
+
+    ## theme will be deprecated, use style of forest() instead.
+
+    ## Unknown arguments ignored: `vert_line_lty`, `vert_line_col`. They are not used by `fn_ci`, `fn_summary` or `index_args`, see ?forest.
+
     ## $`Example Target-GI bleed-none`
 
 ![](ExampleCode_files/figure-html/unnamed-chunk-16-1.png)

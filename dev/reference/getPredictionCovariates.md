@@ -88,5 +88,4 @@ covs <- getPredictionCovariates(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> Closing database connection
 ```

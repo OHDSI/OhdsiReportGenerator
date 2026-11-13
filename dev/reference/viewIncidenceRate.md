@@ -112,16 +112,17 @@ incidenceData <- getIncidenceRates(
   schema = schema,  
   analysisIds = 1
  )
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
 
 viewIncidenceRate(
   incidenceData = incidenceData,
   ageData = ageData,
   genderData = genderData
   )
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
 
 
   
