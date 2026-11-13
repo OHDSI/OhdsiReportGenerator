@@ -29,8 +29,10 @@ Create a friendly single tar column
 
 Other helper:
 [`formatBinaryCovariateName()`](formatBinaryCovariateName.md),
+[`formatTargetPopulation()`](formatTargetPopulation.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
 [`getOutcomeTable()`](getOutcomeTable.md),
+[`getTarText()`](getTarText.md),
 [`getTargetTable()`](getTargetTable.md), [`kableDark()`](kableDark.md),
 [`removeSpaces()`](removeSpaces.md)
 

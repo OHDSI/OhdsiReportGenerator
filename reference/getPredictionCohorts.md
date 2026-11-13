@@ -79,4 +79,5 @@ predCohorts <- getPredictionCohorts(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
+#> Closing database connection
 ```

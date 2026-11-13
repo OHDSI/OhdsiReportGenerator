@@ -151,22 +151,24 @@ Specify the connectionHandler, the schema and the table prefixes
 
 Other helper: [`addTarColumn()`](addTarColumn.md),
 [`formatBinaryCovariateName()`](formatBinaryCovariateName.md),
+[`formatTargetPopulation()`](formatTargetPopulation.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
 [`getOutcomeTable()`](getOutcomeTable.md),
-[`kableDark()`](kableDark.md), [`removeSpaces()`](removeSpaces.md)
+[`getTarText()`](getTarText.md), [`kableDark()`](kableDark.md),
+[`removeSpaces()`](removeSpaces.md)
 
 ## Examples
 
 ``` r
 conDet <- getExampleConnectionDetails()
-#> Closing database connection
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#> Closing database connection
 #> Connecting using SQLite driver
 
 targetTable <- getTargetTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "-- Total time for extarcting target table: 0.200499057769775 secs"
+#> [1] "-- Total time for extarcting target table: 0.213833093643188 secs"
 ```

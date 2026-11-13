@@ -108,6 +108,8 @@ IDs
 Other Characterization:
 [`characterizationCompareBinary()`](characterizationCompareBinary.md),
 [`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
+[`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md),
+[`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
 [`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
 [`getCaseCounts()`](getCaseCounts.md),

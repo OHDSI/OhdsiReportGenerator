@@ -12,6 +12,7 @@ getIncidenceRates(
   ciTablePrefix = "ci_",
   cgTablePrefix = "cg_",
   databaseTable = "database_meta_data",
+  characterizationTargetIds = NULL,
   targetIds = NULL,
   parentIds = NULL,
   outcomeIds = NULL
@@ -42,6 +43,10 @@ getIncidenceRates(
 
   The name of the table with the database details (default
   'database_meta_data')
+
+- characterizationTargetIds:
+
+  The characterization identifier for the target
 
 - targetIds:
 
@@ -121,6 +126,8 @@ IDs
 Other Characterization:
 [`characterizationCompareBinary()`](characterizationCompareBinary.md),
 [`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
+[`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md),
+[`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md),
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
 [`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
@@ -157,4 +164,6 @@ ir <- getIncidenceRates(
 connectionHandler = connectionHandler, 
 schema = 'main'
 )
+#> Warning: Parameter 'use_characterization_target' not found in SQL
+#> Warning: Parameter 'characterization_target_id' not found in SQL
 ```

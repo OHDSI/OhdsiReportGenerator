@@ -129,6 +129,10 @@ cohort incidence analyses and plot results.
 - [`characterizationCompareContinuous()`](characterizationCompareContinuous.md)
   : A function to extract cohort aggregate continuous feature
   characterization results
+- [`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md)
+  : A function to extract binary risk factor across databases
+- [`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md)
+  : A function to extract risk factors across add databases in results
 - [`getBinaryCaseSeries()`](getBinaryCaseSeries.md) : A function to
   extract case series characterization results
 - [`getBinaryRiskFactors()`](getBinaryRiskFactors.md) : A function to
@@ -290,10 +294,14 @@ These functions are used to help result extraction.
 - [`addTarColumn()`](addTarColumn.md) : addTarColumn
 - [`formatBinaryCovariateName()`](formatBinaryCovariateName.md) :
   formatBinaryCovariateName
+- [`formatTargetPopulation()`](formatTargetPopulation.md) : output a
+  string summarizing the target population
 - [`getExampleConnectionDetails()`](getExampleConnectionDetails.md) :
   create a connection detail for an example OHDSI results database
 - [`getOutcomeTable()`](getOutcomeTable.md) : Extract the outcome
   cohorts and where they are used in the analyses.
+- [`getTarText()`](getTarText.md) : output a string summarizing the time
+  at risk
 - [`getTargetTable()`](getTargetTable.md) : Extract the target cohorts
   and where they are used in the analyses.
 - [`kableDark()`](kableDark.md) : output a nicely formatted html table

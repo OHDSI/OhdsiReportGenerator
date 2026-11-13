@@ -220,6 +220,13 @@ ir <- getIncidenceRates(
     schema = 'main', 
     targetIds = 1
 )
+```
+
+    ## Warning: Parameter 'use_characterization_target' not found in SQL
+
+    ## Warning: Parameter 'characterization_target_id' not found in SQL
+
+``` r
 
 knitr::kable(
   x = ir %>% dplyr::filter(
@@ -455,8 +462,8 @@ knitr::kable(
 
 | databaseName | databaseId | analysisId | description | targetComparatorId | targetName | targetId | comparatorName | comparatorId | indicationName | indicationId | outcomeName | outcomeId | calibratedRr | calibratedCi95Lb | calibratedCi95Ub | calibratedP | calibratedOneSidedP | calibratedLogRr | calibratedSeLogRr | targetSubjects | comparatorSubjects | targetDays | comparatorDays | targetOutcomes | comparatorOutcomes | unblind | unblindForEvidenceSynthesis | targetEstimator |
 |:---|:---|---:|:---|---:|:---|---:|:---|---:|:---|---:|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|:---|
-| Synthea | 388020256 | 1 | No matching, simple outcome model | -927689127 | Celecoxib - first event with 365 prior obs first event with 365 prior obs | 1002 | Diclofenac - first event with 365 prior obs first event with 365 prior obs | 2002 | NA | 0 | GI bleed | 3 | 1.342495 | 1.097514 | 1.653167 | 0.0048267 | 0.0024133 | 0.29453 | 0.1045033 | 1793 | 830 | 539527 | 261005 | 353 | 124 | 1 | 1 | ate |
-| Synthea | 388020256 | 2 | Matching on ps and covariates, simple outcomeModel | -927689127 | Celecoxib - first event with 365 prior obs first event with 365 prior obs | 1002 | Diclofenac - first event with 365 prior obs first event with 365 prior obs | 2002 | NA | 0 | GI bleed | 3 | NA | NA | NA | NA | NA | NA | NA | 830 | 830 | 267053 | 261005 | 108 | 124 | 0 | 0 | att |
+| Synthea | 388020256 | 1 | No matching, simple outcome model | -927689127 | Celecoxib - first event with 365 prior obs first event with 365 prior obs | 1002 | Diclofenac - first event with 365 prior obs first event with 365 prior obs | 2002 | none | 0 | GI bleed | 3 | 1.342495 | 1.097514 | 1.653167 | 0.0048267 | 0.0024133 | 0.29453 | 0.1045033 | 1793 | 830 | 539527 | 261005 | 353 | 124 | 1 | 1 | ate |
+| Synthea | 388020256 | 2 | Matching on ps and covariates, simple outcomeModel | -927689127 | Celecoxib - first event with 365 prior obs first event with 365 prior obs | 1002 | Diclofenac - first event with 365 prior obs first event with 365 prior obs | 2002 | none | 0 | GI bleed | 3 | NA | NA | NA | NA | NA | NA | NA | 830 | 830 | 267053 | 261005 | 108 | 124 | 0 | 0 | att |
 
 Example cohort method estimation results. {.table}
 
@@ -499,6 +506,14 @@ plotCmEstimates(
 
     ## footnote_col will be deprecated, use footnote_gp instead.
 
-    ## $`Example Target-GI bleed-NA`
+    ## x_trans, xlim, vert_line, ticks_at will be deprecated, use set_xaxis() instead.
+
+    ## arrow_lab, footnote will be deprecated, use set_labs() instead.
+
+    ## theme will be deprecated, use style of forest() instead.
+
+    ## Unknown arguments ignored: `vert_line_lty`, `vert_line_col`. They are not used by `fn_ci`, `fn_summary` or `index_args`, see ?forest.
+
+    ## $`Example Target-GI bleed-none`
 
 ![](ExampleCode_files/figure-html/unnamed-chunk-16-1.png)

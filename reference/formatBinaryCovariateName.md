@@ -26,8 +26,10 @@ Makes the covariateName more friendly and shorter
 ## See also
 
 Other helper: [`addTarColumn()`](addTarColumn.md),
+[`formatTargetPopulation()`](formatTargetPopulation.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
 [`getOutcomeTable()`](getOutcomeTable.md),
+[`getTarText()`](getTarText.md),
 [`getTargetTable()`](getTargetTable.md), [`kableDark()`](kableDark.md),
 [`removeSpaces()`](removeSpaces.md)
 
@@ -37,7 +39,7 @@ Other helper: [`addTarColumn()`](addTarColumn.md),
 formatBinaryCovariateName(data.frame(
 covariateName = c("fdfgfgf: dgdgff","made up test")
 ))
-#>       covariateName
-#> 1            dgdgff
-#> 2 Unknown covariate
+#>   covariateName
+#> 1        dgdgff
+#> 2  made up test
 ```

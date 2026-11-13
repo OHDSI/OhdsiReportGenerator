@@ -10,6 +10,7 @@ getOutcomesUsedInIncidence(
   schema,
   ciTablePrefix = "ci_",
   cgTablePrefix = "cg_",
+  characterizationTargetId = NULL,
   targetId = NULL,
   parentId = NULL
 )
@@ -35,6 +36,10 @@ getOutcomesUsedInIncidence(
 
   The prefix used for the cohort generator results tables
 
+- characterizationTargetId:
+
+  The characterization identifier for the target
+
 - targetId:
 
   An integer corresponding to the target cohort ID
@@ -56,6 +61,8 @@ Specify the connectionHandler, the schema and the prefixes
 Other Characterization:
 [`characterizationCompareBinary()`](characterizationCompareBinary.md),
 [`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
+[`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md),
+[`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md),
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
 [`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
@@ -92,4 +99,6 @@ outcomes <- getOutcomesUsedInIncidence(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
+#> Warning: Parameter 'use_characterization_target' not found in SQL
+#> Warning: Parameter 'characterization_target_id' not found in SQL
 ```

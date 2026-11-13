@@ -152,7 +152,9 @@ Specify the connectionHandler, the schema and the table prefixes
 
 Other helper: [`addTarColumn()`](addTarColumn.md),
 [`formatBinaryCovariateName()`](formatBinaryCovariateName.md),
+[`formatTargetPopulation()`](formatTargetPopulation.md),
 [`getExampleConnectionDetails()`](getExampleConnectionDetails.md),
+[`getTarText()`](getTarText.md),
 [`getTargetTable()`](getTargetTable.md), [`kableDark()`](kableDark.md),
 [`removeSpaces()`](removeSpaces.md)
 
@@ -168,5 +170,10 @@ outcomeTable <- getOutcomeTable(
   connectionHandler = connectionHandler, 
   schema = 'main'
 )
-#> [1] "-- Total time for extarcting outcome table: 0.211573362350464 secs"
+#> Warning: Parameter 'use_characterization_target' not found in SQL
+#> Warning: Parameter 'characterization_target_id' not found in SQL
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> [1] "-- Total time for extarcting outcome table: 0.390860795974731 secs"
 ```

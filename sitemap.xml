@@ -17,8 +17,11 @@
 <url><loc>/reference/dot-getCmVersion.html</loc></url>
 <url><loc>/reference/dot-getSccsVersion.html</loc></url>
 <url><loc>/reference/formatBinaryCovariateName.html</loc></url>
+<url><loc>/reference/formatTargetPopulation.html</loc></url>
 <url><loc>/reference/generateFullReport.html</loc></url>
 <url><loc>/reference/generateSummaryPredictionReport.html</loc></url>
+<url><loc>/reference/getAggregateBinaryRiskFactors.html</loc></url>
+<url><loc>/reference/getAggregateContinuousRiskFactors.html</loc></url>
 <url><loc>/reference/getAnalysisCohorts.html</loc></url>
 <url><loc>/reference/getBinaryCaseSeries.html</loc></url>
 <url><loc>/reference/getBinaryRiskFactors.html</loc></url>
@@ -83,6 +86,7 @@
 <url><loc>/reference/getSccsTargets.html</loc></url>
 <url><loc>/reference/getSccsTimeToEvent.html</loc></url>
 <url><loc>/reference/getSubsetText.html</loc></url>
+<url><loc>/reference/getTarText.html</loc></url>
 <url><loc>/reference/getTargetCounts.html</loc></url>
 <url><loc>/reference/getTargetTable.html</loc></url>
 <url><loc>/reference/getTargetsUsedInCharacterization.html</loc></url>

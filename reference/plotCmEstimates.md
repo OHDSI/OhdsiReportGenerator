@@ -92,7 +92,11 @@ plotCmEstimates(
 )
 #> refline_col will be deprecated, use refline_gp instead.
 #> footnote_col will be deprecated, use footnote_gp instead.
-#> $`Celecoxib - first event with 365 prior obs first event with 365 prior obs-GI bleed-NA`
+#> x_trans, xlim, vert_line, ticks_at will be deprecated, use set_xaxis() instead.
+#> arrow_lab, footnote will be deprecated, use set_labs() instead.
+#> theme will be deprecated, use style of forest() instead.
+#> Unknown arguments ignored: `vert_line_lty`, `vert_line_col`. They are not used by `fn_ci`, `fn_summary` or `index_args`, see ?forest.
+#> $`Celecoxib - first event with 365 prior obs first event with 365 prior obs-GI bleed-none`
 
 #> 
 ```

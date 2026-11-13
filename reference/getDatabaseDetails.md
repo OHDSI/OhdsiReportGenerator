@@ -78,4 +78,6 @@ ir <- getIncidenceRates(
 connectionHandler = connectionHandler, 
 schema = 'main'
 )
+#> Warning: Parameter 'use_characterization_target' not found in SQL
+#> Warning: Parameter 'characterization_target_id' not found in SQL
 ```

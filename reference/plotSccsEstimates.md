@@ -90,7 +90,7 @@ plotSccsEstimates(
 #> Warning: no non-missing arguments to max; returning -Inf
 #> refline_col will be deprecated, use refline_gp instead.
 #> footnote_col will be deprecated, use footnote_gp instead.
-#> Warning: Missing lower and/or upper limit on column2 row 3
+#> Warning: Missing lower and/or upper limit on column 2 row 3
 #> $`Celecoxib-GI bleed-NA`
 
 #> 

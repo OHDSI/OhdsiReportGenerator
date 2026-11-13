@@ -111,6 +111,8 @@ Specify the connectionHandler, the schema and the target cohort IDs
 Other Characterization:
 [`characterizationCompareBinary()`](characterizationCompareBinary.md),
 [`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
+[`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md),
+[`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md),
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
 [`getCaseCounts()`](getCaseCounts.md),

@@ -53,6 +53,8 @@ Input the incidence rate data (and optionally demographic data)
 Other Characterization:
 [`characterizationCompareBinary()`](characterizationCompareBinary.md),
 [`characterizationCompareContinuous()`](characterizationCompareContinuous.md),
+[`getAggregateBinaryRiskFactors()`](getAggregateBinaryRiskFactors.md),
+[`getAggregateContinuousRiskFactors()`](getAggregateContinuousRiskFactors.md),
 [`getBinaryCaseSeries()`](getBinaryCaseSeries.md),
 [`getBinaryRiskFactors()`](getBinaryRiskFactors.md),
 [`getBinaryTargetBaseline()`](getBinaryTargetBaseline.md),
@@ -90,6 +92,14 @@ incidenceData <- getIncidenceRates(
   connectionHandler = connectionHandler , 
   schema = schema
   )
+#> Warning: Parameter 'use_characterization_target' not found in SQL
+#> Warning: Parameter 'characterization_target_id' not found in SQL
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
+#> Closing database connection
   
   # incidence data does not have rate values to imputing them
   incidenceData$incidenceRateP100py <- 1 +
@@ -114,11 +124,6 @@ viewIncidenceRate(
   ageData = ageData,
   genderData = genderData
   )
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
-#> Closing database connection
 #> Closing database connection
 
 
