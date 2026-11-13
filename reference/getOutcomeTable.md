@@ -175,5 +175,5 @@ outcomeTable <- getOutcomeTable(
 #> Closing database connection
 #> Closing database connection
 #> Closing database connection
-#> [1] "-- Total time for extarcting outcome table: 0.333846092224121 secs"
+#> [1] "-- Total time for extarcting outcome table: 0.281730175018311 secs"
 ```

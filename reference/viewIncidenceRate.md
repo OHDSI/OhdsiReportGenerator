@@ -100,7 +100,6 @@ incidenceData <- getIncidenceRates(
 #> Closing database connection
 #> Closing database connection
 #> Closing database connection
-#> Closing database connection
   
   # incidence data does not have rate values to imputing them
   incidenceData$incidenceRateP100py <- 1 +
