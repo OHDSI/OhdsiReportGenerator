@@ -49,29 +49,18 @@
     schema,
     ciTablePrefix = 'ci_'
 ){
-  version <- 0 
+  version <- paste0(ciTablePrefix,0) 
   
-  tryCatch(
-    {
-      sql <- "SELECT version_number from @schema.@ci_table_prefixpackage_version;"
-      
-      pkversion <- connectionHandler$queryDb(
-        sql = sql,
-        schema = schema,
-        ci_table_prefix = ciTablePrefix
-      ) %>%
-        dplyr::pull(.data$versionNumber) %>%
-        dplyr::first()
-      
-      majorVersion = strsplit(x = pkversion, split = '\\.')[[1]][1]
-      minorVersion = strsplit(x = pkversion, split = '\\.')[[1]][2]
-      
-    },
-    error = function(e) {
-      # Do nothing - most likely the migration table does not exist so assume
-      # v0
-    }
-  )
+  # check whether results are in char
+  if(ciTablePrefix == 'c_'){
+
+    cVersion <- .getCVersion(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cTablePrefix = ciTablePrefix
+    )
+    version <- paste0('c_',cVersion)
+  }
   
   return(version)
 }
@@ -209,6 +198,7 @@ getCharacterizationTargetSettings <- function(
 #' @template schema
 #' @template ciTablePrefix
 #' @template cgTablePrefix
+#' @param characterizationTargetIds optional vector of characterizationTargetIds to restrict to
 #' @param targetIds optional vector of targetIds to restrict to
 #'
 #' @family Characterization
@@ -233,11 +223,18 @@ getIncidenceTargetSettings <- function(
     schema,
     ciTablePrefix = 'ci_',
     cgTablePrefix = 'cg_',
+    characterizationTargetIds = NULL,
     targetIds = NULL
 ){
   
+  ciVersion <- .getCIVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    ciTablePrefix = ciTablePrefix
+  )
+  
   sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getIncidenceTargetSettings.sql"),
+    paste0("sql/sql_server/characterization/getIncidenceTargetSettingsV",ciVersion,".sql"),
     package = "OhdsiReportGenerator",
     mustWork = TRUE
   ))
@@ -247,6 +244,8 @@ getIncidenceTargetSettings <- function(
     schema = schema,
     cg_table_prefix = cgTablePrefix,
     ci_table_prefix = ciTablePrefix,
+    use_characterization_target = !is.null(characterizationTargetIds),
+    characterization_target_id = paste0(characterizationTargetIds, collapse = ','),
     use_target = !is.null(targetIds),
     target_id = paste0(targetIds, collapse = ',')
   )}, error = function(e){warning(e); return(NULL)})
@@ -986,9 +985,10 @@ getTargetsUsedInIncidence <- function(
 ){
   
   ciVersion <- .getCIVersion(
-      connectionHandler = connectionHandler,
-      ciTablePrefix = ciTablePrefix
-      )
+    connectionHandler = connectionHandler,
+    schema = schema,
+    ciTablePrefix = ciTablePrefix
+  )
   
   sql <- SqlRender::readSql(system.file(
     paste0("sql/sql_server/characterization/getIncidenceTargetsV", ciVersion, ".sql"),
@@ -1022,6 +1022,7 @@ getTargetsUsedInIncidence <- function(
 #' @template schema
 #' @template ciTablePrefix
 #' @template cgTablePrefix
+#' @param characterizationTargetId The characterization identifier for the target
 #' @template targetId
 #' @param parentId the parent target cohort Id to extract outcomes for 
 #' @family Characterization
@@ -1046,6 +1047,7 @@ getOutcomesUsedInIncidence <- function(
     schema,
     ciTablePrefix = 'ci_',
     cgTablePrefix = 'cg_',
+    characterizationTargetId = NULL,
     targetId = NULL,
     parentId = NULL
 ){
@@ -1057,6 +1059,7 @@ getOutcomesUsedInIncidence <- function(
   
   ciVersion <- .getCIVersion(
     connectionHandler = connectionHandler,
+    schema = schema,
     ciTablePrefix = ciTablePrefix
   )
   
@@ -1071,6 +1074,8 @@ getOutcomesUsedInIncidence <- function(
     schema = schema,
     cg_table_prefix = cgTablePrefix,
     ci_table_prefix = ciTablePrefix,
+    use_characterization_target = !is.null(characterizationTargetId),
+    characterization_target_id = paste0(characterizationTargetId, collapse = ','),
     use_target = !is.null(targetId),
     target_id = paste0(targetId, collapse = ','),
     use_parent = !is.null(parentId),
@@ -1098,6 +1103,7 @@ getOutcomesUsedInIncidence <- function(
 #' @template ciTablePrefix
 #' @template cgTablePrefix
 #' @template databaseTable
+#' @param characterizationTargetIds The characterization identifier for the target
 #' @template targetIds
 #' @param parentIds The parent cohort ids to restrict to
 #' @template outcomeIds
@@ -1151,6 +1157,7 @@ getIncidenceRates <- function(
     ciTablePrefix = 'ci_',
     cgTablePrefix = 'cg_',
     databaseTable = 'database_meta_data',
+    characterizationTargetIds = NULL,
     targetIds = NULL,
     parentIds = NULL,
     outcomeIds = NULL
@@ -1158,6 +1165,7 @@ getIncidenceRates <- function(
   
   ciVersion <- .getCIVersion(
     connectionHandler = connectionHandler,
+    schema = schema,
     ciTablePrefix = ciTablePrefix
   )
   
@@ -1172,6 +1180,8 @@ getIncidenceRates <- function(
     schema = schema,
     ci_table_prefix = ciTablePrefix,
     cg_table_prefix = cgTablePrefix,
+    use_characterization_target = !is.null(characterizationTargetIds),
+    characterization_target_id = paste0(characterizationTargetIds, collapse = ','),
     target_id = paste0(targetIds, collapse = ','),
     use_target = !is.null(targetIds),
     parent_id = paste0(parentIds, collapse = ','),
@@ -2050,6 +2060,253 @@ getContinuousRiskFactors <- function(
       use_outcome_washout = !is.null(outcomeWashout),
       outcome_washout = outcomeWashout
     )
+  
+  
+  return(result)
+}
+
+
+
+# get risk factors aggregated across all databases
+
+#' A function to extract binary risk factor across databases
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target/outcome cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @param characterizationTargetId the characterization target id
+#' @param characterizationCaseId the characterization case id
+#' @template outcomeId
+#' @param outcomeWashout (optional) restrict to outcome washout
+#' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
+#' @param riskWindowStart (optional) A vector of time-at-risk risk window starts to restrict to
+#' @param riskWindowEnd (optional) A vector of time-at-risk risk window ends to restrict to
+#' @param startAnchor (optional) A vector of time-at-risk start anchors to restrict to
+#' @param endAnchor (optional) A vector of time-at-risk end anchors to restrict to
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the aggregate binary risk factors 
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' rf <- getAggregateBinaryRiskFactors(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   characterizationTargetId = 1, 
+#'   outcomeId = 3
+#' )
+#' 
+getAggregateBinaryRiskFactors <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    characterizationTargetId = NULL,
+    characterizationCaseId = NULL,
+    outcomeId = NULL,
+    outcomeWashout = NULL,
+    analysisIds = c(3), # TODO enable this to be NULL?
+    riskWindowStart = NULL,
+    riskWindowEnd = NULL,
+    startAnchor = NULL,
+    endAnchor = NULL
+){
+  
+  if(is.null(characterizationCaseId)){
+    if(is.null(characterizationTargetId)){
+      stop('characterizationTargetId must be entered')
+    }
+    if(is.null(outcomeId)){
+      stop('outcomeId must be entered')
+    }
+    if(length(characterizationTargetId) > 1){
+      stop('Must be single characterizationTargetId')
+    }
+    if(length(outcomeId) > 1){
+      stop('Must be single outcomeId')
+    } } else{
+      if(length(characterizationCaseId) > 1){
+        stop('Must be single characterizationCaseId')
+      }
+    }
+  
+  
+  cVersion <- .getCVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = cTablePrefix
+  )
+  
+  if(cVersion != '4_0_0'){
+    warning('Function only available for characterization results version 4.0.0 or higher')
+    return(NULL)
+  } 
+  
+  
+  sql <- SqlRender::readSql(system.file(
+    paste0("sql/sql_server/characterization/getAggregateBinaryRiskFactorsV", cVersion, ".sql"),
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
+  
+  # restrict by restrictToFirstInNDays, minPriorObseration, outcomeWashoutDays and TAR?
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    characterization_target_id = paste0(characterizationTargetId, collapse = ','),
+    use_characterization_target = !is.null(characterizationTargetId),
+    characterization_case_id = paste0(characterizationCaseId, collapse = ','),
+    use_characterization_case = !is.null(characterizationCaseId),
+    outcome_id = paste0(outcomeId, collapse = ','),
+    use_outcome = !is.null(outcomeId),
+    c_table_prefix = cTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    use_analysis = !is.null(analysisIds),
+    analysis_ids = paste0(analysisIds, collapse = ','),
+    
+    use_risk_window_start = !is.null(riskWindowStart),
+    risk_window_start = riskWindowStart,
+    use_risk_window_end = !is.null(riskWindowEnd),
+    risk_window_end = riskWindowEnd,
+    use_start_anchor = !is.null(startAnchor),
+    start_anchor = startAnchor,
+    use_end_anchor = !is.null(endAnchor),
+    end_anchor = endAnchor,
+    
+    use_outcome_washout = !is.null(outcomeWashout),
+    outcome_washout = outcomeWashout
+  )
+  
+  return(result)
+}
+
+#' A function to extract risk factors across add databases in results
+#'
+#' @details
+#' Specify the connectionHandler, the schema and the target/outcome cohort IDs
+#'
+#' @template connectionHandler
+#' @template schema
+#' @template cTablePrefix
+#' @template cgTablePrefix
+#' @template databaseTable
+#' @param characterizationTargetId The characterization target id
+#' @param characterizationCaseId The characterization case id
+#' @template outcomeId
+#' @param outcomeWashout (optional) the outcome washout to restrict to
+#' @param analysisIds The feature extraction analysis ID of interest (e.g., 201 is condition)
+#' @param riskWindowStart (optional) A vector of time-at-risk risk window starts to restrict to
+#' @param riskWindowEnd (optional) A vector of time-at-risk risk window ends to restrict to
+#' @param startAnchor (optional) A vector of time-at-risk start anchors to restrict to
+#' @param endAnchor (optional) A vector of time-at-risk end anchors to restrict to
+#'
+#' @family Characterization
+#' 
+#' @return
+#' A data.frame with the risk factors
+#'
+#' @export
+#' 
+#' @examples
+#' conDet <- getExampleConnectionDetails()
+#' 
+#' connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
+#' 
+#' rf <- getAggregateContinuousRiskFactors(
+#'   connectionHandler = connectionHandler, 
+#'   schema = 'main',
+#'   characterizationTargetId = 1, 
+#'   outcomeId = 3
+#' )
+#' 
+getAggregateContinuousRiskFactors <- function(
+    connectionHandler,
+    schema,
+    cTablePrefix = 'c_',
+    cgTablePrefix = 'cg_',
+    databaseTable = 'database_meta_data',
+    characterizationTargetId = NULL,
+    characterizationCaseId = NULL,
+    outcomeId = NULL,
+    outcomeWashout = NULL,
+    analysisIds = NULL,
+    riskWindowStart = NULL,
+    riskWindowEnd = NULL,
+    startAnchor = NULL,
+    endAnchor = NULL
+){
+  
+  if(is.null(characterizationCaseId)){
+    if(is.null(characterizationTargetId)){
+      stop('characterizationTargetId must be entered')
+    }
+    if(is.null(outcomeId)){
+      stop('outcomeId must be entered')
+    }
+    if(length(characterizationTargetId) > 1){
+      stop('Must be single characterizationTargetId')
+    }
+    if(length(outcomeId) > 1){
+      stop('Must be single outcomeId')
+    } } else{
+      if(length(characterizationCaseId) > 1){
+        stop('Must be single characterizationCaseId')
+      }
+    }
+  
+  cVersion <- .getCVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = cTablePrefix
+  )
+  
+  if(cVersion != '4_0_0'){
+    warning('Function only available for characterization results version 4.0.0 or higher')
+    return(NULL)
+  } 
+  
+  sql <- SqlRender::readSql(system.file(
+    paste0("sql/sql_server/characterization/getAggregateContRiskFactorsV", cVersion, ".sql"),
+    package = "OhdsiReportGenerator",
+    mustWork = TRUE
+  ))
+  
+  result <- connectionHandler$queryDb(
+    sql = sql,
+    schema = schema,
+    characterization_target_id = paste0(characterizationTargetId, collapse = ','),
+    use_characterization_target = !is.null(characterizationTargetId),
+    characterization_case_id = paste0(characterizationCaseId, collapse = ','),
+    use_characterization_case = !is.null(characterizationCaseId),
+    outcome_id = paste0(outcomeId, collapse = ','),
+    use_outcome = !is.null(outcomeId),
+    c_table_prefix = cTablePrefix,
+    cg_table_prefix = cgTablePrefix,
+    use_analysis = !is.null(analysisIds),
+    analysis_ids = paste0(analysisIds, collapse = ','),
+    
+    use_risk_window_start = !is.null(riskWindowStart),
+    risk_window_start = paste0(riskWindowStart, collapse = ','),
+    use_risk_window_end = !is.null(riskWindowEnd),
+    risk_window_end = paste0(riskWindowEnd, collapse = ','),
+    use_start_anchor = !is.null(startAnchor),
+    start_anchor = paste0("'",startAnchor,"'", collapse = ","),
+    use_end_anchor = !is.null(endAnchor),
+    end_anchor = paste0("'",endAnchor,"'", collapse = ","),
+    
+    use_outcome_washout = !is.null(outcomeWashout),
+    outcome_washout = outcomeWashout
+  )
   
   
   return(result)

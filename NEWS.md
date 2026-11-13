@@ -1,3 +1,11 @@
+OhdsiReportGenerator v2.3.2
+======================
+- made an edit to v3 characterization risk factor SQL to let you filter by characterization_case_id
+- cleaned the full report code 
+- made edits for incidence now being in characterization or cohort incidence (the code uses the incidence_prefix to figure it out)
+- added aggregate risk factors functions that summarizes risk factors across databases 
+- added population settings to incidence rate output when using prefix 'c_'
+
 OhdsiReportGenerator v2.3.1
 ======================
 - editing code that calls quarto to temporarily set environmental vars for cache into the render intermediate folder so it does not persist and cause a note.

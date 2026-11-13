@@ -6,7 +6,7 @@ SELECT DISTINCT dmd.cdm_source_abbreviation database_name
 	,cmds.target_id
 	,cgcd2.cohort_name comparator_name
 	,cmds.comparator_id
-	,NULL AS indication_name
+	,'none' AS indication_name
 	,0 AS indication_id
 	,cgcd3.cohort_name outcome_name
 	,cmds.outcome_id

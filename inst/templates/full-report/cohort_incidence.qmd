@@ -48,13 +48,16 @@ headings <- cohortIncidence %>%
 
 if(nrow(headings) > 0){
 for(ind in 1:nrow(headings)){
+  
+cat(paste0("\n\n### Incidence rates for ", cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == headings$outcomeId[ind]]), " during ", headings$tar[ind] ," washout ", headings$cleanWindow[ind] ,"\n\n")
+  
       
       cohortIncidenceOfInt <-  cohortIncidence %>%
         filter(.data$outcomeId == !!headings$outcomeId[ind]) %>%
         filter(.data$tar == !!headings$tar[ind]) %>%
         filter(.data$cleanWindow == !!headings$cleanWindow[ind])
       
-      boxTitle <- paste0('The incidence proportion/rate for outcome ', cohortDefinitions$friendlyName[cohortDefinitions$cohortDefinitionId == headings$outcomeId[ind]], ' occuring between ', headings$tar[ind], ' after exposure when the outcome clean window is ', headings$cleanWindow[ind] )
+      boxTitle <- paste0("Click to open the incidence proportion/rate table for all available targets")
       
 
       cat('\n\n::: {.callout-note collapse="true"}')

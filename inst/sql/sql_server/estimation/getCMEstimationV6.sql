@@ -7,7 +7,7 @@ SELECT db.cdm_source_abbreviation AS database_name
 	,tc.target_id
 	,c2.cohort_name AS comparator_name
 	,tc.comparator_id
-	,c4.cohort_name AS indication_name
+	,ISNULL(c4.cohort_name, 'none') AS indication_name
 	,ISNULL(tc.nesting_cohort_id,0) AS indication_id
 	,c3.cohort_name AS outcome_name
 	,r.outcome_id

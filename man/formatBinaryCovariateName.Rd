@@ -27,8 +27,10 @@ covariateName = c("fdfgfgf: dgdgff","made up test")
 \seealso{
 Other helper:
 \code{\link[=addTarColumn]{addTarColumn()}},
+\code{\link[=formatTargetPopulation]{formatTargetPopulation()}},
 \code{\link[=getExampleConnectionDetails]{getExampleConnectionDetails()}},
 \code{\link[=getOutcomeTable]{getOutcomeTable()}},
+\code{\link[=getTarText]{getTarText()}},
 \code{\link[=getTargetTable]{getTargetTable()}},
 \code{\link[=kableDark]{kableDark()}},
 \code{\link[=removeSpaces]{removeSpaces()}}

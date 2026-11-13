@@ -399,22 +399,26 @@ plotCmEstimates <- function (
         `Target\n    N` = ifelse(
           is.na(.data$targetSubjects),
           "",
-          format(.data$targetSubjects, big.mark = ",")
+          formatNeg(.data$targetSubjects)
+          #format(.data$targetSubjects, big.mark = ",")
         ),
         `Target\nevents` = ifelse(
           is.na(.data$targetOutcomes),
           "",
-          format(.data$targetOutcomes, big.mark = ",")
+          formatNeg(.data$targetOutcomes)
+          #format(.data$targetOutcomes, big.mark = ",")
         ),
         `Comparator\n      N` = ifelse(
           is.na(.data$comparatorSubjects),
           "",
-          format(.data$comparatorSubjects, big.mark = ",")
+          formatNeg(.data$comparatorSubjects)
+          #format(.data$comparatorSubjects, big.mark = ",")
         ),
         `Comparator\n    events` = ifelse(
           is.na(.data$comparatorOutcomes),
           "",
-          format(.data$comparatorOutcomes, big.mark = ",")
+          formatNeg(.data$comparatorOutcomes)
+          #format(.data$comparatorOutcomes, big.mark = ",")
         ),
         
         `MDRR` = dplyr::case_when(
@@ -990,22 +994,26 @@ plotSccsEstimates <- function(
         `Target\n    N` = ifelse(
           is.na(.data$covariateSubjects),
           "",
-          format(.data$covariateSubjects, big.mark = ",")
+          formatNeg(.data$covariateSubjects)
+          #format(.data$covariateSubjects, big.mark = ",")
         ),
         `Target\nevents` = ifelse(
           is.na(.data$covariateOutcomes),
           "",
-          format(.data$covariateOutcomes, big.mark = ",")
+          formatNeg(.data$covariateOutcomes)
+          #format(.data$covariateOutcomes, big.mark = ",")
         ),
         `Outcome\nSubjects` = ifelse(
           is.na(.data$outcomeSubjects),
           "",
-          format(.data$outcomeSubjects, big.mark = ",")
+          formatNeg(.data$outcomeSubjects)
+          #format(.data$outcomeSubjects, big.mark = ",")
         ),
         `Outcome\nEvents` = ifelse(
           is.na(.data$outcomeEvents),
           "",
-          format(.data$outcomeEvents, big.mark = ",")
+          formatNeg(.data$outcomeEvents)
+          #format(.data$outcomeEvents, big.mark = ",")
         ),
         
         `MDRR` = dplyr::case_when(
@@ -1199,6 +1207,20 @@ plotSccsEstimates <- function(
 
 
 
-
+# format helper
+formatNeg <- function(x){
+  
+  addLessSign <- x < 0
+  if(anyNA(addLessSign)){
+    addLessSign[is.na(addLessSign)] <- FALSE
+  }
+  x <- format(abs(x), big.mark = ",")
+  
+  if(sum(addLessSign) > 0){
+    x[addLessSign] <- paste0('<', x[addLessSign])
+  }
+  
+  return(x)
+}
 
 

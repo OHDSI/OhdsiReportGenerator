@@ -9,6 +9,7 @@ getOutcomesUsedInIncidence(
   schema,
   ciTablePrefix = "ci_",
   cgTablePrefix = "cg_",
+  characterizationTargetId = NULL,
   targetId = NULL,
   parentId = NULL
 )
@@ -21,6 +22,8 @@ getOutcomesUsedInIncidence(
 \item{ciTablePrefix}{The prefix used for the cohort incidence results tables}
 
 \item{cgTablePrefix}{The prefix used for the cohort generator results tables}
+
+\item{characterizationTargetId}{The characterization identifier for the target}
 
 \item{targetId}{An integer corresponding to the target cohort ID}
 
@@ -50,6 +53,8 @@ outcomes <- getOutcomesUsedInIncidence(
 Other Characterization:
 \code{\link[=characterizationCompareBinary]{characterizationCompareBinary()}},
 \code{\link[=characterizationCompareContinuous]{characterizationCompareContinuous()}},
+\code{\link[=getAggregateBinaryRiskFactors]{getAggregateBinaryRiskFactors()}},
+\code{\link[=getAggregateContinuousRiskFactors]{getAggregateContinuousRiskFactors()}},
 \code{\link[=getBinaryCaseSeries]{getBinaryCaseSeries()}},
 \code{\link[=getBinaryRiskFactors]{getBinaryRiskFactors()}},
 \code{\link[=getBinaryTargetBaseline]{getBinaryTargetBaseline()}},

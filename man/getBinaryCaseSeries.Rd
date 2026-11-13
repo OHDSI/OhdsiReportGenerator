@@ -82,6 +82,8 @@ cs <- getBinaryCaseSeries(
 Other Characterization:
 \code{\link[=characterizationCompareBinary]{characterizationCompareBinary()}},
 \code{\link[=characterizationCompareContinuous]{characterizationCompareContinuous()}},
+\code{\link[=getAggregateBinaryRiskFactors]{getAggregateBinaryRiskFactors()}},
+\code{\link[=getAggregateContinuousRiskFactors]{getAggregateContinuousRiskFactors()}},
 \code{\link[=getBinaryRiskFactors]{getBinaryRiskFactors()}},
 \code{\link[=getBinaryTargetBaseline]{getBinaryTargetBaseline()}},
 \code{\link[=getCaseCounts]{getCaseCounts()}},
