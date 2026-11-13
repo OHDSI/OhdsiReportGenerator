@@ -2,6 +2,66 @@
 # VERSION FUNCTIONS
 #===========================================
 
+# helper: split into numeric parts
+versions_to_nums <- function(x, sep = '.') {
+  x <- gsub('V', '', x)
+  parts <- strsplit(x, paste0("\\", sep), perl = TRUE)[[1]]
+  as.integer(parts)
+  
+  if(length(parts) < 3){
+    parts <- c(parts, rep(0, 3-length(parts)))
+  }
+  return(parts)
+}
+
+.getMostRecentSql <- function(fileName, version = '0.0.0'){
+  
+  availableVersions <- dir(system.file('sql/sql_server/characterization', package = 'OhdsiReportGenerator'), 
+      pattern = fileName)
+  
+  if(length(availableVersions) == 0){
+    warning('No sql code for that fileName found')
+    return('')
+  }
+  
+  availableVersions <- gsub('.sql', '', gsub(fileName, '', availableVersions))
+  availableVersionsSplit <- do.call(rbind, (lapply(
+    X = 1:length(availableVersions),
+    FUN = function(i){
+      versions_to_nums(availableVersions[i], sep = '_')
+    })))
+  
+  maxVersion <- versions_to_nums(version, sep = '.')
+  
+  checkVersion <- rep(TRUE, nrow(availableVersionsSplit))
+  for(i in 1:3){
+    checkVersion <- checkVersion & availableVersionsSplit[,i] <= maxVersion[i]
+  }
+  
+  if(sum(checkVersion) == 0){
+    warning('No sql versions less than or equal to package version found')
+    cVersion <- '0'
+  } else{
+    
+    possibleVersions <- availableVersionsSplit[checkVersion, , drop = FALSE]
+    
+    colnames(possibleVersions) <- c('major', 'med', 'min')
+    possibleVersions <- as.data.frame(possibleVersions) %>% 
+      dplyr::arrange(
+        dplyr::desc(.data$major), 
+        dplyr::desc(.data$med), 
+        dplyr::desc(.data$min)
+      )
+    
+    cVersion <- paste0(possibleVersions[1,], collapse = '_')
+  }
+
+  
+  sqlFileLoc <- system.file(paste0("sql/sql_server/characterization/",fileName,"V",cVersion,".sql"),
+              package = 'OhdsiReportGenerator')
+  
+  return(sqlFileLoc)
+}
 
 .getCVersion <- function(
     connectionHandler,
@@ -154,11 +214,14 @@ getCharacterizationTargetSettings <- function(
     #stop('Function not available in older characterization results tables')
   }
   
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getTargetSettingsV",cVersion,".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  cVersion <- .getCPackageVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = cTablePrefix
+  )
+  sqlLoc <- .getMostRecentSql(fileName = 'getTargetSettings', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
   
   data <- tryCatch({connectionHandler$queryDb(
     sql = sql,
@@ -306,11 +369,15 @@ getCharacterizationCaseSettings <- function(
     #stop('Function not available in older characterization results tables')
   }
   
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getCaseSettingsV",cVersion,".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  cVersion <- .getCPackageVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = cTablePrefix
+  )
+  
+  sqlLoc <- .getMostRecentSql(fileName = 'getCaseSettings', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
   
   data <- tryCatch({connectionHandler$queryDb(
     sql = sql,
@@ -628,11 +695,16 @@ getTargetIdsUsedInCharacterization <- function(
     stop('Function not available in older characterization results tables')
   }
   
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getTargetIds.sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  
+  cVersion <- .getCPackageVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = cTablePrefix
+  )
+  
+  sqlLoc <- .getMostRecentSql(fileName = 'getTargetIds', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
   
   data <- tryCatch({connectionHandler$queryDb(
     sql = sql,
@@ -708,12 +780,15 @@ getOutcomesUsedInCharacterization <- function(
     
     start <- Sys.time()
     
+    cVersion <- .getCPackageVersion(
+      connectionHandler = connectionHandler,
+      schema = schema,
+      cTablePrefix = cTablePrefix
+    )
     
-    sql <- SqlRender::readSql(system.file(
-      paste0("sql/sql_server/characterization/getCharacterizationOutcomesV", cVersion, ".sql"),
-      package = "OhdsiReportGenerator",
-      mustWork = TRUE
-    ))
+    sqlLoc <- .getMostRecentSql(fileName = 'getCharacterizationOutcomes', version = cVersion)
+    
+    sql <- SqlRender::readSql(sqlLoc)
     
     outcomes <- connectionHandler$queryDb(
       sql = sql,
@@ -1280,22 +1355,19 @@ getTimeToEvent <- function(
     outcomeIds = NULL
 ){
   
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  if(cVersion == 0){
-    cVersion <- '3_0_0'
+  if(cVersion == "0.0.0"){
+    cVersion <- '3.0.0'
   }
   
-  # add code here
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getTimeToEventV",cVersion,".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  sqlLoc <- .getMostRecentSql(fileName = 'getTimeToEvent', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -1382,21 +1454,20 @@ getDechallengeRechallenge <- function(
     outcomeIds = NULL
 ){
   
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  if(cVersion == 0){
-    cVersion <- '3_0_0'
+  if(cVersion == "0.0.0"){
+    cVersion <- '3.0.0'
   }
   
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getDechallengeRechallengeV",cVersion,".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  sqlLoc <- .getMostRecentSql(fileName = 'getDechallengeRechallenge', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
+
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -1574,18 +1645,15 @@ getBinaryTargetBaseline <- function(
     minThreshold = NULL
 ){
   
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  # add code here
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getBinaryTargetBaselineV",cVersion,".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  sqlLoc <- .getMostRecentSql(fileName = 'getBinaryTargetBaseline', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -1678,17 +1746,15 @@ getContinuousTargetBaseline <- function(
     minThreshold = NULL
 ){
   
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getContinuousTargetBaselineV", cVersion, ".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  sqlLoc <- .getMostRecentSql(fileName = 'getContinuousTargetBaseline', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -1887,22 +1953,19 @@ getBinaryRiskFactors <- function(
     }
 
     
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  if(cVersion == 0){
+  if(cVersion == '0.0.0'){
     warning('The result version you are using is no longer support by OhdsiReportGenerator')
   } 
   
+  sqlLoc <- .getMostRecentSql(fileName = 'getBinaryRiskFactors', version = cVersion)
   
-    sql <- SqlRender::readSql(system.file(
-      paste0("sql/sql_server/characterization/getBinaryRiskFactorsV", cVersion, ".sql"),
-      package = "OhdsiReportGenerator",
-      mustWork = TRUE
-    ))
+  sql <- SqlRender::readSql(sqlLoc)
     
     # restrict by restrictToFirstInNDays, minPriorObseration, outcomeWashoutDays and TAR?
     result <- connectionHandler$queryDb(
@@ -2015,21 +2078,19 @@ getContinuousRiskFactors <- function(
       }
     }
   
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  if(cVersion == 0){
-      warning('You have old results that are no longer supported by OhdsiReportGenerator and my be unstable')
+  if(cVersion == '0.0.0'){
+    warning('You have old results that are no longer supported by OhdsiReportGenerator and my be unstable')
   } 
-    
-    sql <- SqlRender::readSql(system.file(
-      paste0("sql/sql_server/characterization/getContinuousRiskFactorsV", cVersion, ".sql"),
-      package = "OhdsiReportGenerator",
-      mustWork = TRUE
-    ))
+  
+  sqlLoc <- .getMostRecentSql(fileName = 'getContinuousRiskFactors', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
     
     result <- connectionHandler$queryDb(
       sql = sql,
@@ -2152,12 +2213,15 @@ getAggregateBinaryRiskFactors <- function(
     return(NULL)
   } 
   
+  cVersion <- .getCPackageVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = cTablePrefix
+  )
   
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getAggregateBinaryRiskFactorsV", cVersion, ".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  sqlLoc <- .getMostRecentSql(fileName = 'getAggregateBinaryRiskFactors', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
   
   # restrict by restrictToFirstInNDays, minPriorObseration, outcomeWashoutDays and TAR?
   result <- connectionHandler$queryDb(
@@ -2275,11 +2339,15 @@ getAggregateContinuousRiskFactors <- function(
     return(NULL)
   } 
   
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getAggregateContRiskFactorsV", cVersion, ".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  cVersion <- .getCPackageVersion(
+    connectionHandler = connectionHandler,
+    schema = schema,
+    cTablePrefix = cTablePrefix
+  )
+  
+  sqlLoc <- .getMostRecentSql(fileName = 'getAggregateContRiskFactors', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -2395,18 +2463,15 @@ getBinaryCaseSeries <- function(
     }
   }
   
-  
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getBinaryCaseSeriesV", cVersion, ".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  sqlLoc <- .getMostRecentSql(fileName = 'getBinaryCaseSeries', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -2515,17 +2580,15 @@ getContinuousCaseSeries <- function(
     }
   }
   
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getContinuousCaseSeriesV", cVersion, ".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  sqlLoc <- .getMostRecentSql(fileName = 'getContinuousCaseSeries', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -2642,19 +2705,16 @@ getNonCaseCounts <- function(
     includeNames = TRUE
 ){
   
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getNonCaseCountsV", cVersion, ".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  sqlLoc <- .getMostRecentSql(fileName = 'getNonCaseCounts', version = cVersion)
   
-  
+  sql <- SqlRender::readSql(sqlLoc)
+
  result <- connectionHandler$queryDb(
     sql = sql,
     schema = schema,
@@ -2764,17 +2824,15 @@ getCaseCounts <- function(
     outcomeWashout = NULL
 ){
   
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getCaseCountsV", cVersion, ".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  sqlLoc <- .getMostRecentSql(fileName = 'getCaseCounts', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
   
   result <- connectionHandler$queryDb(
     sql = sql,
@@ -2859,18 +2917,15 @@ getTargetCounts <- function(
     includeNames = TRUE
 ){
   
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  # getting counts
-  sql <- SqlRender::readSql(system.file(
-    paste0("sql/sql_server/characterization/getTargetCountsV", cVersion, ".sql"),
-    package = "OhdsiReportGenerator",
-    mustWork = TRUE
-  ))
+  sqlLoc <- .getMostRecentSql(fileName = 'getTargetCounts', version = cVersion)
+  
+  sql <- SqlRender::readSql(sqlLoc)
   
   counts <- connectionHandler$queryDb(
     sql = sql,
@@ -2941,13 +2996,13 @@ characterizationCompareBinary <- function(
     minThreshold = 0
 ){
   
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
-  
-  if(cVersion == '0'){
+
+  if(cVersion == '0.0.0'){
     warning('Results detected are old and no longer supported by OhdsiReportGenerator')
   } 
     
@@ -3053,13 +3108,13 @@ characterizationCompareContinuous <- function(
     minThreshold = 0
 ){
   
-  cVersion <- .getCVersion(
+  cVersion <- .getCPackageVersion(
     connectionHandler = connectionHandler,
     schema = schema,
     cTablePrefix = cTablePrefix
   )
   
-  if(cVersion == '0'){
+  if(cVersion == '0.0.0'){
     warning('Results detected are old and no longer supported by OhdsiReportGenerator')
   } 
     
