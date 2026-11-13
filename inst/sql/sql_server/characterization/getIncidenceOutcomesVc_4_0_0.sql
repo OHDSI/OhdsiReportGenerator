@@ -15,29 +15,31 @@ select distinct
   
   {@use_target}?{ 
     inner join 
-    (select distinct outcome_id from @schema.@ci_table_prefixincidence_summary isum
+    (select distinct outcome_cohort_id from @schema.@ci_table_prefixtarget_outcome_ref tor
     INNER JOIN @schema.@ci_table_prefixtarget_settings ts
-    ON ts.characterization_target_id = isum.characterization_target_id
+    ON ts.characterization_target_id = tor.characterization_target_id
+    AND ts.setting_id = tor.setting_id
     where ts.target_id in (@target_id)) temp
-    on temp.outcome_id = c.outcome_id
+    on temp.outcome_cohort_id = c.outcome_cohort_definition_id
   }
   
   {@use_characterization_target}?{ 
     inner join 
-    (select distinct outcome_id from @schema.@ci_table_prefixincidence_summary isum
-    where isum.characterization_target_id in (@characterization_target_id)) temp
-    on temp.outcome_id = c.outcome_id
+    (select distinct outcome_id from @schema.@ci_table_prefixtarget_outcome_ref tor
+    where tor.characterization_target_id in (@characterization_target_id)) temp
+    on temp.outcome_cohort_id = c.outcome_cohort_definition_id
   }
   
     {@use_parent}?{ 
     inner join 
-    (select distinct outcome_id from @schema.@ci_table_prefixincidence_summary isum
+    (select distinct outcome_cohort_id from @schema.@ci_table_prefixtarget_outcome_ref tor
     INNER JOIN @schema.@ci_table_prefixtarget_settings ts
-    ON ts.characterization_target_id = isum.characterization_target_id
+    ON ts.characterization_target_id = tor.characterization_target_id
+    AND ts.setting_id = tor.setting_id
     INNER JOIN @schema.@cg_table_prefixcohort_definition cg1
     ON cg1.cohort_definition_id = ts.target_id
     where cg1.subset_parent in (@parent_id)) temp
-    on temp.outcome_id = c.outcome_id
+    on temp.outcome_cohort_id = c.outcome_cohort_definition_id
   }
   
   ;

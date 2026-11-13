@@ -178,7 +178,7 @@ formatBinaryCovariateName <- function(data){
       }
     }
     
-    data$covariateName <- unlist(lapply(tempNames, function(x) ifelse(length(strsplit(x,':')[[1]])>=2, strsplit(x,': ')[[1]][2], 'Unknown covariate')))
+    data$covariateName <- unlist(lapply(tempNames, function(x) ifelse(length(strsplit(x,':')[[1]])>=2, strsplit(x,': ')[[1]][2], x)))
   } 
   
   # add conceptId to the name
