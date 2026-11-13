@@ -3,6 +3,17 @@ select
     d.database_id,
     cg1.cohort_name as target_name,
     ts.target_id,
+    
+    -- adding in population columns 
+    ts.limit_to_first_in_n_days,	
+    ts.min_prior_observation,
+    ts.nesting_cohort_id,
+    ts.min_age,
+    ts.max_age,
+    ts.study_start,
+    ts.study_end,
+    ts.gender_concept_ids,
+    
     cg2.cohort_name as outcome_name,
     i.outcome_cohort_definition_id as outcome_id, 
     
