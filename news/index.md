@@ -9,6 +9,8 @@
   incidence (the code uses the incidence_prefix to figure it out)
 - added aggregate risk factors functions that summarizes risk factors
   across databases
+- added population settings to incidence rate output when using prefix
+  ‘c\_’
 
 ## OhdsiReportGenerator v2.3.1
 

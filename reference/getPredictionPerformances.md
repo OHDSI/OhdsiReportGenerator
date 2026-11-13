@@ -156,8 +156,8 @@ Other Prediction:
 conDet <- getExampleConnectionDetails()
 
 connectionHandler <- ResultModelManager::ConnectionHandler$new(conDet)
-#> Closing database connection
 #> Connecting using SQLite driver
+#> Closing database connection
 
 perf <- getPredictionPerformances(
   connectionHandler = connectionHandler, 
