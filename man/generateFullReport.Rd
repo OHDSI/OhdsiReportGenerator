@@ -21,6 +21,7 @@ generateFullReport(
   includeCharacterization = TRUE,
   includeCohortMethod = TRUE,
   includeSccs = TRUE,
+  includeScc = TRUE,
   includePrediction = TRUE,
   webAPI = NULL,
   authMethod = NULL,
@@ -66,6 +67,8 @@ generateFullReport(
 
 \item{includeSccs}{Whether to include the self controlled case series slides}
 
+\item{includeScc}{Whether to include the self controlled cohort slides}
+
 \item{includePrediction}{Whether to include the patient level prediction slides}
 
 \item{webAPI}{The ATLAS web API to use for the characterization index breakdown (set to NULL to not include)}
@@ -95,8 +98,8 @@ Specify the connection details to the result database and the schema name
 to generate the full report.
 }
 \seealso{
-Other Reporting:
-\code{\link[=createPredictionReport]{createPredictionReport()}},
-\code{\link[=generateSummaryPredictionReport]{generateSummaryPredictionReport()}}
+Other Reporting: 
+\code{\link{createPredictionReport}()},
+\code{\link{generateSummaryPredictionReport}()}
 }
 \concept{Reporting}
